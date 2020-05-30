@@ -1,0 +1,34 @@
+DRAWING:
+
+* smart refresh that responds immediately to drawing
+
+EVENTS:
+
+* listen for touch events
+* listen for stylus events
+* listen for button presses
+
+APP:
+
+* write Button class
+* make UI for simple app with buttons
+* implement brushes
+  * sketchy
+  * shaded
+  * chrome
+  * eraser
+
+
+TESTING:
+
+* write simple app that draws a circle, rect or point when there are touch events
+
+PERF:
+
+* investigate dirty rectangles
+
+
+DONE:
+
+x draw to framebuffer
+x refresh framebuffer
