@@ -40,7 +40,7 @@ class FB:
   ~FB():
     close(this->fd)
 
-  def wait_for_redraw(int update_marker):
+  def wait_for_redraw(uint32_t update_marker):
     #ifdef REMARKABLE
     mxcfb_update_marker_data mdata = { update_marker, 0 }
     ioctl(this->fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &mdata)
@@ -76,7 +76,7 @@ class FB:
     return um
 
   tuple<int,int> get_size():
-    size_f = ifstream("/sys/class/graphics/fb0/virtual_size")  
+    size_f = ifstream("/sys/class/graphics/fb0/virtual_size")
     string width_s, height_s
     char delim = ',';
     getline(size_f, width_s, delim)
@@ -84,7 +84,7 @@ class FB:
 
     width = stoi(width_s)
     height = stoi(height_s)
-   
+
     f = 1
     #ifdef REMARKABLE
     f = 2
@@ -95,7 +95,7 @@ class FB:
   def draw_rect(int o_x, o_y, w, h, color):
     printf("DRAWING RECT: %i %i %i %i COLOR: %i\n", o_x, o_y, w, h, color)
     uint32_t* ptr = this->fbmem
-  
+
     ptr += (o_x + o_y * this->width)
 
     for y 0 h:

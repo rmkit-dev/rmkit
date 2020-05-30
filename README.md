@@ -21,6 +21,6 @@ Almost nothing is implemented yet. But future plans is to create helper classes 
 
 ### Compiling
 
-* compile for linux usage: `make compile`
-* compile for remarkable: `make compile_arm`
+* compile for linux usage: `make sketchy_x86`
+* compile for remarkable: `make sketchy_arm`
 * test on remarkable: `make test_arm` - assumes that the remarkable is plugged in on USB
