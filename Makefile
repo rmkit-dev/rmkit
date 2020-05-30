@@ -1,4 +1,4 @@
-FILES=fb_map.cpy fb.cpy mxcfb.h defines.h
+FILES=main.cpy fb.cpy mxcfb.h defines.h
 HOST?=10.11.99.1
 EXE="sketchy"
 
