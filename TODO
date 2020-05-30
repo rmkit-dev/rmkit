@@ -27,6 +27,9 @@ PERF:
 
 * investigate dirty rectangles
 
+DEV EXPERIENCE:
+
+* tool to view the framebuffer contents from the desktop/outside tty1
 
 DONE:
 
