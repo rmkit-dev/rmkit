@@ -24,4 +24,3 @@ Almost nothing is implemented yet. But future plans is to create helper classes 
 * compile for linux usage: `make compile`
 * compile for remarkable: `make compile_arm`
 * test on remarkable: `make test_arm` - assumes that the remarkable is plugged in on USB
-

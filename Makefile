@@ -8,10 +8,12 @@ sketchy: compile
 
 compile:
 	cd okp/ && okp -for -d ../cpp/ -o ../${EXE} ${FILES}
+	clang-format -i cpp/*.h cpp/*.cpp
 
 compile_arm:
 	export CXX=arm-linux-gnueabihf-g++ 
 	cd okp/ && okp -for -d ../cpp/ -o ../${EXE} ${FILES} -- -D"REMARKABLE=1"
+	clang-format -i cpp/*.h cpp/*.cpp
 
 test_arm: compile_arm
 	scp a.out root@${HOST}:a.out
