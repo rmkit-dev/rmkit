@@ -24,32 +24,53 @@ class FB:
 
   public:
   int width, height, fd
+  int byte_size
   int update_marker = 1
   uint32_t* fbmem
 
   FB():
-    width, height = this->get_size()
-    this->width = width
-    this->height = height
+    width, height = self.get_size()
+    self.width = width
+    self.height = height
 
     printf("W: %i H: %i\n", width, height)
+    size = width*height*sizeof(uint32_t)
+    self.byte_size = size
 
-    this->fd = open("/dev/fb0", O_RDWR)
-    fbmem = (uint32_t*) mmap(NULL, width*height*sizeof(uint32_t), PROT_WRITE, MAP_SHARED, this->fd, 0)
+    #ifndef DEV
+    self.fd = open("/dev/fb0", O_RDWR)
+    fbmem = (uint32_t*) mmap(NULL, size, PROT_WRITE, MAP_SHARED, self.fd, 0)
+    #else
+    // make an empty file of the right size
+    std::ofstream ofs("fb.raw", std::ios::binary | std::ios::out);
+    ofs.seekp(size);
+    ofs.write("", 1);
+    ofs.close()
+
+
+
+    self.fd = open("./fb.raw", O_RDWR)
+    fbmem = (uint32_t*) mmap(NULL, size, PROT_WRITE, MAP_SHARED, self.fd, 0)
+    #endif
+    return
 
   ~FB():
-    close(this->fd)
+    close(self.fd)
 
   def wait_for_redraw(uint32_t update_marker):
     #ifdef REMARKABLE
     mxcfb_update_marker_data mdata = { update_marker, 0 }
-    ioctl(this->fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &mdata)
+    ioctl(self.fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &mdata)
     #endif
     return
 
 
   def redraw_screen(bool wait_for_refresh=false):
     um = 0
+    #ifdef DEV
+    msync(self.fbmem, self.byte_size, MS_SYNC)
+    #endif
+
     #ifdef REMARKABLE
     mxcfb_update_data update_data
     mxcfb_rect update_rect
@@ -67,9 +88,9 @@ class FB:
 
     update_data.update_marker = 0
     if wait_for_refresh:
-      update_data.update_marker = this->update_marker++
+      update_data.update_marker = self.update_marker++
 
-    ioctl(this->fd, MXCFB_SEND_UPDATE, &update_data)
+    ioctl(self.fd, MXCFB_SEND_UPDATE, &update_data)
     printf("REDRAWING SCREEN\n")
     um = update_data.update_marker
     #endif
@@ -94,13 +115,13 @@ class FB:
 
   def draw_rect(int o_x, o_y, w, h, color):
     printf("DRAWING RECT: %i %i %i %i COLOR: %i\n", o_x, o_y, w, h, color)
-    uint32_t* ptr = this->fbmem
+    uint32_t* ptr = self.fbmem
 
-    ptr += (o_x + o_y * this->width)
+    ptr += (o_x + o_y * self.width)
 
     for y 0 h:
       for x 0 w:
-        ptr[y*this->width + x] = color
+        ptr[y*self.width + x] = color
 
   def draw_rect(rect r, int color):
     w = r.w
@@ -110,6 +131,6 @@ class FB:
     w /= 2
     #endif
 
-    this->draw_rect(r.x, r.y, w, h, color)
+    self.draw_rect(r.x, r.y, w, h, color)
 
 #endif

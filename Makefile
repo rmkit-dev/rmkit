@@ -2,17 +2,22 @@ FILES=main.cpy fb.cpy mxcfb.h defines.h
 HOST?=10.11.99.1
 EXE="sketchy"
 
-default: sketchy
+default: sketchy_dev
 
-sketchy: compile_x86 format
+sketchy_fb: compile_x86 format
+
+sketchy_dev: compile_dev format
 
 sketchy_arm: compile_arm format
 
 compile_x86:
-	cd okp/ && okp -for -d ../cpp/ -o ../${EXE} ${FILES}
+	cd okp/ && okp -for -d ../cpp/ -o ../${EXE} ${FILES} -g
 
 compile_arm:
-	cd okp/ && CXX=arm-linux-gnueabihf-g++ okp -for -d ../cpp/ -o ../${EXE} ${FILES} -- -D"REMARKABLE=1"
+	cd okp/ && CXX=arm-linux-gnueabihf-g++ okp -for -d ../cpp/ -o ../${EXE} ${FILES} -- -D"REMARKABLE=1" -g
+
+compile_dev:
+	cd okp/ && okp -for -d ../cpp/ -o ../${EXE} ${FILES} -- -D"DEV=1" -g
 
 test_arm: compile_arm format
 	scp sketchy root@${HOST}:sketchy
