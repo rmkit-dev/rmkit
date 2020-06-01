@@ -153,7 +153,8 @@ class FB:
     buf[i] = 0
 
     wrote = write(fd, buf, i-1)
-
     close(fd)
+
+    ret = system("pnmtopng fb.pnm > fb.png")
 
 #endif
