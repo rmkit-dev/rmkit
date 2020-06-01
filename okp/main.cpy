@@ -27,7 +27,7 @@ def main():
     fb.draw_rect(prev_rect, WHITE)
     fb.draw_rect(cur_rect, color)
     marker = fb.redraw_screen(true)
-    printf("WAITING FOR REDRAW: %i\n", marker)
+//    printf("WAITING FOR REDRAW: %i\n", marker)
 //    fb.wait_for_redraw(marker)
 
     prev_rect = cur_rect

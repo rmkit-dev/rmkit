@@ -69,6 +69,7 @@ class FB:
     um = 0
     #ifdef DEV
     msync(self.fbmem, self.byte_size, MS_SYNC)
+    self.save_pnm()
     #endif
 
     #ifdef REMARKABLE
@@ -132,5 +133,27 @@ class FB:
     #endif
 
     self.draw_rect(r.x, r.y, w, h, color)
+
+  void save_pnm():
+    // save the buffer to pnm format
+    fd = open("fb.pnm", O_RDWR)
+    lseek(fd, 0, 0)
+    char c[100];
+    i = sprintf(c, "P6%d %d\n255\n", self.width, self.height)
+    wrote = write(fd, c, i-1)
+    char buf[self.width * self.height * 4]
+    ptr = &buf[0]
+
+    for y 0 self.height:
+      for x 0 self.width:
+        d = (short) self.fbmem[y*self.width + x]
+        buf[i++] = (d & 0xf800) >> 8
+        buf[i++] = (d & 0x1f) << 3
+        buf[i++] = (d & 0x7e0) >> 3
+    buf[i] = 0
+
+    wrote = write(fd, buf, i-1)
+
+    close(fd)
 
 #endif
