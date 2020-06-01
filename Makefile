@@ -27,3 +27,6 @@ test_arm: compile_arm format
 
 format:
 	clang-format -i cpp/*.h cpp/*.cpp
+
+view:
+	python scripts/viewer.py

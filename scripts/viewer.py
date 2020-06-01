@@ -7,7 +7,6 @@ import time
 if __name__ == "__main__":
     WIN = gtk.Window()
     IMG = gtk.Image()
-    IMG.set_from_file("./fb.png")
 
     WIN.add(IMG)
     WIN.connect("destroy", gtk.main_quit)
@@ -29,6 +28,7 @@ if __name__ == "__main__":
         IMG.queue_draw()
         return True
 
+    update_image()
 
     glib.timeout_add(100, update_image)
 
