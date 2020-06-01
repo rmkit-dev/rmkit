@@ -136,11 +136,13 @@ class FB:
 
   void save_pnm():
     // save the buffer to pnm format
-    fd = open("fb.pnm", O_RDWR)
+    fd = open("fb.pnm", O_CREAT|O_RDWR, 0755)
     lseek(fd, 0, 0)
     char c[100];
     i = sprintf(c, "P6%d %d\n255\n", self.width, self.height)
     wrote = write(fd, c, i-1)
+    if wrote == -1:
+      printf("ERROR %i", errno)
     char buf[self.width * self.height * 4]
     ptr = &buf[0]
 
@@ -148,11 +150,13 @@ class FB:
       for x 0 self.width:
         d = (short) self.fbmem[y*self.width + x]
         buf[i++] = (d & 0xf800) >> 8
-        buf[i++] = (d & 0x1f) << 3
         buf[i++] = (d & 0x7e0) >> 3
+        buf[i++] = (d & 0x1f) << 3
     buf[i] = 0
 
     wrote = write(fd, buf, i-1)
+    if wrote == -1:
+      printf("ERROR %i", errno)
     close(fd)
 
     ret = system("pnmtopng fb.pnm > fb.png")

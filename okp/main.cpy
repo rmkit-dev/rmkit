@@ -31,6 +31,6 @@ def main():
 //    fb.wait_for_redraw(marker)
 
     prev_rect = cur_rect
-    usleep(100000)
+    usleep(1000000)
 
     color += 100
