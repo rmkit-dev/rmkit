@@ -37,4 +37,4 @@ def main():
 
     color += 100
 
-  input.listen()
+  input.listen_wacom()
