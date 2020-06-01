@@ -77,7 +77,7 @@ class Input:
         if ev_data[i].type == EV_SYN:
           printf("SYN EVENT\n");
         else:
-          printf("Event: time %ld, type: %d, code :%d, value %d\n", \
+          printf("Event: time %ld, type: %x, code :%x, value %d\n", \
             ev_data[i].time.tv_sec, ev_data[i].type, ev_data[i].code, ev_data[i].value)
 
 
