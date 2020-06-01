@@ -2,6 +2,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/select.h>
+#include <linux/input.h>
 
 using namespace std
 
@@ -11,6 +12,7 @@ class Input:
   public:
   int mouse_fd, wacom_fd, touch_fd, gpio_fd, bytes
   unsigned char data[3]
+  input_event ev_data[64]
 
   Input():
     printf("Initializing input\n")
@@ -20,6 +22,8 @@ class Input:
     wacom_fd = open("/dev/input/event0", O_RDONLY)
     touch_fd = open("/dev/input/event1", O_RDONLY)
     gpio_fd = open("/dev/input/event2", O_RDONLY)
+
+    printf("FDs WACOM %i TOUCH %i GPIO %i\n", wacom_fd, touch_fd, gpio_fd)
 
   ~Input():
     close(mouse_fd)
@@ -46,10 +50,6 @@ class Input:
     // code (u16)
     // value (i32)
 
-    // event types
-    EV_SYNC = 0 // request to synchronize...? wacom.rs isn't clear on what this does
-    EV_KEY = 1 // tool change
-    EV_ABS = 3 // absolute values
 
     // event codes for EV_ABS
     WACOM_EVCODE_PRESSURE = 24 // goes up to 4095
@@ -70,10 +70,17 @@ class Input:
     Stylus2 = 332
 
     while 1:
-      $bytes = read(wacom_fd, data, sizeof(data));
-      if bytes > 0:
-        print "bytes=%d\n", bytes
-        print "data=%s\n", data
+      $bytes = read(wacom_fd, ev_data, sizeof(input_event) * 64);
+      if bytes < sizeof(struct input_event):
+        continue
+      for int i = 0; i < bytes / sizeof(struct input_event); i++:
+        if ev_data[i].type == EV_SYN:
+          printf("SYN EVENT\n");
+        else:
+          printf("Event: time %ld, type: %d, code :%d, value %d\n", \
+            ev_data[i].time.tv_sec, ev_data[i].type, ev_data[i].code, ev_data[i].value)
+
+
 
 
 #endif

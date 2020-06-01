@@ -22,8 +22,10 @@ compile_dev:
 	cd okp/ && okp ${OKP_FLAGS} -- -D"DEV=1" ${CPP_FLAGS}
 
 test_arm: compile_arm format
+	ssh root@${HOST} killall sketchy || true
 	scp sketchy root@${HOST}:sketchy
-	ssh root@${HOST} ./sketchy
+	ssh root@${HOST} ./sketchy || true
+	ssh root@${HOST} killall sketchy || true
 
 format:
 	clang-format -i cpp/*.h cpp/*.cpp
