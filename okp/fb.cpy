@@ -24,7 +24,7 @@ class FB:
 
   public:
   int width, height, fd
-  int byte_size
+  int byte_size, dirty
   int update_marker = 1
   uint32_t* fbmem
 
@@ -65,7 +65,8 @@ class FB:
     return
 
 
-  def redraw_screen(bool wait_for_refresh=false):
+  def redraw_screen(bool wait_for_refresh=false, rect *redraw_area=NULL):
+    dirty = 0
     um = 0
     #ifdef DEV
     msync(self.fbmem, self.byte_size, MS_SYNC)
@@ -76,15 +77,22 @@ class FB:
     mxcfb_update_data update_data
     mxcfb_rect update_rect
 
-    update_rect.top = 0
-    update_rect.left = 0
-    update_rect.width = 1404
-    update_rect.height = 1872
+    if redraw_area != NULL:
+      update_rect.top = redraw_area->y
+      update_rect.left = redraw_area->x
+      update_rect.width = redraw_area->w
+      update_rect.height = redraw_area->h
+    else:
+      update_rect.top = 0
+      update_rect.left = 0
+      update_rect.width = 1404
+      update_rect.height = 1872
 
     update_data.update_region = update_rect
-    update_data.waveform_mode = WAVEFORM_MODE_AUTO
+    update_data.waveform_mode = WAVEFORM_MODE_DU
     update_data.update_mode = UPDATE_MODE_PARTIAL
-    update_data.temp = TEMP_USE_AMBIENT
+    update_data.dither_mode = EPDC_FLAG_EXP1
+    update_data.temp = TEMP_USE_REMARKABLE_DRAW
     update_data.flags = 0
 
     update_data.update_marker = 0
@@ -92,10 +100,13 @@ class FB:
       update_data.update_marker = self.update_marker++
 
     ioctl(self.fd, MXCFB_SEND_UPDATE, &update_data)
-    printf("REDRAWING SCREEN\n")
     um = update_data.update_marker
     #endif
     return um
+
+  def redraw_if_dirty():
+    if self.dirty:
+      self.redraw_screen()
 
   tuple<int,int> get_size():
     size_f = ifstream("/sys/class/graphics/fb0/virtual_size")
@@ -115,8 +126,9 @@ class FB:
     return width/f, height/f
 
   def draw_rect(int o_x, o_y, w, h, color):
-    printf("DRAWING RECT: %i %i %i %i COLOR: %i\n", o_x, o_y, w, h, color)
+    self.dirty = 1
     uint32_t* ptr = self.fbmem
+    printf("DRAWING RECT X: %i Y: %i W: %i H: %i, COLOR: %i\n", o_x, o_y, w, h, color)
 
     ptr += (o_x + o_y * self.width)
 

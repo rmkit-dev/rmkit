@@ -4,36 +4,60 @@ import input
 
 using namespace std
 
-def main():
+class App:
   FB fb
   Input input
-  input.listen_all()
-  srand(time(NULL))
 
-  // its the first set of bytes that determine the color?
-  uint32_t color = 0x000
+  int x = 0
+  int y = 0
 
-  printf("COLOR: %u\n", color)
-  fb.draw_rect(0, 0, fb.width, fb.height, WHITE)
-  fb.redraw_screen()
 
-  rect prev_rect{0, 0, 0, 0} 
-  rect cur_rect
+  public:
+  def handle_wacom(auto ev):
+    rect r = rect{ev.x, ev.y, 2, 2}
+    fb.draw_rect(r, BLACK)
 
-  for i 0 10:
-    cur_rect.w = 200
-    cur_rect.h = 200
+  def handle_mouse(auto ev):
+    self.x += ev.x
+    self.y += ev.y
 
-    cur_rect.x = rand() % (fb.width - cur_rect.w)
-    cur_rect.y = rand() % (fb.height - cur_rect.h)
-    
-    fb.draw_rect(prev_rect, WHITE)
-    fb.draw_rect(cur_rect, color)
-    marker = fb.redraw_screen(true)
-//    printf("WAITING FOR REDRAW: %i\n", marker)
-//    fb.wait_for_redraw(marker)
 
-    prev_rect = cur_rect
-    usleep(1000000)
+    if self.y < 0:
+      self.y = 0
+    if self.x < 0:
+      self.x = 0
 
-    color += 100
+    if self.y >= self.fb.height - 1:
+      self.y = (int) self.fb.height - 5
+
+    if self.x >= self.fb.width - 1:
+      self.x = (int) self.fb.width - 5
+
+    o_x = self.x
+    o_y = self.fb.height - self.y
+
+    if o_y >= self.fb.height - 1:
+      o_y = self.fb.height - 5
+
+    fb.draw_rect(o_x, o_y, 2, 2, BLACK)
+
+  def run():
+    fb.draw_rect(0, 0, fb.width, fb.height, WHITE)
+    fb.redraw_screen()
+
+    printf("HANDLING RUN\n")
+    while true:
+      input.listen_all()
+      for auto ev : input.wacom_events:
+        self.handle_wacom(ev)
+
+      for auto ev : input.mouse_events:
+        self.handle_mouse(ev)
+
+      fb.redraw_if_dirty()
+
+
+def main():
+  app = App()
+  app.run()
+
