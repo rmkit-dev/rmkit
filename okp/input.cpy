@@ -10,9 +10,10 @@ class Input:
   private:
 
   public:
-  int mouse_fd, wacom_fd, touch_fd, gpio_fd, bytes
+  int mouse_fd, wacom_fd, touch_fd, gpio_fd, bytes, max_fd
   unsigned char data[3]
   input_event ev_data[64]
+  fd_set rdfs
 
   Input():
     printf("Initializing input\n")
@@ -22,6 +23,8 @@ class Input:
     wacom_fd = open("/dev/input/event0", O_RDONLY)
     touch_fd = open("/dev/input/event1", O_RDONLY)
     gpio_fd = open("/dev/input/event2", O_RDONLY)
+
+    FD_ZERO(&rdfs)
 
     printf("FDs MOUSE %i WACOM %i TOUCH %i GPIO %i\n", mouse_fd, wacom_fd, touch_fd, gpio_fd)
 
@@ -95,30 +98,32 @@ class Input:
     // TODO
     pass
 
+  def monitor(int fd):
+    FD_SET(fd,&rdfs)
+    max_fd = max(max_fd, fd)
+
   def listen_all():
-    fd_set rdfs
-    struct timeval tv
+    fd_set rdfs_cp
     int retval
 
-    FD_ZERO(&rdfs)
     // should probably remove mouse_fd from rdfs for remarkable
     // it was the only way I could test on ubuntu
-    FD_SET(mouse_fd,&rdfs)
-    FD_SET(wacom_fd,&rdfs)
-    FD_SET(touch_fd,&rdfs)
-    FD_SET(gpio_fd,&rdfs)
+    monitor(mouse_fd)
+    monitor(wacom_fd)
+    monitor(touch_fd)
+    monitor(gpio_fd)
 
     while 1:
-      nfds = max(max(mouse_fd, wacom_fd),max(touch_fd, gpio_fd))+1
-      retval = select(nfds, &rdfs, NULL, NULL, NULL)
+      rdfs_cp = rdfs
+      retval = select(max_fd+1, &rdfs_cp, NULL, NULL, NULL)
       if retval > 0:
-        if FD_ISSET(mouse_fd, &rdfs):
+        if FD_ISSET(mouse_fd, &rdfs_cp):
           read_mouse()
-        if FD_ISSET(wacom_fd, &rdfs):
+        if FD_ISSET(wacom_fd, &rdfs_cp):
           read_wacom()
-        if FD_ISSET(touch_fd, &rdfs):
+        if FD_ISSET(touch_fd, &rdfs_cp):
           read_touch()
-        if FD_ISSET(gpio_fd, &rdfs):
+        if FD_ISSET(gpio_fd, &rdfs_cp):
           read_gpio()
       if retval < 0:
         print "oops, select broke"
