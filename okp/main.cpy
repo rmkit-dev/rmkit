@@ -7,6 +7,7 @@ using namespace std
 def main():
   FB fb
   Input input
+  input.listen_all()
   srand(time(NULL))
 
   // its the first set of bytes that determine the color?
@@ -36,5 +37,3 @@ def main():
     usleep(1000000)
 
     color += 100
-
-  input.listen_wacom()

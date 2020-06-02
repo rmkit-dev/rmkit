@@ -23,33 +23,12 @@ class Input:
     touch_fd = open("/dev/input/event1", O_RDONLY)
     gpio_fd = open("/dev/input/event2", O_RDONLY)
 
-    printf("FDs WACOM %i TOUCH %i GPIO %i\n", wacom_fd, touch_fd, gpio_fd)
+    printf("FDs MOUSE %i WACOM %i TOUCH %i GPIO %i\n", mouse_fd, wacom_fd, touch_fd, gpio_fd)
 
-  ~Input():
-    close(mouse_fd)
-    close(wacom_fd)
-    close(touch_fd)
-    close(gpio_fd)
-
-  // not going to use this on remarkable
-  def listen_mouse():
-    while 1:
-      $bytes = read(mouse_fd, data, sizeof(data));
-      if bytes > 0:
-        left = data[0]&0x1
-        right = data[0]&0x2
-        middle = data[0]&0x4
-        signed char x = data[1]
-        signed char y = data[2]
-        printf("x=%d, y=%d, left=%d, middle=%d, right=%d\n", x, y, left, middle, right)
-
-  // wacom = pen. naming comes from libremarkable
-  def listen_wacom():
     // input events (for wacom,touch,gpio) have:
     // type (u16)
     // code (u16)
     // value (i32)
-
 
     // event codes for EV_ABS
     WACOM_EVCODE_PRESSURE = 24 // goes up to 4095
@@ -69,16 +48,82 @@ class Input:
     Stylus = 331
     Stylus2 = 332
 
+
+  ~Input():
+    close(mouse_fd)
+    close(wacom_fd)
+    close(touch_fd)
+    close(gpio_fd)
+
+  def read_mouse():
+    $bytes = read(mouse_fd, data, sizeof(data));
+    if bytes > 0:
+      left = data[0]&0x1
+      right = data[0]&0x2
+      middle = data[0]&0x4
+      signed char x = data[1]
+      signed char y = data[2]
+      printf("x=%d, y=%d, left=%d, middle=%d, right=%d\n", x, y, left, middle, right)
+
+  // not going to use this on remarkable
+  def listen_mouse():
     while 1:
-      $bytes = read(wacom_fd, ev_data, sizeof(input_event) * 64);
-      if bytes < sizeof(struct input_event):
-        continue
-      for int i = 0; i < bytes / sizeof(struct input_event); i++:
-        if ev_data[i].type == EV_SYN:
-          printf("SYN EVENT\n");
-        else:
-          printf("Event: time %ld, type: %x, code :%x, value %d\n", \
-            ev_data[i].time.tv_sec, ev_data[i].type, ev_data[i].code, ev_data[i].value)
+      read_mouse()
+
+  def read_wacom():
+    $bytes = read(wacom_fd, ev_data, sizeof(input_event) * 64);
+    if bytes < sizeof(struct input_event):
+      return
+    for int i = 0; i < bytes / sizeof(struct input_event); i++:
+      if ev_data[i].type == EV_SYN:
+        printf("SYN EVENT\n");
+      else:
+        printf("Event: time %ld, type: %x, code :%x, value %d\n", \
+          ev_data[i].time.tv_sec, ev_data[i].type, ev_data[i].code, ev_data[i].value)
+
+  // wacom = pen. naming comes from libremarkable
+  def listen_wacom():
+    print "listening for pen input"
+    while 1:
+      self.read_wacom()
+
+  def read_touch():
+    // TODO
+    pass
+
+  def read_gpio():
+    // TODO
+    pass
+
+  def listen_all():
+    fd_set rdfs
+    struct timeval tv
+    int retval
+
+    FD_ZERO(&rdfs)
+    // should probably remove mouse_fd from rdfs for remarkable
+    // it was the only way I could test on ubuntu
+    FD_SET(mouse_fd,&rdfs)
+    FD_SET(wacom_fd,&rdfs)
+    FD_SET(touch_fd,&rdfs)
+    FD_SET(gpio_fd,&rdfs)
+
+    while 1:
+      nfds = max(max(mouse_fd, wacom_fd),max(touch_fd, gpio_fd))+1
+      retval = select(nfds, &rdfs, NULL, NULL, NULL)
+      if retval > 0:
+        if FD_ISSET(mouse_fd, &rdfs):
+          read_mouse()
+        if FD_ISSET(wacom_fd, &rdfs):
+          read_wacom()
+        if FD_ISSET(touch_fd, &rdfs):
+          read_touch()
+        if FD_ISSET(gpio_fd, &rdfs):
+          read_gpio()
+      if retval < 0:
+        print "oops, select broke"
+        exit(1)
+
 
 
 
