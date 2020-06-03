@@ -19,6 +19,10 @@ struct rect:
 
 typedef struct rect rect
 
+void do_nothing(int x, y):
+  pass
+
+
 class FB:
   private:
 
@@ -56,6 +60,7 @@ class FB:
 
   ~FB():
     close(self.fd)
+
 
   def wait_for_redraw(uint32_t update_marker):
     #ifdef REMARKABLE
@@ -125,18 +130,19 @@ class FB:
 
     return width/f, height/f
 
-  def draw_rect(int o_x, o_y, w, h, color):
+  def draw_rect(int o_x, o_y, w, h, color, fill=true):
     self.dirty = 1
     uint32_t* ptr = self.fbmem
     printf("DRAWING RECT X: %i Y: %i W: %i H: %i, COLOR: %i\n", o_x, o_y, w, h, color)
 
     ptr += (o_x + o_y * self.width)
 
-    for y 0 h:
-      for x 0 w:
-        ptr[y*self.width + x] = color
+    for j 0 h:
+      for i 0 w:
+        if fill || (j == 0 || i == 0 || j == h-1 || i == w-1):
+          ptr[j*self.width + i] = color
 
-  def draw_rect(rect r, int color):
+  def draw_rect(rect r, int color, fill=true):
     w = r.w
     h = r.h
 
@@ -144,7 +150,7 @@ class FB:
     w /= 2
     #endif
 
-    self.draw_rect(r.x, r.y, w, h, color)
+    self.draw_rect(r.x, r.y, w, h, color, fill)
 
   void save_pnm():
     // save the buffer to pnm format
@@ -171,6 +177,6 @@ class FB:
       printf("ERROR %i", errno)
     close(fd)
 
-    ret = system("pnmtopng fb.pnm > fb.png")
+    ret = system("pnmtopng fb.pnm > fb.png 2>/dev/null")
 
 #endif
