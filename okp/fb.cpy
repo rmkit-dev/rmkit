@@ -72,6 +72,9 @@ class FB:
 
 
   def redraw_screen(bool wait_for_refresh=false, rect *redraw_area=NULL):
+    if dirty == 0:
+      return 0
+
     dirty = 0
     um = 0
     #ifdef DEV
@@ -80,6 +83,7 @@ class FB:
     #endif
 
     #ifdef REMARKABLE
+    printf("REDRAWING SCREEN\n")
     mxcfb_update_data update_data
     mxcfb_rect update_rect
 
@@ -140,6 +144,9 @@ class FB:
 
     for j 0 h:
       for i 0 w:
+        if j+o_y >= self.height || i+o_x >= self.width:
+          continue
+
         if fill || (j == 0 || i == 0 || j == h-1 || i == w-1):
           ptr[j*self.width + i] = color
 

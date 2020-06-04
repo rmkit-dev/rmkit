@@ -1,6 +1,6 @@
 DRAWING:
 
-* only draw when the stylus is touching tablet
+x only draw when the stylus is touching tablet
 * draw a line between consecutive mouse points (aka convert pixels into contours)
 * draw text to canvas
 

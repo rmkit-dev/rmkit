@@ -22,18 +22,19 @@ class App:
     new Button(100, 240, 200, 50, "undo")
     new Button(100, 310, 200, 50, "redo")
 
-  def handle_wacom(auto ev):
+  def handle_wacom(WacomEvent ev):
+    if ev.pressure == 0:
+      return
+
     if Widget::handle_click(ev.x, ev.y):
       return
 
     rect r = rect{ev.x, ev.y, 2, 2}
     fb.draw_rect(r, BLACK)
-    fb.redraw_screen()
 
-  def handle_mouse(auto ev):
+  def handle_mouse(MouseEvent ev):
     self.x += ev.x
     self.y += ev.y
-
 
     if self.y < 0:
       self.y = 0
@@ -45,6 +46,10 @@ class App:
 
     if self.x >= self.fb.width - 1:
       self.x = (int) self.fb.width - 5
+
+    // we don't do any more mouse processing if its not a click
+    if ev.left == 0:
+      return
 
     o_x = self.x
     o_y = self.fb.height - self.y
@@ -74,7 +79,7 @@ class App:
         self.handle_mouse(ev)
 
       Widget::main(fb)
-      fb.redraw_if_dirty()
+      fb.redraw_screen()
 
 
 def main():

@@ -110,10 +110,12 @@ class Input:
 
   // not going to use this on remarkable
   void handle_mouse():
+$   bytes = read(mouse_fd, data, sizeof(data));
+
     #ifdef REMARKABLE
+    // we return after reading so that the socket is not indefinitely active
     return
     #endif
-$   bytes = read(mouse_fd, data, sizeof(data));
     ev = MouseEvent()
     if bytes > 0:
       ev.left = data[0]&0x1
@@ -126,7 +128,7 @@ $   bytes = read(mouse_fd, data, sizeof(data));
 
   template<class T>
   void handle_input_event(int fd, vector<T> &events):
-$   bytes = read(self.wacom_fd, ev_data, sizeof(input_event) * 64);
+$   bytes = read(fd, ev_data, sizeof(input_event) * 64);
     if bytes < sizeof(struct input_event) || bytes == -1:
       return
 
@@ -156,6 +158,7 @@ $   bytes = read(self.wacom_fd, ev_data, sizeof(input_event) * 64);
     self.reset_events()
 
     rdfs_cp = rdfs
+
     retval = select(max_fd, &rdfs_cp, NULL, NULL, NULL)
     if retval > 0:
       if FD_ISSET(mouse_fd, &rdfs_cp):
@@ -166,7 +169,6 @@ $   bytes = read(self.wacom_fd, ev_data, sizeof(input_event) * 64);
         self.handle_touchscreen()
       if FD_ISSET(gpio_fd, &rdfs_cp):
         self.handle_gpio()
-    printf("EVENTS %i %i\n", self.wacom_events.size(), self.mouse_events.size())
     if retval < 0:
       print "oops, select broke"
       exit(1)
