@@ -59,9 +59,12 @@ class FB:
     #endif
     return
 
+  FB(const FB &copy):
+    printf("COPY CONSTRUCTOR CALLED\n")
+    throw
+
   ~FB():
     close(self.fd)
-
 
   def wait_for_redraw(uint32_t update_marker):
     #ifdef REMARKABLE

@@ -18,16 +18,15 @@ class Widget:
   ~Widget(): // can't de-allocate widgets yet
     printf("DESTROYING WIDGET %lx\n", (uint64_t) this)
 
-  virtual void redraw(FB fb):
+  virtual void redraw(FB &fb):
     printf("REDRAWING WIDGET\n")
     pass
 
-  static void main(FB fb):
-    for auto widget: widgets:
+  static void main(FB &fb):
+    for auto &widget: widgets:
       if widget->dirty:
         widget->redraw(fb)
         widget->dirty = 0
-    fb.redraw_screen()
 
   static void mark_widgets(int o_x, o_y):
     for auto widget: widgets:
@@ -71,7 +70,7 @@ class Button: Widget:
   Button(int x, y, w, h, string t): Widget(x,y,w,h):
     self.text = t
 
-  def draw_text(FB fb):
+  def draw_text(FB &fb):
     image_data image;
     image.buffer = (unsigned char*) malloc(sizeof(char)*self.w*self.h)
     memset(image.buffer, 0, sizeof(char)*self.w*self.h)
@@ -80,6 +79,7 @@ class Button: Widget:
     fb.draw_text(self.text, self.x, self.y, image)
     free(image.buffer)
 
-  void redraw(FB fb):
+  void redraw(FB &fb):
     printf("REDRAWING BUTTON\n")
     fb.draw_rect(self.x, self.y, self.w, self.h, BLACK, false)
+    self.draw_text(fb)
