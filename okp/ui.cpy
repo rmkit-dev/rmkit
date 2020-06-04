@@ -71,13 +71,15 @@ class Button: Widget:
   Button(int x, y, w, h, string t): Widget(x,y,w,h):
     self.text = t
 
-  void redraw(FB fb):
-    printf("REDRAWING BUTTON\n")
+  def draw_text(FB fb):
     image_data image;
     image.buffer = (unsigned char*) malloc(sizeof(char)*self.w*self.h)
     memset(image.buffer, 0, sizeof(char)*self.w*self.h)
     image.w = self.w
     image.h = self.h
-    fb.draw_rect(self.x, self.y, self.w, self.h, BLACK, false)
     fb.draw_text(self.text, self.x, self.y, image)
     free(image.buffer)
+
+  void redraw(FB fb):
+    printf("REDRAWING BUTTON\n")
+    fb.draw_rect(self.x, self.y, self.w, self.h, BLACK, false)

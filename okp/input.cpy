@@ -12,6 +12,7 @@ class Event:
   public:
   def update(input_event data)
   def print_event(input_event data):
+    return
     printf("Event: time %ld, type: %x, code :%x, value %d\n", \
       data.time.tv_sec, data.type, data.code, data.value)
 
@@ -165,7 +166,7 @@ $   bytes = read(self.wacom_fd, ev_data, sizeof(input_event) * 64);
         self.handle_touchscreen()
       if FD_ISSET(gpio_fd, &rdfs_cp):
         self.handle_gpio()
-
+    printf("EVENTS %i %i\n", self.wacom_events.size(), self.mouse_events.size())
     if retval < 0:
       print "oops, select broke"
       exit(1)

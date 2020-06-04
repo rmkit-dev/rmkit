@@ -28,6 +28,7 @@ class App:
 
     rect r = rect{ev.x, ev.y, 2, 2}
     fb.draw_rect(r, BLACK)
+    fb.redraw_screen()
 
   def handle_mouse(auto ev):
     self.x += ev.x
@@ -58,6 +59,8 @@ class App:
 
   def run():
     fb.draw_rect(0, 0, fb.width, fb.height, WHITE)
+    fb.redraw_screen()
+
     Widget::main(fb)
     fb.redraw_screen()
 
