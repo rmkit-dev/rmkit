@@ -10,8 +10,6 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#define FONT_SIZE 32
-
 struct image_data {
   unsigned char* buffer;
   int w;
@@ -45,10 +43,9 @@ void draw_bitmap(FT_Bitmap *bitmap, FT_Int x, FT_Int y, image_data image) {
       image.buffer[j*image.w+i] = bitmap->buffer[q * bitmap->width + p];
     }
   }
-  show_image(image);
 }
 
-int render_text(char* text, int x, int y, image_data image) {
+int render_text(char* text, int x, int y, image_data image, int font_size = 32) {
   FT_Library library;
   FT_Face face;
 
@@ -56,28 +53,23 @@ int render_text(char* text, int x, int y, image_data image) {
   FT_Vector pen;    /* untransformed origin  */
   FT_Error error;
 
-  char *filename;
-  //char *text;
+  const char *filename;
 
   int target_height;
   int n, num_chars;
 
   // filename = argv[1]; /* first argument     */
+  #ifdef REMARKABLE
+  filename = "/usr/share/fonts/ttf/noto/NotoMono-Regular.ttf";
+  #else
   filename = "/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf";
+  #endif
   num_chars = strlen(text);
   target_height = image.h;
 
   error = FT_Init_FreeType(&library); /* initialize library */
-  /* error handling omitted */
-
   error = FT_New_Face(library, filename, 0, &face); /* create face object */
-  /* error handling omitted */
-
-  error = FT_Set_Char_Size(face, FONT_SIZE * 64, 0, 100, 0); /* set character size */
-  /* error handling omitted */
-
-  /* cmap selection omitted;                                        */
-  /* for simplicity we assume that the font contains a Unicode cmap */
+  error = FT_Set_Char_Size(face, font_size * 64, 0, 100, 0); /* set character size */
 
   slot = face->glyph;
 
@@ -92,12 +84,9 @@ int render_text(char* text, int x, int y, image_data image) {
       continue; /* ignore errors */
     int offsetY = tOffsetY - slot->bitmap_top;
     pen.y += offsetY;
-    /* now, draw to our target surface (convert position) */
     draw_bitmap(&slot->bitmap, 
                 pen.x / 64,
-                pen.y / 64 - slot->bitmap_top + FONT_SIZE,
-                //slot->bitmap_left,
-                //target_height - slot->bitmap_top,
+                pen.y / 64 - slot->bitmap_top + font_size,
                 image);
     pen.y -= offsetY;
 
@@ -105,6 +94,10 @@ int render_text(char* text, int x, int y, image_data image) {
     pen.x += slot->advance.x;
     pen.y += slot->advance.y;
   }
+
+  #ifdef DEV
+  show_image(image);
+  #endif
 
 
   FT_Done_Face(face);
