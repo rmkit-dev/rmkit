@@ -1,7 +1,7 @@
 FILES=main.cpy
 HOST?=10.11.99.1
 EXE="sketchy"
-CPP_FLAGS=-O3 -g
+CPP_FLAGS=-O3 -g -I/usr/include/freetype2 -lfreetype
 OKP_FLAGS=-for -d ../cpp/ -o ../${EXE} -nr ${FILES}
 
 default: sketchy_dev

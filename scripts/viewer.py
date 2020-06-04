@@ -10,6 +10,7 @@ if __name__ == "__main__":
 
     WIN.add(IMG)
     WIN.connect("destroy", gtk.main_quit)
+    WIN.set_size_request(1024,768)
 
     WIN.show_all()
 

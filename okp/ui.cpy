@@ -66,9 +66,18 @@ vector<Widget*> Widget::widgets = vector<Widget*>();
 
 class Button: Widget:
   public:
-  Button(int x, y, w, h, string text): Widget(x,y,w,h):
-    pass
+  string text
+
+  Button(int x, y, w, h, string t): Widget(x,y,w,h):
+    self.text = t
 
   void redraw(FB fb):
     printf("REDRAWING BUTTON\n")
+    image_data image;
+    image.buffer = (unsigned char*) malloc(sizeof(char)*self.w*self.h)
+    memset(image.buffer, 0, sizeof(char)*self.w*self.h)
+    image.w = self.w
+    image.h = self.h
     fb.draw_rect(self.x, self.y, self.w, self.h, BLACK, false)
+    fb.draw_text(self.text, self.x, self.y, image)
+    free(image.buffer)
