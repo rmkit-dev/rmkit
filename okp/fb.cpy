@@ -159,15 +159,15 @@ class FB:
 
     self.draw_rect(r.x, r.y, w, h, color, fill)
 
-  def draw_bitmap(image_data image, int o_x, int o_y):
+  def draw_bitmap(freetype::image_data image, int o_x, int o_y):
     uint32_t* ptr = self.fbmem
     ptr += (o_x + o_y * self.width)
     for j 0 image.h:
       for i 0 image.w:
         ptr[j*self.width + i] = (uint32_t)image.buffer[j*image.w+i]
 
-  def draw_text(string text, int x, int y, image_data image):
-    render_text((char*)text.c_str(), x, y, image)
+  def draw_text(string text, int x, int y, freetype::image_data image):
+    freetype::render_text((char*)text.c_str(), x, y, image)
     draw_bitmap(image, x, y)
 
   void save_pnm():

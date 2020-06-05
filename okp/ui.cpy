@@ -138,7 +138,7 @@ class Text: public Widget:
     self.text = t
 
   void redraw(FB &fb):
-    image_data image;
+    freetype::image_data image;
     image.buffer = (uint32_t*) malloc(sizeof(uint32_t)*self.w*self.h)
     memset(image.buffer, WHITE, sizeof(uint32_t)*self.w*self.h)
     image.w = self.w
