@@ -1,20 +1,16 @@
 DRAWING:
 
-x only draw when the stylus is touching tablet
+* only draw when the stylus is touching tablet
 * draw a line between consecutive mouse points (aka convert pixels into contours)
-* draw text to canvas
 
 EVENTS:
 
-* handle button presses
 * handle eraser (stylus)
 
 
 APP:
 
 * write Canvas class (low pri?)
-* write Text class
-* write Button class: draw text + outline + handle input events
 * make UI for simple app with buttons
 * implement dialogs
 * implement brushes
@@ -45,3 +41,7 @@ x listen for stylus events
 x listen for button presses
 x tool to view the framebuffer contents from the desktop/outside tty1
 x smart refresh that responds immediately to drawing
+x draw text to canvas
+x handle button presses
+x write Text class
+x write Button class: draw text + outline + handle input events
