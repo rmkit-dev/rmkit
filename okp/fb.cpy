@@ -157,10 +157,6 @@ class FB:
     w = r.w
     h = r.h
 
-    #ifdef REMARKABLE
-    w /= 2
-    #endif
-
     self.draw_rect(r.x, r.y, w, h, color, fill)
 
   def draw_bitmap(image_data image, int o_x, int o_y):

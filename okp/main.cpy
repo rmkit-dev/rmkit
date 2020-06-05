@@ -17,10 +17,12 @@ class App:
 
   public:
   App():
-    new Button(100, 100, 200, 50, "tool")
-    new Button(100, 170, 200, 50, "eraser")
-    new Button(100, 240, 200, 50, "undo")
-    new Button(100, 310, 200, 50, "redo")
+    Widget::add(new Text(10, 10, fb.width, 50, "reHarmony"))
+
+    Widget::add(new Button(10, 100, 200, 50, "tool"))
+    Widget::add(new Button(10, 170, 200, 50, "eraser"))
+    Widget::add(new Button(10, 240, 200, 50, "undo"))
+    Widget::add(new Button(10, 310, 200, 50, "redo"))
 
   def handle_wacom(WacomEvent ev):
     SynEvent syn_ev;
@@ -29,7 +31,7 @@ class App:
     syn_ev.left = ev.pressure > 0
     syn_ev.right = ev.pressure == 0
 
-    if Widget::handle_mouse_event(syn_ev):
+    if Widget::handle_mouse_event(fb, syn_ev):
       return
 
     rect r = rect{ev.x, ev.y, 2, 2}
@@ -61,7 +63,7 @@ class App:
     syn_ev.y = o_y
     syn_ev.left = ev.left
     syn_ev.right = ev.right
-    if Widget::handle_mouse_event(syn_ev):
+    if Widget::handle_mouse_event(fb, syn_ev):
       return
 
     fb.draw_rect(o_x, o_y, 2, 2, BLACK)

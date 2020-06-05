@@ -27,11 +27,13 @@ compile_arm: export CPP_FLAGS += -I../vendor/freetype2/install/usr/local/include
 compile_arm:
 	cd okp/ && CXX=arm-linux-gnueabihf-g++ okp ${OKP_FLAGS} -- -D"REMARKABLE=1" ${CPP_FLAGS}
 
-test_arm: compile_arm
+test_arm: compile_arm copy_arm
 	ssh root@${HOST} killall sketchy || true
-	scp sketchy root@${HOST}:sketchy
 	ssh root@${HOST} ./sketchy || true
 	ssh root@${HOST} killall sketchy || true
+
+copy_arm: compile_arm
+	scp sketchy root@${HOST}:sketchy
 
 view:
 	python scripts/viewer.py

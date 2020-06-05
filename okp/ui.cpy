@@ -16,11 +16,14 @@ class Widget:
     mouse_inside = false
     mouse_down = false
 
-    widgets.push_back(this)
     dirty = 1
 
   ~Widget(): // can't de-allocate widgets yet
     printf("DESTROYING WIDGET %lx\n", (uint64_t) this)
+    for auto it = widgets.begin(); it != widgets.end(); it++:
+      if *it == this:
+        widgets.erase(it)
+        break
 
   virtual void redraw(FB &fb):
     printf("REDRAWING WIDGET\n")
@@ -53,39 +56,50 @@ class Widget:
     for auto widget: widgets:
       widget->maybe_mark_dirty(o_x, o_y)
 
-  static bool handle_mouse(int o_x, o_y):
-    pass
+  static void add(Widget *w):
+    widgets.push_back(w)
 
   // iterate over all widgets and dispatch mouse events
-  static bool handle_mouse_event(SynEvent ev):
+  // TODO: refactor this into cleaner code
+  static bool handle_mouse_event(FB &fb, SynEvent ev):
     bool is_hit = false
     bool hit_widget = false
 
     for auto widget: widgets:
       is_hit = widget->is_hit(ev.x, ev.y)
-      if widget->mouse_down && !ev.left:
-        widget->mouse_down = false
-        if is_hit:
+
+      prev_mouse_down = widget->mouse_down
+      prev_mouse_inside = widget->mouse_inside
+
+      widget->mouse_down = ev.left && is_hit
+      widget->mouse_inside = is_hit
+
+      if is_hit:
+        // mouse move issued on is_hit
+        widget->on_mouse_move(ev)
+
+        // mouse down event
+        if !prev_mouse_down && ev.left:
+          widget->on_mouse_down(ev)
+
+        // mouse up / click events
+        if prev_mouse_down && !ev.left::
           widget->on_mouse_up(ev)
           widget->on_mouse_click(ev)
-      if is_hit:
-        if !widget->mouse_inside:
-          widget->on_mouse_enter(ev)
-        if !widget->mouse_down && ev.left:
-          widget->on_mouse_down(ev)
-        widget->on_mouse_move(ev)
-        hit_widget = true
-      else:
-        if widget->mouse_inside:
-          widget->on_mouse_leave(ev)
 
-      widget->mouse_inside = (bool) is_hit
-      widget->mouse_down = ev.left
+        // mouse enter event
+        if !prev_mouse_inside:
+          widget->on_mouse_enter(ev)
+
+        hit_widget = true
+        widget->redraw(fb)
+      else:
+        // mouse leave event
+        if prev_mouse_inside:
+          widget->on_mouse_leave(ev)
+          widget->redraw(fb)
 
     return hit_widget
-
-  void run():
-    pass
 
   // checks if this widget is hit by a button press
   bool is_hit(int o_x, o_y):
@@ -104,25 +118,55 @@ class Widget:
       return true
     return false
 
+  void set_coords(int a=-1, b=-1, c=-1, d=-1):
+    if a != -1:
+      self.x = a
+    if b != -1:
+      self.y = b
+    if c != -1:
+      self.w = c
+    if d != -1:
+      self.h = d
+
 vector<Widget*> Widget::widgets = vector<Widget*>();
 
-class Button: Widget:
+class Text: public Widget:
   public:
   string text
 
-  Button(int x, y, w, h, string t): Widget(x,y,w,h):
+  Text(int x, y, w, h, string t): Widget(x, y, w, h):
     self.text = t
 
-  def draw_text(FB &fb):
+  void redraw(FB &fb):
     image_data image;
-    image.buffer = (unsigned char*) malloc(sizeof(char)*self.w*self.h)
-    memset(image.buffer, 0, sizeof(char)*self.w*self.h)
+    image.buffer = (uint32_t*) malloc(sizeof(uint32_t)*self.w*self.h)
+    memset(image.buffer, WHITE, sizeof(uint32_t)*self.w*self.h)
     image.w = self.w
     image.h = self.h
     fb.draw_text(self.text, self.x, self.y, image)
     free(image.buffer)
 
+
+class Button: public Widget:
+  public:
+  string text
+  Text *textWidget
+
+  Button(int x, y, w, h, string t): Widget(x,y,w,h):
+    self.text = t
+    self.textWidget = new Text(x, y, w, h, t)
+
+  ~Button():
+    delete self.textWidget
+
   void redraw(FB &fb):
-    printf("REDRAWING BUTTON\n")
-    fb.draw_rect(self.x, self.y, self.w, self.h, BLACK, false)
-    self.draw_text(fb)
+    self.textWidget->set_coords(x, y, w, h)
+    self.textWidget->redraw(fb)
+
+    color = WHITE
+    if self.mouse_inside:
+      color = BLACK
+    fill = false
+    if self.mouse_down:
+      fill = true
+    fb.draw_rect(self.x, self.y, self.w, self.h, color, fill)

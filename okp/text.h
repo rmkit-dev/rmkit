@@ -10,8 +10,10 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
+#include "defines.h"
+
 struct image_data {
-  unsigned char* buffer;
+  uint32_t* buffer;
   int w;
   int h;
 };
@@ -40,12 +42,19 @@ void draw_bitmap(FT_Bitmap *bitmap, FT_Int x, FT_Int y, image_data image) {
       if (i < 0 || j < 0 || i >= image.w || j >= image.h)
         continue;
 
-      image.buffer[j*image.w+i] = bitmap->buffer[q * bitmap->width + p];
+      uint32_t val = bitmap->buffer[q * bitmap->width + p];
+      if (val == 0) {
+        val = WHITE;
+      } else {
+        val = 255 - val;
+      }
+
+      image.buffer[j*image.w+i] = val;
     }
   }
 }
 
-int render_text(char* text, int x, int y, image_data image, int font_size = 32) {
+int render_text(char* text, int x, int y, image_data image, int font_size = 24) {
   FT_Library library;
   FT_Face face;
 
@@ -84,7 +93,7 @@ int render_text(char* text, int x, int y, image_data image, int font_size = 32) 
       continue; /* ignore errors */
     int offsetY = tOffsetY - slot->bitmap_top;
     pen.y += offsetY;
-    draw_bitmap(&slot->bitmap, 
+    draw_bitmap(&slot->bitmap,
                 pen.x / 64,
                 pen.y / 64 - slot->bitmap_top + font_size,
                 image);
@@ -96,7 +105,7 @@ int render_text(char* text, int x, int y, image_data image, int font_size = 32) 
   }
 
   #ifdef DEV
-  show_image(image);
+  // show_image(image);
   #endif
 
 
