@@ -5,7 +5,7 @@ import events
 
 class Widget:
   public:
-  int x, y, w, h, dirty
+  int x, y, w, h, dirty, mouse_x, mouse_y
   bool mouse_down, mouse_inside
   static vector<Widget*> widgets
 
@@ -46,6 +46,9 @@ class Widget:
   virtual void on_mouse_move(SynEvent ev):
     printf("ON MOUSE MOVE %lx\n", (uint64_t) this)
 
+  virtual void on_mouse_hover(SynEvent ev):
+    printf("ON MOUSE HOVER %lx\n", (uint64_t) this)
+
   static void main(FB &fb):
     for auto &widget: widgets:
       if widget->dirty:
@@ -70,13 +73,23 @@ class Widget:
 
       prev_mouse_down = widget->mouse_down
       prev_mouse_inside = widget->mouse_inside
+      prev_mouse_x = widget->mouse_x
+      prev_mouse_y = widget->mouse_y
 
       widget->mouse_down = ev.left && is_hit
       widget->mouse_inside = is_hit
 
       if is_hit:
-        // mouse move issued on is_hit
-        widget->on_mouse_move(ev)
+        if widget->mouse_down:
+          widget->mouse_x = ev.x
+          widget->mouse_y = ev.y
+          // mouse move issued on is_hit
+          widget->on_mouse_move(ev)
+        else:
+          // we have mouse_move and mouse_hover
+          // hover is for stylus
+          widget->on_mouse_hover(ev)
+
 
         // mouse down event
         if !prev_mouse_down && ev.left:
@@ -170,3 +183,29 @@ class Button: public Widget:
     if self.mouse_down:
       fill = true
     fb.draw_rect(self.x, self.y, self.w, self.h, color, fill)
+
+class Canvas: public Widget:
+  public:
+  int mx, my
+  uint32_t *mem
+  vector<SynEvent> events;
+
+  Canvas(int x, y, w, h): Widget(x,y,w,h):
+    this->mem = (uint32_t*) malloc(sizeof(uint32_t) * w * h)
+
+  ~Canvas():
+    if this->mem != NULL:
+      free(this->mem)
+    this->mem = NULL
+
+
+  void on_mouse_hover(SynEvent ev):
+    events.push_back(ev)
+
+  void on_mouse_move(SynEvent ev):
+    events.push_back(ev)
+
+  void redraw(FB &fb):
+    while events.size():
+      ev = *events.rbegin(); events.pop_back();
+      fb.draw_rect(ev.x, ev.y, 2, 2, BLACK)

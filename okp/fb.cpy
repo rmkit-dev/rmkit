@@ -45,14 +45,15 @@ class FB:
     #ifndef DEV
     self.fd = open("/dev/fb0", O_RDWR)
     fbmem = (uint32_t*) mmap(NULL, size, PROT_WRITE, MAP_SHARED, self.fd, 0)
+
+    auto_update_mode = AUTO_UPDATE_MODE_AUTOMATIC_MODE
+    ioctl(self.fd, MXCFB_SET_AUTO_UPDATE_MODE, &auto_update_mode);
     #else
     // make an empty file of the right size
     std::ofstream ofs("fb.raw", std::ios::binary | std::ios::out);
     ofs.seekp(size);
     ofs.write("", 1);
     ofs.close()
-
-
 
     self.fd = open("./fb.raw", O_RDWR)
     fbmem = (uint32_t*) mmap(NULL, size, PROT_WRITE, MAP_SHARED, self.fd, 0)

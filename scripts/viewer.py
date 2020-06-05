@@ -25,7 +25,7 @@ if __name__ == "__main__":
         scalar = i_width / float(width)
         img = img.scale_simple(width, int(height/scalar), gtk.gdk.INTERP_BILINEAR)
 
-        IMG.set_from_pixbuf(img) 
+        IMG.set_from_pixbuf(img)
         IMG.queue_draw()
         return True
 

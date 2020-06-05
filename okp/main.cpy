@@ -18,6 +18,7 @@ class App:
   public:
   App():
     Widget::add(new Text(10, 10, fb.width, 50, "reHarmony"))
+    Widget::add(new Canvas(0, 0, fb.width, fb.height))
 
     Widget::add(new Button(10, 100, 200, 50, "tool"))
     Widget::add(new Button(10, 170, 200, 50, "eraser"))
@@ -33,9 +34,6 @@ class App:
 
     if Widget::handle_mouse_event(fb, syn_ev):
       return
-
-    rect r = rect{ev.x, ev.y, 2, 2}
-    fb.draw_rect(r, BLACK)
 
   def handle_mouse(MouseEvent ev):
     self.x += ev.x
@@ -65,8 +63,6 @@ class App:
     syn_ev.right = ev.right
     if Widget::handle_mouse_event(fb, syn_ev):
       return
-
-    fb.draw_rect(o_x, o_y, 2, 2, BLACK)
 
   def run():
     fb.draw_rect(0, 0, fb.width, fb.height, WHITE)
