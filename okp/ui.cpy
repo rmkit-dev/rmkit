@@ -6,11 +6,15 @@ import events
 class Widget:
   public:
   int x, y, w, h, dirty
+  bool mouse_down, mouse_inside
   static vector<Widget*> widgets
 
-  Widget(int a,b,c,d): 
+  Widget(int a,b,c,d):
     x = a; y = b; w = c; h = d;
     printf("MAKING WIDGET %lx\n", (uint64_t) this)
+
+    mouse_inside = false
+    mouse_down = false
 
     widgets.push_back(this)
     dirty = 1
@@ -20,7 +24,24 @@ class Widget:
 
   virtual void redraw(FB &fb):
     printf("REDRAWING WIDGET\n")
-    pass
+
+  virtual void on_mouse_enter(SynEvent ev):
+    printf("ON MOUSE ENTER %lx\n", (uint64_t) this)
+
+  virtual void on_mouse_leave(SynEvent ev):
+    printf("ON MOUSE LEAVE %lx\n", (uint64_t) this)
+
+  virtual void on_mouse_click(SynEvent ev):
+    printf("ON MOUSE CLICK %lx\n", (uint64_t) this)
+
+  virtual void on_mouse_down(SynEvent ev):
+    printf("ON MOUSE DOWN %lx\n", (uint64_t) this)
+
+  virtual void on_mouse_up(SynEvent ev):
+    printf("ON MOUSE UP %lx\n", (uint64_t) this)
+
+  virtual void on_mouse_move(SynEvent ev):
+    printf("ON MOUSE MOVE %lx\n", (uint64_t) this)
 
   static void main(FB &fb):
     for auto &widget: widgets:
@@ -32,13 +53,36 @@ class Widget:
     for auto widget: widgets:
       widget->maybe_mark_dirty(o_x, o_y)
 
-  static bool handle_click(int o_x, o_y):
+  static bool handle_mouse(int o_x, o_y):
+    pass
+
+  // iterate over all widgets and dispatch mouse events
+  static bool handle_mouse_event(SynEvent ev):
+    bool is_hit = false
+    bool hit_widget = false
+
     for auto widget: widgets:
-      if widget->is_hit(o_x, o_y):
-        printf("WIDGET WAS CLICKED %lx\n", (uint64_t) widget)
-        widget->run()
-        return true
-    return false
+      is_hit = widget->is_hit(ev.x, ev.y)
+      if widget->mouse_down && !ev.left:
+        widget->mouse_down = false
+        if is_hit:
+          widget->on_mouse_up(ev)
+          widget->on_mouse_click(ev)
+      if is_hit:
+        if !widget->mouse_inside:
+          widget->on_mouse_enter(ev)
+        if !widget->mouse_down && ev.left:
+          widget->on_mouse_down(ev)
+        widget->on_mouse_move(ev)
+        hit_widget = true
+      else:
+        if widget->mouse_inside:
+          widget->on_mouse_leave(ev)
+
+      widget->mouse_inside = (bool) is_hit
+      widget->mouse_down = ev.left
+
+    return hit_widget
 
   void run():
     pass
@@ -48,14 +92,13 @@ class Widget:
     if o_x < x || o_y < y || o_x > x+w || o_y > y+h:
       return false
 
-    printf("WIDGET IS HIT\n")
     return true
 
   bool maybe_mark_dirty(int o_x, o_y):
     if this->dirty:
       return false
 
-    if is_hit(o_x, o_y): 
+    if is_hit(o_x, o_y):
       printf("WIDGET IS DIRTY %lx\n", (uint64_t) this)
       dirty = 1
       return true

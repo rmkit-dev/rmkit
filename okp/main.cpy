@@ -23,10 +23,13 @@ class App:
     new Button(100, 310, 200, 50, "redo")
 
   def handle_wacom(WacomEvent ev):
-    if ev.pressure == 0:
-      return
+    SynEvent syn_ev;
+    syn_ev.x = ev.x
+    syn_ev.y = ev.y
+    syn_ev.left = ev.pressure > 0
+    syn_ev.right = ev.pressure == 0
 
-    if Widget::handle_click(ev.x, ev.y):
+    if Widget::handle_mouse_event(syn_ev):
       return
 
     rect r = rect{ev.x, ev.y, 2, 2}
@@ -47,17 +50,18 @@ class App:
     if self.x >= self.fb.width - 1:
       self.x = (int) self.fb.width - 5
 
-    // we don't do any more mouse processing if its not a click
-    if ev.left == 0:
-      return
-
     o_x = self.x
     o_y = self.fb.height - self.y
 
     if o_y >= self.fb.height - 1:
       o_y = self.fb.height - 5
 
-    if Widget::handle_click(o_x, o_y):
+    SynEvent syn_ev;
+    syn_ev.x = o_x
+    syn_ev.y = o_y
+    syn_ev.left = ev.left
+    syn_ev.right = ev.right
+    if Widget::handle_mouse_event(syn_ev):
       return
 
     fb.draw_rect(o_x, o_y, 2, 2, BLACK)

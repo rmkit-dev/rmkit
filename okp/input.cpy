@@ -13,8 +13,11 @@ class Event:
   def update(input_event data)
   def print_event(input_event data):
     return
-    printf("Event: time %ld, type: %x, code :%x, value %d\n", \
-      data.time.tv_sec, data.type, data.code, data.value)
+
+class SynEvent: Event:
+  public:
+  int x, y, left, right, middle
+  SynEvent(){}
 
 
 class ButtonEvent: Event:
@@ -123,7 +126,6 @@ $   bytes = read(mouse_fd, data, sizeof(data));
       ev.middle = data[0]&0x4
       ev.x = data[1]
       ev.y = data[2]
-      printf("x=%d, y=%d, left=%d, middle=%d, right=%d\n", ev.x, ev.y, ev.left, ev.middle, ev.right)
       self.mouse_events.push_back(ev)
 
   template<class T>
