@@ -28,9 +28,8 @@ compile_arm:
 	cd okp/ && CXX=arm-linux-gnueabihf-g++ okp ${OKP_FLAGS} -- -D"REMARKABLE=1" ${CPP_FLAGS}
 
 test_arm: compile_arm copy_arm
-	ssh root@${HOST} killall sketchy || true
-	ssh root@${HOST} ./sketchy || true
-	ssh root@${HOST} killall sketchy || true
+	HOST=${HOST} bash scripts/run_sketchy_arm.sh || true
+
 
 copy_arm: compile_arm
 	scp sketchy root@${HOST}:sketchy
