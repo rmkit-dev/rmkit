@@ -110,7 +110,7 @@ class Input:
     self.mouse_y = 0
 
     // dev only
-    self.monitor(mouse_fd = open("/dev/input/mouse0", O_RDONLY))
+    self.monitor(mouse_fd = open("/dev/input/mice", O_RDONLY))
     // used by remarkable
     self.monitor(wacom_fd = open("/dev/input/event0", O_RDONLY))
     self.monitor(touch_fd = open("/dev/input/event1", O_RDONLY))

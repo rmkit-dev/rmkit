@@ -2,6 +2,7 @@
 #define DEFINES_H
 
 #define WHITE 0xFFFFFFFF
+#define GRAY 0x07E0
 #define BLACK 0
 
 #define WAVEFORM_MODE_DU 0x1

@@ -10,6 +10,8 @@ EVENTS:
 
 APP:
 
+* add scenes for layering
+* add left side toolbar
 * make UI for simple app with buttons
 * implement dialogs
 * implement brushes
@@ -29,6 +31,7 @@ PERF:
 
 DEV EXPERIENCE:
 
+* use shared\_ptr and unique\_ptr instead of raw pointers
 * have main app call viewer? (optional)
 
 DONE:

@@ -2,9 +2,8 @@
 import fb
 import input
 import ui
-
+import app_ui
 using namespace std
-
 
 class App:
   FB fb
@@ -20,21 +19,22 @@ class App:
     Widget::add(new Text(10, 10, fb.width, 50, "reHarmony"))
     Widget::add(new Canvas(0, 0, fb.width, fb.height))
 
-    Widget::add(new Button(10, 100, 200, 50, "tool"))
-    Widget::add(new Button(10, 170, 200, 50, "eraser"))
-    Widget::add(new Button(10, 240, 200, 50, "undo"))
-    Widget::add(new Button(10, 310, 200, 50, "redo"))
+    Widget::add(new ToolButton(10, 100, 200, 50, this))
+    Widget::add(new UndoButton(10, 170, 200, 50, this))
+    Widget::add(new RedoButton(10, 240, 200, 50, this))
 
     known Widget::fb = &fb
     known Input::fb = &fb
 
   def handle_event(SynEvent &syn_ev):
-//    if (auto m_ev = Input::is_mouse_event(syn_ev)):
-//      print "MOUSE EVENT"
-//    else if (auto t_ev = Input::is_touch_event(syn_ev)):
-//      print "TOUVCH EVENT"
-//    else if (auto w_ev = Input::is_wacom_event(syn_ev)):
-//      print "WACOM EVENT"
+    #ifdef DEBUG
+    if (auto m_ev = Input::is_mouse_event(syn_ev)):
+      print "MOUSE EVENT"
+    else if (auto t_ev = Input::is_touch_event(syn_ev)):
+      print "TOUVCH EVENT"
+    else if (auto w_ev = Input::is_wacom_event(syn_ev)):
+      print "WACOM EVENT"
+    #endif
 
     Widget::handle_mouse_event(fb, syn_ev)
 

@@ -185,6 +185,7 @@ class Button: public Widget:
     self.dirty = 1
 
   void redraw(FB &fb):
+    self.textWidget->text = text
     self.textWidget->set_coords(x, y, w, h)
     self.textWidget->redraw(fb)
 
@@ -209,7 +210,6 @@ class Canvas: public Widget:
     if this->mem != NULL:
       free(this->mem)
     this->mem = NULL
-
 
   void on_mouse_hover(SynEvent ev):
     events.push_back(ev)
