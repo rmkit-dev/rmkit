@@ -211,6 +211,7 @@ class Canvas: public Widget:
   vector<SynEvent> events;
   vector<uint32_t*> undo_stack;
   vector<uint32_t*> redo_stack;
+  SynEvent last_ev
 
   Canvas(int x, y, w, h): Widget(x,y,w,h):
     this->mem = (uint32_t*) malloc(sizeof(uint32_t) * w * h)
@@ -231,14 +232,20 @@ class Canvas: public Widget:
     uint32_t* fbcopy = (uint32_t*) malloc(self.fb->byte_size)
     memcpy(fbcopy, self.fb->fbmem, self.fb->byte_size)
     self.undo_stack.push_back(fbcopy)
+    self.events.push_back(SynEvent())
 
   void on_mouse_hover(SynEvent ev):
     pass
 
   void redraw(FB &fb):
-    while events.size():
-      ev = *events.rbegin(); events.pop_back();
-      fb.draw_rect(ev.x, ev.y, 2, 2, BLACK)
+    for auto ev: events:
+      if ev.original != NULL:
+        if last_ev.original != NULL:
+          fb.draw_line(last_ev.x, last_ev.y, ev.x,ev.y, 2, BLACK)
+        else:
+          fb.draw_rect(ev.x, ev.y, 2, 2, BLACK)
+      last_ev = ev
+    events.clear()
 
   void undo():
     if self.undo_stack.size() > 1:
