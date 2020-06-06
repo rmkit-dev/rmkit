@@ -1,12 +1,12 @@
-class App;
+import ui
 
 class ToolButton: public Button:
   public:
-  App *app
+  Canvas *canvas
   vector<string> tools = { "simple", "sketchy", "chrome" }
   int tool = 0
-  ToolButton(int x, y, w, h, App *a): Button(x,y,w,h,"tool"):
-    self.app = a
+  ToolButton(int x, y, w, h, Canvas *c): Button(x,y,w,h,"tool"):
+    self.canvas = c
     self.text = tools[tool]
     self.dirty = 1
 
@@ -18,19 +18,21 @@ class ToolButton: public Button:
 
 class UndoButton: public Button:
   public:
-  App *app
-  UndoButton(int x, y, w, h, App *a): Button(x,y,w,h,"undo"):
-    self.app = a
+  Canvas *canvas
+  UndoButton(int x, y, w, h, Canvas *c): Button(x,y,w,h,"undo"):
+    self.canvas = c
 
   void on_mouse_click(SynEvent ev):
     self.dirty = 1
+    self.canvas->undo()
 
 class RedoButton: public Button:
   public:
-  App *app
-  RedoButton(int x, y, w, h, App *a): Button(x,y,w,h,"redo"):
-    self.app = a
+  Canvas *canvas
+  RedoButton(int x, y, w, h, Canvas *c): Button(x,y,w,h,"redo"):
+    self.canvas = c
 
   void on_mouse_click(SynEvent ev):
     self.dirty = 1
+    self.canvas->redo()
 

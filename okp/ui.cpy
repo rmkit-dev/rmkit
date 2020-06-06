@@ -56,6 +56,10 @@ class Widget:
         widget->redraw(fb)
         widget->dirty = 0
 
+  static void refresh():
+    for auto &widget: widgets:
+      widget->dirty = 1
+
   static void mark_widgets(int o_x, o_y):
     for auto widget: widgets:
       widget->maybe_mark_dirty(o_x, o_y)
@@ -70,6 +74,7 @@ class Widget:
     bool hit_widget = false
 
     for auto widget: widgets:
+
       is_hit = widget->is_hit(ev.x, ev.y)
 
       prev_mouse_down = widget->mouse_down
@@ -106,10 +111,12 @@ class Widget:
           widget->on_mouse_enter(ev)
 
         hit_widget = true
+        break
       else:
         // mouse leave event
         if prev_mouse_inside:
           widget->on_mouse_leave(ev)
+
 
     return hit_widget
 
@@ -202,24 +209,53 @@ class Canvas: public Widget:
   int mx, my
   uint32_t *mem
   vector<SynEvent> events;
+  vector<uint32_t*> undo_stack;
+  vector<uint32_t*> redo_stack;
 
   Canvas(int x, y, w, h): Widget(x,y,w,h):
     this->mem = (uint32_t*) malloc(sizeof(uint32_t) * w * h)
+    uint32_t* fbcopy = (uint32_t*) malloc(self.fb->byte_size)
+    memcpy(fbcopy, self.fb->fbmem, self.fb->byte_size)
+    self.undo_stack.push_back(fbcopy)
 
   ~Canvas():
     if this->mem != NULL:
       free(this->mem)
     this->mem = NULL
 
-  void on_mouse_hover(SynEvent ev):
-    events.push_back(ev)
-    self.redraw(*self.fb)
-
   void on_mouse_move(SynEvent ev):
     events.push_back(ev)
     self.redraw(*self.fb)
+
+  void on_mouse_up(SynEvent ev):
+    uint32_t* fbcopy = (uint32_t*) malloc(self.fb->byte_size)
+    memcpy(fbcopy, self.fb->fbmem, self.fb->byte_size)
+    self.undo_stack.push_back(fbcopy)
+
+  void on_mouse_hover(SynEvent ev):
+    pass
 
   void redraw(FB &fb):
     while events.size():
       ev = *events.rbegin(); events.pop_back();
       fb.draw_rect(ev.x, ev.y, 2, 2, BLACK)
+
+  void undo():
+    if self.undo_stack.size() > 1:
+      // copy curr fb to redo stack
+      uint32_t* currfb = (uint32_t*) malloc(self.fb->byte_size)
+      memcpy(currfb, self.fb->fbmem, self.fb->byte_size)
+      self.redo_stack.push_back(currfb)
+      // put last fb from undo stack into fb
+      self.undo_stack.pop_back()
+      uint32_t* undofb = self.undo_stack.back()
+      memcpy(self.fb->fbmem, undofb, self.fb->byte_size)
+      Widget::refresh()
+
+  void redo():
+    if self.redo_stack.size() > 0:
+      uint32_t* redofb = self.redo_stack.back()
+      self.redo_stack.pop_back()
+      memcpy(self.fb->fbmem, redofb, self.fb->byte_size)
+      self.undo_stack.push_back(redofb)
+      Widget::refresh()

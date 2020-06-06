@@ -16,15 +16,21 @@ class App:
 
   public:
   App():
-    Widget::add(new Text(10, 10, fb.width, 50, "reHarmony"))
-    Widget::add(new Canvas(0, 0, fb.width, fb.height))
-
-    Widget::add(new ToolButton(10, 100, 200, 50, this))
-    Widget::add(new UndoButton(10, 170, 200, 50, this))
-    Widget::add(new RedoButton(10, 240, 200, 50, this))
-
     known Widget::fb = &fb
     known Input::fb = &fb
+
+    fb.draw_rect(0, 0, fb.width, fb.height, WHITE)
+    fb.redraw_screen()
+
+    Canvas *c = new Canvas(0, 0, fb.width, fb.height)
+    Widget::add(new Text(10, 10, fb.width, 50, "reHarmony"))
+
+    Widget::add(new ToolButton(10, 100, 200, 50, c))
+    Widget::add(new UndoButton(10, 170, 200, 50, c))
+    Widget::add(new RedoButton(10, 240, 200, 50, c))
+
+    Widget::add(c)
+
 
   def handle_event(SynEvent &syn_ev):
     #ifdef DEBUG
@@ -39,9 +45,6 @@ class App:
     Widget::handle_mouse_event(fb, syn_ev)
 
   def run():
-    fb.draw_rect(0, 0, fb.width, fb.height, WHITE)
-    fb.redraw_screen()
-
     Widget::main(fb)
     fb.redraw_screen()
 
