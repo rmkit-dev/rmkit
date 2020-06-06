@@ -130,6 +130,7 @@ class Input:
     mouse_events.clear()
     touch_events.clear()
     button_events.clear()
+    events.clear()
 
   void monitor(int fd):
     FD_SET(fd,&rdfs)
