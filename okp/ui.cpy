@@ -213,11 +213,11 @@ class Canvas: public Widget:
 
   void on_mouse_hover(SynEvent ev):
     events.push_back(ev)
-    self.redraw(*Widget::fb)
+    self.redraw(*self.fb)
 
   void on_mouse_move(SynEvent ev):
     events.push_back(ev)
-    self.redraw(*Widget::fb)
+    self.redraw(*self.fb)
 
   void redraw(FB &fb):
     while events.size():

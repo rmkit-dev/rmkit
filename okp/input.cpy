@@ -16,19 +16,22 @@ class Event:
       data.time.tv_sec, data.type, data.code, data.value)
     return
 
-class SynEvent: Event:
+  virtual ~Event() = default
+
+class SynEvent: public Event:
   public:
   int x, y, left, right, middle
+  Event *original
   SynEvent(){}
 
 
-class ButtonEvent: Event:
+class ButtonEvent: public Event:
   public:
   ButtonEvent() {}
   def update(input_event data):
     self.print_event(data)
 
-class TouchEvent: Event:
+class TouchEvent: public Event:
   public:
   int x, y, left
   TouchEvent() {}
@@ -47,7 +50,7 @@ class TouchEvent: Event:
       case 3:
         self.handle_abs(data)
 
-class MouseEvent: Event:
+class MouseEvent: public Event:
   public:
   MouseEvent() {}
   signed char x, y
@@ -55,7 +58,7 @@ class MouseEvent: Event:
   def update(input_event data):
     self.print_event(data)
 
-class WacomEvent: Event:
+class WacomEvent: public Event:
   public:
   int x, y, pressure
   bool pen, eraser, button
@@ -87,18 +90,24 @@ class Input:
 
   public:
   int mouse_fd, wacom_fd, touch_fd, gpio_fd, bytes, max_fd
+  int mouse_x, mouse_y
   unsigned char data[3]
   input_event ev_data[64]
   fd_set rdfs
+  static FB *fb
 
   vector<WacomEvent> wacom_events
   vector<MouseEvent> mouse_events
   vector<TouchEvent> touch_events
   vector<ButtonEvent> button_events
+  vector<SynEvent> events
 
   Input():
     printf("Initializing input\n")
     FD_ZERO(&rdfs)
+
+    self.mouse_x = 0
+    self.mouse_y = 0
 
     // dev only
     self.monitor(mouse_fd = open("/dev/input/mouse0", O_RDONLY))
@@ -159,6 +168,58 @@ $   bytes = read(fd, ev_data, sizeof(input_event) * 64);
 
     pass
 
+
+  def marshal_touch(TouchEvent ev):
+    SynEvent syn_ev;
+    syn_ev.x = ev.x
+    syn_ev.y = ev.y
+    syn_ev.left = 1
+    syn_ev.original = &ev
+
+    self.events.push_back(syn_ev)
+
+
+  // TODO: these marshalrs should be somewhere else, not in the App class,
+  // maybe in input.cpy. They need access to FB though
+  def marshal_wacom(WacomEvent ev):
+    SynEvent syn_ev;
+    syn_ev.x = ev.x
+    syn_ev.y = ev.y
+    syn_ev.left = ev.pressure > 0
+    syn_ev.right = ev.pressure == 0
+    syn_ev.original = &ev
+    self.events.push_back(syn_ev)
+
+  def marshal_mouse(MouseEvent ev):
+    self.mouse_x += ev.x
+    self.mouse_y += ev.y
+
+    if self.mouse_y < 0:
+      self.mouse_y = 0
+    if self.mouse_x < 0:
+      self.mouse_x = 0
+
+    if self.mouse_y >= self.fb->height - 1:
+      self.mouse_y = (int) self.fb->height - 5
+
+    if self.mouse_x >= self.fb->width - 1:
+      self.mouse_x = (int) self.fb->width - 5
+
+    o_x = self.mouse_x
+    o_y = self.fb->height - self.mouse_y
+
+    if o_y >= self.fb->height - 1:
+      o_y = self.fb->height - 5
+
+    SynEvent syn_ev;
+    syn_ev.x = o_x
+    syn_ev.y = o_y
+    syn_ev.left = ev.left
+    syn_ev.right = ev.right
+    syn_ev.original = &ev
+
+    self.events.push_back(syn_ev)
+
   // wacom = pen. naming comes from libremarkable
   void handle_wacom():
     self.handle_input_event<WacomEvent>(self.wacom_fd, self.wacom_events)
@@ -186,8 +247,26 @@ $   bytes = read(fd, ev_data, sizeof(input_event) * 64);
         self.handle_touchscreen()
       if FD_ISSET(gpio_fd, &rdfs_cp):
         self.handle_gpio()
+
+    for auto ev : self.wacom_events:
+      self.marshal_wacom(ev)
+
+    for auto ev : self.mouse_events:
+      self.marshal_mouse(ev)
+
+    for auto ev : self.touch_events:
+      self.marshal_touch(ev)
+
     if retval < 0:
       print "oops, select broke"
       exit(1)
 
+  static WacomEvent* is_wacom_event(SynEvent &syn_ev):
+    return dynamic_cast<WacomEvent*>(syn_ev.original)
+  static MouseEvent* is_mouse_event(SynEvent &syn_ev):
+    return dynamic_cast<MouseEvent*>(syn_ev.original)
+  static TouchEvent* is_touch_event(SynEvent &syn_ev):
+    return dynamic_cast<TouchEvent*>(syn_ev.original)
+
+FB* Input::fb = NULL
 #endif

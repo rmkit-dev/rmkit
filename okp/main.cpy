@@ -26,54 +26,17 @@ class App:
     Widget::add(new Button(10, 310, 200, 50, "redo"))
 
     known Widget::fb = &fb
+    known Input::fb = &fb
 
-  def handle_touch(TouchEvent ev):
-    SynEvent syn_ev;
-    syn_ev.x = ev.x
-    syn_ev.y = ev.y
-    syn_ev.left = 1
+  def handle_event(SynEvent &syn_ev):
+//    if (auto m_ev = Input::is_mouse_event(syn_ev)):
+//      print "MOUSE EVENT"
+//    else if (auto t_ev = Input::is_touch_event(syn_ev)):
+//      print "TOUVCH EVENT"
+//    else if (auto w_ev = Input::is_wacom_event(syn_ev)):
+//      print "WACOM EVENT"
 
-    if Widget::handle_mouse_event(fb, syn_ev):
-      return
-
-  def handle_wacom(WacomEvent ev):
-    SynEvent syn_ev;
-    syn_ev.x = ev.x
-    syn_ev.y = ev.y
-    syn_ev.left = ev.pressure > 0
-    syn_ev.right = ev.pressure == 0
-
-    if Widget::handle_mouse_event(fb, syn_ev):
-      return
-
-  def handle_mouse(MouseEvent ev):
-    self.x += ev.x
-    self.y += ev.y
-
-    if self.y < 0:
-      self.y = 0
-    if self.x < 0:
-      self.x = 0
-
-    if self.y >= self.fb.height - 1:
-      self.y = (int) self.fb.height - 5
-
-    if self.x >= self.fb.width - 1:
-      self.x = (int) self.fb.width - 5
-
-    o_x = self.x
-    o_y = self.fb.height - self.y
-
-    if o_y >= self.fb.height - 1:
-      o_y = self.fb.height - 5
-
-    SynEvent syn_ev;
-    syn_ev.x = o_x
-    syn_ev.y = o_y
-    syn_ev.left = ev.left
-    syn_ev.right = ev.right
-    if Widget::handle_mouse_event(fb, syn_ev):
-      return
+    Widget::handle_mouse_event(fb, syn_ev)
 
   def run():
     fb.draw_rect(0, 0, fb.width, fb.height, WHITE)
@@ -85,14 +48,8 @@ class App:
     printf("HANDLING RUN\n")
     while true:
       input.listen_all()
-      for auto ev : input.wacom_events:
-        self.handle_wacom(ev)
-
-      for auto ev : input.mouse_events:
-        self.handle_mouse(ev)
-
-      for auto ev : input.touch_events:
-        self.handle_touch(ev)
+      for auto ev : input.events:
+        self.handle_event(ev)
 
       Widget::main(fb)
       fb.redraw_screen()
