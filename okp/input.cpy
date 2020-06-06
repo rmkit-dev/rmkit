@@ -12,6 +12,8 @@ class Event:
   public:
   def update(input_event data)
   def print_event(input_event data):
+    printf("Event: time %ld, type: %x, code :%x, value %d\n", \
+      data.time.tv_sec, data.type, data.code, data.value)
     return
 
 class SynEvent: Event:
@@ -28,9 +30,22 @@ class ButtonEvent: Event:
 
 class TouchEvent: Event:
   public:
+  int x, y, left
   TouchEvent() {}
+  handle_abs(input_event data):
+    switch data.code:
+      case ABS_MT_POSITION_X:
+        self.x = (MTWIDTH - data.value)*MT_X_SCALAR
+        break
+      case ABS_MT_POSITION_Y:
+        self.y = (MTHEIGHT - data.value)*MT_Y_SCALAR
+        break
+
   def update(input_event data):
     self.print_event(data)
+    switch data.type:
+      case 3:
+        self.handle_abs(data)
 
 class MouseEvent: Event:
   public:
@@ -174,9 +189,5 @@ $   bytes = read(fd, ev_data, sizeof(input_event) * 64);
     if retval < 0:
       print "oops, select broke"
       exit(1)
-
-
-
-
 
 #endif

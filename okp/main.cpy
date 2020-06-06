@@ -25,6 +25,17 @@ class App:
     Widget::add(new Button(10, 240, 200, 50, "undo"))
     Widget::add(new Button(10, 310, 200, 50, "redo"))
 
+    known Widget::fb = &fb
+
+  def handle_touch(TouchEvent ev):
+    SynEvent syn_ev;
+    syn_ev.x = ev.x
+    syn_ev.y = ev.y
+    syn_ev.left = 1
+
+    if Widget::handle_mouse_event(fb, syn_ev):
+      return
+
   def handle_wacom(WacomEvent ev):
     SynEvent syn_ev;
     syn_ev.x = ev.x
@@ -79,6 +90,9 @@ class App:
 
       for auto ev : input.mouse_events:
         self.handle_mouse(ev)
+
+      for auto ev : input.touch_events:
+        self.handle_touch(ev)
 
       Widget::main(fb)
       fb.redraw_screen()

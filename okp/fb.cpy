@@ -87,7 +87,6 @@ class FB:
     #endif
 
     #ifdef REMARKABLE
-    printf("REDRAWING SCREEN\n")
     mxcfb_update_data update_data
     mxcfb_rect update_rect
 

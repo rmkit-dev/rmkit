@@ -8,6 +8,7 @@ class Widget:
   int x, y, w, h, dirty, mouse_x, mouse_y
   bool mouse_down, mouse_inside
   static vector<Widget*> widgets
+  static FB *fb
 
   Widget(int a,b,c,d):
     x = a; y = b; w = c; h = d;
@@ -105,12 +106,10 @@ class Widget:
           widget->on_mouse_enter(ev)
 
         hit_widget = true
-        widget->redraw(fb)
       else:
         // mouse leave event
         if prev_mouse_inside:
           widget->on_mouse_leave(ev)
-          widget->redraw(fb)
 
     return hit_widget
 
@@ -142,6 +141,7 @@ class Widget:
       self.h = d
 
 vector<Widget*> Widget::widgets = vector<Widget*>();
+FB* Widget::fb = NULL
 
 class Text: public Widget:
   public:
@@ -172,6 +172,18 @@ class Button: public Widget:
   ~Button():
     delete self.textWidget
 
+  void on_mouse_down(SynEvent ev):
+    self.dirty = 1
+
+  void on_mouse_up(SynEvent ev):
+    self.dirty = 1
+
+  void on_mouse_leave(SynEvent ev):
+    self.dirty = 1
+
+  void on_mouse_enter(SynEvent ev):
+    self.dirty = 1
+
   void redraw(FB &fb):
     self.textWidget->set_coords(x, y, w, h)
     self.textWidget->redraw(fb)
@@ -201,9 +213,11 @@ class Canvas: public Widget:
 
   void on_mouse_hover(SynEvent ev):
     events.push_back(ev)
+    self.redraw(*Widget::fb)
 
   void on_mouse_move(SynEvent ev):
     events.push_back(ev)
+    self.redraw(*Widget::fb)
 
   void redraw(FB &fb):
     while events.size():

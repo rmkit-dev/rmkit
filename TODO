@@ -10,7 +10,6 @@ EVENTS:
 
 APP:
 
-* write Canvas class (low pri?)
 * make UI for simple app with buttons
 * implement dialogs
 * implement brushes
@@ -45,3 +44,4 @@ x draw text to canvas
 x handle button presses
 x write Text class
 x write Button class: draw text + outline + handle input events
+x write Canvas class (low pri?)
