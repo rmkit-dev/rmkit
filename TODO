@@ -1,11 +1,25 @@
+DESIRED FEATURES:
+
+* save canvas to png (or notebooks)
+* erase content
+* implement brushes
+* undo / redo
+* hideable toolbars
+* variable stroke width (button that allows 3 widths + pressure sensitive)
+* draw icons (instead of text)
+* draw to canvas using wacom input
+* hw buttons should be bound to actions
+* add launcher from button press so app can be launched / quit
+* add polished interactions
+
 DRAWING:
 
-* only draw when the stylus is touching tablet
-* draw a line between consecutive mouse points (aka convert pixels into contours)
+* draw bezier curves (instead of line) between consecutive points
 
 EVENTS:
 
 * handle eraser (stylus)
+* handle multi touch events
 
 
 APP:
@@ -14,6 +28,7 @@ APP:
 * add left side toolbar
 * make UI for simple app with buttons
 * implement dialogs
+* implement pop-over for buttons (Select / Dropdown button)
 * implement brushes
   * sketchy
   * shaded
@@ -28,10 +43,10 @@ TESTING:
 PERF:
 
 * investigate dirty rectangles
+* minimize amount of memory needed for undo/redo
 
 DEV EXPERIENCE:
 
-* use shared\_ptr and unique\_ptr instead of raw pointers
 * have main app call viewer? (optional)
 
 DONE:
@@ -48,3 +63,6 @@ x handle button presses
 x write Text class
 x write Button class: draw text + outline + handle input events
 x write Canvas class (low pri?)
+x use shared\_ptr and unique\_ptr instead of raw pointers
+x only draw when the stylus is touching tablet
+x draw a line between consecutive mouse points (aka convert pixels into contours)
