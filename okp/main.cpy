@@ -1,8 +1,9 @@
 #include "mxcfb.h"
-import fb
-import input
-import ui
-import app_ui
+#include "fb.h"
+#include "input.h"
+#include "ui.h"
+#include "app_ui.h"
+
 using namespace std
 
 class App:

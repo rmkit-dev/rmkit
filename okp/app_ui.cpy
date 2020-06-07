@@ -1,4 +1,4 @@
-import ui
+#include "ui.h"
 
 class ToolButton: public Button:
   public:

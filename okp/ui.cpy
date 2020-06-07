@@ -1,7 +1,7 @@
 #include "defines.h"
 
-import fb
-import input
+#include "fb.h"
+#include "input.h"
 
 class Widget:
   public:

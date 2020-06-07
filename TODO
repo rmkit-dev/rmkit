@@ -15,6 +15,7 @@ DESIRED FEATURES:
 DRAWING:
 
 * draw bezier curves (instead of line) between consecutive points
+* center align text / add text extents
 
 EVENTS:
 
