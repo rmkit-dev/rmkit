@@ -1,7 +1,7 @@
 #include "defines.h"
 
 import fb
-import events
+import input
 
 class Widget:
   public:
@@ -27,28 +27,28 @@ class Widget:
         break
 
   virtual void redraw(FB &fb):
-    printf("REDRAWING WIDGET\n")
+    pass
 
-  virtual void on_mouse_enter(SynEvent ev):
-    printf("ON MOUSE ENTER %lx\n", (uint64_t) this)
+  virtual void on_mouse_enter(SynEvent &ev):
+    pass
 
-  virtual void on_mouse_leave(SynEvent ev):
-    printf("ON MOUSE LEAVE %lx\n", (uint64_t) this)
+  virtual void on_mouse_leave(SynEvent &ev):
+    pass
 
-  virtual void on_mouse_click(SynEvent ev):
-    printf("ON MOUSE CLICK %lx\n", (uint64_t) this)
+  virtual void on_mouse_click(SynEvent &ev):
+    pass
 
-  virtual void on_mouse_down(SynEvent ev):
-    printf("ON MOUSE DOWN %lx\n", (uint64_t) this)
+  virtual void on_mouse_down(SynEvent &ev):
+    pass
 
-  virtual void on_mouse_up(SynEvent ev):
-    printf("ON MOUSE UP %lx\n", (uint64_t) this)
+  virtual void on_mouse_up(SynEvent &ev):
+    pass
 
-  virtual void on_mouse_move(SynEvent ev):
-    printf("ON MOUSE MOVE %lx\n", (uint64_t) this)
+  virtual void on_mouse_move(SynEvent &ev):
+    pass
 
-  virtual void on_mouse_hover(SynEvent ev):
-    printf("ON MOUSE HOVER %lx\n", (uint64_t) this)
+  virtual void on_mouse_hover(SynEvent &ev):
+    pass
 
   static void main(FB &fb):
     for auto &widget: widgets:
@@ -69,9 +69,11 @@ class Widget:
 
   // iterate over all widgets and dispatch mouse events
   // TODO: refactor this into cleaner code
-  static bool handle_mouse_event(FB &fb, SynEvent ev):
+  static bool handle_mouse_event(SynEvent ev):
     bool is_hit = false
     bool hit_widget = false
+    if ev.x == -1 || ev.y == -1:
+      return false
 
     for auto widget: widgets:
 
@@ -179,16 +181,16 @@ class Button: public Widget:
   ~Button():
     delete self.textWidget
 
-  void on_mouse_down(SynEvent ev):
+  void on_mouse_down(SynEvent &ev):
     self.dirty = 1
 
-  void on_mouse_up(SynEvent ev):
+  void on_mouse_up(SynEvent &ev):
     self.dirty = 1
 
-  void on_mouse_leave(SynEvent ev):
+  void on_mouse_leave(SynEvent &ev):
     self.dirty = 1
 
-  void on_mouse_enter(SynEvent ev):
+  void on_mouse_enter(SynEvent &ev):
     self.dirty = 1
 
   void redraw(FB &fb):
@@ -224,28 +226,36 @@ class Canvas: public Widget:
       free(this->mem)
     this->mem = NULL
 
-  void on_mouse_move(SynEvent ev):
+  void on_mouse_move(SynEvent &ev):
+    if Input::is_touch_event(ev):
+      return
+
     events.push_back(ev)
     self.redraw(*self.fb)
 
-  void on_mouse_up(SynEvent ev):
+  void on_mouse_up(SynEvent &ev):
+    #ifdef DEV
+    printf("ADDING TO UNDO STACK\n")
     uint32_t* fbcopy = (uint32_t*) malloc(self.fb->byte_size)
     memcpy(fbcopy, self.fb->fbmem, self.fb->byte_size)
     self.undo_stack.push_back(fbcopy)
-    self.events.push_back(SynEvent())
+    #endif
+    SynEvent null_ev
+    null_ev.original = NULL
+    self.events.push_back(null_ev)
 
-  void on_mouse_hover(SynEvent ev):
+  void on_mouse_hover(SynEvent &ev):
     pass
 
   void redraw(FB &fb):
-    for auto ev: events:
+    for auto ev: self.events:
       if ev.original != NULL:
         if last_ev.original != NULL:
           fb.draw_line(last_ev.x, last_ev.y, ev.x,ev.y, 2, BLACK)
         else:
           fb.draw_rect(ev.x, ev.y, 2, 2, BLACK)
       last_ev = ev
-    events.clear()
+    self.events.clear()
 
   void undo():
     if self.undo_stack.size() > 1:

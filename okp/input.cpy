@@ -21,8 +21,11 @@ class Event:
 class SynEvent: public Event:
   public:
   int x, y, left, right, middle
-  Event *original
+  shared_ptr<Event> original
   SynEvent(){}
+
+  def set_original(Event *ev):
+    self.original = shared_ptr<Event>(ev)
 
 
 class ButtonEvent: public Event:
@@ -100,7 +103,7 @@ class Input:
   vector<MouseEvent> mouse_events
   vector<TouchEvent> touch_events
   vector<ButtonEvent> button_events
-  vector<SynEvent> events
+  vector<SynEvent> all_events
 
   Input():
     printf("Initializing input\n")
@@ -130,7 +133,7 @@ class Input:
     mouse_events.clear()
     touch_events.clear()
     button_events.clear()
-    events.clear()
+    all_events.clear()
 
   void monitor(int fd):
     FD_SET(fd,&rdfs)
@@ -144,6 +147,7 @@ $   bytes = read(mouse_fd, data, sizeof(data));
     // we return after reading so that the socket is not indefinitely active
     return
     #endif
+
     ev = MouseEvent()
     if bytes > 0:
       ev.left = data[0]&0x1
@@ -175,9 +179,9 @@ $   bytes = read(fd, ev_data, sizeof(input_event) * 64);
     syn_ev.x = ev.x
     syn_ev.y = ev.y
     syn_ev.left = 1
-    syn_ev.original = &ev
+    syn_ev.set_original(new TouchEvent(ev))
 
-    self.events.push_back(syn_ev)
+    self.all_events.push_back(syn_ev)
 
 
   // TODO: these marshalrs should be somewhere else, not in the App class,
@@ -188,8 +192,8 @@ $   bytes = read(fd, ev_data, sizeof(input_event) * 64);
     syn_ev.y = ev.y
     syn_ev.left = ev.pressure > 0
     syn_ev.right = ev.pressure == 0
-    syn_ev.original = &ev
-    self.events.push_back(syn_ev)
+    syn_ev.set_original(new WacomEvent(ev))
+    self.all_events.push_back(syn_ev)
 
   def marshal_mouse(MouseEvent ev):
     self.mouse_x += ev.x
@@ -217,9 +221,9 @@ $   bytes = read(fd, ev_data, sizeof(input_event) * 64);
     syn_ev.y = o_y
     syn_ev.left = ev.left
     syn_ev.right = ev.right
-    syn_ev.original = &ev
+    syn_ev.set_original(new MouseEvent(ev))
 
-    self.events.push_back(syn_ev)
+    self.all_events.push_back(syn_ev)
 
   // wacom = pen. naming comes from libremarkable
   void handle_wacom():
@@ -263,11 +267,11 @@ $   bytes = read(fd, ev_data, sizeof(input_event) * 64);
       exit(1)
 
   static WacomEvent* is_wacom_event(SynEvent &syn_ev):
-    return dynamic_cast<WacomEvent*>(syn_ev.original)
+    return dynamic_cast<WacomEvent*>(syn_ev.original.get())
   static MouseEvent* is_mouse_event(SynEvent &syn_ev):
-    return dynamic_cast<MouseEvent*>(syn_ev.original)
+    return dynamic_cast<MouseEvent*>(syn_ev.original.get())
   static TouchEvent* is_touch_event(SynEvent &syn_ev):
-    return dynamic_cast<TouchEvent*>(syn_ev.original)
+    return dynamic_cast<TouchEvent*>(syn_ev.original.get())
 
 FB* Input::fb = NULL
 #endif

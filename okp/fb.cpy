@@ -35,6 +35,7 @@ class FB:
 
   FB():
     width, height = self.get_size()
+    print "SIZE", width, height
     self.width = width
     self.height = height
 
@@ -198,13 +199,16 @@ class FB:
     ret = system("pnmtopng fb.pnm > fb.png 2>/dev/null")
 
   def draw_line(int x0,y0,x1,y1,width,color):
+    print "DRAWING LINE", x0, y0, x1, y1
+    self.dirty = 1
     dx =  abs(x1-x0)
     sx = x0<x1 ? 1 : -1
     dy = -abs(y1-y0)
     sy = y0<y1 ? 1 : -1
     err = dx+dy  /* error value e_xy */
     while (true):   /* loop */
-      self.fbmem[y0*self.width+x0] = color
+      self.draw_rect(x0, y0, 2, 2, color)
+      // self.fbmem[y0*self.width + x0] = color
       if (x0==x1 && y0==y1) break;
       e2 = 2*err
       if (e2 >= dy):
