@@ -33,12 +33,14 @@ class App:
 
 
   def handle_event(SynEvent &syn_ev):
+    #ifdef DEBUG_INPUT
     if (auto m_ev = Input::is_mouse_event(syn_ev)):
       print "MOUSE EVENT"
     else if (auto t_ev = Input::is_touch_event(syn_ev)):
       print "TOUVCH EVENT"
     else if (auto w_ev = Input::is_wacom_event(syn_ev)):
       print "WACOM EVENT"
+    #endif
 
     Widget::handle_mouse_event(syn_ev)
 

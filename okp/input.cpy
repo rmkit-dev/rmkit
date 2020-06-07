@@ -8,12 +8,16 @@
 
 using namespace std
 
+// #define DEBUG_INPUT_EVENT 0
+
 class Event:
   public:
   def update(input_event data)
   def print_event(input_event data):
+    #ifdef DEBUG_INPUT_EVENT
     printf("Event: time %ld, type: %x, code :%x, value %d\n", \
       data.time.tv_sec, data.type, data.code, data.value)
+    #endif
     return
 
   virtual ~Event() = default
@@ -64,10 +68,15 @@ class MouseEvent: public Event:
 class WacomEvent: public Event:
   public:
   int x = -1, y = -1, pressure = 0
+  int btn_touch = -1
   bool pen, eraser, button
 
+
   handle_key(input_event data):
-    pass
+    switch data.code:
+      case BTN_TOUCH:
+        self.btn_touch = data.value
+        break
 
   handle_abs(input_event data):
     switch data.code:
@@ -94,6 +103,7 @@ class Input:
   public:
   int mouse_fd, wacom_fd, touch_fd, gpio_fd, bytes, max_fd
   int mouse_x, mouse_y
+  int wacom_btn_touch = 0
   unsigned char data[3]
   input_event ev_data[64]
   fd_set rdfs
@@ -167,6 +177,9 @@ $   bytes = read(fd, ev_data, sizeof(input_event) * 64);
     for int i = 0; i < bytes / sizeof(struct input_event); i++:
       if ev_data[i].type == EV_SYN:
         events.push_back(event)
+        #ifdef DEBUG_INPUT_EVENT
+        printf("\n")
+        #endif
         event = {} // clear the event?
       else:
         event.update(ev_data[i])
@@ -190,8 +203,12 @@ $   bytes = read(fd, ev_data, sizeof(input_event) * 64);
     SynEvent syn_ev;
     syn_ev.x = ev.x
     syn_ev.y = ev.y
-    syn_ev.left = ev.pressure > 0
-    syn_ev.right = ev.pressure == 0
+
+    if ev.btn_touch != -1:
+      self.wacom_btn_touch = ev.btn_touch
+
+    syn_ev.left = self.wacom_btn_touch
+    syn_ev.right = !self.wacom_btn_touch
     syn_ev.set_original(new WacomEvent(ev))
     self.all_events.push_back(syn_ev)
 

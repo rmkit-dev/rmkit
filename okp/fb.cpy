@@ -35,7 +35,6 @@ class FB:
 
   FB():
     width, height = self.get_size()
-    print "SIZE", width, height
     self.width = width
     self.height = height
 
@@ -142,7 +141,9 @@ class FB:
   def draw_rect(int o_x, o_y, w, h, color, fill=true):
     self.dirty = 1
     uint32_t* ptr = self.fbmem
+    #ifdef DEBUG_FB
     printf("DRAWING RECT X: %i Y: %i W: %i H: %i, COLOR: %i\n", o_x, o_y, w, h, color)
+    #endif
 
     ptr += (o_x + o_y * self.width)
 
@@ -199,7 +200,9 @@ class FB:
     ret = system("pnmtopng fb.pnm > fb.png 2>/dev/null")
 
   def draw_line(int x0,y0,x1,y1,width,color):
-    print "DRAWING LINE", x0, y0, x1, y1
+    #ifdef DEBUG_FB
+    printf("DRAWING LINE %i %i %i %i\n", x0, y0, x1, y1)
+    #endif
     self.dirty = 1
     dx =  abs(x1-x0)
     sx = x0<x1 ? 1 : -1

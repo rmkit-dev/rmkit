@@ -237,6 +237,8 @@ class Canvas: public Widget:
     memcpy(fbcopy, self.fb->fbmem, self.fb->byte_size)
     self.undo_stack.push_back(fbcopy)
     #endif
+
+    printf("MOUSE UP\n")
     SynEvent null_ev
     null_ev.original = NULL
     self.events.push_back(null_ev)
