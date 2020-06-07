@@ -63,7 +63,7 @@ class MouseEvent: public Event:
 
 class WacomEvent: public Event:
   public:
-  int x, y, pressure
+  int x = -1, y = -1, pressure = 0
   bool pen, eraser, button
 
   handle_key(input_event data):

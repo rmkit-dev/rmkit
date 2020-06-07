@@ -22,7 +22,7 @@ class UndoButton: public Button:
   UndoButton(int x, y, w, h, Canvas *c): Button(x,y,w,h,"undo"):
     self.canvas = c
 
-  void on_mouse_click(SynEvent ev):
+  void on_mouse_click(SynEvent &ev):
     self.dirty = 1
     self.canvas->undo()
 
@@ -32,7 +32,7 @@ class RedoButton: public Button:
   RedoButton(int x, y, w, h, Canvas *c): Button(x,y,w,h,"redo"):
     self.canvas = c
 
-  void on_mouse_click(SynEvent ev):
+  void on_mouse_click(SynEvent &ev):
     self.dirty = 1
     self.canvas->redo()
 

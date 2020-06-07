@@ -7,7 +7,7 @@ class Widget:
   public:
   int x, y, w, h, dirty, mouse_x, mouse_y
   bool mouse_down, mouse_inside
-  static vector<Widget*> widgets
+  static vector<shared_ptr<Widget>> widgets
   static FB *fb
 
   Widget(int a,b,c,d):
@@ -22,7 +22,7 @@ class Widget:
   ~Widget(): // can't de-allocate widgets yet
     printf("DESTROYING WIDGET %lx\n", (uint64_t) this)
     for auto it = widgets.begin(); it != widgets.end(); it++:
-      if *it == this:
+      if it->get() == this:
         widgets.erase(it)
         break
 
@@ -65,11 +65,11 @@ class Widget:
       widget->maybe_mark_dirty(o_x, o_y)
 
   static void add(Widget *w):
-    widgets.push_back(w)
+    widgets.push_back(shared_ptr<Widget>(w))
 
   // iterate over all widgets and dispatch mouse events
   // TODO: refactor this into cleaner code
-  static bool handle_mouse_event(SynEvent ev):
+  static bool handle_mouse_event(SynEvent &ev):
     bool is_hit = false
     bool hit_widget = false
     if ev.x == -1 || ev.y == -1:
@@ -149,7 +149,7 @@ class Widget:
     if d != -1:
       self.h = d
 
-vector<Widget*> Widget::widgets = vector<Widget*>();
+vector<shared_ptr<Widget>> Widget::widgets = vector<shared_ptr<Widget>>();
 FB* Widget::fb = NULL
 
 class Text: public Widget:
@@ -172,14 +172,11 @@ class Text: public Widget:
 class Button: public Widget:
   public:
   string text
-  Text *textWidget
+  shared_ptr<Text> textWidget
 
   Button(int x, y, w, h, string t): Widget(x,y,w,h):
     self.text = t
-    self.textWidget = new Text(x, y, w, h, t)
-
-  ~Button():
-    delete self.textWidget
+    self.textWidget = shared_ptr<Text>(new Text(x, y, w, h, t))
 
   void on_mouse_down(SynEvent &ev):
     self.dirty = 1
