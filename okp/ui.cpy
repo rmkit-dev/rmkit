@@ -206,15 +206,15 @@ class Button: public Widget:
 class Canvas: public Widget:
   public:
   int mx, my
-  uint32_t *mem
+  remarkable_color *mem
   vector<SynEvent> events;
-  vector<uint32_t*> undo_stack;
-  vector<uint32_t*> redo_stack;
+  vector<remarkable_color*> undo_stack;
+  vector<remarkable_color*> redo_stack;
   SynEvent last_ev
 
   Canvas(int x, y, w, h): Widget(x,y,w,h):
-    this->mem = (uint32_t*) malloc(sizeof(uint32_t) * w * h)
-    uint32_t* fbcopy = (uint32_t*) malloc(self.fb->byte_size)
+    this->mem = (remarkable_color*) malloc(sizeof(remarkable_color) * w * h)
+    remarkable_color* fbcopy = (remarkable_color*) malloc(self.fb->byte_size)
     memcpy(fbcopy, self.fb->fbmem, self.fb->byte_size)
     self.undo_stack.push_back(fbcopy)
 
@@ -231,14 +231,11 @@ class Canvas: public Widget:
     self.redraw(*self.fb)
 
   void on_mouse_up(SynEvent &ev):
-    #ifdef DEV
     printf("ADDING TO UNDO STACK\n")
-    uint32_t* fbcopy = (uint32_t*) malloc(self.fb->byte_size)
-    memcpy(fbcopy, self.fb->fbmem, self.fb->byte_size)
-    self.undo_stack.push_back(fbcopy)
+    #ifdef DEV
+    push_undo()
     #endif
 
-    printf("MOUSE UP\n")
     SynEvent null_ev
     null_ev.original = NULL
     self.events.push_back(null_ev)
@@ -247,30 +244,33 @@ class Canvas: public Widget:
     pass
 
   void redraw(FB &fb):
+    stroke = 4
     for auto ev: self.events:
       if ev.original != NULL:
         if last_ev.original != NULL:
-          fb.draw_line(last_ev.x, last_ev.y, ev.x,ev.y, 2, BLACK)
+          fb.draw_line(last_ev.x, last_ev.y, ev.x,ev.y, stroke, BLACK)
         else:
-          fb.draw_rect(ev.x, ev.y, 2, 2, BLACK)
+          fb.draw_rect(ev.x, ev.y, stroke, stroke, BLACK)
       last_ev = ev
     self.events.clear()
 
+  void push_undo():
+    remarkable_color* fbcopy = (remarkable_color*) malloc(self.fb->byte_size)
+    memcpy(fbcopy, self.fb->fbmem, self.fb->byte_size)
+    self.undo_stack.push_back(fbcopy)
+
   void undo():
     if self.undo_stack.size() > 1:
-      // copy curr fb to redo stack
-      uint32_t* currfb = (uint32_t*) malloc(self.fb->byte_size)
-      memcpy(currfb, self.fb->fbmem, self.fb->byte_size)
-      self.redo_stack.push_back(currfb)
       // put last fb from undo stack into fb
+      self.redo_stack.push_back(self.undo_stack.back())
       self.undo_stack.pop_back()
-      uint32_t* undofb = self.undo_stack.back()
+      remarkable_color* undofb = self.undo_stack.back()
       memcpy(self.fb->fbmem, undofb, self.fb->byte_size)
       Widget::refresh()
 
   void redo():
     if self.redo_stack.size() > 0:
-      uint32_t* redofb = self.redo_stack.back()
+      remarkable_color* redofb = self.redo_stack.back()
       self.redo_stack.pop_back()
       memcpy(self.fb->fbmem, redofb, self.fb->byte_size)
       self.undo_stack.push_back(redofb)

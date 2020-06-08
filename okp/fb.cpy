@@ -23,6 +23,7 @@ typedef struct rect rect
 void do_nothing(int x, y):
   pass
 
+#define remarkable_color uint16_t
 
 class FB:
   private:
@@ -31,7 +32,7 @@ class FB:
   int width, height, fd
   int byte_size, dirty
   int update_marker = 1
-  uint32_t* fbmem
+  remarkable_color* fbmem
 
   FB():
     width, height = self.get_size()
@@ -39,15 +40,26 @@ class FB:
     self.height = height
 
     printf("W: %i H: %i\n", width, height)
-    size = width*height*sizeof(uint32_t)
+    size = width*height*sizeof(remarkable_color)
     self.byte_size = size
 
     #ifndef DEV
     self.fd = open("/dev/fb0", O_RDWR)
-    fbmem = (uint32_t*) mmap(NULL, size, PROT_WRITE, MAP_SHARED, self.fd, 0)
+    fbmem = (remarkable_color*) mmap(NULL, size, PROT_WRITE, MAP_SHARED, self.fd, 0)
 
     auto_update_mode = AUTO_UPDATE_MODE_AUTOMATIC_MODE
     ioctl(self.fd, MXCFB_SET_AUTO_UPDATE_MODE, &auto_update_mode);
+
+    fb_var_screeninfo vinfo;
+    if (ioctl(self.fd, FBIOGET_VSCREENINFO, &vinfo)):
+      printf("Could not get screen vinfo for %s\n", "/dev/fb0")
+      return
+
+    print "XRES", vinfo.xres, "YRES", vinfo.yres, "BPP", vinfo.bits_per_pixel
+
+
+
+
     #else
     // make an empty file of the right size
     std::ofstream ofs("fb.raw", std::ios::binary | std::ios::out);
@@ -56,7 +68,7 @@ class FB:
     ofs.close()
 
     self.fd = open("./fb.raw", O_RDWR)
-    fbmem = (uint32_t*) mmap(NULL, size, PROT_WRITE, MAP_SHARED, self.fd, 0)
+    fbmem = (remarkable_color*) mmap(NULL, size, PROT_WRITE, MAP_SHARED, self.fd, 0)
     #endif
     return
 
@@ -133,14 +145,13 @@ class FB:
 
     f = 1
     #ifdef REMARKABLE
-    f = 2
     #endif
 
     return width/f, height/f
 
   def draw_rect(int o_x, o_y, w, h, color, fill=true):
     self.dirty = 1
-    uint32_t* ptr = self.fbmem
+    remarkable_color* ptr = self.fbmem
     #ifdef DEBUG_FB
     printf("DRAWING RECT X: %i Y: %i W: %i H: %i, COLOR: %i\n", o_x, o_y, w, h, color)
     #endif
@@ -162,11 +173,11 @@ class FB:
     self.draw_rect(r.x, r.y, w, h, color, fill)
 
   def draw_bitmap(freetype::image_data image, int o_x, int o_y):
-    uint32_t* ptr = self.fbmem
+    remarkable_color* ptr = self.fbmem
     ptr += (o_x + o_y * self.width)
     for j 0 image.h:
       for i 0 image.w:
-        ptr[j*self.width + i] = (uint32_t)image.buffer[j*image.w+i]
+        ptr[j*self.width + i] = (remarkable_color)image.buffer[j*image.w+i]
 
   def draw_text(string text, int x, int y, freetype::image_data image):
     freetype::render_text((char*)text.c_str(), x, y, image)
@@ -210,7 +221,7 @@ class FB:
     sy = y0<y1 ? 1 : -1
     err = dx+dy  /* error value e_xy */
     while (true):   /* loop */
-      self.draw_rect(x0, y0, 2, 2, color)
+      self.draw_rect(x0, y0, width, width, color)
       // self.fbmem[y0*self.width + x0] = color
       if (x0==x1 && y0==y1) break;
       e2 = 2*err
