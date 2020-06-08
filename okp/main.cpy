@@ -28,20 +28,20 @@ class App:
 
     fb->clear_screen()
 
-    Canvas *c = new ui::Canvas(0, 0, fb->width, fb->height)
-    MainLoop::add(new ui::Text(10, 10, fb->width, 50, "rmHarmony"))
+    ui::Canvas *c = new ui::Canvas(0, 0, fb->width, fb->height)
+    ui::MainLoop::add(new ui::Text(10, 10, fb->width, 50, "rmHarmony"))
 
-    MainLoop::add(new app_ui::ToolButton(10, 100, 200, 50, c))
-    MainLoop::add(new app_ui::UndoButton(10, 170, 200, 50, c))
-    MainLoop::add(new app_ui::RedoButton(10, 240, 200, 50, c))
+    ui::MainLoop::add(new app_ui::ToolButton(10, 100, 200, 50, c))
+    ui::MainLoop::add(new app_ui::UndoButton(10, 170, 200, 50, c))
+    ui::MainLoop::add(new app_ui::RedoButton(10, 240, 200, 50, c))
 
-    MainLoop::add(c)
+    ui::MainLoop::add(c)
 
 
   def handle_key_event(input::KeyEvent &key_ev):
     if key_ev.is_pressed && key_ev.key == KEY_HOME:
       fb->clear_screen()
-      MainLoop::refresh()
+      ui::MainLoop::refresh()
 
   def handle_motion_event(input::SynEvent &syn_ev):
     #ifdef DEBUG_INPUT
@@ -53,7 +53,7 @@ class App:
       print "WACOM EVENT"
     #endif
 
-    MainLoop::handle_motion_event(syn_ev)
+    ui::MainLoop::handle_motion_event(syn_ev)
 
   def run():
     ui::MainLoop::main()
