@@ -7,7 +7,7 @@
 using namespace std
 
 class App:
-  FB fb
+  shared_ptr<FB> fb
   Input input
   vector<Widget> widgets
 
@@ -17,13 +17,19 @@ class App:
 
   public:
   App():
-    known Widget::fb = &fb
-    known Input::fb = &fb
+    #ifndef DEV
+    fb = make_shared<HardwareFB>()
+    #else
+    fb = make_shared<VirtualFB>()
+    #endif
 
-    fb.clear_screen()
+    known Widget::fb = fb.get()
+    known Input::fb = fb.get()
 
-    Canvas *c = new Canvas(0, 0, fb.width, fb.height)
-    Widget::add(new Text(10, 10, fb.width, 50, "reHarmony"))
+    fb->clear_screen()
+
+    Canvas *c = new Canvas(0, 0, fb->width, fb->height)
+    Widget::add(new Text(10, 10, fb->width, 50, "rmHarmony"))
 
     Widget::add(new ToolButton(10, 100, 200, 50, c))
     Widget::add(new UndoButton(10, 170, 200, 50, c))
@@ -34,7 +40,7 @@ class App:
 
   def handle_key_event(KeyEvent &key_ev):
     if key_ev.is_pressed && key_ev.key == KEY_HOME:
-      fb.clear_screen()
+      fb->clear_screen()
       Widget::refresh()
 
   def handle_motion_event(SynEvent &syn_ev):
@@ -50,8 +56,8 @@ class App:
     Widget::handle_motion_event(syn_ev)
 
   def run():
-    Widget::main(fb)
-    fb.redraw_screen()
+    Widget::main(*fb)
+    self.fb->redraw_screen()
 
     printf("HANDLING RUN\n")
     while true:
@@ -62,8 +68,8 @@ class App:
       for auto ev : input.all_key_events:
         self.handle_key_event(ev)
 
-      Widget::main(fb)
-      fb.redraw_screen()
+      Widget::main(*fb)
+      self.fb->redraw_screen()
 
 
 def main():

@@ -15,7 +15,7 @@ sketchy_dev: compile_dev
 sketchy_arm: compile_arm
 
 compile_x86: export CPP_FLAGS += -I/usr/include/freetype2 -lfreetype
-compile_x86: freetype_x86
+compile_x86:
 	cd okp/ && okp ${OKP_FLAGS} -- ${CPP_FLAGS}
 
 compile_dev: export CPP_FLAGS += -I/usr/include/freetype2 -lfreetype

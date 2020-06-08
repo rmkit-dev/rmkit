@@ -29,6 +29,9 @@ class Widget:
   virtual void redraw(FB &fb):
     pass
 
+  virtual bool ignore_event(SynEvent &ev):
+    pass
+
   virtual void on_mouse_enter(SynEvent &ev):
     pass
 
@@ -76,6 +79,8 @@ class Widget:
       return false
 
     for auto widget: widgets:
+      if widget->ignore_event(ev):
+        continue
 
       is_hit = widget->is_hit(ev.x, ev.y)
 
@@ -223,10 +228,10 @@ class Canvas: public Widget:
       free(this->mem)
     this->mem = NULL
 
-  void on_mouse_move(SynEvent &ev):
-    if Input::is_touch_event(ev):
-      return
+  bool ignore_event(SynEvent &ev):
+    return Input::is_touch_event(ev) != NULL
 
+  void on_mouse_move(SynEvent &ev):
     events.push_back(ev)
     self.redraw(*self.fb)
 
