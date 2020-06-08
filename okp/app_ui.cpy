@@ -12,7 +12,6 @@ namespace app_ui:
       self.dirty = 1
 
     void on_mouse_click(input::SynEvent&):
-      printf("TOOL CLICKED\n")
       tool++
       tool %= tools.size()
       self.text = tools[tool]

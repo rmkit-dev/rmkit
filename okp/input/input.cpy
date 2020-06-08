@@ -8,7 +8,7 @@
 
 using namespace std
 
-//#define DEBUG_INPUT_EVENT 0
+//#define DEBUG_INPUT_EVENT 1
 namespace input:
   class Input:
     private:
@@ -92,6 +92,7 @@ namespace input:
       T event
       for int i = 0; i < bytes / sizeof(struct input_event); i++:
         if ev_data[i].type == EV_SYN:
+          event.finalize()
           events.push_back(event)
           #ifdef DEBUG_INPUT_EVENT
           printf("\n")

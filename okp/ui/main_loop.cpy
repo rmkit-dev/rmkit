@@ -66,7 +66,7 @@ namespace ui:
         widget->mouse_down = ev.left && is_hit
         widget->mouse_inside = is_hit
 
-        if is_hit:
+        if is_hit && !hit_widget:
           if widget->mouse_down:
             widget->mouse_x = ev.x
             widget->mouse_y = ev.y
@@ -92,7 +92,6 @@ namespace ui:
             widget->on_mouse_enter(ev)
 
           hit_widget = true
-          break
         else:
           // mouse leave event
           if prev_mouse_inside:

@@ -1,13 +1,18 @@
+//#define DEBUG_INPUT_EVENT 1
+
 namespace input:
   class Event:
     public:
     def update(input_event data)
-    def print_event(input_event data):
+    def print_event(input_event &data):
       #ifdef DEBUG_INPUT_EVENT
       printf("Event: time %ld, type: %x, code :%x, value %d\n", \
         data.time.tv_sec, data.type, data.code, data.value)
       #endif
       return
+
+    def finalize():
+      pass
 
     virtual ~Event() = default
 
@@ -39,6 +44,7 @@ namespace input:
     public:
     int x, y, left
     TouchEvent() {}
+
     handle_abs(input_event data):
       switch data.code:
         case ABS_MT_POSITION_X:

@@ -33,19 +33,26 @@ class App:
     notebook = ui::make_scene()
     ui::MainLoop::set_scene(notebook)
 
-    ui::Canvas *c = new ui::Canvas(0, 0, fb->width, fb->height)
+    canvas = new ui::Canvas(0, 0, fb->width, fb->height)
+    w, h = fb->get_display_size()
+    print "FB HEIGHT", h
 
-    notebook->add(new ui::Text(10, 10, fb->width, 50, "rmHarmony"))
-    notebook->add(new app_ui::ToolButton(10, 100, 200, 50, c))
-    notebook->add(new app_ui::UndoButton(10, 170, 200, 50, c))
-    notebook->add(new app_ui::RedoButton(10, 240, 200, 50, c))
-    notebook->add(c)
+    topbar = new ui::HorizontalLayout(10, 10, w, 50, notebook)
+    topbar->pack_end(new ui::Text(0, 0, 200, 50, "rmHarmony"))
+
+
+    // because we pack end, we go in reverse order
+    topbar->pack_start(new app_ui::ToolButton(0, 0, 200, 50, canvas))
+    topbar->pack_start(new app_ui::UndoButton(0, 0, 200, 50, canvas))
+    topbar->pack_start(new app_ui::RedoButton(0, 0, 200, 50, canvas))
+
+    notebook->add(canvas)
 
     save_dialog = ui::make_scene()
-    save_dialog->add(new ui::Text(fb->width / 2 - 100, 10, fb->width, 50, "SAVE DIALOG"))
+    save_dialog->add(new ui::Text(w / 2 - 100, 10, w, 50, "SAVE DIALOG"))
 
     open_dialog = ui::make_scene()
-    open_dialog->add(new ui::Text(fb->width / 2 - 100, 10, fb->width, 50, "OPEN DIALOG"))
+    open_dialog->add(new ui::Text(w / 2 - 100, 10, w, 50, "OPEN DIALOG"))
 
 
   def handle_key_event(input::KeyEvent &key_ev):

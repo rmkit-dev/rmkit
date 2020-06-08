@@ -109,6 +109,9 @@ namespace framebuffer:
 
       return width, height
 
+    virtual tuple<int, int> get_display_size():
+      return self.width, self.height
+
     inline void draw_rect(int o_x, o_y, w, h, color, fill=true):
       self.dirty = 1
       remarkable_color* ptr = self.fbmem
@@ -219,6 +222,12 @@ namespace framebuffer:
     void wait_for_redraw(uint32_t update_marker):
       mxcfb_update_marker_data mdata = { update_marker, 0 }
       ioctl(self.fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &mdata)
+
+    tuple<int, int> get_display_size():
+      fb_var_screeninfo vinfo;
+      ioctl(self.fd, FBIOGET_VSCREENINFO, &vinfo)
+
+      return vinfo.xres, vinfo.yres
 
     int perform_redraw(bool full_screen, wait_for_refresh):
       um = 0

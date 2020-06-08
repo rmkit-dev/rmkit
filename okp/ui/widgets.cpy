@@ -1,7 +1,6 @@
 #include "ui.h"
 
 namespace ui:
-
   class Text: public Widget:
     public:
     string text

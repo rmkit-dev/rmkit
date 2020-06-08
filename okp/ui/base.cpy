@@ -4,6 +4,8 @@ namespace ui:
   class Widget:
     public:
     static framebuffer::FB *fb
+    vector<shared_ptr<Widget>> children
+
     int x, y, w, h
     int mouse_down, mouse_inside, mouse_x, mouse_y
     int dirty
