@@ -1,15 +1,17 @@
-#include "mxcfb.h"
 #include "fb.h"
 #include "input.h"
-#include "ui.h"
-#include "widgets.h"
 #include "app_ui.h"
+#include "ui/widgets.h"
 
 using namespace std
 
 class App:
   shared_ptr<framebuffer::FB> fb
   input::Input in
+
+  ui::Scene notebook
+  ui::Scene save_dialog
+  ui::Scene open_dialog
 
   int x = 0
   int y = 0
@@ -28,20 +30,38 @@ class App:
 
     fb->clear_screen()
 
+    notebook = ui::make_scene()
+    ui::MainLoop::set_scene(notebook)
+
     ui::Canvas *c = new ui::Canvas(0, 0, fb->width, fb->height)
-    ui::MainLoop::add(new ui::Text(10, 10, fb->width, 50, "rmHarmony"))
 
-    ui::MainLoop::add(new app_ui::ToolButton(10, 100, 200, 50, c))
-    ui::MainLoop::add(new app_ui::UndoButton(10, 170, 200, 50, c))
-    ui::MainLoop::add(new app_ui::RedoButton(10, 240, 200, 50, c))
+    notebook->add(new ui::Text(10, 10, fb->width, 50, "rmHarmony"))
+    notebook->add(new app_ui::ToolButton(10, 100, 200, 50, c))
+    notebook->add(new app_ui::UndoButton(10, 170, 200, 50, c))
+    notebook->add(new app_ui::RedoButton(10, 240, 200, 50, c))
+    notebook->add(c)
 
-    ui::MainLoop::add(c)
+    save_dialog = ui::make_scene()
+    save_dialog->add(new ui::Text(fb->width / 2 - 100, 10, fb->width, 50, "SAVE DIALOG"))
+
+    open_dialog = ui::make_scene()
+    open_dialog->add(new ui::Text(fb->width / 2 - 100, 10, fb->width, 50, "OPEN DIALOG"))
 
 
   def handle_key_event(input::KeyEvent &key_ev):
-    if key_ev.is_pressed && key_ev.key == KEY_HOME:
-      fb->clear_screen()
-      ui::MainLoop::refresh()
+    if key_ev.is_pressed:
+      switch key_ev.key:
+        case KEY_HOME:
+          fb->clear_screen()
+          ui::MainLoop::refresh()
+          break
+        case KEY_LEFT:
+          ui::MainLoop::toggle_overlay(save_dialog)
+          break
+        case KEY_RIGHT:
+          ui::MainLoop::toggle_overlay(open_dialog)
+          break
+
 
   def handle_motion_event(input::SynEvent &syn_ev):
     #ifdef DEBUG_INPUT
