@@ -30,7 +30,7 @@ class Widget:
     pass
 
   virtual bool ignore_event(SynEvent &ev):
-    pass
+    return false
 
   virtual void on_mouse_enter(SynEvent &ev):
     pass
@@ -216,11 +216,13 @@ class Canvas: public Widget:
   vector<remarkable_color*> undo_stack;
   vector<remarkable_color*> redo_stack;
   SynEvent last_ev
+  VirtualFB vfb
 
   Canvas(int x, y, w, h): Widget(x,y,w,h):
     this->mem = (remarkable_color*) malloc(sizeof(remarkable_color) * w * h)
     remarkable_color* fbcopy = (remarkable_color*) malloc(self.fb->byte_size)
     memcpy(fbcopy, self.fb->fbmem, self.fb->byte_size)
+    memcpy(vfb.fbmem, self.fb->fbmem, self.fb->byte_size)
     self.undo_stack.push_back(fbcopy)
 
   ~Canvas():
@@ -253,8 +255,10 @@ class Canvas: public Widget:
       if ev.original != NULL:
         if last_ev.original != NULL:
           fb.draw_line(last_ev.x, last_ev.y, ev.x,ev.y, stroke, BLACK)
+          vfb.draw_line(last_ev.x, last_ev.y, ev.x,ev.y, stroke, BLACK)
         else:
           fb.draw_rect(ev.x, ev.y, stroke, stroke, BLACK)
+          vfb.draw_rect(ev.x, ev.y, stroke, stroke, BLACK)
       last_ev = ev
     self.events.clear()
 

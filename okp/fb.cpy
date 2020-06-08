@@ -20,7 +20,7 @@ class FBRect:
 
 class FB:
   public:
-  int width, height, fd
+  int width=0, height=0, fd=-1
   int byte_size, dirty
   int update_marker = 1
   remarkable_color* fbmem
@@ -42,7 +42,8 @@ class FB:
     throw
 
   ~FB():
-    close(self.fd)
+    if self.fd != -1:
+      close(self.fd)
 
   virtual void wait_for_redraw(uint32_t update_marker):
     return
@@ -142,7 +143,7 @@ class FB:
     freetype::render_text((char*)text.c_str(), x, y, image)
     draw_bitmap(image, x, y)
 
-  void save_pnm():
+  void save_png():
     // save the buffer to pnm format
     fd = open("fb.pnm", O_CREAT|O_RDWR, 0755)
     lseek(fd, 0, 0)
@@ -244,9 +245,9 @@ class HardwareFB: public FB:
     self.reset_dirty()
     return um
 
-class VirtualFB: public FB:
+class FileFB: public FB:
   public:
-  VirtualFB(): FB():
+  FileFB(): FB():
     // make an empty file of the right size
     std::ofstream ofs("fb.raw", std::ios::binary | std::ios::out);
     ofs.seekp(self.byte_size);
@@ -255,9 +256,14 @@ class VirtualFB: public FB:
 
     self.fd = open("./fb.raw", O_RDWR)
     self.fbmem = (remarkable_color*) mmap(NULL, self.byte_size, PROT_WRITE, MAP_SHARED, self.fd, 0)
-    printf("SET FB MEM TO %lx\n", self.fbmem)
 
   int perform_redraw(bool, bool):
     msync(self.fbmem, self.byte_size, MS_SYNC)
-    self.save_pnm()
+    self.save_png()
     return 0
+
+class VirtualFB: public FB:
+  public:
+  VirtualFB(): FB():
+    self.fbmem = (remarkable_color*) malloc(self.byte_size)
+    self.fd = -1

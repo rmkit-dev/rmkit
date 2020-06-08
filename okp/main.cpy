@@ -20,7 +20,7 @@ class App:
     #ifndef DEV
     fb = make_shared<HardwareFB>()
     #else
-    fb = make_shared<VirtualFB>()
+    fb = make_shared<FileFB>()
     #endif
 
     known Widget::fb = fb.get()
