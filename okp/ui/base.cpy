@@ -1,4 +1,4 @@
-#include "../fb.h"
+#include "../fb/fb.h"
 
 namespace ui:
   class Widget:

@@ -10,7 +10,7 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#include "defines.h"
+#include "../defines.h"
 
 namespace freetype {
   struct image_data {
