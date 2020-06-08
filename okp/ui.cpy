@@ -6,13 +6,12 @@
 namespace ui:
   class Widget:
     public:
-    int x, y, w, h, dirty, mouse_x, mouse_y
-    bool mouse_down, mouse_inside
-    static vector<shared_ptr<Widget>> widgets
     static framebuffer::FB *fb
+    int x, y, w, h
+    int mouse_down, mouse_inside, mouse_x, mouse_y
+    int dirty
 
-    Widget(int a,b,c,d):
-      x = a; y = b; w = c; h = d;
+    Widget(int x,y,w,h): x(x), y(y), w(w), h(h):
       printf("MAKING WIDGET %lx\n", (uint64_t) this)
 
       mouse_inside = false
@@ -20,14 +19,7 @@ namespace ui:
 
       dirty = 1
 
-    ~Widget(): // can't de-allocate widgets yet
-      printf("DESTROYING WIDGET %lx\n", (uint64_t) this)
-      for auto it = widgets.begin(); it != widgets.end(); it++:
-        if it->get() == this:
-          widgets.erase(it)
-          break
-
-    virtual void redraw(framebuffer::FB &fb):
+    virtual void redraw():
       pass
 
     virtual bool ignore_event(input::SynEvent &ev):
@@ -54,10 +46,43 @@ namespace ui:
     virtual void on_mouse_hover(input::SynEvent &ev):
       pass
 
-    static void main(framebuffer::FB &fb):
+    // checks if this widget is hit by a button press
+    bool is_hit(int o_x, o_y):
+      if o_x < x || o_y < y || o_x > x+w || o_y > y+h:
+        return false
+
+      return true
+
+    bool maybe_mark_dirty(int o_x, o_y):
+      if this->dirty:
+        return false
+
+      if is_hit(o_x, o_y):
+        printf("WIDGET IS DIRTY %lx\n", (uint64_t) this)
+        dirty = 1
+        return true
+      return false
+
+    void set_coords(int a=-1, b=-1, c=-1, d=-1):
+      if a != -1:
+        self.x = a
+      if b != -1:
+        self.y = b
+      if c != -1:
+        self.w = c
+      if d != -1:
+        self.h = d
+
+  class MainLoop:
+    public:
+    int mouse_x, mouse_y
+    bool mouse_down, mouse_inside
+    static vector<shared_ptr<Widget>> widgets
+
+    static void main():
       for auto &widget: widgets:
         if widget->dirty:
-          widget->redraw(fb)
+          widget->redraw()
           widget->dirty = 0
 
     static void refresh():
@@ -128,34 +153,8 @@ namespace ui:
 
       return hit_widget
 
-    // checks if this widget is hit by a button press
-    bool is_hit(int o_x, o_y):
-      if o_x < x || o_y < y || o_x > x+w || o_y > y+h:
-        return false
 
-      return true
-
-    bool maybe_mark_dirty(int o_x, o_y):
-      if this->dirty:
-        return false
-
-      if is_hit(o_x, o_y):
-        printf("WIDGET IS DIRTY %lx\n", (uint64_t) this)
-        dirty = 1
-        return true
-      return false
-
-    void set_coords(int a=-1, b=-1, c=-1, d=-1):
-      if a != -1:
-        self.x = a
-      if b != -1:
-        self.y = b
-      if c != -1:
-        self.w = c
-      if d != -1:
-        self.h = d
-
-  vector<shared_ptr<Widget>> Widget::widgets = vector<shared_ptr<Widget>>();
+  vector<shared_ptr<Widget>> MainLoop::widgets = vector<shared_ptr<Widget>>();
   framebuffer::FB* Widget::fb = NULL
 
   class Text: public Widget:
@@ -165,13 +164,13 @@ namespace ui:
     Text(int x, y, w, h, string t): Widget(x, y, w, h):
       self.text = t
 
-    void redraw(framebuffer::FB &fb):
+    void redraw():
       freetype::image_data image;
       image.buffer = (uint32_t*) malloc(sizeof(uint32_t)*self.w*self.h)
       memset(image.buffer, WHITE, sizeof(uint32_t)*self.w*self.h)
       image.w = self.w
       image.h = self.h
-      fb.draw_text(self.text, self.x, self.y, image)
+      fb->draw_text(self.text, self.x, self.y, image)
       free(image.buffer)
 
 
@@ -196,10 +195,10 @@ namespace ui:
     void on_mouse_enter(input::SynEvent &ev):
       self.dirty = 1
 
-    void redraw(framebuffer::FB &fb):
+    void redraw():
       self.textWidget->text = text
       self.textWidget->set_coords(x, y, w, h)
-      self.textWidget->redraw(fb)
+      self.textWidget->redraw()
 
       color = WHITE
       if self.mouse_inside:
@@ -207,7 +206,7 @@ namespace ui:
       fill = false
       if self.mouse_down:
         fill = true
-      fb.draw_rect(self.x, self.y, self.w, self.h, color, fill)
+      fb->draw_rect(self.x, self.y, self.w, self.h, color, fill)
 
   class Canvas: public Widget:
     public:
@@ -219,13 +218,15 @@ namespace ui:
     input::SynEvent last_ev
 
     framebuffer::FBRect dirty_rect
-    framebuffer::VirtualFB vfb
+    shared_ptr<framebuffer::VirtualFB> vfb
 
     Canvas(int x, y, w, h): Widget(x,y,w,h):
+      vfb = make_shared<framebuffer::VirtualFB>()
       this->mem = (remarkable_color*) malloc(sizeof(remarkable_color) * w * h)
       remarkable_color* fbcopy = (remarkable_color*) malloc(self.fb->byte_size)
       memcpy(fbcopy, self.fb->fbmem, self.fb->byte_size)
-      memcpy(vfb.fbmem, self.fb->fbmem, self.fb->byte_size)
+      memcpy(vfb->fbmem, self.fb->fbmem, self.fb->byte_size)
+
       self.undo_stack.push_back(fbcopy)
       reset_dirty(self.dirty_rect)
 
@@ -239,7 +240,7 @@ namespace ui:
 
     void on_mouse_move(input::SynEvent &ev):
       events.push_back(ev)
-      self.redraw(*self.fb)
+      self.redraw()
 
     void on_mouse_up(input::SynEvent &ev):
       #ifdef DEV
@@ -253,22 +254,22 @@ namespace ui:
     void on_mouse_hover(input::SynEvent &ev):
       pass
 
-    void redraw(framebuffer::FB &fb):
+    void redraw():
       stroke = 4
       for auto ev: self.events:
         if ev.original != NULL:
           if last_ev.original != NULL:
-            fb.draw_line(last_ev.x, last_ev.y, ev.x,ev.y, stroke, BLACK)
-            vfb.draw_line(last_ev.x, last_ev.y, ev.x,ev.y, stroke, BLACK)
+            fb->draw_line(last_ev.x, last_ev.y, ev.x,ev.y, stroke, BLACK)
+            vfb->draw_line(last_ev.x, last_ev.y, ev.x,ev.y, stroke, BLACK)
           else:
-            fb.draw_rect(ev.x, ev.y, stroke, stroke, BLACK)
-            vfb.draw_rect(ev.x, ev.y, stroke, stroke, BLACK)
+            fb->draw_rect(ev.x, ev.y, stroke, stroke, BLACK)
+            vfb->draw_rect(ev.x, ev.y, stroke, stroke, BLACK)
           update_dirty(self.dirty_rect, ev.x, ev.y)
         last_ev = ev
       self.events.clear()
 
     void push_undo():
-      print "ADDING TO UNDO STACK, DIRTY AREA IS\n", \
+      print "ADDING TO UNDO STACK, DIRTY AREA IS", \
         dirty_rect.x0, dirty_rect.y0, dirty_rect.x1, dirty_rect.y1
       remarkable_color* fbcopy = (remarkable_color*) malloc(self.fb->byte_size)
       memcpy(fbcopy, self.fb->fbmem, self.fb->byte_size)
@@ -282,7 +283,7 @@ namespace ui:
         self.undo_stack.pop_back()
         remarkable_color* undofb = self.undo_stack.back()
         memcpy(self.fb->fbmem, undofb, self.fb->byte_size)
-        Widget::refresh()
+        MainLoop::refresh()
 
     void redo():
       if self.redo_stack.size() > 0:
@@ -290,4 +291,4 @@ namespace ui:
         self.redo_stack.pop_back()
         memcpy(self.fb->fbmem, redofb, self.fb->byte_size)
         self.undo_stack.push_back(redofb)
-        Widget::refresh()
+        MainLoop::refresh()

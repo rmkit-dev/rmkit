@@ -76,7 +76,6 @@ namespace framebuffer:
 
     void clear_screen():
       self.draw_rect(0, 0, self.width, self.height, WHITE)
-      self.redraw_screen()
 
     int redraw_screen(bool full_screen=false, wait_for_refresh=false):
       if dirty == 0:

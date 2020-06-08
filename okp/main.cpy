@@ -9,7 +9,6 @@ using namespace std
 class App:
   shared_ptr<framebuffer::FB> fb
   input::Input in
-  vector<Widget> widgets
 
   int x = 0
   int y = 0
@@ -29,19 +28,19 @@ class App:
     fb->clear_screen()
 
     Canvas *c = new ui::Canvas(0, 0, fb->width, fb->height)
-    Widget::add(new ui::Text(10, 10, fb->width, 50, "rmHarmony"))
+    MainLoop::add(new ui::Text(10, 10, fb->width, 50, "rmHarmony"))
 
-    Widget::add(new app_ui::ToolButton(10, 100, 200, 50, c))
-    Widget::add(new app_ui::UndoButton(10, 170, 200, 50, c))
-    Widget::add(new app_ui::RedoButton(10, 240, 200, 50, c))
+    MainLoop::add(new app_ui::ToolButton(10, 100, 200, 50, c))
+    MainLoop::add(new app_ui::UndoButton(10, 170, 200, 50, c))
+    MainLoop::add(new app_ui::RedoButton(10, 240, 200, 50, c))
 
-    Widget::add(c)
+    MainLoop::add(c)
 
 
   def handle_key_event(input::KeyEvent &key_ev):
     if key_ev.is_pressed && key_ev.key == KEY_HOME:
       fb->clear_screen()
-      Widget::refresh()
+      MainLoop::refresh()
 
   def handle_motion_event(input::SynEvent &syn_ev):
     #ifdef DEBUG_INPUT
@@ -53,10 +52,10 @@ class App:
       print "WACOM EVENT"
     #endif
 
-    Widget::handle_motion_event(syn_ev)
+    MainLoop::handle_motion_event(syn_ev)
 
   def run():
-    ui::Widget::main(*fb)
+    ui::MainLoop::main()
     self.fb->redraw_screen()
 
     printf("HANDLING RUN\n")
@@ -68,7 +67,7 @@ class App:
       for auto ev : in.all_key_events:
         self.handle_key_event(ev)
 
-      ui::Widget::main(*fb)
+      ui::MainLoop::main()
       self.fb->redraw_screen()
 
 
