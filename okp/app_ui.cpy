@@ -1,38 +1,41 @@
 #include "ui.h"
 
-class ToolButton: public Button:
-  public:
-  Canvas *canvas
-  vector<string> tools = { "simple", "sketchy", "chrome" }
-  int tool = 0
-  ToolButton(int x, y, w, h, Canvas *c): Button(x,y,w,h,"tool"):
-    self.canvas = c
-    self.text = tools[tool]
-    self.dirty = 1
+using namespace ui
 
-  void on_mouse_click(SynEvent&):
-    printf("TOOL CLICKED\n")
-    tool++
-    tool %= tools.size()
-    self.text = tools[tool]
+namespace app_ui:
+  class ToolButton: public Button:
+    public:
+    Canvas *canvas
+    vector<string> tools = { "simple", "sketchy", "chrome" }
+    int tool = 0
+    ToolButton(int x, y, w, h, Canvas *c): Button(x,y,w,h,"tool"):
+      self.canvas = c
+      self.text = tools[tool]
+      self.dirty = 1
 
-class UndoButton: public Button:
-  public:
-  Canvas *canvas
-  UndoButton(int x, y, w, h, Canvas *c): Button(x,y,w,h,"undo"):
-    self.canvas = c
+    void on_mouse_click(input::SynEvent&):
+      printf("TOOL CLICKED\n")
+      tool++
+      tool %= tools.size()
+      self.text = tools[tool]
 
-  void on_mouse_click(SynEvent &ev):
-    self.dirty = 1
-    self.canvas->undo()
+  class UndoButton: public Button:
+    public:
+    Canvas *canvas
+    UndoButton(int x, y, w, h, Canvas *c): Button(x,y,w,h,"undo"):
+      self.canvas = c
 
-class RedoButton: public Button:
-  public:
-  Canvas *canvas
-  RedoButton(int x, y, w, h, Canvas *c): Button(x,y,w,h,"redo"):
-    self.canvas = c
+    void on_mouse_click(input::SynEvent &ev):
+      self.dirty = 1
+      self.canvas->undo()
 
-  void on_mouse_click(SynEvent &ev):
-    self.dirty = 1
-    self.canvas->redo()
+  class RedoButton: public Button:
+    public:
+    Canvas *canvas
+    RedoButton(int x, y, w, h, Canvas *c): Button(x,y,w,h,"redo"):
+      self.canvas = c
+
+    void on_mouse_click(input::SynEvent &ev):
+      self.dirty = 1
+      self.canvas->redo()
 
