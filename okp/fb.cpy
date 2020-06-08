@@ -15,8 +15,9 @@
 
 using namespace std
 
-struct rect:
-  int x, y, w, h
+class FBRect:
+  public:
+  int x0, y0, x1, y1
 
 typedef struct rect rect
 
@@ -33,6 +34,7 @@ class FB:
   int byte_size, dirty
   int update_marker = 1
   remarkable_color* fbmem
+  FBRect dirty_area
 
   FB():
     width, height = self.get_size()
@@ -87,12 +89,16 @@ class FB:
     return
 
 
-  def redraw_screen(bool wait_for_refresh=false, rect *redraw_area=NULL):
+  def redraw_screen(bool full_screen=false, wait_for_refresh=false):
     if dirty == 0:
       return 0
 
     dirty = 0
     um = 0
+
+    if dirty_area.y1 == 0 || dirty_area.x1 == 0:
+      return 0
+
     #ifdef DEV
     msync(self.fbmem, self.byte_size, MS_SYNC)
     self.save_pnm()
@@ -102,16 +108,16 @@ class FB:
     mxcfb_update_data update_data
     mxcfb_rect update_rect
 
-    if redraw_area != NULL:
-      update_rect.top = redraw_area->y
-      update_rect.left = redraw_area->x
-      update_rect.width = redraw_area->w
-      update_rect.height = redraw_area->h
+    if !full_screen:
+      update_rect.top = dirty_area.y0
+      update_rect.left = dirty_area.x0
+      update_rect.width = dirty_area.x1 - dirty_area.x0
+      update_rect.height = dirty_area.y1 - dirty_area.y0
     else:
       update_rect.top = 0
       update_rect.left = 0
-      update_rect.width = 1404
-      update_rect.height = 1872
+      update_rect.width = DISPLAYWIDTH
+      update_rect.height = DISPLAYHEIGHT
 
     update_data.update_region = update_rect
     update_data.waveform_mode = WAVEFORM_MODE_DU
@@ -126,6 +132,8 @@ class FB:
 
     ioctl(self.fd, MXCFB_SEND_UPDATE, &update_data)
     um = update_data.update_marker
+
+    self.reset_dirty()
     #endif
     return um
 
@@ -149,7 +157,23 @@ class FB:
 
     return width/f, height/f
 
-  def draw_rect(int o_x, o_y, w, h, color, fill=true):
+  inline void update_dirty(int x, y):
+    dirty_area.x0 = min(x, dirty_area.x0)
+    dirty_area.y0 = min(y, dirty_area.y0)
+    dirty_area.x0 = max(0, dirty_area.x0)
+    dirty_area.y0 = max(0, dirty_area.y0)
+    dirty_area.x1 = max(dirty_area.x1, x)
+    dirty_area.y1 = max(dirty_area.y1, y)
+    dirty_area.x1 = min(dirty_area.x1, int(DISPLAYWIDTH)-1)
+    dirty_area.y1 = min(dirty_area.y1, int(DISPLAYHEIGHT)-1)
+
+  void reset_dirty():
+    dirty_area.x0 = DISPLAYWIDTH
+    dirty_area.y0 = DISPLAYHEIGHT
+    dirty_area.x1 = 0
+    dirty_area.y1 = 0
+
+  inline void draw_rect(int o_x, o_y, w, h, color, fill=true):
     self.dirty = 1
     remarkable_color* ptr = self.fbmem
     #ifdef DEBUG_FB
@@ -158,26 +182,34 @@ class FB:
 
     ptr += (o_x + o_y * self.width)
 
+    update_dirty(o_x, o_y)
+    update_dirty(o_x+w, o_y+h)
+
     for j 0 h:
+      if j+o_y >= self.height:
+        break
+
       for i 0 w:
-        if j+o_y >= self.height || i+o_x >= self.width:
-          continue
+        if i+o_x >= self.width:
+          break
 
         if fill || (j == 0 || i == 0 || j == h-1 || i == w-1):
-          ptr[j*self.width + i] = color
-
-  def draw_rect(rect r, int color, fill=true):
-    w = r.w
-    h = r.h
-
-    self.draw_rect(r.x, r.y, w, h, color, fill)
+          ptr[i] = color
+      ptr += self.width
 
   def draw_bitmap(freetype::image_data image, int o_x, int o_y):
     remarkable_color* ptr = self.fbmem
     ptr += (o_x + o_y * self.width)
+    src = image.buffer
+
+    update_dirty(o_x, o_y)
+    update_dirty(o_x+image.w, o_y+image.h)
+
     for j 0 image.h:
       for i 0 image.w:
-        ptr[j*self.width + i] = (remarkable_color)image.buffer[j*image.w+i]
+        ptr[i] = (remarkable_color) src[i]
+      ptr += self.width
+      src += image.w
 
   def draw_text(string text, int x, int y, freetype::image_data image):
     freetype::render_text((char*)text.c_str(), x, y, image)

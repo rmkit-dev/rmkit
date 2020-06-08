@@ -196,9 +196,6 @@ $   bytes = read(fd, ev_data, sizeof(input_event) * 64);
 
     self.all_events.push_back(syn_ev)
 
-
-  // TODO: these marshalrs should be somewhere else, not in the App class,
-  // maybe in input.cpy. They need access to FB though
   def marshal_wacom(WacomEvent ev):
     SynEvent syn_ev;
     syn_ev.x = ev.x
@@ -279,9 +276,6 @@ $   bytes = read(fd, ev_data, sizeof(input_event) * 64);
     for auto ev : self.touch_events:
       self.marshal_touch(ev)
 
-    if retval < 0:
-      print "oops, select broke"
-      exit(1)
 
   static WacomEvent* is_wacom_event(SynEvent &syn_ev):
     return dynamic_cast<WacomEvent*>(syn_ev.original.get())

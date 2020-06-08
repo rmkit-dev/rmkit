@@ -231,7 +231,6 @@ class Canvas: public Widget:
     self.redraw(*self.fb)
 
   void on_mouse_up(SynEvent &ev):
-    printf("ADDING TO UNDO STACK\n")
     #ifdef DEV
     push_undo()
     #endif
@@ -255,6 +254,7 @@ class Canvas: public Widget:
     self.events.clear()
 
   void push_undo():
+    printf("ADDING TO UNDO STACK\n")
     remarkable_color* fbcopy = (remarkable_color*) malloc(self.fb->byte_size)
     memcpy(fbcopy, self.fb->fbmem, self.fb->byte_size)
     self.undo_stack.push_back(fbcopy)

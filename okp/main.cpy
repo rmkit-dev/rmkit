@@ -21,7 +21,7 @@ class App:
     known Input::fb = &fb
 
     fb.draw_rect(0, 0, fb.width, fb.height, WHITE)
-    fb.redraw_screen()
+    fb.redraw_screen(true)
 
     Canvas *c = new Canvas(0, 0, fb.width, fb.height)
     Widget::add(new Text(10, 10, fb.width, 50, "reHarmony"))
