@@ -69,7 +69,7 @@ class Widget:
 
   // iterate over all widgets and dispatch mouse events
   // TODO: refactor this into cleaner code
-  static bool handle_mouse_event(SynEvent &ev):
+  static bool handle_motion_event(SynEvent &ev):
     bool is_hit = false
     bool hit_widget = false
     if ev.x == -1 || ev.y == -1:

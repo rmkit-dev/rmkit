@@ -20,8 +20,7 @@ class App:
     known Widget::fb = &fb
     known Input::fb = &fb
 
-    fb.draw_rect(0, 0, fb.width, fb.height, WHITE)
-    fb.redraw_screen(true)
+    fb.clear_screen()
 
     Canvas *c = new Canvas(0, 0, fb.width, fb.height)
     Widget::add(new Text(10, 10, fb.width, 50, "reHarmony"))
@@ -33,7 +32,12 @@ class App:
     Widget::add(c)
 
 
-  def handle_event(SynEvent &syn_ev):
+  def handle_key_event(KeyEvent &key_ev):
+    if key_ev.is_pressed && key_ev.key == KEY_HOME:
+      fb.clear_screen()
+      Widget::refresh()
+
+  def handle_motion_event(SynEvent &syn_ev):
     #ifdef DEBUG_INPUT
     if (auto m_ev = Input::is_mouse_event(syn_ev)):
       print "MOUSE EVENT"
@@ -43,7 +47,7 @@ class App:
       print "WACOM EVENT"
     #endif
 
-    Widget::handle_mouse_event(syn_ev)
+    Widget::handle_motion_event(syn_ev)
 
   def run():
     Widget::main(fb)
@@ -52,8 +56,11 @@ class App:
     printf("HANDLING RUN\n")
     while true:
       input.listen_all()
-      for auto ev : input.all_events:
-        self.handle_event(ev)
+      for auto ev : input.all_motion_events:
+        self.handle_motion_event(ev)
+
+      for auto ev : input.all_key_events:
+        self.handle_key_event(ev)
 
       Widget::main(fb)
       fb.redraw_screen()

@@ -8,7 +8,7 @@
 
 using namespace std
 
-// #define DEBUG_INPUT_EVENT 0
+//#define DEBUG_INPUT_EVENT 0
 
 class Event:
   public:
@@ -25,17 +25,25 @@ class Event:
 class SynEvent: public Event:
   public:
   int x, y, left, right, middle
-  shared_ptr<Event> original
+  Event *original
   SynEvent(){}
 
   def set_original(Event *ev):
-    self.original = shared_ptr<Event>(ev)
+    self.original = ev
 
+class KeyEvent: public Event:
+  public:
+  int key, is_pressed
 
 class ButtonEvent: public Event:
   public:
+  int key = -1, is_pressed = 0
   ButtonEvent() {}
   def update(input_event data):
+    if data.type == EV_KEY:
+      self.key = data.code
+      self.is_pressed = data.value
+
     self.print_event(data)
 
 class TouchEvent: public Event:
@@ -50,6 +58,10 @@ class TouchEvent: public Event:
       case ABS_MT_POSITION_Y:
         self.y = (MTHEIGHT - data.value)*MT_Y_SCALAR
         break
+      case ABS_MT_TRACKING_ID:
+        self.left = data.value > -1
+        break
+
 
   def update(input_event data):
     self.print_event(data)
@@ -103,6 +115,7 @@ class Input:
   public:
   int mouse_fd, wacom_fd, touch_fd, gpio_fd, bytes, max_fd
   int mouse_x, mouse_y
+  int touch_x, touch_y
   int wacom_btn_touch = 0
   unsigned char data[3]
   input_event ev_data[64]
@@ -113,7 +126,8 @@ class Input:
   vector<MouseEvent> mouse_events
   vector<TouchEvent> touch_events
   vector<ButtonEvent> button_events
-  vector<SynEvent> all_events
+  vector<SynEvent> all_motion_events
+  vector<KeyEvent> all_key_events
 
   Input():
     printf("Initializing input\n")
@@ -143,7 +157,8 @@ class Input:
     mouse_events.clear()
     touch_events.clear()
     button_events.clear()
-    all_events.clear()
+    all_motion_events.clear()
+    all_key_events.clear()
 
   void monitor(int fd):
     FD_SET(fd,&rdfs)
@@ -187,16 +202,30 @@ $   bytes = read(fd, ev_data, sizeof(input_event) * 64);
     pass
 
 
-  def marshal_touch(TouchEvent ev):
+  def marshal_button(ButtonEvent &ev):
+    KeyEvent key_ev
+    key_ev.key = ev.key
+    key_ev.is_pressed = ev.is_pressed
+    self.all_key_events.push_back(key_ev)
+
+  def marshal_touch(TouchEvent &ev):
     SynEvent syn_ev;
-    syn_ev.x = ev.x
-    syn_ev.y = ev.y
-    syn_ev.left = 1
+    syn_ev.left = ev.left
+
+    // if there's no left click, we re-use the last x,y coordinate
+    if !ev.left:
+      syn_ev.x = self.touch_x
+      syn_ev.y = self.touch_y
+    else:
+      syn_ev.x = ev.x
+      syn_ev.y = ev.y
+    self.touch_x = syn_ev.x
+    self.touch_y = syn_ev.y
     syn_ev.set_original(new TouchEvent(ev))
 
-    self.all_events.push_back(syn_ev)
+    self.all_motion_events.push_back(syn_ev)
 
-  def marshal_wacom(WacomEvent ev):
+  def marshal_wacom(WacomEvent &ev):
     SynEvent syn_ev;
     syn_ev.x = ev.x
     syn_ev.y = ev.y
@@ -207,9 +236,9 @@ $   bytes = read(fd, ev_data, sizeof(input_event) * 64);
     syn_ev.left = self.wacom_btn_touch
     syn_ev.right = !self.wacom_btn_touch
     syn_ev.set_original(new WacomEvent(ev))
-    self.all_events.push_back(syn_ev)
+    self.all_motion_events.push_back(syn_ev)
 
-  def marshal_mouse(MouseEvent ev):
+  def marshal_mouse(MouseEvent &ev):
     self.mouse_x += ev.x
     self.mouse_y += ev.y
 
@@ -237,7 +266,7 @@ $   bytes = read(fd, ev_data, sizeof(input_event) * 64);
     syn_ev.right = ev.right
     syn_ev.set_original(new MouseEvent(ev))
 
-    self.all_events.push_back(syn_ev)
+    self.all_motion_events.push_back(syn_ev)
 
   // wacom = pen. naming comes from libremarkable
   void handle_wacom():
@@ -276,13 +305,16 @@ $   bytes = read(fd, ev_data, sizeof(input_event) * 64);
     for auto ev : self.touch_events:
       self.marshal_touch(ev)
 
+    for auto ev : self.button_events:
+      self.marshal_button(ev)
+
 
   static WacomEvent* is_wacom_event(SynEvent &syn_ev):
-    return dynamic_cast<WacomEvent*>(syn_ev.original.get())
+    return dynamic_cast<WacomEvent*>(syn_ev.original)
   static MouseEvent* is_mouse_event(SynEvent &syn_ev):
-    return dynamic_cast<MouseEvent*>(syn_ev.original.get())
+    return dynamic_cast<MouseEvent*>(syn_ev.original)
   static TouchEvent* is_touch_event(SynEvent &syn_ev):
-    return dynamic_cast<TouchEvent*>(syn_ev.original.get())
+    return dynamic_cast<TouchEvent*>(syn_ev.original)
 
 FB* Input::fb = NULL
 #endif

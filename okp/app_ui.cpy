@@ -10,7 +10,7 @@ class ToolButton: public Button:
     self.text = tools[tool]
     self.dirty = 1
 
-  void on_mouse_click(SynEvent):
+  void on_mouse_click(SynEvent&):
     printf("TOOL CLICKED\n")
     tool++
     tool %= tools.size()
