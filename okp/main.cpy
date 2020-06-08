@@ -1,5 +1,5 @@
 #include "fb.h"
-#include "input.h"
+#include "input/input.h"
 #include "app_ui.h"
 #include "ui/widgets.h"
 

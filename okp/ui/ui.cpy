@@ -1,7 +1,7 @@
 #include "../defines.h"
 
 #include "../fb.h"
-#include "../input.h"
+#include "../input/input.h"
 #include "scene.h"
 
 namespace ui:
