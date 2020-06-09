@@ -32,8 +32,16 @@ namespace ui:
       return input::is_touch_event(ev) != NULL
 
     void on_mouse_move(input::SynEvent &ev):
-      events.push_back(ev)
-      self.redraw()
+      stroke = 4
+      if ev.original != NULL:
+        if last_ev.original != NULL:
+          fb->draw_line(last_ev.x, last_ev.y, ev.x,ev.y, stroke, BLACK)
+          vfb->draw_line(last_ev.x, last_ev.y, ev.x,ev.y, stroke, BLACK)
+        else:
+          fb->draw_rect(ev.x, ev.y, stroke, stroke, BLACK)
+          vfb->draw_rect(ev.x, ev.y, stroke, stroke, BLACK)
+        update_dirty(self.dirty_rect, ev.x, ev.y)
+      last_ev = ev
 
     void on_mouse_up(input::SynEvent &ev):
       #ifdef DEV
@@ -42,30 +50,19 @@ namespace ui:
 
       input::SynEvent null_ev
       null_ev.original = NULL
-      self.events.push_back(null_ev)
+      last_ev = null_ev
 
     void on_mouse_hover(input::SynEvent &ev):
       pass
 
     void redraw():
-      stroke = 4
-      for auto ev: self.events:
-        if ev.original != NULL:
-          if last_ev.original != NULL:
-            fb->draw_line(last_ev.x, last_ev.y, ev.x,ev.y, stroke, BLACK)
-            vfb->draw_line(last_ev.x, last_ev.y, ev.x,ev.y, stroke, BLACK)
-          else:
-            fb->draw_rect(ev.x, ev.y, stroke, stroke, BLACK)
-            vfb->draw_rect(ev.x, ev.y, stroke, stroke, BLACK)
-          update_dirty(self.dirty_rect, ev.x, ev.y)
-        last_ev = ev
-      self.events.clear()
+      memcpy(self.fb->fbmem, vfb->fbmem, self.fb->byte_size)
 
     void push_undo():
       print "ADDING TO UNDO STACK, DIRTY AREA IS", \
         dirty_rect.x0, dirty_rect.y0, dirty_rect.x1, dirty_rect.y1
       remarkable_color* fbcopy = (remarkable_color*) malloc(self.fb->byte_size)
-      memcpy(fbcopy, self.fb->fbmem, self.fb->byte_size)
+      memcpy(fbcopy, vfb->fbmem, self.fb->byte_size)
       self.undo_stack.push_back(fbcopy)
       reset_dirty(self.dirty_rect)
 
@@ -76,6 +73,7 @@ namespace ui:
         self.undo_stack.pop_back()
         remarkable_color* undofb = self.undo_stack.back()
         memcpy(self.fb->fbmem, undofb, self.fb->byte_size)
+        memcpy(vfb->fbmem, undofb, self.fb->byte_size)
         MainLoop::refresh()
 
     void redo():
@@ -83,5 +81,6 @@ namespace ui:
         remarkable_color* redofb = self.redo_stack.back()
         self.redo_stack.pop_back()
         memcpy(self.fb->fbmem, redofb, self.fb->byte_size)
+        memcpy(vfb->fbmem, redofb, self.fb->byte_size)
         self.undo_stack.push_back(redofb)
         MainLoop::refresh()
