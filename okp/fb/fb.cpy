@@ -214,13 +214,21 @@ namespace framebuffer:
       self.fd = open("/dev/fb0", O_RDWR)
       self.fbmem = (remarkable_color*) mmap(NULL, self.byte_size, PROT_WRITE, MAP_SHARED, self.fd, 0)
 
-      auto_update_mode = AUTO_UPDATE_MODE_AUTOMATIC_MODE
-      ioctl(self.fd, MXCFB_SET_AUTO_UPDATE_MODE, &auto_update_mode);
-
       fb_var_screeninfo vinfo;
       if (ioctl(self.fd, FBIOGET_VSCREENINFO, &vinfo)):
         printf("Could not get screen vinfo for %s\n", "/dev/fb0")
         return
+
+      #ifdef REMARKABLE
+      // if we are using remarkable, then we set it to grayscale
+      vinfo.bits_per_pixel = 8;
+      vinfo.grayscale = GRAYSCALE_8BIT;
+      retval = ioctl(self.fd, FBIOPUT_VSCREENINFO, &vinfo);
+
+      auto_update_mode = AUTO_UPDATE_MODE_AUTOMATIC_MODE
+      ioctl(self.fd, MXCFB_SET_AUTO_UPDATE_MODE, (uint32_t) &auto_update_mode);
+
+      #endif
 
       print "XRES", vinfo.xres, "YRES", vinfo.yres, "BPP", vinfo.bits_per_pixel
 

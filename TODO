@@ -35,6 +35,7 @@ APP:
   * shaded
   * chrome
   * eraser
+* add SIG\* signal handlers to reset the framebuffer to its original settings
 
 
 TESTING:

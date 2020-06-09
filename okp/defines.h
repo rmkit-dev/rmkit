@@ -15,9 +15,11 @@
 #define TEMP_USE_REMARKABLE_DRAW 0x0018
 #define EPDC_FLAG_EXP1 0x270ce20
 
+#define EPDC_FLAG_USE_DITHERING_ALPHA 0x3ff00000
+
 #ifdef REMARKABLE
 // remarkable uses rgb565_le but is grayscale
-#define remarkable_color uint16_t
+#define remarkable_color uint8_t
 #else
 // on linux framebuffer we have 32bit colors
 #define remarkable_color uint32_t
