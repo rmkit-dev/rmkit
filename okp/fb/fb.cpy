@@ -133,7 +133,12 @@ namespace framebuffer:
             break
 
           if fill || (j == 0 || i == 0 || j == h-1 || i == w-1):
-            ptr[i] = color
+            if color == ERASER:
+              if ptr[i] != WHITE:
+                if int(ptr + i) % 5 == 0 || int(ptr + i) % 3 == 0:
+                  ptr[i] = WHITE
+            else:
+              ptr[i] = color
         ptr += self.width
 
     def draw_bitmap(freetype::image_data image, int o_x, int o_y):

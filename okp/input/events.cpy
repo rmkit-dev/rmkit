@@ -19,6 +19,7 @@ namespace input:
   class SynEvent: public Event:
     public:
     int x, y, left, right, middle
+    int eraser = -1
     Event *original
     SynEvent(){}
 
@@ -76,13 +77,18 @@ namespace input:
     public:
     int x = -1, y = -1, pressure = 0
     int btn_touch = -1
-    bool pen, eraser, button
-
+    int eraser = -1
 
     handle_key(input_event data):
       switch data.code:
         case BTN_TOUCH:
           self.btn_touch = data.value
+          break
+        case BTN_TOOL_RUBBER:
+          self.eraser = data.value
+          break
+        case BTN_STYLUS:
+          self.eraser = data.value
           break
 
     handle_abs(input_event data):
@@ -97,7 +103,6 @@ namespace input:
           self.pressure = data.value
 
     update(input_event data):
-      self.print_event(data)
       switch data.type:
         case 1:
           self.handle_key(data)

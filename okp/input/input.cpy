@@ -17,7 +17,7 @@ namespace input:
     int mouse_fd, wacom_fd, touch_fd, gpio_fd, bytes, max_fd
     int mouse_x, mouse_y
     int touch_x, touch_y
-    int wacom_btn_touch = 0
+    int wacom_btn_touch = 0, wacom_btn_eraser = 0
     unsigned char data[3]
     input_event ev_data[64]
     fd_set rdfs
@@ -135,8 +135,12 @@ namespace input:
       if ev.btn_touch != -1:
         self.wacom_btn_touch = ev.btn_touch
 
+      if ev.eraser != -1:
+        self.wacom_btn_eraser = ev.eraser
+
       syn_ev.left = self.wacom_btn_touch
       syn_ev.right = !self.wacom_btn_touch
+      syn_ev.eraser = self.wacom_btn_eraser
       syn_ev.set_original(new WacomEvent(ev))
       self.all_motion_events.push_back(syn_ev)
 
@@ -166,6 +170,7 @@ namespace input:
       syn_ev.y = o_y
       syn_ev.left = ev.left
       syn_ev.right = ev.right
+      syn_ev.eraser = -1
       syn_ev.set_original(new MouseEvent(ev))
 
       self.all_motion_events.push_back(syn_ev)

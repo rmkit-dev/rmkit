@@ -1,11 +1,17 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
-#define WHITE 0xFFFFFFFF
-#define GRAY 0x07E0
-#define BLACK 0
+#define WHITE remarkable_color(0x000FFFFF)
+#define GRAY remarkable_color(0x4444)
+#define BLACK remarkable_color(0)
+#define ERASER remarkable_color(0x93)
 
 #define WAVEFORM_MODE_DU 0x1
+#define WAVEFORM_MODE_GC16 0x2
+#define WAVEFORM_MODE_GC4 0x3
+#define WAVEFORM_MODE_A2 0x4
+#define WAVEFORM_MODE_DU4 0x7
+#define WAVEFORM_MODE_AUTO 257
 #define TEMP_USE_REMARKABLE_DRAW 0x0018
 #define EPDC_FLAG_EXP1 0x270ce20
 

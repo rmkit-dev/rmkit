@@ -35,7 +35,6 @@ class App:
 
     canvas = new ui::Canvas(0, 0, fb->width, fb->height)
     w, h = fb->get_display_size()
-    print "FB HEIGHT", h
 
     toolbar_area = new ui::VerticalLayout(0, 0, w, h, notebook)
     minibar_area = new ui::VerticalLayout(0, 0, w, h, notebook)

@@ -17,6 +17,8 @@ namespace ui:
     input::SynEvent last_ev
     int byte_size
 
+    bool erasing
+
     framebuffer::FBRect dirty_rect
     shared_ptr<framebuffer::VirtualFB> vfb
 
@@ -37,26 +39,34 @@ namespace ui:
         free(self.mem)
       self.mem = NULL
 
-    bool ignore_event(input::SynEvent &ev):
-      return input::is_touch_event(ev) != NULL
+    void run_event(input::SynEvent &ev):
+      if ev.original == NULL:
+        return
 
-    void on_mouse_move(input::SynEvent &ev):
+      color = BLACK
       stroke = 4
+      off = 0
+      if ev.eraser > 0:
+        if self.erasing:
+          color = WHITE
+        else:
+          color = ERASER
+        stroke = 10
+        off=-4
+
+        if !self.erasing:
+          self.eraser_events.push_back(ev)
+
       if ev.original != NULL:
         if last_ev.original != NULL:
-          fb->draw_line(last_ev.x, last_ev.y, ev.x,ev.y, stroke, BLACK)
-          vfb->draw_line(last_ev.x, last_ev.y, ev.x,ev.y, stroke, BLACK)
+          fb->draw_line(last_ev.x-off, last_ev.y-off, ev.x,ev.y, stroke, color)
+          vfb->draw_line(last_ev.x-off, last_ev.y-off, ev.x,ev.y, stroke, color)
         else:
-          fb->draw_rect(ev.x, ev.y, stroke, stroke, BLACK)
-          vfb->draw_rect(ev.x, ev.y, stroke, stroke, BLACK)
+          fb->draw_rect(ev.x-off, ev.y-off, stroke, stroke, color)
+          vfb->draw_rect(ev.x-off, ev.y-off, stroke, stroke, color)
         update_dirty(self.dirty_rect, ev.x, ev.y)
       last_ev = ev
 
-    void on_mouse_up(input::SynEvent &ev):
-      finish_stroke()
-
-    void on_mouse_hover(input::SynEvent &ev):
-      pass
 
     void finish_stroke():
       push_undo()
@@ -64,6 +74,28 @@ namespace ui:
       input::SynEvent null_ev
       null_ev.original = NULL
       last_ev = null_ev
+
+      if self.eraser_events.size():
+        self.erasing = true
+        for auto &ev: self.eraser_events:
+          self.run_event(ev)
+        self.erasing = false
+        self.eraser_events.clear()
+        self.eraser_events.push_back(null_ev)
+
+      last_ev = null_ev
+
+    bool ignore_event(input::SynEvent &ev):
+      return input::is_touch_event(ev) != NULL
+
+    void on_mouse_move(input::SynEvent &ev):
+      run_event(ev)
+
+    void on_mouse_up(input::SynEvent &ev):
+      finish_stroke()
+
+    void on_mouse_hover(input::SynEvent &ev):
+      pass
 
     void redraw():
       memcpy(self.fb->fbmem, vfb->fbmem, self.byte_size)
