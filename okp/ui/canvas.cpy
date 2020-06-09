@@ -6,19 +6,22 @@ namespace ui:
     int mx, my
     remarkable_color *mem
     vector<input::SynEvent> events;
-    vector<remarkable_color*> undo_stack;
-    vector<remarkable_color*> redo_stack;
+    vector<shared_ptr<remarkable_color>> undo_stack;
+    vector<shared_ptr<remarkable_color>> redo_stack;
     input::SynEvent last_ev
+    int byte_size
 
     framebuffer::FBRect dirty_rect
     shared_ptr<framebuffer::VirtualFB> vfb
 
     Canvas(int x, y, w, h): Widget(x,y,w,h):
+      px_width, px_height = self.fb->get_display_size()
+      self.byte_size = px_width * px_height * sizeof(remarkable_color)
       vfb = make_shared<framebuffer::VirtualFB>()
       self.mem = (remarkable_color*) malloc(sizeof(remarkable_color) * w * h)
-      remarkable_color* fbcopy = (remarkable_color*) malloc(self.fb->byte_size)
-      memcpy(fbcopy, self.fb->fbmem, self.fb->byte_size)
-      memcpy(vfb->fbmem, self.fb->fbmem, self.fb->byte_size)
+      fbcopy = shared_ptr<remarkable_color>((remarkable_color*) malloc(self.byte_size))
+      memcpy(fbcopy.get(), self.fb->fbmem, self.byte_size)
+      memcpy(vfb->fbmem, self.fb->fbmem, self.byte_size)
 
       self.undo_stack.push_back(fbcopy)
       reset_dirty(self.dirty_rect)
@@ -44,25 +47,26 @@ namespace ui:
       last_ev = ev
 
     void on_mouse_up(input::SynEvent &ev):
-      #ifdef DEV
+      finish_stroke()
+
+    void on_mouse_hover(input::SynEvent &ev):
+      pass
+
+    void finish_stroke():
       push_undo()
-      #endif
 
       input::SynEvent null_ev
       null_ev.original = NULL
       last_ev = null_ev
 
-    void on_mouse_hover(input::SynEvent &ev):
-      pass
-
     void redraw():
-      memcpy(self.fb->fbmem, vfb->fbmem, self.fb->byte_size)
+      memcpy(self.fb->fbmem, vfb->fbmem, self.byte_size)
 
     void push_undo():
       print "ADDING TO UNDO STACK, DIRTY AREA IS", \
         dirty_rect.x0, dirty_rect.y0, dirty_rect.x1, dirty_rect.y1
-      remarkable_color* fbcopy = (remarkable_color*) malloc(self.fb->byte_size)
-      memcpy(fbcopy, vfb->fbmem, self.fb->byte_size)
+      fbcopy = shared_ptr<remarkable_color>((remarkable_color*) malloc(self.byte_size))
+      memcpy(fbcopy.get(), vfb->fbmem, self.byte_size)
       self.undo_stack.push_back(fbcopy)
       reset_dirty(self.dirty_rect)
 
@@ -71,16 +75,16 @@ namespace ui:
         // put last fb from undo stack into fb
         self.redo_stack.push_back(self.undo_stack.back())
         self.undo_stack.pop_back()
-        remarkable_color* undofb = self.undo_stack.back()
-        memcpy(self.fb->fbmem, undofb, self.fb->byte_size)
-        memcpy(vfb->fbmem, undofb, self.fb->byte_size)
-        MainLoop::refresh()
+        undofb = self.undo_stack.back()
+        memcpy(self.fb->fbmem, undofb.get(), self.byte_size)
+        memcpy(vfb->fbmem, undofb.get(), self.byte_size)
+        ui::MainLoop::full_refresh()
 
     void redo():
       if self.redo_stack.size() > 0:
-        remarkable_color* redofb = self.redo_stack.back()
+        redofb = self.redo_stack.back()
         self.redo_stack.pop_back()
-        memcpy(self.fb->fbmem, redofb, self.fb->byte_size)
-        memcpy(vfb->fbmem, redofb, self.fb->byte_size)
+        memcpy(self.fb->fbmem, redofb.get(), self.byte_size)
+        memcpy(vfb->fbmem, redofb.get(), self.byte_size)
         self.undo_stack.push_back(redofb)
-        MainLoop::refresh()
+        ui::MainLoop::full_refresh()
