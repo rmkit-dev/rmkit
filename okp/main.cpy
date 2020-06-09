@@ -37,11 +37,25 @@ class App:
     w, h = fb->get_display_size()
     print "FB HEIGHT", h
 
-    topbar = new ui::HorizontalLayout(10, 10, w, 50, notebook)
+    toolbar_area = new ui::VerticalLayout(0, 0, w, h, notebook)
+    minibar_area = new ui::VerticalLayout(0, 0, w, h, notebook)
+    topbar = new ui::HorizontalLayout(0, 0, w, 50, notebook)
+    minibar = new ui::HorizontalLayout(0, 0, w, 50, notebook)
+
+
+    // aligns the topbar to the bottom of the screen by packing end
+    // this is an example of nesting a layout
+    toolbar_area->pack_end(topbar)
+    minibar_area->pack_end(minibar)
+    minibar->hide()
+
+
+    // we always have to pack layouts in order, i believe
+    minibar->pack_start(new app_ui::HideButton(0, 0, 200, 50, topbar, minibar))
+
     topbar->pack_end(new ui::Text(0, 0, 200, 50, "rmHarmony"))
-
-
     // because we pack end, we go in reverse order
+    topbar->pack_start(new app_ui::HideButton(0, 0, 200, 50, topbar, minibar))
     topbar->pack_start(new app_ui::ToolButton(0, 0, 200, 50, canvas))
     topbar->pack_start(new app_ui::UndoButton(0, 0, 200, 50, canvas))
     topbar->pack_start(new app_ui::RedoButton(0, 0, 200, 50, canvas))

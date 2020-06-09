@@ -66,7 +66,7 @@ namespace ui:
 
     Canvas(int x, y, w, h): Widget(x,y,w,h):
       vfb = make_shared<framebuffer::VirtualFB>()
-      this->mem = (remarkable_color*) malloc(sizeof(remarkable_color) * w * h)
+      self.mem = (remarkable_color*) malloc(sizeof(remarkable_color) * w * h)
       remarkable_color* fbcopy = (remarkable_color*) malloc(self.fb->byte_size)
       memcpy(fbcopy, self.fb->fbmem, self.fb->byte_size)
       memcpy(vfb->fbmem, self.fb->fbmem, self.fb->byte_size)
@@ -75,9 +75,9 @@ namespace ui:
       reset_dirty(self.dirty_rect)
 
     ~Canvas():
-      if this->mem != NULL:
-        free(this->mem)
-      this->mem = NULL
+      if self.mem != NULL:
+        free(self.mem)
+      self.mem = NULL
 
     bool ignore_event(input::SynEvent &ev):
       return input::is_touch_event(ev) != NULL

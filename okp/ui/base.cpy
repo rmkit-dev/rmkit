@@ -9,18 +9,27 @@ namespace ui:
     int x, y, w, h
     int mouse_down, mouse_inside, mouse_x, mouse_y
     int dirty
+    bool visible
 
     Widget(int x,y,w,h): x(x), y(y), w(w), h(h):
       printf("MAKING WIDGET %lx\n", (uint64_t) this)
 
       mouse_inside = false
       mouse_down = false
+      visible = true
 
       dirty = 1
 
     virtual void redraw():
       pass
 
+    virtual void hide():
+      visible = false
+
+    virtual void show():
+      visible = true
+
+    // {{{ SIGNAL HANDLERS
     virtual bool ignore_event(input::SynEvent &ev):
       return false
 
@@ -44,6 +53,7 @@ namespace ui:
 
     virtual void on_mouse_hover(input::SynEvent &ev):
       pass
+    // }}}
 
     // checks if this widget is hit by a button press
     bool is_hit(int o_x, o_y):
@@ -53,7 +63,7 @@ namespace ui:
       return true
 
     bool maybe_mark_dirty(int o_x, o_y):
-      if this->dirty:
+      if self.dirty:
         return false
 
       if is_hit(o_x, o_y):

@@ -32,10 +32,15 @@ namespace ui:
     static void show_overlay(Scene s):
       overlay = s
       overlay_is_visible = true
+      Widget::fb->clear_screen()
       MainLoop::refresh()
 
     static void hide_overlay():
       overlay_is_visible = false
+      Widget::fb->clear_screen()
+      MainLoop::refresh()
+
+    static void full_refresh():
       Widget::fb->clear_screen()
       MainLoop::refresh()
 
@@ -53,7 +58,7 @@ namespace ui:
         return false
 
       for auto widget: display_scene->widgets:
-        if widget->ignore_event(ev):
+        if widget->ignore_event(ev) || !widget->visible:
           continue
 
         is_hit = widget->is_hit(ev.x, ev.y)

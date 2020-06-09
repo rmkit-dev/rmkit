@@ -10,6 +10,9 @@ namespace ui:
 
     static void redraw(vector<shared_ptr<Widget>> &widgets):
       for auto &widget: widgets:
+        if !widget->visible:
+          continue
+
         if widget->dirty:
           widget->redraw()
           widget->dirty = 0

@@ -1,23 +1,33 @@
 #include "base.h"
+#include "../input/events.h"
 
 namespace ui:
   class Layout: public Widget:
     public:
     Scene scene
-    int x, y, w, h
     vector<shared_ptr<Widget>> children
     int padding = 0
 
-    Layout(int x, y, w, h, Scene s): Widget(x,y,w,h), scene(s), x(x), y(y), w(w), h(h):
+    Layout(int x, y, w, h, Scene s): Widget(x,y,w,h), scene(s):
       pass
 
     void add(Widget *w):
       children.push_back(shared_ptr<Widget>(w))
       scene->add(w)
 
-    void redraw():
-      for auto c: children:
-        c->redraw()
+    void hide():
+      for auto w: children:
+        w->hide()
+      self.visible = false
+
+    void show():
+      for auto w: children:
+        w->show()
+      self.visible = true
+
+    // Layouts generally don't receive events
+    bool ignore_event(input::SynEvent &ev):
+      return true
 
   class AbsLayout: public Layout:
     public:
