@@ -1,16 +1,20 @@
 DESIRED FEATURES:
 
 * save canvas to png (or notebooks)
-* erase content
+* browse notebooks
+* erase content, erase all, erase selection
 * implement brushes
+  * procedural: sketchy, chrome, shaded, etc
+  * normal: pen, marker, etc
+  * tilt and pressure effects
 * undo / redo
 * hideable toolbars
 * variable stroke width (button that allows 3 widths + pressure sensitive)
 * draw icons (instead of text)
 * draw to canvas using wacom input
-* hw buttons should be bound to actions
 * add launcher from button press so app can be launched / quit
 * add polished interactions
+* layout that scales based on resolution
 
 DRAWING:
 
@@ -19,15 +23,11 @@ DRAWING:
 
 EVENTS:
 
-* handle eraser (stylus)
 * handle multi touch events
 
 
 APP:
 
-* add scenes for layering
-* add left side toolbar
-* make UI for simple app with buttons
 * implement dialogs
 * implement pop-over for buttons (Select / Dropdown button)
 * implement brushes
@@ -44,7 +44,6 @@ TESTING:
 
 PERF:
 
-* investigate dirty rectangles
 * minimize amount of memory needed for undo/redo
 
 DEV EXPERIENCE:
@@ -68,3 +67,9 @@ x write Canvas class (low pri?)
 x use shared\_ptr and unique\_ptr instead of raw pointers
 x only draw when the stylus is touching tablet
 x draw a line between consecutive mouse points (aka convert pixels into contours)
+x investigate dirty rectangles (this is almost automatic with eink display?)
+x make UI for simple app with buttons
+x add left side toolbar (made it bottom instead of left)
+x hw buttons should be bound to actions
+x add scenes for layering
+x handle eraser (stylus)
