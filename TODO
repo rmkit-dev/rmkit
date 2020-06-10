@@ -1,3 +1,11 @@
+NEXT:
+
+* brushes
+* text centering
+* clear canvas
+* save canvas to a notebook (just start with one notebook now?)
+* implement listbox widget
+
 DESIRED FEATURES:
 
 * save canvas to png (or notebooks)
