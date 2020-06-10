@@ -19,7 +19,7 @@ namespace input:
   class SynEvent: public Event:
     public:
     int x, y, left, right, middle
-    int eraser = -1
+    int eraser
     Event *original
     SynEvent(){}
 
@@ -85,10 +85,10 @@ namespace input:
           self.btn_touch = data.value
           break
         case BTN_TOOL_RUBBER:
-          self.eraser = data.value
+          self.eraser = data.value ? ERASER_RUBBER : 0
           break
         case BTN_STYLUS:
-          self.eraser = data.value
+          self.eraser = data.value ? ERASER_STYLUS : 0
           break
 
     handle_abs(input_event data):

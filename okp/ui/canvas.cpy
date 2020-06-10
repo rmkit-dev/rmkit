@@ -43,14 +43,14 @@ namespace ui:
       if ev.original == NULL:
         return
 
-      color = BLACK
+      int color = BLACK
       stroke = 4
       off = 0
-      if ev.eraser > 0:
+      if ev.eraser && ev.eraser != -1:
         if self.erasing:
           color = WHITE
         else:
-          color = ERASER
+          color = ev.eraser
         stroke = 10
         off=-4
 

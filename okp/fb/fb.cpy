@@ -112,6 +112,26 @@ namespace framebuffer:
     virtual tuple<int, int> get_display_size():
       return self.width, self.height
 
+    inline void do_dithering(remarkable_color *ptr, int i, j, color):
+      switch color:
+        case ERASER_RUBBER:
+          if pointer_size(ptr + i) % 2 == 0 || pointer_size(ptr + i) % 3 == 0:
+            ptr[i] = WHITE
+          else:
+            ptr[i] = BLACK
+          break
+        case ERASER_STYLUS:
+          if ptr[i] != WHITE:
+            if pointer_size(ptr + i) % 3 == 0 || pointer_size(ptr + i) % 5 == 0:
+              ptr[i] = WHITE
+          break
+        default:
+          ptr[i] = color
+
+    inline void draw_pixel(remarkable_color *ptr, int x, y, color):
+      ptr[y * self.width + x] = color
+      update_dirty(dirty_area, x, y)
+
     inline void draw_rect(int o_x, o_y, w, h, color, fill=true):
       self.dirty = 1
       remarkable_color* ptr = self.fbmem
@@ -133,12 +153,7 @@ namespace framebuffer:
             break
 
           if fill || (j == 0 || i == 0 || j == h-1 || i == w-1):
-            if color == ERASER:
-              if ptr[i] != WHITE:
-                if (pointer_size(ptr) + i) % 5 == 0 || pointer_size(ptr + i) % 3 == 0:
-                  ptr[i] = WHITE
-            else:
-              ptr[i] = color
+            do_dithering(ptr, i, j, color)
         ptr += self.width
 
     def draw_bitmap(freetype::image_data image, int o_x, int o_y):
