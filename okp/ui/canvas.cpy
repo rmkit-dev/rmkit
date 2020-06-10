@@ -1,13 +1,19 @@
 #include "base.h"
 
+#ifdef REMARKABLE
+#define UNDO_STACK_SIZE 10
+#else
+#define UNDO_STACK_SIZE 100
+#endif
 namespace ui:
   class Canvas: public Widget:
     public:
     int mx, my
     remarkable_color *mem
     vector<input::SynEvent> events;
-    vector<shared_ptr<remarkable_color>> undo_stack;
-    vector<shared_ptr<remarkable_color>> redo_stack;
+    vector<input::SynEvent> eraser_events;
+    deque<shared_ptr<remarkable_color>> undo_stack;
+    deque<shared_ptr<remarkable_color>> redo_stack;
     input::SynEvent last_ev
     int byte_size
 
@@ -62,12 +68,20 @@ namespace ui:
     void redraw():
       memcpy(self.fb->fbmem, vfb->fbmem, self.byte_size)
 
+    void trim_stacks():
+      while UNDO_STACK_SIZE > 0 && self.undo_stack.size() > UNDO_STACK_SIZE:
+        self.undo_stack.pop_front()
+      while UNDO_STACK_SIZE > 0 && self.redo_stack.size() > UNDO_STACK_SIZE:
+        self.redo_stack.pop_front()
+
     void push_undo():
       print "ADDING TO UNDO STACK, DIRTY AREA IS", \
         dirty_rect.x0, dirty_rect.y0, dirty_rect.x1, dirty_rect.y1
       fbcopy = shared_ptr<remarkable_color>((remarkable_color*) malloc(self.byte_size))
       memcpy(fbcopy.get(), vfb->fbmem, self.byte_size)
       self.undo_stack.push_back(fbcopy)
+
+      trim_stacks()
       reset_dirty(self.dirty_rect)
 
     void undo():
