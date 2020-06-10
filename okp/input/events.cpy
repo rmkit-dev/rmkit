@@ -18,8 +18,9 @@ namespace input:
 
   class SynEvent: public Event:
     public:
-    int x, y, left, right, middle
-    int eraser
+    int x, y
+    int left = 0, right = 0, middle = 0
+    int eraser = 0
     Event *original
     SynEvent(){}
 
@@ -69,7 +70,7 @@ namespace input:
     public:
     MouseEvent() {}
     signed char x, y
-    int left, right, middle
+    int left = 0 , right = 0 , middle = 0
     def update(input_event data):
       self.print_event(data)
 

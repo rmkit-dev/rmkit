@@ -139,7 +139,6 @@ namespace input:
         self.wacom_btn_eraser = ev.eraser
 
       syn_ev.left = self.wacom_btn_touch
-      syn_ev.right = !self.wacom_btn_touch
       syn_ev.eraser = self.wacom_btn_eraser
       syn_ev.set_original(new WacomEvent(ev))
       self.all_motion_events.push_back(syn_ev)
@@ -170,7 +169,12 @@ namespace input:
       syn_ev.y = o_y
       syn_ev.left = ev.left
       syn_ev.right = ev.right
-      syn_ev.eraser = -1
+
+      if ev.right:
+        syn_ev.eraser = ERASER_STYLUS
+      if ev.middle:
+        syn_ev.eraser = ERASER_RUBBER
+
       syn_ev.set_original(new MouseEvent(ev))
 
       self.all_motion_events.push_back(syn_ev)

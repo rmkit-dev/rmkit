@@ -68,7 +68,8 @@ namespace ui:
         prev_mouse_x = widget->mouse_x
         prev_mouse_y = widget->mouse_y
 
-        widget->mouse_down = ev.left && is_hit
+        mouse_down = ev.left || ev.right || ev.middle
+        widget->mouse_down = mouse_down && is_hit
         widget->mouse_inside = is_hit
 
         if is_hit && !hit_widget:
@@ -84,11 +85,11 @@ namespace ui:
 
 
           // mouse down event
-          if !prev_mouse_down && ev.left:
+          if !prev_mouse_down && mouse_down:
             widget->on_mouse_down(ev)
 
           // mouse up / click events
-          if prev_mouse_down && !ev.left::
+          if prev_mouse_down && !mouse_down:
             widget->on_mouse_up(ev)
             widget->on_mouse_click(ev)
 
