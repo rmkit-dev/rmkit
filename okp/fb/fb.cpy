@@ -135,7 +135,7 @@ namespace framebuffer:
           if fill || (j == 0 || i == 0 || j == h-1 || i == w-1):
             if color == ERASER:
               if ptr[i] != WHITE:
-                if int(ptr + i) % 5 == 0 || int(ptr + i) % 3 == 0:
+                if (pointer_size(ptr) + i) % 5 == 0 || pointer_size(ptr + i) % 3 == 0:
                   ptr[i] = WHITE
             else:
               ptr[i] = color

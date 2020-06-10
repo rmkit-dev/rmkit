@@ -12,7 +12,7 @@ namespace ui:
     bool visible
 
     Widget(int x,y,w,h): x(x), y(y), w(w), h(h):
-      printf("MAKING WIDGET %lx\n", (uint64_t) this)
+      printf("MAKING WIDGET %lx\n", (pointer_size) this)
 
       mouse_inside = false
       mouse_down = false
@@ -67,7 +67,7 @@ namespace ui:
         return false
 
       if is_hit(o_x, o_y):
-        printf("WIDGET IS DIRTY %lx\n", (uint64_t) this)
+        printf("WIDGET IS DIRTY %lx\n", (pointer_size) this)
         dirty = 1
         return true
       return false
