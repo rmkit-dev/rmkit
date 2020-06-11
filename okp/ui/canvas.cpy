@@ -37,10 +37,8 @@ namespace ui:
 
       self.undo_stack.push_back(fbcopy)
       reset_dirty(self.dirty_rect)
-      self.curr_brush = make_shared<Shaded>(self.fb)
-      self.curr_brush->init(1)
-      self.eraser = make_shared<Eraser>(self.fb)
-      self.eraser->init(10)
+      self.curr_brush = make_shared<Pencil>(self.fb,1)
+      self.eraser = make_shared<Eraser>(self.fb,10)
 
     ~Canvas():
       if self.mem != NULL:

@@ -12,14 +12,12 @@ namespace ui:
     int last_x = -1, last_y = -1
     int stroke_width
     vector<Point> points
+    string name = "brush"
 
-    Brush(framebuffer::FB *fb): fb(fb):
+    Brush(framebuffer::FB *fb, int stroke_width): fb(fb), stroke_width(stroke_width):
       pass
 
     ~Brush():
-      pass
-
-    virtual void init(int stroke): 
       pass
 
     virtual void destroy(): 
@@ -43,14 +41,12 @@ namespace ui:
 
   class Pencil: public Brush:
     public:
-    Pencil(framebuffer::FB *fb): Brush(fb):
-      pass
+
+    Pencil(framebuffer::FB *fb, int stroke_width): Brush(fb, stroke_width):
+      self.name = "pencil"
 
     ~Pencil():
       pass
-
-    void init(int _stroke_width):
-      self.stroke_width = _stroke_width
 
     void destroy(): 
       pass
@@ -67,14 +63,12 @@ namespace ui:
 
   class Eraser: public Brush:
     public:
-    Eraser(framebuffer::FB *fb): Brush(fb):
+    Eraser(framebuffer::FB *fb, int stroke_width): Brush(fb, stroke_width):
+      self.name = "eraser"
       pass
 
     ~Eraser():
       pass
-
-    void init(int _stroke_width):
-      self.stroke_width = _stroke_width
 
     void destroy(): 
       pass
@@ -99,14 +93,13 @@ namespace ui:
 
   class Shaded: public Brush:
     public:
-    Shaded(framebuffer::FB *fb): Brush(fb):
+
+    Shaded(framebuffer::FB *fb, int stroke_width): Brush(fb, stroke_width):
+      self.name = "shaded"
       pass
 
     ~Shaded():
       pass
-
-    void init(int _stroke_width):
-      self.stroke_width = _stroke_width
 
     void destroy(): 
       pass
