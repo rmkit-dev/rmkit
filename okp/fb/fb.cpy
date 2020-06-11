@@ -115,7 +115,7 @@ namespace framebuffer:
     inline void do_dithering(remarkable_color *ptr, int i, j, color):
       switch color:
         case ERASER_RUBBER:
-          if pointer_size(ptr + i) % 2 == 0:
+          if pointer_size(ptr + i) % 3 == 0 || pointer_size(ptr + i) % 5 == 0:
             ptr[i] = WHITE
           else:
             ptr[i] = BLACK

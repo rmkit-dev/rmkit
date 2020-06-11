@@ -1,4 +1,5 @@
 #include "base.h"
+#include "brush.h"
 
 #ifdef REMARKABLE
 #define UNDO_STACK_SIZE 10
@@ -22,6 +23,9 @@ namespace ui:
     framebuffer::FBRect dirty_rect
     shared_ptr<framebuffer::VirtualFB> vfb
 
+    shared_ptr<Brush> curr_brush
+    shared_ptr<Eraser> eraser
+
     Canvas(int x, y, w, h): Widget(x,y,w,h):
       px_width, px_height = self.fb->get_display_size()
       self.byte_size = px_width * px_height * sizeof(remarkable_color)
@@ -33,69 +37,38 @@ namespace ui:
 
       self.undo_stack.push_back(fbcopy)
       reset_dirty(self.dirty_rect)
+      self.curr_brush = make_shared<Shaded>(self.fb)
+      self.curr_brush->init(1)
+      self.eraser = make_shared<Eraser>(self.fb)
+      self.eraser->init(10)
 
     ~Canvas():
       if self.mem != NULL:
         free(self.mem)
       self.mem = NULL
 
-    void run_event(input::SynEvent &ev):
-      if ev.original == NULL:
-        return
-
-      int color = BLACK
-      stroke = 4
-      off = 0
-      if ev.eraser && ev.eraser != -1:
-        if self.erasing:
-          color = WHITE
-        else:
-          color = ev.eraser
-        stroke = 10
-        off=-4
-
-        if !self.erasing:
-          self.eraser_events.push_back(ev)
-
-      if ev.original != NULL:
-        if last_ev.original != NULL:
-          fb->draw_line(last_ev.x-off, last_ev.y-off, ev.x,ev.y, stroke, color)
-          vfb->draw_line(last_ev.x-off, last_ev.y-off, ev.x,ev.y, stroke, color)
-        else:
-          fb->draw_rect(ev.x-off, ev.y-off, stroke, stroke, color)
-          vfb->draw_rect(ev.x-off, ev.y-off, stroke, stroke, color)
-        update_dirty(self.dirty_rect, ev.x, ev.y)
-      last_ev = ev
-
-
-    void finish_stroke():
-      push_undo()
-
-      input::SynEvent null_ev
-      null_ev.original = NULL
-      last_ev = null_ev
-
-      if self.eraser_events.size():
-        self.erasing = true
-        for auto &ev: self.eraser_events:
-          self.run_event(ev)
-        self.erasing = false
-        self.eraser_events.clear()
-        self.eraser_events.push_back(null_ev)
-
-      last_ev = null_ev
-
     bool ignore_event(input::SynEvent &ev):
       return input::is_touch_event(ev) != NULL
 
     void on_mouse_move(input::SynEvent &ev):
-      run_event(ev)
+      brush = self.erasing ? self.eraser : self.curr_brush
+      brush->stroke(ev.x, ev.y)
+      brush->update_last_pos(ev.x, ev.y)
 
     void on_mouse_up(input::SynEvent &ev):
-      finish_stroke()
+      brush = self.erasing ? self.eraser : self.curr_brush
+      brush->stroke_end()
+      self.push_undo()
+      brush->update_last_pos(-1,-1)
 
     void on_mouse_hover(input::SynEvent &ev):
       pass
+
+    void on_mouse_down(input::SynEvent &ev):
+      self.erasing = ev.eraser && ev.eraser != -1
+      brush = self.erasing ? self.eraser : self.curr_brush
+      brush->stroke_start(ev.x, ev.y)
+      brush->update_last_pos(ev.x, ev.y)
 
     void redraw():
       memcpy(self.fb->fbmem, vfb->fbmem, self.byte_size)
