@@ -23,7 +23,7 @@ namespace ui:
 
     static void refresh(vector<shared_ptr<Widget>> &widgets):
       for auto &widget: widgets:
-        widget->dirty = 1
+        widget->mark_redraw()
         if widget->children.size():
           refresh(widget->children)
 

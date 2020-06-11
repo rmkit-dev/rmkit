@@ -14,11 +14,14 @@ namespace ui:
     vector<Point> points
     string name = "brush"
 
-    Brush(framebuffer::FB *fb, int stroke_width): fb(fb), stroke_width(stroke_width):
+    Brush(int stroke_width): stroke_width(stroke_width):
       pass
 
     ~Brush():
       pass
+
+    virtual void reset():
+      self.points.clear()
 
     virtual void destroy(): 
       pass
@@ -38,11 +41,14 @@ namespace ui:
       self.last_y = y
       self.points.push_back(Point{x,y})
 
+    void set_framebuffer(framebuffer::FB *f):
+      self.fb = f
+
 
   class Pencil: public Brush:
     public:
 
-    Pencil(framebuffer::FB *fb, int stroke_width): Brush(fb, stroke_width):
+    Pencil(int stroke_width): Brush(stroke_width):
       self.name = "pencil"
 
     ~Pencil():
@@ -63,7 +69,7 @@ namespace ui:
 
   class Eraser: public Brush:
     public:
-    Eraser(framebuffer::FB *fb, int stroke_width): Brush(fb, stroke_width):
+    Eraser(int stroke_width): Brush(stroke_width):
       self.name = "eraser"
       pass
 
@@ -94,9 +100,8 @@ namespace ui:
   class Shaded: public Brush:
     public:
 
-    Shaded(framebuffer::FB *fb, int stroke_width): Brush(fb, stroke_width):
+    Shaded(int stroke_width): Brush(stroke_width):
       self.name = "shaded"
-      pass
 
     ~Shaded():
       pass
@@ -108,6 +113,10 @@ namespace ui:
       pass
 
     void stroke(int x, y):
+      if self.last_x != -1:
+        self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width,\
+                           BLACK)
+
       for auto point: self.points:
         dx = point.x - x
         dy = point.y - y

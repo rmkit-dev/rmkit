@@ -50,11 +50,11 @@ class App:
 
 
     // we always have to pack layouts in order, i believe
-    minibar->pack_start(new app_ui::HideButton(0, 0, 200, 50, topbar, minibar))
+    minibar->pack_start(new app_ui::HideButton(0, 0, 200, 50, topbar, minibar), 20)
 
     topbar->pack_end(new ui::Text(0, 0, 200, 50, "rmHarmony"))
     // because we pack end, we go in reverse order
-    topbar->pack_start(new app_ui::HideButton(0, 0, 200, 50, topbar, minibar))
+    topbar->pack_start(new app_ui::HideButton(0, 0, 200, 50, topbar, minibar), 20)
     topbar->pack_start(new app_ui::ToolButton(0, 0, 200, 50, canvas))
     topbar->pack_start(new app_ui::UndoButton(0, 0, 200, 50, canvas))
     topbar->pack_start(new app_ui::RedoButton(0, 0, 200, 50, canvas))

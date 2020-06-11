@@ -29,6 +29,9 @@ namespace ui:
     virtual void show():
       visible = true
 
+    virtual void mark_redraw():
+      self.dirty = 1
+
     // {{{ SIGNAL HANDLERS
     virtual bool ignore_event(input::SynEvent &ev):
       return false

@@ -11,18 +11,20 @@ namespace app_ui:
     ToolButton(int x, y, w, h, ui::Canvas *c): ui::Button(x,y,w,h,"tool"):
       self.canvas = c
       self.dirty = 1
-      pencil = make_shared<ui::Pencil>(self.fb,1)
-      shaded = make_shared<ui::Shaded>(self.fb,1)
-      eraser = make_shared<ui::Eraser>(self.fb,10)
+
+      pencil = make_shared<ui::Pencil>(3)
+      shaded = make_shared<ui::Shaded>(1)
+      eraser = make_shared<ui::Eraser>(10)
+
       self.tools = {pencil, shaded, eraser}
       self.text = tools[idx]->name
-      self.canvas->curr_brush = tools[idx]
+      self.canvas->set_brush(tools[idx])
 
     void on_mouse_click(input::SynEvent&):
       idx++
       idx %= tools.size()
       self.text = tools[idx]->name
-      self.canvas->curr_brush = tools[idx]
+      self.canvas->set_brush(tools[idx])
 
   class UndoButton: public ui::Button:
     public:
