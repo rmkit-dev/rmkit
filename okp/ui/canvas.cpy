@@ -20,7 +20,7 @@ namespace ui:
     shared_ptr<framebuffer::VirtualFB> vfb
 
     shared_ptr<Brush> curr_brush
-    shared_ptr<Eraser> eraser
+    shared_ptr<Brush> eraser
 
     Canvas(int x, y, w, h): Widget(x,y,w,h):
       px_width, px_height = self.fb->get_display_size()
@@ -33,9 +33,10 @@ namespace ui:
 
       self.undo_stack.push_back(fbcopy)
       reset_dirty(self.dirty_rect)
-      self.curr_brush = make_shared<Pencil>(1)
-      self.eraser = make_shared<Eraser>(10)
-      self.eraser->set_framebuffer(self.fb)
+
+      self.set_brush(PENCIL)
+      self.eraser = ERASER
+      self.eraser->set_stroke_width(Brush::StrokeSize::MEDIUM)
 
     ~Canvas():
       if self.mem != NULL:
@@ -45,6 +46,7 @@ namespace ui:
     void set_brush(shared_ptr<Brush> brush):
       self.curr_brush = brush
       brush->reset()
+      brush->set_stroke_width(Brush::StrokeSize::MEDIUM)
       brush->set_framebuffer(self.vfb.get())
 
     bool ignore_event(input::SynEvent &ev):
@@ -74,8 +76,7 @@ namespace ui:
 
     void mark_redraw():
       self.dirty = 1
-      px_width, px_height = self.fb->get_display_size()
-      vfb->dirty_area = {0, 0, px_width, px_height}
+      vfb->dirty_area = {0, 0, self.fb->width, self.fb->height}
 
     void redraw():
       memcpy(self.fb->fbmem, vfb->fbmem, self.byte_size)

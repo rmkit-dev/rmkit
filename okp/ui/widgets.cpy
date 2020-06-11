@@ -8,6 +8,7 @@ namespace ui:
     Text(int x, y, w, h, string t): Widget(x, y, w, h):
       self.text = t
 
+    // TODO: cache the image buffer
     void redraw():
       freetype::image_data image;
       image.buffer = (uint32_t*) malloc(sizeof(uint32_t)*self.w*self.h)

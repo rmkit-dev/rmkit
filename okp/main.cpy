@@ -29,6 +29,7 @@ class App:
     known input::Input::fb = fb.get()
 
     fb->clear_screen()
+    fb->redraw_screen()
 
     notebook = ui::make_scene()
     ui::MainLoop::set_scene(notebook)

@@ -8,22 +8,37 @@ namespace ui:
 
   class Brush:
     public:
+    enum StrokeSize { THIN, MEDIUM, THICK }
+
     framebuffer::FB *fb
     int last_x = -1, last_y = -1
-    int stroke_width
     vector<Point> points
     string name = "brush"
 
-    Brush(int stroke_width): stroke_width(stroke_width):
-      pass
+    // stroke sizing
+    int stroke_width = 1
+    StrokeSize stroke_enum = StrokeSize::MEDIUM
+    int sw_thin =  1, sw_medium = 3, sw_thick = 5
+
+    Brush():
+      self.set_stroke_width(StrokeSize::MEDIUM)
 
     ~Brush():
       pass
 
+    inline int get_stroke_width(StrokeSize s):
+      switch s:
+        case StrokeSize::THIN:
+          return self.sw_thin
+        case StrokeSize::MEDIUM:
+          return self.sw_medium
+        case StrokeSize::THICK:
+          return self.sw_thick
+
     virtual void reset():
       self.points.clear()
 
-    virtual void destroy(): 
+    virtual void destroy():
       pass
 
     virtual void stroke_start(int x, y):
@@ -33,7 +48,7 @@ namespace ui:
       pass
 
     virtual void stroke_end():
-      // TODO return dirty_rect 
+      // TODO return dirty_rect
       pass
 
     void update_last_pos(int x, int y):
@@ -44,17 +59,21 @@ namespace ui:
     void set_framebuffer(framebuffer::FB *f):
       self.fb = f
 
+    virtual void set_stroke_width(StrokeSize s):
+      self.stroke_enum = s
+      self.stroke_width = self.get_stroke_width(s)
+      print "SETTING STROKE WIDTH", self.stroke_width
 
   class Pencil: public Brush:
     public:
 
-    Pencil(int stroke_width): Brush(stroke_width):
+    Pencil(): Brush():
       self.name = "pencil"
 
     ~Pencil():
       pass
 
-    void destroy(): 
+    void destroy():
       pass
 
     void stroke_start(int x, y):
@@ -69,14 +88,14 @@ namespace ui:
 
   class Eraser: public Brush:
     public:
-    Eraser(int stroke_width): Brush(stroke_width):
+    Eraser(): Brush():
       self.name = "eraser"
-      pass
+      sw_thin = 5; sw_medium = 10; sw_thick = 15
 
     ~Eraser():
       pass
 
-    void destroy(): 
+    void destroy():
       pass
 
     void stroke_start(int x, y):
@@ -85,28 +104,27 @@ namespace ui:
     void stroke(int x, y):
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width,\
-                           ERASER_RUBBER)
+        ERASER_RUBBER)
 
     void stroke_end():
       Point last_p = Point{-1,-1}
       for auto point: self.points:
         if last_p.x != -1:
-          self.fb->draw_line(last_p.x, last_p.y, point.x, point.y, self.stroke_width,\
-                           WHITE)
+          self.fb->draw_line(last_p.x, last_p.y, point.x, point.y, \
+          self.stroke_width, WHITE)
         last_p = point
       self.points.clear()
 
 
   class Shaded: public Brush:
     public:
-
-    Shaded(int stroke_width): Brush(stroke_width):
+    Shaded(): Brush():
       self.name = "shaded"
 
     ~Shaded():
       pass
 
-    void destroy(): 
+    void destroy():
       pass
 
     void stroke_start(int x, y):
@@ -114,8 +132,7 @@ namespace ui:
 
     void stroke(int x, y):
       if self.last_x != -1:
-        self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width,\
-                           BLACK)
+        self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, BLACK)
 
       for auto point: self.points:
         dx = point.x - x
@@ -126,3 +143,7 @@ namespace ui:
 
     void stroke_end():
       pass
+
+  static shared_ptr<Brush> ERASER = make_shared<Eraser>()
+  static shared_ptr<Brush> PENCIL = make_shared<Pencil>()
+  static shared_ptr<Brush> SHADED = make_shared<Shaded>()

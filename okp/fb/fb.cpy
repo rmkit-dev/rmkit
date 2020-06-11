@@ -234,17 +234,6 @@ namespace framebuffer:
         printf("Could not get screen vinfo for %s\n", "/dev/fb0")
         return
 
-      #ifdef REMARKABLE
-      // if we are using remarkable, then we set it to grayscale
-      vinfo.bits_per_pixel = 8;
-      vinfo.grayscale = GRAYSCALE_8BIT;
-      retval = ioctl(self.fd, FBIOPUT_VSCREENINFO, &vinfo);
-
-      auto_update_mode = AUTO_UPDATE_MODE_AUTOMATIC_MODE
-      ioctl(self.fd, MXCFB_SET_AUTO_UPDATE_MODE, (uint32_t) &auto_update_mode);
-
-      #endif
-
       print "XRES", vinfo.xres, "YRES", vinfo.yres, "BPP", vinfo.bits_per_pixel
 
     void wait_for_redraw(uint32_t update_marker):
@@ -257,7 +246,7 @@ namespace framebuffer:
 
       return vinfo.xres, vinfo.yres
 
-    int perform_redraw(bool full_screen, wait_for_refresh):
+    int perform_redraw(bool full_screen=false, wait_for_refresh=false):
       um = 0
       mxcfb_update_data update_data
       mxcfb_rect update_rect
@@ -312,3 +301,14 @@ namespace framebuffer:
     VirtualFB(): FB():
       self.fbmem = (remarkable_color*) malloc(self.byte_size)
       self.fd = -1
+
+  class RemarkableFB: public HardwareFB:
+    RemarkableFB():
+      // if we are using remarkable, then we set it to grayscale
+      fb_var_screeninfo vinfo = {0};
+      vinfo.bits_per_pixel = 8;
+      vinfo.grayscale = GRAYSCALE_8BIT;
+      retval = ioctl(self.fd, FBIOPUT_VSCREENINFO, &vinfo);
+
+      auto_update_mode = AUTO_UPDATE_MODE_AUTOMATIC_MODE
+      ioctl(self.fd, MXCFB_SET_AUTO_UPDATE_MODE, (pointer_size) &auto_update_mode);

@@ -12,11 +12,7 @@ namespace app_ui:
       self.canvas = c
       self.dirty = 1
 
-      pencil = make_shared<ui::Pencil>(3)
-      shaded = make_shared<ui::Shaded>(1)
-      eraser = make_shared<ui::Eraser>(10)
-
-      self.tools = {pencil, shaded, eraser}
+      self.tools = {ui::PENCIL, ui::SHADED, ui::ERASER}
       self.text = tools[idx]->name
       self.canvas->set_brush(tools[idx])
 
