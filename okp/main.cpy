@@ -19,10 +19,12 @@ class App:
 
   public:
   App():
-    #ifndef DEV
-    fb = make_shared<framebuffer::HardwareFB>()
-    #else
+    #ifdef REMARKABLE
+    fb = make_shared<framebuffer::RemarkableFB>()
+    #elif #DEV
     fb = make_shared<framebuffer::FileFB>()
+    #else
+    fb = make_shared<framebuffer::HardwareFB>()
     #endif
 
     known ui::Widget::fb = fb.get()
@@ -51,14 +53,14 @@ class App:
 
 
     // we always have to pack layouts in order, i believe
-    minibar->pack_start(new app_ui::HideButton(0, 0, 200, 50, topbar, minibar), 20)
+    minibar->pack_start(new app_ui::HideButton(0, 0, 50, 50, topbar, minibar), 20)
 
-    topbar->pack_end(new ui::Text(0, 0, 200, 50, "rmHarmony"))
     // because we pack end, we go in reverse order
-    topbar->pack_start(new app_ui::HideButton(0, 0, 200, 50, topbar, minibar), 20)
+    topbar->pack_start(new app_ui::HideButton(0, 0, 50, 50, topbar, minibar), 20)
     topbar->pack_start(new app_ui::ToolButton(0, 0, 200, 50, canvas))
-    topbar->pack_start(new app_ui::UndoButton(0, 0, 200, 50, canvas))
-    topbar->pack_start(new app_ui::RedoButton(0, 0, 200, 50, canvas))
+    topbar->pack_start(new app_ui::BrushSizeButton(0, 0, 200, 50, canvas))
+    topbar->pack_end(new app_ui::RedoButton(0, 0, 100, 50, canvas))
+    topbar->pack_end(new app_ui::UndoButton(0, 0, 100, 50, canvas))
 
     notebook->add(canvas)
 

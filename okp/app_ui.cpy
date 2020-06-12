@@ -22,6 +22,25 @@ namespace app_ui:
       self.text = tools[idx]->name
       self.canvas->set_brush(tools[idx])
 
+  class BrushSizeButton: public ui::Button:
+    public:
+    ui::Canvas *canvas
+    vector<ui::Brush::StrokeSize> strokes
+    vector<string> names
+    int idx = 1
+    BrushSizeButton(int x, y, w, h, ui::Canvas *c): ui::Button(x,y,w,h,""):
+      self.canvas = c
+      self.strokes = {ui::Brush::StrokeSize::THIN, ui::Brush::StrokeSize::MEDIUM, ui::Brush::StrokeSize::THICK}
+      self.names = vector<string>({ "thin", "medium", "wide" })
+      self.text = self.names[idx]
+      self.canvas->set_stroke_width(self.strokes[idx])
+
+    void on_mouse_click(input::SynEvent&):
+      idx++
+      idx %= self.strokes.size()
+      self.text = self.names[idx]
+      self.canvas->set_stroke_width(self.strokes[idx])
+
   class UndoButton: public ui::Button:
     public:
     ui::Canvas *canvas
@@ -45,7 +64,7 @@ namespace app_ui:
   class HideButton: public ui::Button:
     public:
     ui::Layout *toolbar, *minibar
-    HideButton(int x, y, w, h, ui::Layout *l, *m): ui::Button(x,y,w,h,"hide"):
+    HideButton(int x, y, w, h, ui::Layout *l, *m): ui::Button(x,y,w,h,"v"):
       self.toolbar = l
       self.minibar = m
 
@@ -62,5 +81,5 @@ namespace app_ui:
       ui::MainLoop::full_refresh()
 
     void redraw():
-      self.text = self.toolbar->visible ? "hide" : "show"
+      self.text = self.toolbar->visible ? "v" : "^"
       ui::Button::redraw()

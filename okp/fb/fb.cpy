@@ -303,9 +303,14 @@ namespace framebuffer:
       self.fd = -1
 
   class RemarkableFB: public HardwareFB:
+    public:
     RemarkableFB():
       // if we are using remarkable, then we set it to grayscale
-      fb_var_screeninfo vinfo = {0};
+      fb_var_screeninfo vinfo;
+      if (ioctl(self.fd, FBIOGET_VSCREENINFO, &vinfo)):
+        printf("Could not get screen vinfo for %s\n", "/dev/fb0")
+        exit(0)
+
       vinfo.bits_per_pixel = 8;
       vinfo.grayscale = GRAYSCALE_8BIT;
       retval = ioctl(self.fd, FBIOPUT_VSCREENINFO, &vinfo);

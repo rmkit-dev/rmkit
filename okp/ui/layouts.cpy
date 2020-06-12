@@ -1,6 +1,7 @@
 #include "base.h"
 #include "../input/events.h"
 
+#define DEBUG_LAYOUT
 namespace ui:
   class Layout: public Widget:
     public:
@@ -66,8 +67,8 @@ namespace ui:
   class HorizontalLayout: public AutoLayout:
     public:
     HorizontalLayout(int x, y, w, h, Scene s): AutoLayout(x,y,w,h,s):
-      start = 0
-      end = w
+      self.start = 0
+      self.end = w
 
     void pack_start(Widget *w, int padding=0):
       w->x += self.start + self.x + padding
