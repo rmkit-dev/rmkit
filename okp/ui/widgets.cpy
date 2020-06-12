@@ -15,7 +15,7 @@ namespace ui:
       memset(image.buffer, WHITE, sizeof(uint32_t)*self.w*self.h)
       image.w = self.w
       image.h = self.h
-      fb->draw_text(self.text, self.x, self.y, image)
+      fb->draw_text_center(self.text, self.x, self.y, image)
       free(image.buffer)
 
 

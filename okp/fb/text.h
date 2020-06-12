@@ -30,10 +30,11 @@ namespace freetype {
   }
 
 
-  void draw_bitmap(FT_Bitmap *bitmap, FT_Int x, FT_Int y, image_data image) {
+  int draw_bitmap(FT_Bitmap *bitmap, FT_Int x, FT_Int y, image_data image) {
     FT_Int i, j, p, q;
     FT_Int x_max = x + bitmap->width;
     FT_Int y_max = y + bitmap->rows;
+    int last_x = 0;
 
     /* for simplicity, we assume that `bitmap->pixel_mode' */
     /* is `FT_PIXEL_MODE_GRAY' (i.e., not a bitmap font)   */
@@ -46,13 +47,18 @@ namespace freetype {
         uint32_t val = bitmap->buffer[q * bitmap->width + p];
         if (val == 0) {
           val = WHITE;
+          if (i > last_x) { last_x = i; }
         } else {
           val = 255 - val;
         }
 
+
+
         image.buffer[j*image.w+i] = val;
       }
     }
+
+    return last_x;
   }
 
   int render_text(char* text, int x, int y, image_data image, int font_size = 24) {
@@ -87,6 +93,7 @@ namespace freetype {
     pen.y = target_height;
 
     int tOffsetY = slot->bitmap_top;
+    int last_x = 0;
     for (n = 0; n < num_chars; n++) {
       /* load glyph image into the slot (erase previous one) */
       error = FT_Load_Char(face, text[n], FT_LOAD_RENDER);
@@ -94,10 +101,11 @@ namespace freetype {
         continue; /* ignore errors */
       int offsetY = tOffsetY - slot->bitmap_top;
       pen.y += offsetY;
-      draw_bitmap(&slot->bitmap,
+      x = draw_bitmap(&slot->bitmap,
                   pen.x / 64,
                   pen.y / 64 - slot->bitmap_top + font_size,
                   image);
+      if (last_x < x) { last_x = x; }
       pen.y -= offsetY;
 
       /* increment pen position */
@@ -113,7 +121,7 @@ namespace freetype {
     FT_Done_Face(face);
     FT_Done_FreeType(library);
 
-    return 0;
+    return last_x;
   }
 }
 /* EOF */

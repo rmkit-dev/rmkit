@@ -166,11 +166,32 @@ namespace framebuffer:
 
       for j 0 image.h:
         for i 0 image.w:
+          if o_x + i >= self.width:
+            break
+
           ptr[i] = (remarkable_color) src[i]
         ptr += self.width
         src += image.w
 
-    def draw_text(string text, int x, int y, freetype::image_data image):
+    int draw_text_center(string text, int x, int y, freetype::image_data image):
+      max_x = freetype::render_text((char*)text.c_str(), x, y, image)
+      leftover_x = image.w - max_x
+      padding_x = 0
+      if leftover_x > 0:
+        padding_x = leftover_x / 2
+      draw_bitmap(image, x + padding_x, y)
+
+    int draw_text(string text, int x, int y, freetype::image_data image):
+      freetype::render_text((char*)text.c_str(), x, y, image)
+      draw_bitmap(image, x, y)
+
+    int draw_text_right(string text, int x, int y, freetype::image_data image):
+      max_x = freetype::render_text((char*)text.c_str(), x, y, image)
+      leftover_x = image.w - max_x
+      padding_x = 0
+      if leftover_x > 0:
+        padding_x = leftover_x
+      draw_bitmap(image, x + padding_x, y)
       freetype::render_text((char*)text.c_str(), x, y, image)
       draw_bitmap(image, x, y)
 
