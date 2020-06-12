@@ -7,18 +7,12 @@ namespace ui:
     vector<shared_ptr<Widget>> children
 
     int x, y, w, h
-    int mouse_down, mouse_inside, mouse_x, mouse_y
-    int dirty
-    bool visible
+    int mouse_down = false, mouse_inside = false, mouse_x, mouse_y
+    int dirty = 1
+    bool visible = true
 
     Widget(int x,y,w,h): x(x), y(y), w(w), h(h):
-      printf("MAKING WIDGET %lx\n", (pointer_size) this)
-
-      mouse_inside = false
-      mouse_down = false
-      visible = true
-
-      dirty = 1
+      pass
 
     virtual void redraw():
       pass

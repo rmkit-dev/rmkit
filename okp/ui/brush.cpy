@@ -62,7 +62,6 @@ namespace ui:
     virtual void set_stroke_width(StrokeSize s):
       self.stroke_enum = s
       self.stroke_width = self.get_stroke_width(s)
-      print "SETTING STROKE WIDTH", self.stroke_width
 
   class Pencil: public Brush:
     public:

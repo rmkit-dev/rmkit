@@ -21,7 +21,7 @@ class App:
   App():
     #ifdef REMARKABLE
     fb = make_shared<framebuffer::RemarkableFB>()
-    #elif #DEV
+    #elif DEV
     fb = make_shared<framebuffer::FileFB>()
     #else
     fb = make_shared<framebuffer::HardwareFB>()
