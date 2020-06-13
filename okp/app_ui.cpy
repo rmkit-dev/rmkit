@@ -1,45 +1,32 @@
 #include "ui/widgets.h"
 #include "ui/scene.h"
 #include "ui/ui.h"
+#include "ui/dropdown.h"
 
 namespace app_ui:
-  class ToolButton: public ui::Button:
+
+  vector<shared_ptr<ui::Brush>> tools = {ui::PENCIL, ui::SHADED, ui::ERASER}
+  class ToolButton: public ui::DropdownButton<shared_ptr<ui::Brush>>:
     public:
     ui::Canvas *canvas
-    vector<shared_ptr<ui::Brush>> tools
-    int idx = 0
-    ToolButton(int x, y, w, h, ui::Canvas *c): ui::Button(x,y,w,h,"tool"):
+    ToolButton(int x, y, w, h, ui::Canvas *c): \
+      ui::DropdownButton<shared_ptr<ui::Brush>>(x,y,w,h,tools)
       self.canvas = c
-      self.dirty = 1
 
-      self.tools = {ui::PENCIL, ui::SHADED, ui::ERASER}
-      self.text = tools[idx]->name
-      self.canvas->set_brush(tools[idx])
+    void on_select(int idx):
+      self.canvas->set_brush(self.options[idx])
 
-    void on_mouse_click(input::SynEvent&):
-      idx++
-      idx %= tools.size()
-      self.text = tools[idx]->name
-      self.canvas->set_brush(tools[idx])
 
-  class BrushSizeButton: public ui::Button:
+  vector<ui::StrokeSize*> stroke_sizes = {&ui::THIN_SIZE, &ui::MEDIUM_SIZE, &ui::THICK_SIZE}
+  class BrushSizeButton: public ui::DropdownButton<ui::StrokeSize*>:
     public:
     ui::Canvas *canvas
-    vector<ui::Brush::StrokeSize> strokes
-    vector<string> names
-    int idx = 1
-    BrushSizeButton(int x, y, w, h, ui::Canvas *c): ui::Button(x,y,w,h,""):
+    BrushSizeButton(int x, y, w, h, ui::Canvas *c): \
+      ui::DropdownButton<ui::StrokeSize*>(x,y,w,h,stroke_sizes)
       self.canvas = c
-      self.strokes = {ui::Brush::StrokeSize::THIN, ui::Brush::StrokeSize::MEDIUM, ui::Brush::StrokeSize::THICK}
-      self.names = vector<string>({ "thin", "medium", "wide" })
-      self.text = self.names[idx]
-      self.canvas->set_stroke_width(self.strokes[idx])
 
-    void on_mouse_click(input::SynEvent&):
-      idx++
-      idx %= self.strokes.size()
-      self.text = self.names[idx]
-      self.canvas->set_stroke_width(self.strokes[idx])
+    void on_select(int idx):
+      self.canvas->set_stroke_width(stroke_sizes[idx]->val)
 
   class UndoButton: public ui::Button:
     public:

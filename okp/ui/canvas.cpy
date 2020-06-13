@@ -36,14 +36,14 @@ namespace ui:
 
       self.set_brush(PENCIL)
       self.eraser = ERASER
-      self.eraser->set_stroke_width(Brush::StrokeSize::MEDIUM)
+      self.eraser->set_stroke_width(StrokeSize::MEDIUM)
 
     ~Canvas():
       if self.mem != NULL:
         free(self.mem)
       self.mem = NULL
 
-    void set_stroke_width(ui::Brush::StrokeSize s):
+    void set_stroke_width(int s):
       self.curr_brush->set_stroke_width(s)
 
     void set_brush(shared_ptr<Brush> brush):

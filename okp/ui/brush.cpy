@@ -2,13 +2,28 @@
 #include "../defines.h"
 
 namespace ui:
+  class StrokeSize:
+    public:
+    int val
+    string name
+    const static int THIN = 0;
+    const static int MEDIUM = 1;
+    const static int THICK = 2;
+
+    StrokeSize(int val, string name): val(val), name(name):
+      pass
+
+  static StrokeSize THIN_SIZE = StrokeSize(StrokeSize::THIN, "fine")
+  static StrokeSize MEDIUM_SIZE = StrokeSize(StrokeSize::MEDIUM,"medium")
+  static StrokeSize THICK_SIZE = StrokeSize(StrokeSize::THICK, "wide")
+
   struct Point
     int x
     int y
+  ;
 
   class Brush:
     public:
-    enum StrokeSize { THIN, MEDIUM, THICK }
 
     framebuffer::FB *fb
     int last_x = -1, last_y = -1
@@ -17,7 +32,7 @@ namespace ui:
 
     // stroke sizing
     int stroke_width = 1
-    StrokeSize stroke_enum = StrokeSize::MEDIUM
+    int stroke_val = StrokeSize::MEDIUM
     int sw_thin =  1, sw_medium = 3, sw_thick = 5
 
     Brush():
@@ -26,7 +41,7 @@ namespace ui:
     ~Brush():
       pass
 
-    inline int get_stroke_width(StrokeSize s):
+    inline int get_stroke_width(int s):
       switch s:
         case StrokeSize::THIN:
           return self.sw_thin
@@ -59,8 +74,8 @@ namespace ui:
     void set_framebuffer(framebuffer::FB *f):
       self.fb = f
 
-    virtual void set_stroke_width(StrokeSize s):
-      self.stroke_enum = s
+    virtual void set_stroke_width(int s):
+      self.stroke_val = s
       self.stroke_width = self.get_stroke_width(s)
 
   class Pencil: public Brush:
