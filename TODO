@@ -1,7 +1,5 @@
 NEXT:
 
-* brushes
-* text centering
 * clear canvas
 * save canvas to a notebook (just start with one notebook now?)
 * implement listbox widget
@@ -27,7 +25,6 @@ DESIRED FEATURES:
 DRAWING:
 
 * draw bezier curves (instead of line) between consecutive points
-* center align text / add text extents
 
 EVENTS:
 
@@ -43,7 +40,6 @@ APP:
   * shaded
   * chrome
   * eraser
-* add SIG\* signal handlers to reset the framebuffer to its original settings
 
 
 TESTING:
@@ -81,3 +77,7 @@ x add left side toolbar (made it bottom instead of left)
 x hw buttons should be bound to actions
 x add scenes for layering
 x handle eraser (stylus)
+x brushes
+x text centering
+x center align text / add text extents
+x add SIG\* signal handlers to reset the framebuffer to its original settings
