@@ -59,16 +59,6 @@ namespace ui:
 
       return true
 
-    bool maybe_mark_dirty(int o_x, o_y):
-      if self.dirty:
-        return false
-
-      if is_hit(o_x, o_y):
-        printf("WIDGET IS DIRTY %lx\n", (pointer_size) this)
-        dirty = 1
-        return true
-      return false
-
     void set_coords(int a=-1, b=-1, c=-1, d=-1):
       if a != -1:
         self.x = a
