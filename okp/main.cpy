@@ -1,11 +1,15 @@
+#include <csignal>
+
 #include "fb/fb.h"
 #include "input/input.h"
 #include "app_ui.h"
 #include "ui/widgets.h"
 
+
 using namespace std
 
 class App:
+  public:
   shared_ptr<framebuffer::FB> fb
   input::Input in
 
@@ -17,7 +21,6 @@ class App:
   int y = 0
 
 
-  public:
   App():
     #ifdef REMARKABLE
     fb = make_shared<framebuffer::RemarkableFB>()
@@ -114,8 +117,12 @@ class App:
       ui::MainLoop::main()
       self.fb->redraw_screen()
 
+App app
+
+void signal_handler(int signum):
+  app.fb->cleanup()
+  exit(signum)
 
 def main():
-  app = App()
+  signal(SIGINT, signal_handler)
   app.run()
-

@@ -70,6 +70,9 @@ namespace framebuffer:
       if self.fd != -1:
         close(self.fd)
 
+    virtual void cleanup():
+      print "CLEANING UP FB"
+
     virtual void wait_for_redraw(uint32_t update_marker):
       return
 
@@ -255,7 +258,7 @@ namespace framebuffer:
         printf("Could not get screen vinfo for %s\n", "/dev/fb0")
         return
 
-      print "XRES", vinfo.xres, "YRES", vinfo.yres, "BPP", vinfo.bits_per_pixel
+      print "XRES", vinfo.xres, "YRES", vinfo.yres, "BPP", vinfo.bits_per_pixel, "GRAYSCALE", vinfo.grayscale
 
     void wait_for_redraw(uint32_t update_marker):
       mxcfb_update_marker_data mdata = { update_marker, 0 }
@@ -338,3 +341,14 @@ namespace framebuffer:
 
       auto_update_mode = AUTO_UPDATE_MODE_AUTOMATIC_MODE
       ioctl(self.fd, MXCFB_SET_AUTO_UPDATE_MODE, (pointer_size) &auto_update_mode);
+
+    void cleanup():
+      print "CLEANING UP FB"
+      fb_var_screeninfo vinfo;
+      if (ioctl(self.fd, FBIOGET_VSCREENINFO, &vinfo)):
+        printf("Could not get screen vinfo for %s\n", "/dev/fb0")
+        exit(0)
+
+      vinfo.bits_per_pixel = 16;
+      vinfo.grayscale = 0
+      retval = ioctl(self.fd, FBIOPUT_VSCREENINFO, &vinfo);
