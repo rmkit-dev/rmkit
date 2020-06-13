@@ -130,6 +130,10 @@ namespace ui:
       pass
 
     void stroke(int x, y):
+      dist = 1000
+      #ifndef REMARKABLE
+      dist = 5000
+      #endif
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, BLACK)
 
@@ -137,7 +141,7 @@ namespace ui:
         dx = point.x - x
         dy = point.y - y
         d = dx * dx + dy * dy
-        if d < 1000:
+        if d < dist:
           self.fb->draw_line(x,y,point.x,point.y,self.stroke_width,BLACK)
 
     void stroke_end():

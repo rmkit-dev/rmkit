@@ -66,6 +66,7 @@ namespace ui:
       self.push_undo()
       brush->update_last_pos(-1,-1)
       self.dirty = 1
+      ui::MainLoop::full_refresh()
 
     void on_mouse_hover(input::SynEvent &ev):
       pass

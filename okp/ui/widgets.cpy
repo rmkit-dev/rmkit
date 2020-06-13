@@ -41,6 +41,7 @@ namespace ui:
       self.dirty = 1
 
     void redraw():
+      fb->draw_rect(self.x, self.y, self.w, self.h, WHITE, true)
       self.textWidget->text = text
       self.textWidget->set_coords(x, y, w, h)
       self.textWidget->redraw()
