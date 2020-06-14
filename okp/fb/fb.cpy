@@ -330,9 +330,14 @@ namespace framebuffer:
         printf("Could not get screen vinfo for %s\n", "/dev/fb0")
         exit(0)
 
+      #ifdef GRAYSCALE_8BIT
       vinfo.bits_per_pixel = 8;
       vinfo.grayscale = GRAYSCALE_8BIT;
+      #else
+      vinfo.bits_per_pixel = 16;
+      vinfo.grayscale = 0;
       retval = ioctl(self.fd, FBIOPUT_VSCREENINFO, &vinfo);
+      #endif
 
       auto_update_mode = AUTO_UPDATE_MODE_AUTOMATIC_MODE
       ioctl(self.fd, MXCFB_SET_AUTO_UPDATE_MODE, (pointer_size) &auto_update_mode);

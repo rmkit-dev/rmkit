@@ -1,6 +1,6 @@
 NEXT:
 
-* re-work how input event system looks
+x re-work how input event system looks
 * implement non-procedural brushes pencil, fineliner, paintbrush, etc
 * put brushes into own dir
 * figure out how to dither grayscale
