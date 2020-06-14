@@ -22,9 +22,9 @@ namespace ui:
       Size(int val, string name): val(val), name(name):
         pass
 
-    static Size FINE = stroke::Size(Size::FINE, "fine")
-    static Size MEDIUM = stroke::Size(Size::MEDIUM,"medium")
-    static Size WIDE = stroke::Size(Size::WIDE, "wide")
+    static Size FINE   = Size(Size::FINE, "fine")
+    static Size MEDIUM = Size(Size::MEDIUM,"medium")
+    static Size WIDE   = Size(Size::WIDE, "wide")
 
     static vector<Size*> SIZES = { &FINE, &MEDIUM, &WIDE }
 
@@ -235,11 +235,43 @@ namespace ui:
     void stroke_end():
       pass
 
-  namespace brush:
-    static Brush *ERASER = new Eraser()
-    static Brush *RUBBER_ERASER = new RubberEraser()
-    static Brush *PENCIL = new Pencil()
-    static Brush *SHADED = new Shaded()
-    static Brush *SKETCHY = new Sketchy()
+  class Fur: public Brush:
+    public:
+    Fur(): Brush():
+      self.name = "fur"
 
-    static vector<Brush*> BRUSHES = { PENCIL, SKETCHY, SHADED, ERASER, RUBBER_ERASER }
+    ~Fur():
+      pass
+
+    void destroy():
+      pass
+
+    void stroke_start(int x, y):
+      pass
+
+    void stroke(int x, y):
+      dist = 4000 * MULTIPLIER
+      if self.last_x != -1:
+        self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, BLACK)
+
+      for auto point: self.points:
+        dx = point.x - x
+        dy = point.y - y
+        d = dx * dx + dy * dy
+
+        if d < dist && rand() < RAND_MAX / (20 / MULTIPLIER):
+        self.fb->draw_line(x+dx*0.5, y+dy*0.5, x-dx*0.5, y-dy*0.5, \
+          self.stroke_width, BLACK)
+
+    void stroke_end():
+      pass
+
+  namespace brush:
+    static Brush *ERASER        = new Eraser()
+    static Brush *FUR           = new Fur()
+    static Brush *PENCIL        = new Pencil()
+    static Brush *RUBBER_ERASER = new RubberEraser()
+    static Brush *SHADED        = new Shaded()
+    static Brush *SKETCHY       = new Sketchy()
+
+    static vector<Brush*> BRUSHES = { PENCIL, SKETCHY, SHADED, FUR, ERASER, RUBBER_ERASER }
