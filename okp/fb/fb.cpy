@@ -176,8 +176,20 @@ namespace framebuffer:
         ptr += self.width
         src += image.w
 
+    def get_last_pixels(freetype::image_data image):
+      int max_x = 0
+      int max_y = 0
+      for i 0 image.w:
+        for j 0 image.h:
+          if image.buffer[j*image.w + i] == 0:
+            max_x = max(i, max_x)
+            max_y = max(j, max_y)
+
+      return max_x, max_y
+
     int draw_text_center(string text, int x, int y, freetype::image_data image):
-      max_x = freetype::render_text((char*)text.c_str(), x, y, image)
+      freetype::render_text((char*)text.c_str(), x, y, image)
+      max_x, max_y = get_last_pixels(image)
       leftover_x = image.w - max_x
       padding_x = 0
       if leftover_x > 0:
@@ -189,7 +201,8 @@ namespace framebuffer:
       draw_bitmap(image, x, y)
 
     int draw_text_right(string text, int x, int y, freetype::image_data image):
-      max_x = freetype::render_text((char*)text.c_str(), x, y, image)
+      freetype::render_text((char*)text.c_str(), x, y, image)
+      max_x, max_y = get_last_pixels(image)
       leftover_x = image.w - max_x
       padding_x = 0
       if leftover_x > 0:
