@@ -165,6 +165,7 @@ namespace ui:
     void stroke_end():
       pass
 
-  static Brush *ERASER = new Eraser()
-  static Brush *PENCIL = new Pencil()
-  static Brush *SHADED = new Shaded()
+  namespace brush:
+    static Brush *ERASER = new Eraser()
+    static Brush *PENCIL = new Pencil()
+    static Brush *SHADED = new Shaded()

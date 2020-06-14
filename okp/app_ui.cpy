@@ -5,7 +5,7 @@
 
 namespace app_ui:
 
-  vector<ui::Brush*> tools = {ui::PENCIL, ui::SHADED, ui::ERASER}
+  vector<ui::Brush*> tools = {ui::brush::PENCIL, ui::brush::SHADED, ui::brush::ERASER}
   class ToolButton: public ui::DropdownButton<ui::Brush*>:
     public:
     ui::Canvas *canvas
