@@ -1,8 +1,5 @@
-/* example1.c                                                      */
-/*                                                                 */
-/* This small program shows how to print a rotated string with the */
-/* FreeType 2 library.                                             */
-
+#ifndef TEXT_H
+#define TEXT_H
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
@@ -55,6 +52,60 @@ namespace freetype {
     }
   }
 
+  image_data get_text_size(const char *text, int font_size=24) {
+    image_data image;
+
+    FT_Library library;
+    FT_Face face;
+
+    FT_GlyphSlot slot;
+    FT_Vector pen;    /* untransformed origin  */
+    FT_Error error;
+
+    const char *filename;
+
+    int target_height;
+    int n, num_chars;
+
+    // filename = argv[1]; /* first argument     */
+    #ifdef REMARKABLE
+    filename = "/usr/share/fonts/ttf/noto/NotoMono-Regular.ttf";
+    #else
+    filename = "/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf";
+    #endif
+    num_chars = strlen(text);
+
+    error = FT_Init_FreeType(&library); /* initialize library */
+    error = FT_New_Face(library, filename, 0, &face); /* create face object */
+    error = FT_Set_Char_Size(face, font_size * 64, 0, 100, 0); /* set character size */
+
+    slot = face->glyph;
+
+    pen.x = 0;
+    pen.y = target_height;
+
+    int max_top = 0;
+    for (n = 0; n < num_chars; n++) {
+      /* load glyph image into the slot (erase previous one) */
+      error = FT_Load_Char(face, text[n], FT_LOAD_RENDER);
+      if (error)
+        continue; /* ignore errors */
+
+      max_top = max_top < slot->bitmap_top ? slot->bitmap_top : max_top;
+      /* increment pen position */
+      pen.x += slot->advance.x;
+      pen.y += slot->advance.y;
+    }
+
+    FT_Done_Face(face);
+    FT_Done_FreeType(library);
+
+    image.w = pen.x / 64.0;
+    image.h = font_size + max_top;
+    image.buffer = NULL;
+    return image;
+  }
+
   int render_text(char* text, int x, int y, image_data image, int font_size = 24) {
     FT_Library library;
     FT_Face face;
@@ -92,13 +143,12 @@ namespace freetype {
       error = FT_Load_Char(face, text[n], FT_LOAD_RENDER);
       if (error)
         continue; /* ignore errors */
-      int offsetY = tOffsetY - slot->bitmap_top;
-      pen.y += offsetY;
+      pen.y -= slot->bitmap_top;
       draw_bitmap(&slot->bitmap,
                   pen.x / 64,
                   pen.y / 64 - slot->bitmap_top + font_size,
                   image);
-      pen.y -= offsetY;
+      pen.y += slot->bitmap_top;
 
       /* increment pen position */
       pen.x += slot->advance.x;
@@ -116,4 +166,4 @@ namespace freetype {
     return 0;
   }
 }
-/* EOF */
+#endif

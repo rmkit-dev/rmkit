@@ -188,27 +188,7 @@ namespace framebuffer:
 
       return max_x, max_y
 
-    int draw_text_center(string text, int x, int y, freetype::image_data image):
-      freetype::render_text((char*)text.c_str(), x, y, image)
-      max_x, max_y = get_last_pixels(image)
-      leftover_x = image.w - max_x
-      padding_x = 0
-      if leftover_x > 0:
-        padding_x = leftover_x / 2
-      draw_bitmap(image, x + padding_x, y)
-
     int draw_text(string text, int x, int y, freetype::image_data image):
-      freetype::render_text((char*)text.c_str(), x, y, image)
-      draw_bitmap(image, x, y)
-
-    int draw_text_right(string text, int x, int y, freetype::image_data image):
-      freetype::render_text((char*)text.c_str(), x, y, image)
-      max_x, max_y = get_last_pixels(image)
-      leftover_x = image.w - max_x
-      padding_x = 0
-      if leftover_x > 0:
-        padding_x = leftover_x
-      draw_bitmap(image, x + padding_x, y)
       freetype::render_text((char*)text.c_str(), x, y, image)
       draw_bitmap(image, x, y)
 

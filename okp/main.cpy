@@ -3,7 +3,7 @@
 #include "fb/fb.h"
 #include "input/input.h"
 #include "app_ui.h"
-#include "ui/widgets.h"
+#include "ui/text.h"
 
 
 using namespace std

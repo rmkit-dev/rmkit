@@ -1,38 +1,7 @@
 #include "base.h"
+#include "text.h"
 
 namespace ui:
-  class Text: public Widget:
-    public:
-    enum JUSTIFY { LEFT, CENTER, RIGHT }
-    string text
-    JUSTIFY justify = JUSTIFY::CENTER
-
-    Text(int x, y, w, h, string t): Widget(x, y, w, h):
-      self.text = t
-
-    // TODO: cache the image buffer
-    void redraw():
-      freetype::image_data image;
-      image.buffer = (uint32_t*) malloc(sizeof(uint32_t)*self.w*self.h)
-      memset(image.buffer, WHITE, sizeof(uint32_t)*self.w*self.h)
-      image.w = self.w
-      image.h = self.h
-
-      switch justify:
-        case JUSTIFY::LEFT:
-          fb->draw_text(self.text, self.x, self.y, image)
-          break
-        case JUSTIFY::CENTER:
-          fb->draw_text_center(self.text, self.x, self.y, image)
-          break
-        case JUSTIFY::RIGHT:
-          fb->draw_text_right(self.text, self.x, self.y, image)
-          break
-        default:
-          fb->draw_text(self.text, self.x, self.y, image)
-      free(image.buffer)
-
-
   class Button: public Widget:
     public:
     string text
