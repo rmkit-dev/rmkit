@@ -19,8 +19,8 @@ namespace ui:
     framebuffer::FBRect dirty_rect
     shared_ptr<framebuffer::VirtualFB> vfb
 
-    shared_ptr<Brush> curr_brush
-    shared_ptr<Brush> eraser
+    Brush* curr_brush
+    Brush* eraser
 
     Canvas(int x, y, w, h): Widget(x,y,w,h):
       px_width, px_height = self.fb->get_display_size()
@@ -46,7 +46,7 @@ namespace ui:
     void set_stroke_width(int s):
       self.curr_brush->set_stroke_width(s)
 
-    void set_brush(shared_ptr<Brush> brush):
+    void set_brush(Brush* brush):
       self.curr_brush = brush
       brush->reset()
       brush->set_framebuffer(self.vfb.get())

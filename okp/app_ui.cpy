@@ -5,12 +5,12 @@
 
 namespace app_ui:
 
-  vector<shared_ptr<ui::Brush>> tools = {ui::PENCIL, ui::SHADED, ui::ERASER}
-  class ToolButton: public ui::DropdownButton<shared_ptr<ui::Brush>>:
+  vector<ui::Brush*> tools = {ui::PENCIL, ui::SHADED, ui::ERASER}
+  class ToolButton: public ui::DropdownButton<ui::Brush*>:
     public:
     ui::Canvas *canvas
     ToolButton(int x, y, w, h, ui::Canvas *c): \
-      ui::DropdownButton<shared_ptr<ui::Brush>>(x,y,w,h,tools)
+      ui::DropdownButton<ui::Brush*>(x,y,w,h,tools)
       self.canvas = c
 
     void on_select(int idx):

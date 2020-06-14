@@ -162,6 +162,6 @@ namespace ui:
     void stroke_end():
       pass
 
-  static shared_ptr<Brush> ERASER = make_shared<Eraser>()
-  static shared_ptr<Brush> PENCIL = make_shared<Pencil>()
-  static shared_ptr<Brush> SHADED = make_shared<Shaded>()
+  static Brush *ERASER = new Eraser()
+  static Brush *PENCIL = new Pencil()
+  static Brush *SHADED = new Shaded()
