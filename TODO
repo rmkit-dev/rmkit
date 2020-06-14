@@ -1,7 +1,7 @@
 NEXT:
 
-* clear canvas
-* save canvas to a notebook (just start with one notebook now?)
+* clear canvas button
+* save canvas to a file on remarkable
 * implement listbox widget
 
 DESIRED FEATURES:
@@ -81,3 +81,4 @@ x brushes
 x text centering
 x center align text / add text extents
 x add SIG\* signal handlers to reset the framebuffer to its original settings
+* implement dropdown
