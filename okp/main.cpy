@@ -31,7 +31,7 @@ class App:
     #endif
 
     known ui::Widget::fb = fb.get()
-    known input::Input::fb = fb.get()
+    known input::Event::fb = fb.get()
 
     fb->clear_screen()
     fb->redraw_screen()

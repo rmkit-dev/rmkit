@@ -41,13 +41,7 @@ namespace freetype {
           continue;
 
         uint32_t val = bitmap->buffer[q * bitmap->width + p];
-        if (val == 0) {
-          val = WHITE;
-        } else {
-          val = 255 - val;
-        }
-
-        image.buffer[j*image.w+i] = val;
+        image.buffer[j*image.w+i] = val == 0 ? WHITE: BLACK;
       }
     }
   }
@@ -130,7 +124,7 @@ namespace freetype {
 
     error = FT_Init_FreeType(&library); /* initialize library */
     error = FT_New_Face(library, filename, 0, &face); /* create face object */
-    error = FT_Set_Char_Size(face, font_size * 64, 0, 0, 0); /* set character size */
+    error = FT_Set_Char_Size(face, font_size * 64, 0, 72, 0); /* set character size */
 
     slot = face->glyph;
 

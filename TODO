@@ -1,8 +1,11 @@
 NEXT:
 
+* re-work how input event system looks
+* implement non-procedural brushes pencil, fineliner, paintbrush, etc
+* put brushes into own dir
+* figure out how to dither grayscale
 * clear canvas button
 * save canvas to a file on remarkable
-* implement listbox widget
 
 DESIRED FEATURES:
 
@@ -33,6 +36,7 @@ EVENTS:
 
 APP:
 
+* implement listbox widget
 * implement dialogs
 * implement pop-over for buttons (Select / Dropdown button)
 * implement brushes

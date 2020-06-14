@@ -5,6 +5,8 @@ namespace ui:
   class Button: public Widget:
     public:
     string text
+    int x_padding = 10
+    int y_padding = 0
     shared_ptr<Text> textWidget
 
     Button(int x, y, w, h, string t): Widget(x,y,w,h):
@@ -29,7 +31,7 @@ namespace ui:
     void redraw():
       fb->draw_rect(self.x, self.y, self.w, self.h, WHITE, true)
       self.textWidget->text = text
-      self.textWidget->set_coords(x, y, w, h)
+      self.textWidget->set_coords(x+x_padding, y+y_padding, w, h)
       self.textWidget->redraw()
 
       color = WHITE
