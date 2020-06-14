@@ -46,7 +46,7 @@ namespace framebuffer:
   class FB:
     public:
     int width=0, height=0, fd=-1
-    int byte_size, dirty
+    int byte_size = 0, dirty = 0
     int update_marker = 1
     remarkable_color* fbmem
     FBRect dirty_area
@@ -59,6 +59,7 @@ namespace framebuffer:
       printf("W: %i H: %i\n", width, height)
       size = width*height*sizeof(remarkable_color)
       self.byte_size = size
+      reset_dirty(dirty_area)
 
       return
 
@@ -220,12 +221,12 @@ namespace framebuffer:
       wrote = write(fd, c, i-1)
       if wrote == -1:
         printf("ERROR %i", errno)
-      char buf[self.width * self.height * 4]
-      ptr = &buf[0]
+      buf = (char *) calloc(sizeof(char), self.width * self.height * 4)
+      memset(buf, 0, sizeof(buf))
 
       for y 0 self.height:
         for x 0 self.width:
-          d = (short) self.fbmem[y*self.width + x]
+          d = (char) self.fbmem[y*self.width + x]
           buf[i++] = (d & 0xf800) >> 8
           buf[i++] = (d & 0x7e0) >> 3
           buf[i++] = (d & 0x1f) << 3
@@ -235,6 +236,7 @@ namespace framebuffer:
       if wrote == -1:
         printf("ERROR %i", errno)
       close(fd)
+      free(buf)
 
       ret = system("pnmtopng fb.pnm > fb.png 2>/dev/null")
 

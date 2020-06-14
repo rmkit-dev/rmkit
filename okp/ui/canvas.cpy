@@ -14,7 +14,7 @@ namespace ui:
     deque<shared_ptr<remarkable_color>> redo_stack;
     int byte_size
 
-    bool erasing
+    bool erasing = false
 
     framebuffer::FBRect dirty_rect
     shared_ptr<framebuffer::VirtualFB> vfb

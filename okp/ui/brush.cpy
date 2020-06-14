@@ -29,8 +29,8 @@ namespace ui:
     static vector<Size*> SIZES = { &FINE, &MEDIUM, &WIDE }
 
   struct Point
-    int x
-    int y
+    int x = 0
+    int y = 0
   ;
 
   class Brush:
@@ -80,7 +80,8 @@ namespace ui:
     void update_last_pos(int x, int y):
       self.last_x = x
       self.last_y = y
-      self.points.push_back(Point{x,y})
+      p = Point{x,y}
+      self.points.push_back(p)
 
     void set_framebuffer(framebuffer::FB *f):
       self.fb = f

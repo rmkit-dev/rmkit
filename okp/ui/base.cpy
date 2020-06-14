@@ -17,6 +17,9 @@ namespace ui:
     virtual void redraw():
       pass
 
+    virtual void undraw():
+      self.fb->draw_rect(self.x, self.y, self.w, self.h, WHITE, true)
+
     virtual void hide():
       visible = false
 

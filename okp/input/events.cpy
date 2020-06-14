@@ -18,7 +18,7 @@ namespace input:
 
   class SynEvent: public Event:
     public:
-    int x, y
+    int x = -1, y = -1
     int left = 0, right = 0, middle = 0
     int eraser = 0
     Event *original
