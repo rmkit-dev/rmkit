@@ -17,12 +17,12 @@ namespace app_ui:
       self.canvas->set_brush(self.options[idx])
 
 
-  vector<ui::StrokeSize*> stroke_sizes = {&ui::THIN_SIZE, &ui::MEDIUM_SIZE, &ui::THICK_SIZE}
-  class BrushSizeButton: public ui::DropdownButton<ui::StrokeSize*>:
+  vector<ui::stroke::Size*> stroke_sizes = { &ui::stroke::FINE, &ui::stroke::MEDIUM, &ui::stroke::WIDE };
+  class BrushSizeButton: public ui::DropdownButton<ui::stroke::Size*>:
     public:
     ui::Canvas *canvas
     BrushSizeButton(int x, y, w, h, ui::Canvas *c): \
-      ui::DropdownButton<ui::StrokeSize*>(x,y,w,h,stroke_sizes)
+      ui::DropdownButton<ui::stroke::Size*>(x,y,w,h,stroke_sizes)
       self.canvas = c
 
     void on_select(int idx):

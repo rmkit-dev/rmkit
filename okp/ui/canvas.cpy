@@ -36,7 +36,7 @@ namespace ui:
 
       self.set_brush(PENCIL)
       self.eraser = ERASER
-      self.eraser->set_stroke_width(StrokeSize::MEDIUM)
+      self.eraser->set_stroke_width(stroke::Size::MEDIUM)
 
     ~Canvas():
       if self.mem != NULL:

@@ -2,20 +2,23 @@
 #include "../defines.h"
 
 namespace ui:
-  class StrokeSize:
-    public:
-    int val
-    string name
-    const static int THIN = 0;
-    const static int MEDIUM = 1;
-    const static int THICK = 2;
+  typedef int BrushSize
 
-    StrokeSize(int val, string name): val(val), name(name):
-      pass
+  namespace stroke:
+    class Size:
+      public:
+      BrushSize val
+      string name
+      const static BrushSize FINE = 0;
+      const static BrushSize MEDIUM = 1;
+      const static BrushSize WIDE = 2;
 
-  static StrokeSize THIN_SIZE = StrokeSize(StrokeSize::THIN, "fine")
-  static StrokeSize MEDIUM_SIZE = StrokeSize(StrokeSize::MEDIUM,"medium")
-  static StrokeSize THICK_SIZE = StrokeSize(StrokeSize::THICK, "wide")
+      Size(int val, string name): val(val), name(name):
+        pass
+
+    static Size FINE = stroke::Size(Size::FINE, "fine")
+    static Size MEDIUM = stroke::Size(Size::MEDIUM,"medium")
+    static Size WIDE = stroke::Size(Size::WIDE, "wide")
 
   struct Point
     int x
@@ -32,22 +35,22 @@ namespace ui:
 
     // stroke sizing
     int stroke_width = 1
-    int stroke_val = StrokeSize::MEDIUM
+    BrushSize stroke_val = stroke::Size::MEDIUM
     int sw_thin =  1, sw_medium = 3, sw_thick = 5
 
     Brush():
-      self.set_stroke_width(StrokeSize::MEDIUM)
+      self.set_stroke_width(stroke::Size::MEDIUM)
 
     ~Brush():
       pass
 
-    inline int get_stroke_width(int s):
+    inline int get_stroke_width(BrushSize s):
       switch s:
-        case StrokeSize::THIN:
+        case stroke::Size::FINE:
           return self.sw_thin
-        case StrokeSize::MEDIUM:
+        case stroke::Size::MEDIUM:
           return self.sw_medium
-        case StrokeSize::THICK:
+        case stroke::Size::WIDE:
           return self.sw_thick
 
     virtual void reset():
