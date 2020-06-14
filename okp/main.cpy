@@ -125,4 +125,6 @@ void signal_handler(int signum):
 
 def main():
   signal(SIGINT, signal_handler)
+  signal(SIGTERM, signal_handler)
+  signal(SIGABRT, signal_handler)
   app.run()
