@@ -36,6 +36,7 @@ namespace ui:
         for auto option: self.options:
           t_y = self.y - self.h*i
           option_btn = new OptionButton<DropdownButton>(x, t_y, w, h, self, option->name, i)
+          option_btn->set_justification(ui::Text::JUSTIFY::LEFT)
           self.scene->add(option_btn)
           i += 1
       ui::MainLoop::show_overlay(self.scene)

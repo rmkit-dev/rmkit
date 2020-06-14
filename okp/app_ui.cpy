@@ -11,6 +11,7 @@ namespace app_ui:
     ToolButton(int x, y, w, h, ui::Canvas *c): \
       ui::DropdownButton<ui::Brush*>(x,y,w,h,ui::brush::BRUSHES)
       self.canvas = c
+      self.set_justification(ui::Text::JUSTIFY::LEFT)
 
     void on_select(int idx):
       self.canvas->set_brush(self.options[idx])

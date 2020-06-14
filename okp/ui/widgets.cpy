@@ -3,7 +3,9 @@
 namespace ui:
   class Text: public Widget:
     public:
+    enum JUSTIFY { LEFT, CENTER, RIGHT }
     string text
+    JUSTIFY justify = JUSTIFY::CENTER
 
     Text(int x, y, w, h, string t): Widget(x, y, w, h):
       self.text = t
@@ -15,7 +17,19 @@ namespace ui:
       memset(image.buffer, WHITE, sizeof(uint32_t)*self.w*self.h)
       image.w = self.w
       image.h = self.h
-      fb->draw_text_center(self.text, self.x, self.y, image)
+
+      switch justify:
+        case JUSTIFY::LEFT:
+          fb->draw_text(self.text, self.x, self.y, image)
+          break
+        case JUSTIFY::CENTER:
+          fb->draw_text_center(self.text, self.x, self.y, image)
+          break
+        case JUSTIFY::RIGHT:
+          fb->draw_text_right(self.text, self.x, self.y, image)
+          break
+        default:
+          fb->draw_text(self.text, self.x, self.y, image)
       free(image.buffer)
 
 
@@ -39,6 +53,9 @@ namespace ui:
 
     void on_mouse_enter(input::SynEvent &ev):
       self.dirty = 1
+
+    void set_justification(Text::JUSTIFY j):
+      self.textWidget->justify = j
 
     void redraw():
       fb->draw_rect(self.x, self.y, self.w, self.h, WHITE, true)
