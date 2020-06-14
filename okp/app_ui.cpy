@@ -5,28 +5,26 @@
 
 namespace app_ui:
 
-  vector<ui::Brush*> tools = {ui::brush::PENCIL, ui::brush::SHADED, ui::brush::ERASER}
   class ToolButton: public ui::DropdownButton<ui::Brush*>:
     public:
     ui::Canvas *canvas
     ToolButton(int x, y, w, h, ui::Canvas *c): \
-      ui::DropdownButton<ui::Brush*>(x,y,w,h,tools)
+      ui::DropdownButton<ui::Brush*>(x,y,w,h,ui::brush::BRUSHES)
       self.canvas = c
 
     void on_select(int idx):
       self.canvas->set_brush(self.options[idx])
 
 
-  vector<ui::stroke::Size*> stroke_sizes = { &ui::stroke::FINE, &ui::stroke::MEDIUM, &ui::stroke::WIDE };
   class BrushSizeButton: public ui::DropdownButton<ui::stroke::Size*>:
     public:
     ui::Canvas *canvas
     BrushSizeButton(int x, y, w, h, ui::Canvas *c): \
-      ui::DropdownButton<ui::stroke::Size*>(x,y,w,h,stroke_sizes)
+      ui::DropdownButton<ui::stroke::Size*>(x,y,w,h,ui::stroke::SIZES)
       self.canvas = c
 
     void on_select(int idx):
-      self.canvas->set_stroke_width(stroke_sizes[idx]->val)
+      self.canvas->set_stroke_width(self.options[idx]->val)
 
   class UndoButton: public ui::Button:
     public:

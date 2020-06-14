@@ -4,6 +4,12 @@
 namespace ui:
   typedef int BrushSize
 
+  #ifdef REMARKABLE
+  int MULTIPLIER = 1
+  #else
+  int MULTIPLIER = 4
+  #endif
+
   namespace stroke:
     class Size:
       public:
@@ -19,6 +25,8 @@ namespace ui:
     static Size FINE = stroke::Size(Size::FINE, "fine")
     static Size MEDIUM = stroke::Size(Size::MEDIUM,"medium")
     static Size WIDE = stroke::Size(Size::WIDE, "wide")
+
+    static vector<Size*> SIZES = { &FINE, &MEDIUM, &WIDE }
 
   struct Point
     int x
@@ -121,6 +129,35 @@ namespace ui:
     void stroke(int x, y):
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width,\
+        ERASER_STYLUS)
+
+    void stroke_end():
+      Point last_p = Point{-1,-1}
+      for auto point: self.points:
+        if last_p.x != -1:
+          self.fb->draw_line(last_p.x, last_p.y, point.x, point.y, \
+          self.stroke_width, WHITE)
+        last_p = point
+      self.points.clear()
+
+  class RubberEraser: public Brush:
+    public:
+    RubberEraser(): Brush():
+      self.name = "rubber"
+      sw_thin = 5; sw_medium = 10; sw_thick = 15
+
+    ~RubberEraser():
+      pass
+
+    void destroy():
+      pass
+
+    void stroke_start(int x, y):
+      pass
+
+    void stroke(int x, y):
+      if self.last_x != -1:
+        self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width,\
         ERASER_RUBBER)
 
     void stroke_end():
@@ -148,10 +185,7 @@ namespace ui:
       pass
 
     void stroke(int x, y):
-      dist = 1000
-      #ifndef REMARKABLE
-      dist = 5000
-      #endif
+      dist = 1000 * MULTIPLIER
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, BLACK)
 
@@ -165,7 +199,46 @@ namespace ui:
     void stroke_end():
       pass
 
+  class Sketchy: public Brush:
+    public:
+    Sketchy(): Brush():
+      self.name = "sketchy"
+
+    ~Sketchy():
+      pass
+
+    void destroy():
+      pass
+
+    void stroke_start(int x, y):
+      pass
+
+    void stroke(int x, y):
+      dist = 4000 * MULTIPLIER
+      if self.last_x != -1:
+        self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, BLACK)
+
+      for auto point: self.points:
+        dx = point.x - x
+        dy = point.y - y
+        d = dx * dx + dy * dy
+
+        if d < dist && rand() < RAND_MAX / (20 / MULTIPLIER):
+          self.fb->draw_line(\
+            x + dx * 0.3, \
+            y + dy * 0.3, \
+            point.x - dx * 0.3, \
+            point.y - dy * 0.3, \
+            1,BLACK)
+
+    void stroke_end():
+      pass
+
   namespace brush:
     static Brush *ERASER = new Eraser()
+    static Brush *RUBBER_ERASER = new RubberEraser()
     static Brush *PENCIL = new Pencil()
     static Brush *SHADED = new Shaded()
+    static Brush *SKETCHY = new Sketchy()
+
+    static vector<Brush*> BRUSHES = { PENCIL, SKETCHY, SHADED, ERASER, RUBBER_ERASER }
