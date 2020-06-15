@@ -57,6 +57,7 @@ namespace ui:
       if ev.x == -1 || ev.y == -1:
         return false
 
+      mouse_down = ev.left || ev.right || ev.middle
       for auto widget: display_scene->widgets:
         if widget->ignore_event(ev) || !widget->visible:
           continue
@@ -68,7 +69,6 @@ namespace ui:
         prev_mouse_x = widget->mouse_x
         prev_mouse_y = widget->mouse_y
 
-        mouse_down = ev.left || ev.right || ev.middle
         widget->mouse_down = mouse_down && is_hit
         widget->mouse_inside = is_hit
 
@@ -103,6 +103,8 @@ namespace ui:
           if prev_mouse_inside:
             widget->on_mouse_leave(ev)
 
+      if overlay_is_visible && mouse_down && !hit_widget:
+        MainLoop::hide_overlay()
 
       return hit_widget
 
