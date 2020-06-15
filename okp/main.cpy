@@ -2,8 +2,8 @@
 
 #include "fb/fb.h"
 #include "input/input.h"
-#include "app_ui.h"
 #include "ui/text.h"
+#include "app_ui.h"
 
 
 using namespace std
@@ -60,8 +60,10 @@ class App:
 
     // because we pack end, we go in reverse order
     topbar->pack_start(new app_ui::HideButton(0, 0, 50, 50, topbar, minibar), 20)
-    topbar->pack_start(new app_ui::ToolButton(0, 0, 200, 50, canvas))
-    topbar->pack_start(new app_ui::BrushSizeButton(0, 0, 200, 50, canvas))
+    topbar->pack_start(new app_ui::ToolButton(0, 0, 150, 50, canvas))
+    topbar->pack_start(new app_ui::BrushSizeButton(0, 0, 150, 50, canvas))
+    topbar->pack_start(new app_ui::LiftBrushButton(0, 0, 150, 50, canvas))
+    topbar->pack_end(new app_ui::ManageButton(0, 0, 100, 50, canvas))
     topbar->pack_end(new app_ui::RedoButton(0, 0, 100, 50, canvas))
     topbar->pack_end(new app_ui::UndoButton(0, 0, 100, 50, canvas))
 

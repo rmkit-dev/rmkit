@@ -22,6 +22,7 @@ namespace ui:
     public:
     vector<O> options
     ui::Scene scene = NULL
+    int selected
     DropdownButton(int x, y, w, h, vector<O> options):\
                    options(options), ui::Button(x,y,w,h,"replace_me"):
       self.select(0)
@@ -39,14 +40,39 @@ namespace ui:
           option_btn->set_justification(ui::Text::JUSTIFY::LEFT)
           self.scene->add(option_btn)
           i += 1
+
       ui::MainLoop::show_overlay(self.scene)
 
     void select(int idx):
-      self.on_select(idx)
+      selected = idx
       ui::MainLoop::hide_overlay()
-      self.text = self.options[idx]->name
+      if idx < self.options.size():
+        self.text = self.options[idx]->name
+
+      self.on_select(idx)
 
     virtual void on_select(int idx):
       pass
 
+  class TextOption:
+    public:
+    string name
+    TextOption(string n): name(n) {}
 
+
+  def make_options(vector<string> options):
+    vector<TextOption*> ret
+    for auto o: options:
+      ret.push_back(new TextOption(o))
+    return ret
+
+  class TextDropdown: public ui::DropdownButton<ui::TextOption*>:
+    public:
+    vector<string> text_options
+    TextDropdown(int x, y, w, h): \
+      ui::DropdownButton<ui::TextOption*>(x,y,w,h,{})
+      self.text = "..."
+
+    void add_options(vector<string> opts):
+      for auto opt: opts:
+        self.options.push_back(new ui::TextOption(opt))

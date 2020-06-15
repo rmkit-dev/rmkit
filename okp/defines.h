@@ -16,6 +16,7 @@
 #define WAVEFORM_MODE_GC4	0x3	/* Lower fidelity */
 #define WAVEFORM_MODE_A2	0x4	/* Fast black/white animation */
 #define WAVEFORM_MODE_DU4 0x7
+#define WAVEFORM_MODE_REAGLD 0x9
 #define WAVEFORM_MODE_AUTO 257
 
 #define TEMP_USE_REMARKABLE_DRAW 0x0018

@@ -46,6 +46,15 @@ namespace ui:
     void set_stroke_width(int s):
       self.curr_brush->set_stroke_width(s)
 
+    auto get_stroke_width():
+      return self.curr_brush->stroke_val
+
+    void reset():
+      push_undo()
+      memset(self.fb->fbmem, WHITE, self.byte_size)
+      memset(vfb->fbmem, WHITE, self.byte_size)
+      self.curr_brush->reset()
+
     void set_brush(Brush* brush):
       self.curr_brush = brush
       brush->reset()

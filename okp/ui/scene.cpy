@@ -15,6 +15,7 @@ namespace ui:
           continue
 
         if widget->dirty:
+          widget->before_redraw()
           widget->redraw()
           widget->dirty = 0
 

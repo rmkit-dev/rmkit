@@ -14,6 +14,9 @@ namespace ui:
     Widget(int x,y,w,h): x(x), y(y), w(w), h(h):
       pass
 
+    virtual void before_redraw():
+      pass
+
     virtual void redraw():
       pass
 
