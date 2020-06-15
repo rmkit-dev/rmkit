@@ -13,8 +13,9 @@ namespace ui:
       pass
 
     void add(Widget *w):
-      children.push_back(shared_ptr<Widget>(w))
-      scene->add(w)
+      sp = shared_ptr<Widget>(w)
+      children.push_back(sp)
+      scene->add(sp)
 
     void hide():
       for auto w: children:

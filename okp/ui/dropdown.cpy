@@ -1,4 +1,5 @@
 #include "button.h"
+#include "layouts.h"
 
 namespace ui:
 
@@ -20,9 +21,10 @@ namespace ui:
   template<class O>
   class DropdownButton: public ui::Button:
     public:
+    int selected
     vector<O> options
     ui::Scene scene = NULL
-    int selected
+
     DropdownButton(int x, y, w, h, vector<O> options):\
                    options(options), ui::Button(x,y,w,h,"replace_me"):
       self.select(0)
@@ -31,20 +33,24 @@ namespace ui:
       self.show_options()
 
     void show_options():
+
       if self.scene == NULL:
+        width, height = self.fb->get_display_size()
         self.scene = ui::make_scene()
+        // this leaks layout, but i'm fine with it
+        layout = VerticalLayout(x, 0, w, height, self.scene)
         i = 0
         for auto option: self.options:
-          t_y = self.y - self.h*i
-          option_btn = new OptionButton<DropdownButton>(x, t_y, w, h, self, option->name, i)
+          option_btn = new OptionButton<DropdownButton>(0, 0, w, h, self, option->name, i)
           option_btn->set_justification(ui::Text::JUSTIFY::LEFT)
-          self.scene->add(option_btn)
-          i += 1
+          layout.pack_end(option_btn)
+          i++
+
 
       ui::MainLoop::show_overlay(self.scene)
 
     void select(int idx):
-      selected = idx
+      self.selected = idx
       ui::MainLoop::hide_overlay()
       if idx < self.options.size():
         self.text = self.options[idx]->name

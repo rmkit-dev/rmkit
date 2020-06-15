@@ -8,6 +8,9 @@ namespace ui:
     void add(Widget *w):
       widgets.push_back(shared_ptr<Widget>(w))
 
+    void add(shared_ptr<Widget> w):
+      widgets.push_back(w)
+
     static void redraw(vector<shared_ptr<Widget>> &widgets):
       for auto it = widgets.rbegin(); it != widgets.rend(); it++:
         auto &widget = *it
