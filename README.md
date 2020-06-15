@@ -5,10 +5,13 @@ This repo contains code for drawing to the remarkable framebuffer.
 
 ## Status
 
-Almost nothing is implemented yet. But future plans is to create helper classes for the following:
+Almost nothing is implemented yet. But future plans is to create helper classes
+for the following:
 
-* Framebuffer abstraction
+* Framebuffer abstractions
+* Text Rendering
 * Drawing primitives: line, rect, circle, etc
+* Canvas + Procedural brushes
 * Widgets and Immediate mode UI: Buttons, Dropdown, Toolbar, etc
 
 ## Development
@@ -36,8 +39,6 @@ with image framebuffer:
 * run sketchy
 * run local viewer: `make view`
 
-
-
 #### Remarkable
 
 * checkout freetype into repo: `git submodule init`
@@ -45,3 +46,9 @@ with image framebuffer:
 * compile sketchy for remarkable: `make sketchy_arm`
 * test on remarkable: `make test_arm` - assumes that the remarkable is plugged in on USB
 * test on remarkable over wifi: `HOST=192.168.1.10 make test_arm`
+
+
+#### References
+
+* [libremarkable](https://github.com/canselcik/libremarkable)
+* [harmony](https://github.com/mrdoob/harmony)
