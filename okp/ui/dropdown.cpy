@@ -1,7 +1,18 @@
 #include "button.h"
 #include "layouts.h"
+#include "../input/events.h"
 
 namespace ui:
+  class OptionSection: public ui::Button:
+    public:
+    string text
+
+    OptionSection(int x, y, w, h, string t): ui::Button(x,y,w,h,t):
+      self.mouse_inside = true
+      self.textWidget->justify = ui::Text::JUSTIFY::RIGHT
+
+    bool ignore_event(auto ev):
+      return true
 
   template<typename T>
   class OptionButton: public ui::Button:
@@ -41,9 +52,13 @@ namespace ui:
         layout = VerticalLayout(x, 0, w, height, self.scene)
         i = 0
         for auto option: self.options:
-          option_btn = new OptionButton<DropdownButton>(0, 0, w, h, self, option->name, i)
-          option_btn->set_justification(ui::Text::JUSTIFY::LEFT)
-          layout.pack_end(option_btn)
+          if option->name.find("===") == 0:
+            section = new OptionSection(0, 0, w, h, option->name.substr(3))
+            layout.pack_end(section)
+          else:
+            option_btn = new OptionButton<DropdownButton>(0, 0, w, h, self, option->name, i)
+            option_btn->set_justification(ui::Text::JUSTIFY::LEFT)
+            layout.pack_end(option_btn)
           i++
 
 
@@ -78,6 +93,10 @@ namespace ui:
     TextDropdown(int x, y, w, h): \
       ui::DropdownButton<ui::TextOption*>(x,y,w,h,{})
       self.text = "..."
+
+    void add_section(string t):
+        string s = "===" + t
+        self.options.push_back(new TextOption(s))
 
     void add_options(vector<string> opts):
       for auto opt: opts:

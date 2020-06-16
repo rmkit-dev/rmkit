@@ -40,6 +40,7 @@ namespace ui:
     int last_x = -1, last_y = -1
     vector<Point> points
     string name = "brush"
+    int color = BLACK
 
     // stroke sizing
     int stroke_width = 1
@@ -107,7 +108,7 @@ namespace ui:
 
     void stroke(int x, y):
       if self.last_x != -1:
-        self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width, BLACK)
+        self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width, self.color)
 
     void stroke_end():
       self.points.clear()
@@ -188,14 +189,14 @@ namespace ui:
     void stroke(int x, y):
       dist = 1000 * MULTIPLIER
       if self.last_x != -1:
-        self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, BLACK)
+        self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, self.color)
 
       for auto point: self.points:
         dx = point.x - x
         dy = point.y - y
         d = dx * dx + dy * dy
         if d < dist:
-          self.fb->draw_line(x,y,point.x,point.y,self.stroke_width,BLACK)
+          self.fb->draw_line(x,y,point.x,point.y,self.stroke_width,self.color)
 
     void stroke_end():
       pass
@@ -217,7 +218,7 @@ namespace ui:
     void stroke(int x, y):
       dist = 4000 * MULTIPLIER
       if self.last_x != -1:
-        self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, BLACK)
+        self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, self.color)
 
       for auto point: self.points:
         dx = point.x - x
@@ -230,7 +231,7 @@ namespace ui:
             y + dy * 0.3, \
             point.x - dx * 0.3, \
             point.y - dy * 0.3, \
-            1,BLACK)
+            1,self.color)
 
     void stroke_end():
       pass
@@ -252,7 +253,7 @@ namespace ui:
     void stroke(int x, y):
       dist = 4000 * MULTIPLIER
       if self.last_x != -1:
-        self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, BLACK)
+        self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, self.color)
 
       for auto point: self.points:
         dx = point.x - x
@@ -261,7 +262,7 @@ namespace ui:
 
         if d < dist && rand() < RAND_MAX / (20 / MULTIPLIER):
         self.fb->draw_line(x+dx*0.5, y+dy*0.5, x-dx*0.5, y-dy*0.5, \
-          self.stroke_width, BLACK)
+          self.stroke_width, self.color)
 
     void stroke_end():
       pass

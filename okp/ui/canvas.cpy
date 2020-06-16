@@ -49,6 +49,12 @@ namespace ui:
     auto get_stroke_width():
       return self.curr_brush->stroke_val
 
+    void set_stroke_color(int color):
+      self.curr_brush->color = color
+
+    auto get_stroke_color():
+      return self.curr_brush->color
+
     void reset():
       push_undo()
       memset(self.fb->fbmem, WHITE, self.byte_size)

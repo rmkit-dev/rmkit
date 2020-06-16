@@ -1,10 +1,8 @@
 NEXT:
 
 * implement non-procedural brushes pencil, fineliner, paintbrush, etc
-* put brushes into own dir
-* figure out how to dither grayscale
 * save canvas to a file on remarkable
-* Dialog widget
+* dialog widget (for what? opening files?)
 
 DESIRED FEATURES:
 
@@ -23,6 +21,7 @@ DESIRED FEATURES:
 * add launcher from button press so app can be launched / quit
 * add polished interactions
 * layout that scales based on resolution
+* multi layer canvas
 
 DRAWING:
 
@@ -41,10 +40,10 @@ APP:
 * implement dialogs
 * implement pop-over for buttons (Select / Dropdown button)
 * implement brushes
-  * sketchy
-  * shaded
-  * chrome
-  * eraser
+  * web
+  * long fur
+  * squares
+  * circles
 
 
 TESTING:
@@ -58,6 +57,10 @@ PERF:
 DEV EXPERIENCE:
 
 * have main app call viewer? (optional)
+
+PUNT:
+
+* put brushes into own dir
 
 DONE:
 
@@ -90,3 +93,6 @@ x implement dropdown
 x re-work how input event system looks
 x connect brush stroke and brush in UI
 x clear canvas button
+x figure out how to dither grayscale
+x add color dropdown
+

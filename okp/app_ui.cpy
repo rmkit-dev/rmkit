@@ -16,25 +16,56 @@ namespace app_ui:
       self.canvas->set_brush(self.options[idx])
 
 
-  class BrushSizeButton: public ui::DropdownButton<ui::stroke::Size*>:
+  class BrushConfigButton: public ui::TextDropdown:
     public:
     ui::Canvas *canvas
-    BrushSizeButton(int x, y, w, h, ui::Canvas *c): \
-      ui::DropdownButton<ui::stroke::Size*>(x,y,w,h,ui::stroke::SIZES)
+    BrushConfigButton(int x, y, w, h, ui::Canvas *c): \
+      ui::TextDropdown(x,y,w,h)
       self.canvas = c
+
+      for auto b : ui::stroke::SIZES:
+        self.add_options({b->name})
+      self.add_section("size")
+
+      self.add_options({"black", "gray", "white"})
+      self.add_section("color")
+
+    void on_select(int i):
+      option = self.options[i]->name
+      do {
+        if option == ui::stroke::FINE.name:
+          self.canvas->set_stroke_width(ui::stroke::FINE.val)
+          break
+        if option == ui::stroke::MEDIUM.name:
+          self.canvas->set_stroke_width(ui::stroke::MEDIUM.val)
+          break
+        if option == ui::stroke::WIDE.name:
+          self.canvas->set_stroke_width(ui::stroke::WIDE.val)
+          break
+
+        if option == "black":
+          self.canvas->set_stroke_color(BLACK)
+          break
+        if option == "white":
+          self.canvas->set_stroke_color(WHITE)
+          break
+        if option == "gray":
+          self.canvas->set_stroke_color(GRAY)
+          break
+      } while(false);
+
+      self.text = option
 
     // sync the brush stroke to the canvas
     void before_redraw():
       idx = 0
-      for idx = 0; idx < self.options.size(); idx++:
-        if canvas->get_stroke_width() == self.options[idx]->val:
-          self.text = self.options[idx]->name
+      for auto size : ui::stroke::SIZES:
+        if canvas->get_stroke_width() == size->val:
+          self.text = size->name
           break
+        idx++
 
       idx %= self.options.size()
-
-    void on_select(int idx):
-      self.canvas->set_stroke_width(self.options[idx]->val)
 
 
   class LiftBrushButton: public ui::Button:
