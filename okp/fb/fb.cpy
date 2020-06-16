@@ -118,19 +118,25 @@ namespace framebuffer:
 
     inline void do_dithering(remarkable_color *ptr, int i, j, color):
       switch color:
-        case ERASER_RUBBER:
-          if pointer_size(ptr + i) % 3 == 0 || pointer_size(ptr + i) % 5 == 0:
-            ptr[i] = WHITE
+        case GRAY:
+          if (i + j) % 2 == 0:
+            ptr[i+j*self.width] = WHITE
           else:
-            ptr[i] = BLACK
+            ptr[i+j*self.width] = BLACK
+          break
+        case ERASER_RUBBER:
+          if (i + j) % 2 == 0 || (i + j) % 3 == 0:
+            ptr[i+j*self.width] = WHITE
+          else:
+            ptr[i+j*self.width] = BLACK
           break
         case ERASER_STYLUS:
-          if ptr[i] != WHITE:
-            if pointer_size(ptr + i) % 2 == 0 || pointer_size(ptr + i) % 3 == 0:
-              ptr[i] = WHITE
+          if ptr[i+j*self.width] != WHITE:
+            if (i + j) % 2 == 0 || (i + j) % 3 == 0:
+              ptr[i+j*self.width] = WHITE
           break
         default:
-          ptr[i] = color
+          ptr[i + j*self.width] = color
 
     inline void draw_pixel(remarkable_color *ptr, int x, y, color):
       ptr[y * self.width + x] = color
@@ -157,8 +163,7 @@ namespace framebuffer:
             break
 
           if fill || (j == 0 || i == 0 || j == h-1 || i == w-1):
-            do_dithering(ptr, i, j, color)
-        ptr += self.width
+            do_dithering(self.fbmem, i+o_x, j+o_y, color)
 
     def draw_bitmap(freetype::image_data image, int o_x, int o_y):
       remarkable_color* ptr = self.fbmem

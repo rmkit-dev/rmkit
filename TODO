@@ -1,12 +1,10 @@
 NEXT:
 
-x re-work how input event system looks
-* connect brush stroke and brush in UI
 * implement non-procedural brushes pencil, fineliner, paintbrush, etc
 * put brushes into own dir
 * figure out how to dither grayscale
-* clear canvas button
 * save canvas to a file on remarkable
+* Dialog widget
 
 DESIRED FEATURES:
 
@@ -37,6 +35,8 @@ EVENTS:
 
 APP:
 
+* highlight dropdown box
+* multi-option dropdowns (can stroke size and brush type be in same dropdown?)
 * implement listbox widget
 * implement dialogs
 * implement pop-over for buttons (Select / Dropdown button)
@@ -86,4 +86,7 @@ x brushes
 x text centering
 x center align text / add text extents
 x add SIG\* signal handlers to reset the framebuffer to its original settings
-* implement dropdown
+x implement dropdown
+x re-work how input event system looks
+x connect brush stroke and brush in UI
+x clear canvas button
