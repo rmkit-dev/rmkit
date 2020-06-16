@@ -1,5 +1,6 @@
 NEXT:
 
+* button capture + launcher for xochitl / sketchy
 * implement non-procedural brushes pencil, fineliner, paintbrush, etc
 * save canvas to a file on remarkable
 * dialog widget (for what? opening files?)

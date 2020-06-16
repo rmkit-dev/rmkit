@@ -11,7 +11,7 @@ namespace ui:
       self.mouse_inside = true
       self.textWidget->justify = ui::Text::JUSTIFY::RIGHT
 
-    bool ignore_event(auto ev):
+    bool ignore_event(input::SynEvent &ev):
       return true
 
   template<typename T>

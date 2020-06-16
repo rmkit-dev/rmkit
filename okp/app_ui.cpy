@@ -79,6 +79,14 @@ namespace app_ui:
       self.dirty = 1
       self.canvas->curr_brush->reset()
 
+    void redraw():
+      self->fb->draw_rect(self.x, self.y, self.w, self.h, WHITE, true)
+      self->fb->draw_rect(self.x, self.y, self.w, self.h, BLACK, false)
+      if self.mouse_down:
+        self->fb->draw_rect(self.x, self.y, self.w, self.h, BLACK, true)
+      else if self.mouse_inside:
+          self->fb->draw_rect(self.x, self.y, self.w, self.h, GRAY, false)
+
   string UNDO = "undo", CLEAR = "clear", REDO = "redo", SAVE = "save", DOTS = "..."
   class ManageButton: public ui::TextDropdown:
     public:

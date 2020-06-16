@@ -65,6 +65,16 @@ namespace ui:
       self.end -= w->h + padding
       self.add(w)
 
+    void pack_center(Widget *w):
+      leftover = self.h - w->h
+      padding_y = 0
+      if leftover > 0:
+        padding_y = leftover / 2
+      w->y = self.y + padding_y
+      w->x += self.x
+
+      self.add(w)
+
   class HorizontalLayout: public AutoLayout:
     public:
     HorizontalLayout(int x, y, w, h, Scene s): AutoLayout(x,y,w,h,s):
@@ -82,3 +92,13 @@ namespace ui:
       w->y += self.y
       self.end -= w->w + padding
       self.add(w)
+
+    void pack_center(Widget *w):
+      leftover = self.w - w->w
+      padding_x = 0
+      if leftover > 0:
+        padding_x = leftover / 2
+      w->x = self.x + padding_x
+      w->y += self.y
+      self.add(w)
+
