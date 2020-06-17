@@ -3,7 +3,8 @@
 #include "fb/fb.h"
 #include "input/input.h"
 #include "ui/text.h"
-#include "app_ui.h"
+#include "app/ui.h"
+#include "app/canvas.h"
 
 
 using namespace std
@@ -39,7 +40,7 @@ class App:
     notebook = ui::make_scene()
     ui::MainLoop::set_scene(notebook)
 
-    canvas = new ui::Canvas(0, 0, fb->width, fb->height)
+    canvas = new app_ui::Canvas(0, 0, fb->width, fb->height)
     w, h = fb->get_display_size()
 
     toolbar_area = new ui::VerticalLayout(0, 0, w, h, notebook)

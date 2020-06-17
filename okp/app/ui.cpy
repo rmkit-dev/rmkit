@@ -1,15 +1,17 @@
-#include "ui/button.h"
-#include "ui/scene.h"
-#include "ui/ui.h"
-#include "ui/dropdown.h"
+#include "../ui/button.h"
+#include "../ui/scene.h"
+#include "../ui/ui.h"
+#include "../ui/dropdown.h"
+#include "brush.h"
+#include "canvas.h"
 
 namespace app_ui:
 
-  class ToolButton: public ui::DropdownButton<ui::Brush*>:
+  class ToolButton: public ui::DropdownButton<Brush*>:
     public:
-    ui::Canvas *canvas
-    ToolButton(int x, y, w, h, ui::Canvas *c): \
-      ui::DropdownButton<ui::Brush*>(x,y,w,h,ui::brush::BRUSHES)
+    Canvas *canvas
+    ToolButton(int x, y, w, h, Canvas *c): \
+      ui::DropdownButton<Brush*>(x,y,w,h,brush::BRUSHES)
       self.canvas = c
 
     void on_select(int idx):
@@ -18,12 +20,12 @@ namespace app_ui:
 
   class BrushConfigButton: public ui::TextDropdown:
     public:
-    ui::Canvas *canvas
-    BrushConfigButton(int x, y, w, h, ui::Canvas *c): \
+    Canvas *canvas
+    BrushConfigButton(int x, y, w, h, Canvas *c): \
       ui::TextDropdown(x,y,w,h)
       self.canvas = c
 
-      for auto b : ui::stroke::SIZES:
+      for auto b : stroke::SIZES:
         self.add_options({b->name})
       self.add_section("size")
 
@@ -33,14 +35,14 @@ namespace app_ui:
     void on_select(int i):
       option = self.options[i]->name
       do {
-        if option == ui::stroke::FINE.name:
-          self.canvas->set_stroke_width(ui::stroke::FINE.val)
+        if option == stroke::FINE.name:
+          self.canvas->set_stroke_width(stroke::FINE.val)
           break
-        if option == ui::stroke::MEDIUM.name:
-          self.canvas->set_stroke_width(ui::stroke::MEDIUM.val)
+        if option == stroke::MEDIUM.name:
+          self.canvas->set_stroke_width(stroke::MEDIUM.val)
           break
-        if option == ui::stroke::WIDE.name:
-          self.canvas->set_stroke_width(ui::stroke::WIDE.val)
+        if option == stroke::WIDE.name:
+          self.canvas->set_stroke_width(stroke::WIDE.val)
           break
 
         if option == "black":
@@ -59,7 +61,7 @@ namespace app_ui:
     // sync the brush stroke to the canvas
     void before_redraw():
       idx = 0
-      for auto size : ui::stroke::SIZES:
+      for auto size : stroke::SIZES:
         if canvas->get_stroke_width() == size->val:
           self.text = size->name
           break
@@ -70,8 +72,8 @@ namespace app_ui:
 
   class LiftBrushButton: public ui::Button:
     public:
-    ui::Canvas *canvas
-    LiftBrushButton(int x, int y, int w, int h, ui::Canvas *c): \
+    Canvas *canvas
+    LiftBrushButton(int x, int y, int w, int h, Canvas *c): \
         ui::Button(x,y,w,h,"lift"):
       self.canvas = c
 
@@ -90,8 +92,8 @@ namespace app_ui:
   string CLEAR = "clear", SAVE = "save", DOTS = "...", QUIT="exit"
   class ManageButton: public ui::TextDropdown:
     public:
-    ui::Canvas *canvas
-    ManageButton(int x, y, w, h, ui::Canvas *c): TextDropdown(x,y,w,h)
+    Canvas *canvas
+    ManageButton(int x, y, w, h, Canvas *c): TextDropdown(x,y,w,h)
       self.canvas = c
       self.add_options({DOTS, CLEAR, SAVE, QUIT})
       self.text = "..."
@@ -111,8 +113,8 @@ namespace app_ui:
 
   class UndoButton: public ui::Button:
     public:
-    ui::Canvas *canvas
-    UndoButton(int x, y, w, h, ui::Canvas *c): ui::Button(x,y,w,h,"undo"):
+    Canvas *canvas
+    UndoButton(int x, y, w, h, Canvas *c): ui::Button(x,y,w,h,"undo"):
       self.canvas = c
 
     void on_mouse_click(input::SynEvent &ev):
@@ -121,8 +123,8 @@ namespace app_ui:
 
   class RedoButton: public ui::Button:
     public:
-    ui::Canvas *canvas
-    RedoButton(int x, y, w, h, ui::Canvas *c): ui::Button(x,y,w,h,"redo"):
+    Canvas *canvas
+    RedoButton(int x, y, w, h, Canvas *c): ui::Button(x,y,w,h,"redo"):
       self.canvas = c
 
     void on_mouse_click(input::SynEvent &ev):

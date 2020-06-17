@@ -1,7 +1,7 @@
 #include "../fb/fb.h"
 #include "../defines.h"
 
-namespace ui:
+namespace app_ui:
   typedef int BrushSize
 
   #ifdef REMARKABLE

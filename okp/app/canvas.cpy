@@ -1,4 +1,4 @@
-#include "base.h"
+#include "../ui/base.h"
 #include "brush.h"
 
 #ifdef REMARKABLE
@@ -6,8 +6,8 @@
 #else
 #define UNDO_STACK_SIZE 100
 #endif
-namespace ui:
-  class Canvas: public Widget:
+namespace app_ui:
+  class Canvas: public ui::Widget:
     public:
     remarkable_color *mem
     deque<shared_ptr<remarkable_color>> undo_stack;
@@ -22,7 +22,7 @@ namespace ui:
     Brush* curr_brush
     Brush* eraser
 
-    Canvas(int x, y, w, h): Widget(x,y,w,h):
+    Canvas(int x, y, w, h): ui::Widget(x,y,w,h):
       px_width, px_height = self.fb->get_display_size()
       self.byte_size = px_width * px_height * sizeof(remarkable_color)
       vfb = make_shared<framebuffer::VirtualFB>()
