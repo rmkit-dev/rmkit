@@ -87,19 +87,25 @@ namespace app_ui:
       else if self.mouse_inside:
           self->fb->draw_rect(self.x, self.y, self.w, self.h, GRAY, false)
 
-  string UNDO = "undo", CLEAR = "clear", REDO = "redo", SAVE = "save", DOTS = "..."
+  string CLEAR = "clear", SAVE = "save", DOTS = "...", QUIT="exit"
   class ManageButton: public ui::TextDropdown:
     public:
     ui::Canvas *canvas
     ManageButton(int x, y, w, h, ui::Canvas *c): TextDropdown(x,y,w,h)
       self.canvas = c
-      self.add_options({DOTS, CLEAR, SAVE})
+      self.add_options({DOTS, CLEAR, SAVE, QUIT})
       self.text = "..."
 
     void on_select(int i):
       option = self.options[i]->name
       if option == CLEAR:
         self.canvas->reset()
+      if option == QUIT:
+        #ifdef REMARKABLE
+        if system("systemctl restart xochitl 2> /dev/null") == 0:
+          print "STARTING XOCHITL"
+        #endif
+        exit(0)
 
       self.text = "..."
 

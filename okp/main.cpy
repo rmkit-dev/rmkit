@@ -126,7 +126,11 @@ void signal_handler(int signum):
   exit(signum)
 
 def main():
-  signal(SIGINT, signal_handler)
-  signal(SIGTERM, signal_handler)
-  signal(SIGABRT, signal_handler)
+  for auto s : { SIGINT, SIGTERM, SIGABRT}:
+    signal(s, signal_handler)
+
+  #ifdef REMARKABLE
+  if system("systemctl stop xochitl 2> /dev/null") == 0:
+    print "STOPPED XOCHITL"
+  #endif
   app.run()
