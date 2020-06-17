@@ -23,7 +23,8 @@ namespace ui:
 
     OptionButton(int x, y, w, h, T* tb, string text, int idx): \
                  tb(tb), text(text), idx(idx), ui::Button(x,y,w,h,text):
-      pass
+      self.x_padding = 10
+      self.set_justification(ui::Text::JUSTIFY::LEFT)
 
     void on_mouse_click(input::SynEvent &ev):
       self.tb->select(self.idx)
@@ -57,7 +58,6 @@ namespace ui:
             layout.pack_end(section)
           else:
             option_btn = new OptionButton<DropdownButton>(0, 0, w, h, self, option->name, i)
-            option_btn->set_justification(ui::Text::JUSTIFY::LEFT)
             layout.pack_end(option_btn)
           i++
 

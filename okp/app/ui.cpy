@@ -56,18 +56,30 @@ namespace app_ui:
           break
       } while(false);
 
-      self.text = option
+      self.before_redraw()
 
     // sync the brush stroke to the canvas
     void before_redraw():
-      idx = 0
+      string size_text, color_text
+
       for auto size : stroke::SIZES:
         if canvas->get_stroke_width() == size->val:
-          self.text = size->name
+          size_text = size->name
           break
-        idx++
 
-      idx %= self.options.size()
+      for auto size : stroke::SIZES:
+        if canvas->curr_brush->color == BLACK:
+          color_text = "black"
+          break
+        if canvas->curr_brush->color == WHITE:
+          color_text = "white"
+          break
+        if canvas->curr_brush->color == GRAY:
+          color_text = "gray"
+          break
+
+      self.text = size_text + " " + color_text
+
 
 
   class LiftBrushButton: public ui::Button:

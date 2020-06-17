@@ -10,6 +10,16 @@
 #include "../defines.h"
 
 namespace freetype {
+  int DPI = 72;
+  int FONT_SIZE = 24;
+  float PTS = 64.0;
+
+  #ifdef REMARKABLE
+  const char *filename = "/usr/share/fonts/ttf/noto/NotoMono-Regular.ttf";
+  #else
+  const char *filename = "/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf";
+  #endif
+
   struct image_data {
     uint32_t* buffer;
     int w;
@@ -46,7 +56,7 @@ namespace freetype {
     }
   }
 
-  image_data get_text_size(const char *text, int font_size=24) {
+  image_data get_text_size(const char *text, int font_size=FONT_SIZE) {
     image_data image;
 
     FT_Library library;
@@ -56,22 +66,15 @@ namespace freetype {
     FT_Vector pen;    /* untransformed origin  */
     FT_Error error;
 
-    const char *filename;
 
     int target_height;
     int n, num_chars;
 
-    // filename = argv[1]; /* first argument     */
-    #ifdef REMARKABLE
-    filename = "/usr/share/fonts/ttf/noto/NotoMono-Regular.ttf";
-    #else
-    filename = "/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf";
-    #endif
     num_chars = strlen(text);
 
     error = FT_Init_FreeType(&library); /* initialize library */
     error = FT_New_Face(library, filename, 0, &face); /* create face object */
-    error = FT_Set_Char_Size(face, font_size * 64, 0, 100, 0); /* set character size */
+    error = FT_Set_Char_Size(face, font_size * PTS, 0, DPI, 0); /* set character size */
 
     slot = face->glyph;
 
@@ -94,13 +97,13 @@ namespace freetype {
     FT_Done_Face(face);
     FT_Done_FreeType(library);
 
-    image.w = pen.x / 64.0;
+    image.w = pen.x / PTS;
     image.h = font_size + max_top;
     image.buffer = NULL;
     return image;
   }
 
-  int render_text(char* text, int x, int y, image_data image, int font_size = 24) {
+  int render_text(char* text, int x, int y, image_data image, int font_size = FONT_SIZE) {
     FT_Library library;
     FT_Face face;
 
@@ -108,23 +111,16 @@ namespace freetype {
     FT_Vector pen;    /* untransformed origin  */
     FT_Error error;
 
-    const char *filename;
-
     int target_height;
     int n, num_chars;
 
     // filename = argv[1]; /* first argument     */
-    #ifdef REMARKABLE
-    filename = "/usr/share/fonts/ttf/noto/NotoMono-Regular.ttf";
-    #else
-    filename = "/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf";
-    #endif
     num_chars = strlen(text);
     target_height = image.h;
 
     error = FT_Init_FreeType(&library); /* initialize library */
     error = FT_New_Face(library, filename, 0, &face); /* create face object */
-    error = FT_Set_Char_Size(face, font_size * 64, 0, 72, 0); /* set character size */
+    error = FT_Set_Char_Size(face, font_size * PTS, 0, DPI, 0); /* set character size */
 
     slot = face->glyph;
 
@@ -139,8 +135,8 @@ namespace freetype {
         continue; /* ignore errors */
       pen.y -= slot->bitmap_top;
       draw_bitmap(&slot->bitmap,
-                  pen.x / 64,
-                  pen.y / 64 - slot->bitmap_top + font_size,
+                  pen.x / PTS,
+                  pen.y / PTS - slot->bitmap_top + font_size,
                   image);
       pen.y += slot->bitmap_top;
 

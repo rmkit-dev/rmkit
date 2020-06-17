@@ -5,13 +5,14 @@ namespace ui:
   class Button: public Widget:
     public:
     string text
-    int x_padding = 10
+    int x_padding = 0
     int y_padding = 0
     shared_ptr<Text> textWidget
 
     Button(int x, y, w, h, string t): Widget(x,y,w,h):
       self.text = t
       self.textWidget = shared_ptr<Text>(new Text(x, y, w, h, t))
+      self.set_justification(ui::Text::JUSTIFY::CENTER)
 
     void on_mouse_down(input::SynEvent &ev):
       self.dirty = 1
@@ -29,9 +30,11 @@ namespace ui:
       self.textWidget->justify = j
 
     void redraw():
+
       fb->draw_rect(self.x, self.y, self.w, self.h, WHITE, true)
       self.textWidget->text = text
-      self.textWidget->set_coords(x+x_padding, y+y_padding, w, h)
+      self.textWidget->set_coords(x+x_padding, y+y_padding, \
+        self.w - x_padding, self.h - y_padding)
       self.textWidget->redraw()
 
       color = WHITE

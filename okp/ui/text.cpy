@@ -21,7 +21,7 @@ namespace ui:
       leftover_x = self.w - image.w
       padding_x = 0
 
-      switch justify:
+      switch self.justify:
         case JUSTIFY::LEFT:
           break
         case JUSTIFY::CENTER:
@@ -32,6 +32,7 @@ namespace ui:
           if leftover_x > 0:
             padding_x = leftover_x
           break
+
       fb->draw_text(self.text, self.x + padding_x, self.y, image)
 
       free(image.buffer)
