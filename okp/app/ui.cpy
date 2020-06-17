@@ -2,6 +2,7 @@
 #include "../ui/scene.h"
 #include "../ui/ui.h"
 #include "../ui/dropdown.h"
+#include "../ui/dialog.h"
 #include "brush.h"
 #include "canvas.h"
 
@@ -101,10 +102,28 @@ namespace app_ui:
       else if self.mouse_inside:
           self->fb->draw_rect(self.x, self.y, self.w, self.h, GRAY, false)
 
+  class ExitDialog: public ui::Dialog:
+    public:
+      ExitDialog(int x, y, w, h): ui::Dialog(x, y, w, h):
+        pass
+
+      void on_button_selected(string t):
+        print "BUTTON SELECTED"
+        if t == "OK":
+          #ifdef REMARKABLE
+          if system("systemctl restart xochitl 2> /dev/null") == 0:
+            print "STARTING XOCHITL"
+          #endif
+          exit(0)
+        if t == "CANCEL":
+          ui::MainLoop::hide_overlay()
+
   string CLEAR = "clear", SAVE = "save", DOTS = "...", QUIT="exit"
   class ManageButton: public ui::TextDropdown:
     public:
     Canvas *canvas
+
+    ExitDialog *ed
     ManageButton(int x, y, w, h, Canvas *c): TextDropdown(x,y,w,h)
       self.canvas = c
       self.add_options({DOTS, CLEAR, SAVE, QUIT})
@@ -115,12 +134,10 @@ namespace app_ui:
       if option == CLEAR:
         self.canvas->reset()
       if option == QUIT:
-        #ifdef REMARKABLE
-        if system("systemctl restart xochitl 2> /dev/null") == 0:
-          print "STARTING XOCHITL"
-        #endif
-        exit(0)
+        if self.ed == NULL:
+          self.ed = new ExitDialog(0, 0, 500, 500)
 
+        self.ed->show()
       self.text = "..."
 
   class UndoButton: public ui::Button:
