@@ -139,4 +139,7 @@ namespace app_ui:
         memcpy(vfb->fbmem, redofb.get(), self.byte_size)
         self.undo_stack.push_back(redofb)
         ui::MainLoop::full_refresh()
+
+    void save():
+      self.vfb->save_lodepng()
     // }}}

@@ -136,8 +136,10 @@ namespace app_ui:
       if option == QUIT:
         if self.ed == NULL:
           self.ed = new ExitDialog(0, 0, 500, 500)
-
         self.ed->show()
+      if option == SAVE:
+        self.canvas->save()
+
       self.text = "..."
 
   class UndoButton: public ui::Button:

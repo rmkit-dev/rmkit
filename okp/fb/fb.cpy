@@ -11,6 +11,7 @@
 #include "../defines.h"
 #include "mxcfb.h"
 #include "text.h"
+#include <lodepng.h>
 
 using namespace std
 
@@ -224,6 +225,21 @@ namespace framebuffer:
       free(buf)
 
       ret = system("pnmtopng fb.pnm > fb.png 2>/dev/null")
+
+    void save_lodepng():
+      const char *filename = "image.png"
+      buf = vector<unsigned char>(self.width * self.height * 4)
+      i = 0
+      for y 0 self.height:
+        for x 0 self.width:
+          d = self.fbmem[y*self.width + x] == 0 ? 0 : 0xff
+          buf[i++] = d
+          buf[i++] = d
+          buf[i++] = d
+          buf[i++] = 0xff
+      buf[i] = 0
+
+      lodepng::encode(filename, buf, self.width, self.height);
 
     def draw_line(int x0,y0,x1,y1,width,color):
       #ifdef DEBUG_FB
