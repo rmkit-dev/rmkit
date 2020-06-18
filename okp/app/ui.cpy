@@ -105,7 +105,7 @@ namespace app_ui:
   class ExitDialog: public ui::Dialog:
     public:
       ExitDialog(int x, y, w, h): ui::Dialog(x, y, w, h):
-        pass
+        self.set_title("Exit?")
 
       void on_button_selected(string t):
         print "BUTTON SELECTED"

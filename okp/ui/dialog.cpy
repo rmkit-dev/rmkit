@@ -6,29 +6,25 @@
 
 namespace ui:
   template<class T>
-  class DialogButton: public ui::Button:
+  class DialogButton: public Button:
     public:
     T *dialog
-    DialogButton(int x, y, w, h, string t, T *d): Button(x,y,w,h,t):
+    DialogButton(int x, y, w, h, T *d, string t): Button(x,y,w,h,t):
       self.dialog = d
 
-    void on_mouse_click(input::SynEvent &ev):
-      print "ON MOUSE CLICK"
+    void on_mouse_click(input::SynEvent&):
       self.dialog->on_button_selected(self.text)
-
-    void on_mouse_down(input::SynEvent &ev):
-      print "ON MOUSE DOWN"
 
   class Dialog: public Widget:
     public:
     string title
     Text *titleWidget
-    DialogButton<Dialog> *yes_button, *no_button
     Scene scene
 
 
     Dialog(int x, y, w, h): Widget(x,y,w,h):
       self.scene = ui::make_scene()
+      self.scene->add(self)
       width, height = self.fb->get_display_size()
       v_layout = ui::VerticalLayout(0, 0, width, height, self.scene)
       v_layout.pack_center(self)
@@ -40,14 +36,15 @@ namespace ui:
       self.titleWidget = new Text(0, 20, self.w, 50, self.title)
       a_layout.pack_start(self.titleWidget)
 
-      self.scene->add(self)
       button_bar = new HorizontalLayout(0, 0, self.w, 50, self.scene)
       a_layout.pack_end(button_bar)
-      button_bar->pack_start(new DialogButton<Dialog>(20, 0, 100, 50, "OK", self))
-      button_bar->pack_start(new DialogButton<Dialog>(20, 0, 100, 50, "CANCEL", self))
+      button_bar->pack_start(new DialogButton<Dialog>(20, 0, 100, 50, self, "OK"))
+      button_bar->pack_start(new DialogButton<Dialog>(20, 0, 100, 50, self, "CANCEL"))
+
+    bool ignore_event(input::SynEvent&):
+      return true
 
     virtual void on_button_selected(string s):
-      print "ON BUTTON SELECTED"
       pass
 
     void redraw():
