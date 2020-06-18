@@ -16,15 +16,13 @@ sketchy_arm: compile_arm
 
 compile_x86: export CPP_FLAGS += -I/usr/include/freetype2 -lfreetype -I../vendor/lodepng
 compile_x86:
-	g++ ./vendor/lodepng/lodepng.cpp -c 
 	cd okp/ && okp ${OKP_FLAGS} -- ${CPP_FLAGS}
 
 compile_dev: export CPP_FLAGS += -I/usr/include/freetype2 -lfreetype -I../vendor/lodepng
 compile_dev:
-	g++ ./vendor/lodepng/lodepng.cpp -c 
 	cd okp/ && okp ${OKP_FLAGS} -- -D"DEV=1" ${CPP_FLAGS}
 
-compile_arm: export CPP_FLAGS += -I../vendor/freetype2/install/usr/local/include/freetype2 -L../vendor/freetype2/install/usr/local/lib/ -lfreetype
+compile_arm: export CPP_FLAGS += -I../vendor/freetype2/install/usr/local/include/freetype2 -L../vendor/freetype2/install/usr/local/lib/ -lfreetype -I../vendor/lodepng
 
 compile_arm:
 	cd okp/ && CXX=arm-linux-gnueabihf-g++ okp ${OKP_FLAGS} -- -D"REMARKABLE=1" ${CPP_FLAGS}
