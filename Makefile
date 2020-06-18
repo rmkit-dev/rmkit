@@ -40,7 +40,7 @@ view:
 FREETYPE_PATH = ./vendor/freetype2
 freetype_arm:
 	cd vendor/freetype2 && bash autogen.sh
-	cd vendor/freetype2 && CXX=${CXX} CC=${CC} ./configure --without-zlib --without-png --enable-static=yes --enable-shared=no  --without-bzip2 --host=arm-linux-gnueabihf
+	cd vendor/freetype2 && CXX=${CXX} CC=${CC} ./configure --without-zlib --without-png --enable-static=yes --enable-shared=no  --without-bzip2 --host=arm-linux-gnueabihf --without-brotli --without-harfbuzz
 
 	cd vendor/freetype2 && CXX=${CXX} CC=${CC} make -j4
 	cd vendor/freetype2 && DESTDIR=$(shell readlink -f vendor/freetype2/install) make install
