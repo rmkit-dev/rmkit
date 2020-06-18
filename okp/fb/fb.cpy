@@ -166,7 +166,7 @@ namespace framebuffer:
           if fill || (j == 0 || i == 0 || j == h-1 || i == w-1):
             do_dithering(self.fbmem, i+o_x, j+o_y, color)
 
-    def draw_bitmap(freetype::image_data image, int o_x, int o_y):
+    def draw_bitmap(freetype::image_data &image, int o_x, int o_y):
       remarkable_color* ptr = self.fbmem
       ptr += (o_x + o_y * self.width)
       src = image.buffer
@@ -175,6 +175,9 @@ namespace framebuffer:
       update_dirty(dirty_area, o_x+image.w, o_y+image.h)
 
       for j 0 image.h:
+        if o_y + j >= self.height:
+          break
+
         for i 0 image.w:
           if o_x + i >= self.width:
             break
@@ -194,7 +197,7 @@ namespace framebuffer:
 
       return max_x, max_y
 
-    int draw_text(string text, int x, int y, freetype::image_data image):
+    void draw_text(string text, int x, int y, freetype::image_data &image):
       freetype::render_text((char*)text.c_str(), x, y, image)
       draw_bitmap(image, x, y)
 

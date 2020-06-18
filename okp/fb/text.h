@@ -103,7 +103,7 @@ namespace freetype {
     return image;
   }
 
-  int render_text(char* text, int x, int y, image_data image, int font_size = FONT_SIZE) {
+  int render_text(char* text, int x, int y, image_data &image, int font_size = FONT_SIZE) {
     FT_Library library;
     FT_Face face;
 

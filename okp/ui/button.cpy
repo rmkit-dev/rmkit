@@ -11,7 +11,7 @@ namespace ui:
 
     Button(int x, y, w, h, string t): Widget(x,y,w,h):
       self.text = t
-      self.textWidget = shared_ptr<Text>(new Text(x, y, w, h, t))
+      self.textWidget = make_shared<Text>(x, y, w, h, t)
       self.set_justification(ui::Text::JUSTIFY::CENTER)
 
     void on_mouse_down(input::SynEvent &ev):

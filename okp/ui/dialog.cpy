@@ -24,7 +24,6 @@ namespace ui:
 
     Dialog(int x, y, w, h): Widget(x,y,w,h):
       self.scene = ui::make_scene()
-      self.scene->add(self)
       width, height = self.fb->get_display_size()
       v_layout = ui::VerticalLayout(0, 0, width, height, self.scene)
       v_layout.pack_center(self)
@@ -40,6 +39,7 @@ namespace ui:
       a_layout.pack_end(button_bar)
       button_bar->pack_start(new DialogButton<Dialog>(20, 0, 100, 50, self, "OK"))
       button_bar->pack_start(new DialogButton<Dialog>(20, 0, 100, 50, self, "CANCEL"))
+      self.scene->add(self)
 
     bool ignore_event(input::SynEvent&):
       return true
@@ -48,6 +48,7 @@ namespace ui:
       pass
 
     void redraw():
+      self.fb->draw_rect(self.x, self.y, self.w, self.h, WHITE, true)
       self.fb->draw_rect(self.x, self.y, self.w, self.h, BLACK, false)
 
     void set_title(string s):
