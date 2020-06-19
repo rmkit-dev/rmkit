@@ -1,9 +1,10 @@
 NEXT:
 
 * button capture + launcher for xochitl / sketchy
+* implement keyboard capture + shortcuts
+* show mouse in dev mode?
 * implement non-procedural brushes pencil, fineliner, paintbrush, etc
-* save canvas to a file on remarkable
-* dialog widget (for what? opening files?)
+* selection tool (lasso?) + all it entails (copy, cut, rotate, etc?)
 
 DESIRED FEATURES:
 
@@ -97,3 +98,5 @@ x clear canvas button
 x figure out how to dither grayscale
 x add color dropdown
 
+x save canvas to a file on remarkable
+x exit dialog widget

@@ -5,6 +5,7 @@
 #include "../ui/dialog.h"
 #include "brush.h"
 #include "canvas.h"
+#include "proc.h"
 
 namespace app_ui:
 
@@ -110,10 +111,7 @@ namespace app_ui:
       void on_button_selected(string t):
         print "BUTTON SELECTED"
         if t == "OK":
-          #ifdef REMARKABLE
-          if system("systemctl restart xochitl 2> /dev/null") == 0:
-            print "STARTING XOCHITL"
-          #endif
+          proc::start_xochitl()
           exit(0)
         if t == "CANCEL":
           ui::MainLoop::hide_overlay()

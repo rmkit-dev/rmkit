@@ -3,7 +3,6 @@
 namespace input:
   class Event:
     public:
-    static framebuffer::FB *fb
     def update(input_event data)
     def print_event(input_event &data):
       #ifdef DEBUG_INPUT_EVENT
@@ -16,7 +15,6 @@ namespace input:
       pass
 
     virtual ~Event() = default
-  framebuffer::FB* Event::fb = NULL
 
   class SynEvent: public Event:
     public:
@@ -99,6 +97,12 @@ namespace input:
     int x = 0, y = 0
     signed char dx = 0, dy = 0
     int left = 0 , right = 0 , middle = 0
+    static int width, height
+
+    static void set_screen_size(int w, h):
+      width = w
+      height = h
+
     def update(input_event data):
       self.print_event(data)
 
@@ -111,17 +115,17 @@ namespace input:
       if self.x < 0:
         self.x = 0
 
-      if self.y >= self.fb->height - 1:
-        self.y = (int) self.fb->height - 5
+      if self.y >= self.height - 1:
+        self.y = (int) self.height - 5
 
-      if self.x >= self.fb->width - 1:
-        self.x = (int) self.fb->width - 5
+      if self.x >= self.width - 1:
+        self.x = (int) self.width - 5
 
       o_x = self.x
-      o_y = self.fb->height - self.y
+      o_y = self.height - self.y
 
-      if o_y >= self.fb->height - 1:
-        o_y = self.fb->height - 5
+      if o_y >= self.height - 1:
+        o_y = self.height - 5
 
       SynEvent syn_ev;
       syn_ev.x = o_x
@@ -136,6 +140,8 @@ namespace input:
 
       syn_ev.set_original(new MouseEvent(*self))
       return syn_ev
+  int MouseEvent::width = 0
+  int MouseEvent::height = 0
 
   class WacomEvent: public Event:
     public:

@@ -4,6 +4,7 @@
 #include "input/input.h"
 #include "ui/text.h"
 #include "app/ui.h"
+#include "app/proc.h"
 #include "app/canvas.h"
 
 
@@ -32,7 +33,8 @@ class App:
     #endif
 
     known ui::Widget::fb = fb.get()
-    known input::Event::fb = fb.get()
+    w, h = fb->get_display_size()
+    input::MouseEvent::set_screen_size(w, h)
 
     fb->clear_screen()
     fb->redraw_screen()
@@ -41,7 +43,6 @@ class App:
     ui::MainLoop::set_scene(notebook)
 
     canvas = new app_ui::Canvas(0, 0, fb->width, fb->height)
-    w, h = fb->get_display_size()
 
     toolbar_area = new ui::VerticalLayout(0, 0, w, h, notebook)
     minibar_area = new ui::VerticalLayout(0, 0, w, h, notebook)
@@ -130,8 +131,5 @@ def main():
   for auto s : { SIGINT, SIGTERM, SIGABRT}:
     signal(s, signal_handler)
 
-  #ifdef REMARKABLE
-  if system("systemctl stop xochitl 2> /dev/null") == 0:
-    print "STOPPED XOCHITL"
-  #endif
+  proc::stop_xochitl()
   app.run()

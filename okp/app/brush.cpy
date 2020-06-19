@@ -61,6 +61,7 @@ namespace app_ui:
           return self.sw_medium
         case stroke::Size::WIDE:
           return self.sw_thick
+      return self.sw_thin
 
     virtual void reset():
       self.points.clear()
