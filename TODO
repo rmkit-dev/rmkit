@@ -1,5 +1,8 @@
 NEXT:
 
+* add a clock
+* add battery percentage
+* move toolbar to side and use pixmaps (noun project?)
 * button capture + launcher for xochitl / sketchy
 * implement keyboard capture + shortcuts
 * show mouse in dev mode?

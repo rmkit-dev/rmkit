@@ -92,6 +92,7 @@ namespace app_ui:
       self.stroke_val = s
       self.stroke_width = self.get_stroke_width(s)
 
+// {{{ NON PROCEDURAL
   class Pencil: public Brush:
     public:
 
@@ -114,6 +115,74 @@ namespace app_ui:
     void stroke_end():
       self.points.clear()
 
+  class BallpointPen: public Brush:
+    public:
+
+    BallpointPen(): Brush():
+      self.name = "ballpoint pen"
+
+    ~BallpointPen():
+      pass
+
+    void destroy():
+      pass
+
+    void stroke_start(int x, y):
+      pass
+
+    void stroke(int x, y):
+      if self.last_x != -1:
+        self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width, self.color)
+
+    void stroke_end():
+      self.points.clear()
+
+  class FineLiner: public Brush:
+    public:
+
+    FineLiner(): Brush():
+      self.name = "fineliner"
+
+    ~FineLiner():
+      pass
+
+    void destroy():
+      pass
+
+    void stroke_start(int x, y):
+      pass
+
+    void stroke(int x, y):
+      if self.last_x != -1:
+        self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width, self.color)
+
+    void stroke_end():
+      self.points.clear()
+
+  class PaintBrush: public Brush:
+    public:
+
+    PaintBrush(): Brush():
+      self.name = "paint brush"
+
+    ~PaintBrush():
+      pass
+
+    void destroy():
+      pass
+
+    void stroke_start(int x, y):
+      pass
+
+    void stroke(int x, y):
+      if self.last_x != -1:
+        self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width, self.color)
+
+    void stroke_end():
+      self.points.clear()
+// }}}
+
+// {{{ ERASERS
   class Eraser: public Brush:
     public:
     Eraser(): Brush():
@@ -171,8 +240,10 @@ namespace app_ui:
           self.stroke_width, WHITE)
         last_p = point
       self.points.clear()
+// }}}
 
 
+// {{{ PROCEDURAL
   class Shaded: public Brush:
     public:
     Shaded(): Brush():
@@ -267,13 +338,26 @@ namespace app_ui:
 
     void stroke_end():
       pass
+// }}}
 
   namespace brush:
-    static Brush *ERASER        = new Eraser()
+    // PROCEDURAL BRUSHES
     static Brush *FUR           = new Fur()
-    static Brush *PENCIL        = new Pencil()
-    static Brush *RUBBER_ERASER = new RubberEraser()
     static Brush *SHADED        = new Shaded()
     static Brush *SKETCHY       = new Sketchy()
 
-    static vector<Brush*> BRUSHES = { PENCIL, SKETCHY, SHADED, FUR, ERASER, RUBBER_ERASER }
+    // ERASERS
+    static Brush *ERASER        = new Eraser()
+    static Brush *RUBBER_ERASER = new RubberEraser()
+
+    // RM STYLE BRUSHES
+    static Brush *PENCIL        = new Pencil()
+    static Brush *BALLPOINT     = new BallpointPen()
+    static Brush *FINELINER     = new FineLiner()
+    static Brush *PAINTBRUSH    = new PaintBrush()
+
+
+
+    static vector<Brush*> N_BRUSHES = { PENCIL, BALLPOINT, FINELINER, PAINTBRUSH }
+    static vector<Brush*> BRUSHES = { SKETCHY, SHADED, FUR }
+    static vector<Brush*> ERASERS = { ERASER, RUBBER_ERASER }

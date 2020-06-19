@@ -12,9 +12,15 @@ namespace app_ui:
   class ToolButton: public ui::DropdownButton<Brush*>:
     public:
     Canvas *canvas
-    ToolButton(int x, y, w, h, Canvas *c): \
-      ui::DropdownButton<Brush*>(x,y,w,h,brush::BRUSHES)
+    ToolButton(int x, y, w, h, Canvas *c): ui::DropdownButton<Brush*>(x, y, w, h, {}):
+      vector<Brush*> brushes
+      brushes.insert(brushes.end(), brush::BRUSHES.begin(), brush::BRUSHES.end())
+      brushes.insert(brushes.end(), brush::N_BRUSHES.begin(), brush::N_BRUSHES.end())
+      brushes.insert(brushes.end(), brush::ERASERS.begin(), brush::ERASERS.end())
+
+      self.options = brushes
       self.canvas = c
+      self.select(0)
 
     void on_select(int idx):
       self.canvas->set_brush(self.options[idx])
