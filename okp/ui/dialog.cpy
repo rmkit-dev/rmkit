@@ -33,10 +33,10 @@ namespace ui:
 
       a_layout = ui::VerticalLayout(self.x, self.y, self.w, self.h, self.scene)
       self.titleWidget = new Text(0, 20, self.w, 50, self.title)
-      a_layout.pack_start(self.titleWidget)
+      a_layout.pack_start(self.titleWidget, 20)
 
       button_bar = new HorizontalLayout(0, 0, self.w, 50, self.scene)
-      a_layout.pack_end(button_bar)
+      a_layout.pack_end(button_bar, 10)
       button_bar->pack_start(new DialogButton<Dialog>(20, 0, 100, 50, self, "OK"))
       button_bar->pack_start(new DialogButton<Dialog>(20, 0, 100, 50, self, "CANCEL"))
       self.scene->add(self)
