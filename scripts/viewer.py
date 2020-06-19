@@ -1,10 +1,20 @@
 import glib
-import gtk
+import gi
+gi.require_version("Gtk", "3.0")
+gi.require_version("Gdk", "3.0")
+from gi.repository import Gtk as gtk
+from gi.repository import Gdk as gdk
+from gi.repository.GdkPixbuf import Pixbuf, InterpType
+
+
+
 import threading
 import sys
 import time
 
 if __name__ == "__main__":
+    glib.threads_init()
+
     WIN = gtk.Window()
     IMG = gtk.Image()
 
@@ -16,14 +26,14 @@ if __name__ == "__main__":
 
     def update_image():
         try:
-            img = gtk.gdk.pixbuf_new_from_file("./fb.png")
-        except:
+            img = Pixbuf.new_from_file("./fb.png")
+        except Exception, e:
             return True
 
         width, height = WIN.get_size()
         i_width = img.get_width()
         scalar = i_width / float(width)
-        img = img.scale_simple(width, int(height/scalar), gtk.gdk.INTERP_BILINEAR)
+        img = img.scale_simple(width, int(height/scalar), InterpType.BILINEAR)
 
         IMG.set_from_pixbuf(img)
         IMG.queue_draw()
