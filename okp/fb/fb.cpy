@@ -154,6 +154,9 @@ namespace framebuffer:
       printf("DRAWING RECT X: %i Y: %i W: %i H: %i, COLOR: %i\n", o_x, o_y, w, h, color)
       #endif
 
+      if o_y >= self.height || o_x >= self.width || o_y < 0 || o_x < 0:
+        return
+
       ptr += (o_x + o_y * self.width)
 
       update_dirty(dirty_area, o_x, o_y)
@@ -247,6 +250,47 @@ namespace framebuffer:
       buf[i] = 0
 
       lodepng::encode(filename, buf, self.width, self.height);
+
+    // bresenham's outline
+    def draw_circle_outline(int x0, y0, r, stroke,color):
+      y = r
+      x = 0;
+      w = stroke
+      h = stroke
+
+      self.draw_rect(x, y, w, h, color, true);
+      d = (3-2*(int)r);
+      while (x <= y):
+        if (d <= 0):
+          d = d + (4*x + 6);
+        else:
+          d = d + 4*(x-y) + 10;
+          y--;
+        x++;
+
+        self.draw_rect(x+x0, y+y0, w, h, color, true);
+
+        self.draw_rect(-x+x0, y+y0, w, h, color, true);
+        self.draw_rect(x+x0, -y+y0, w, h, color, true);
+
+        self.draw_rect(-x+x0, -y+y0, w, h, color, true);
+        self.draw_rect(y+x0, x+y0, w, h, color, true);
+        self.draw_rect(-y+x0, x+y0, w, h, color, true);
+        self.draw_rect(y+x0, -x+y0, w, h, color, true);
+
+        self.draw_rect(-y+x0, -x+y0, w, h, color, true);
+
+    def draw_circle_filled(int x0, y0, radius, stroke, color):
+      for int x = -radius; x <= radius; x++:
+        for y = -radius; y <= radius; y++:
+          if (x*x+y*y) <= radius*radius:
+            self.draw_rect(x+x0, y+y0, stroke, stroke, color, true)
+
+    def draw_circle(int x0, y0, r, stroke, color, fill=false):
+      if fill:
+        self.draw_circle_filled(x0, y0, r, stroke, color)
+      else:
+        self.draw_circle_outline(x0, y0, r, stroke, color)
 
     def draw_line(int x0,y0,x1,y1,width,color,float dither=1.0):
       #ifdef DEBUG_FB

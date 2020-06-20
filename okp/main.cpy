@@ -64,7 +64,7 @@ class App:
     topbar->pack_start(new app_ui::HideButton(0, 0, 50, 50, topbar, minibar), 20)
     topbar->pack_start(new app_ui::ToolButton(0, 0, 200, 50, canvas))
     topbar->pack_start(new app_ui::BrushConfigButton(0, 0, 250, 50, canvas))
-    topbar->pack_center(new app_ui::LiftBrushButton(0, 0, 150, 50, canvas))
+    topbar->pack_center(new app_ui::LiftBrushButton(0, 0, 114, 100, canvas))
     topbar->pack_end(new app_ui::ManageButton(0, 0, 100, 50, canvas))
     topbar->pack_end(new app_ui::RedoButton(0, 0, 100, 50, canvas))
     topbar->pack_end(new app_ui::UndoButton(0, 0, 100, 50, canvas))

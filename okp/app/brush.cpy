@@ -133,7 +133,7 @@ namespace app_ui:
 
     void stroke(int x, y, tilt_x, tilt_y, pressure):
       if self.last_x != -1:
-        dither = pressure / float(2048)
+        dither = pressure / float(2048*1.5)
         self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width, self.color, dither)
 
     void stroke_end():
