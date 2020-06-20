@@ -37,8 +37,8 @@ namespace ui:
     vector<O> options
     ui::Scene scene = NULL
 
-    DropdownButton(int x, y, w, h, vector<O> options):\
-                   options(options), ui::Button(x,y,w,h,"replace_me"):
+    DropdownButton(int x, y, w, h, vector<O> options, string name):\
+                   options(options), ui::Button(x,y,w,h,name):
       self.select(0)
 
     void on_mouse_click(input::SynEvent&):
@@ -90,9 +90,9 @@ namespace ui:
   class TextDropdown: public ui::DropdownButton<ui::TextOption*>:
     public:
     vector<string> text_options
-    TextDropdown(int x, y, w, h): \
-      ui::DropdownButton<ui::TextOption*>(x,y,w,h,{})
-      self.text = "..."
+    TextDropdown(int x, y, w, h, string t): \
+      ui::DropdownButton<ui::TextOption*>(x,y,w,h,{},t)
+      self.text = t
 
     void add_section(string t):
         string s = "===" + t

@@ -1,5 +1,6 @@
 #include "base.h"
 #include "text.h"
+#include "../input/keycodes.h"
 
 namespace ui:
   class Button: public Widget:
@@ -8,11 +9,16 @@ namespace ui:
     int x_padding = 0
     int y_padding = 0
     shared_ptr<Text> textWidget
+    int key
+    static int key_ctr
 
     Button(int x, y, w, h, string t): Widget(x,y,w,h):
+      self.key = Button::key_ctr
+      Button::key_ctr++
       self.text = t
       self.textWidget = make_shared<Text>(x, y, w, h, t)
       self.set_justification(ui::Text::JUSTIFY::CENTER)
+      print self.text, "=", input::get_key_str(self.key)
 
     void on_mouse_down(input::SynEvent &ev):
       self.dirty = 1
@@ -25,6 +31,11 @@ namespace ui:
 
     void on_mouse_enter(input::SynEvent &ev):
       self.dirty = 1
+
+    void on_key_pressed(input::KeyEvent &ev):
+      if ev.key == key && ev.is_pressed:
+        input::SynEvent fake
+        self.on_mouse_click(fake)
 
     void set_justification(Text::JUSTIFY j):
       self.textWidget->justify = j
@@ -44,3 +55,5 @@ namespace ui:
       if self.mouse_down:
         fill = true
       fb->draw_rect(self.x, self.y, self.w, self.h, color, fill)
+
+  int Button::key_ctr = 16 // "q"

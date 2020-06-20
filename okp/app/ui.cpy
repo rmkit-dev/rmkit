@@ -12,7 +12,8 @@ namespace app_ui:
   class ToolButton: public ui::DropdownButton<Brush*>:
     public:
     Canvas *canvas
-    ToolButton(int x, y, w, h, Canvas *c): ui::DropdownButton<Brush*>(x, y, w, h, {}):
+    ToolButton(int x, y, w, h, Canvas *c): \
+               ui::DropdownButton<Brush*>(x, y, w, h, {}, "tools"):
       vector<Brush*> brushes
       brushes.insert(brushes.end(), brush::P_BRUSHES.begin(), brush::P_BRUSHES.end())
       brushes.insert(brushes.end(), brush::NP_BRUSHES.begin(), brush::NP_BRUSHES.end())
@@ -30,7 +31,7 @@ namespace app_ui:
     public:
     Canvas *canvas
     BrushConfigButton(int x, y, w, h, Canvas *c): \
-      ui::TextDropdown(x,y,w,h)
+      ui::TextDropdown(x,y,w,h,"brush config")
       self.canvas = c
 
       for auto b : stroke::SIZES:
@@ -128,7 +129,7 @@ namespace app_ui:
     Canvas *canvas
 
     ExitDialog *ed
-    ManageButton(int x, y, w, h, Canvas *c): TextDropdown(x,y,w,h)
+    ManageButton(int x, y, w, h, Canvas *c): TextDropdown(x,y,w,h,"...")
       self.canvas = c
       self.add_options({DOTS, CLEAR, SAVE, QUIT})
       self.text = "..."

@@ -91,6 +91,8 @@ class App:
         case KEY_RIGHT:
           ui::MainLoop::toggle_overlay(open_dialog)
           break
+        default:
+          ui::MainLoop::handle_key_event(key_ev)
 
 
   def handle_motion_event(input::SynEvent &syn_ev):

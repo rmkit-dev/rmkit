@@ -56,6 +56,9 @@ namespace ui:
 
     virtual void on_mouse_hover(input::SynEvent &ev):
       pass
+
+    virtual void on_key_pressed(input::KeyEvent &ev):
+      pass
     // }}}
 
     // checks if this widget is hit by a button press

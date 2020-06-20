@@ -45,6 +45,13 @@ namespace ui:
       Widget::fb->clear_screen()
       MainLoop::refresh()
 
+    static void handle_key_event(input::KeyEvent &ev):
+      display_scene = scene
+      if overlay_is_visible:
+        display_scene = overlay
+
+      for auto widget: display_scene->widgets:
+        widget->on_key_pressed(ev)
 
     // iterate over all widgets and dispatch mouse events
     // TODO: refactor this into cleaner code

@@ -2,6 +2,9 @@
 #define DEFINES_H
 
 #define SAVE_DIR "./saved_images"
+#ifdef DEV
+  #define DEV_KBD "/dev/input/by-path/pci-0000:24:00.3-usb-0:3.2:1.0-event-kbd"
+#endif
 
 // {{{ CANVAS RELATED DEFINES
 #define WHITE remarkable_color(0x000FFFFF)
