@@ -1,12 +1,17 @@
+* finish brushes + add more:
+  * web, long fur, circles, rectangles
+* icons + left sidebar
+* fixing draw / redraw
+* system service / easy installation
+
 NEXT:
 
-* add a clock
 * add battery percentage
 * move toolbar to side and use pixmaps (noun project?)
-* implement keyboard capture + shortcuts
-* show mouse in dev mode?
 * implement non-procedural brushes pencil, fineliner, paintbrush, etc
 * selection tool (lasso?) + all it entails (copy, cut, rotate, etc?)
+* stroke list (for saving replays)
+* add systemd service for launcher
 
 DESIRED FEATURES:
 
@@ -39,9 +44,7 @@ EVENTS:
 APP:
 
 * highlight dropdown box
-* multi-option dropdowns (can stroke size and brush type be in same dropdown?)
 * implement listbox widget
-* implement dialogs
 * implement pop-over for buttons (Select / Dropdown button)
 * implement brushes
   * web
@@ -65,6 +68,7 @@ DEV EXPERIENCE:
 PUNT:
 
 * put brushes into own dir
+* show mouse in dev mode?
 
 DONE:
 
@@ -103,3 +107,8 @@ x add color dropdown
 x save canvas to a file on remarkable
 x exit dialog widget
 x button capture + launcher for xochitl / sketchy
+x multi-option dropdowns (can stroke size and brush type be in same dropdown?)
+x implement dialogs
+x implement keyboard capture + shortcuts
+x better image saving
+x add a clock

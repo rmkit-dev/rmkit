@@ -1,4 +1,4 @@
-// LAUNCHER FOR SKETCHY
+// LAUNCHER FOR HARMONY
 #include <csignal>
 #include <time.h>
 
@@ -21,7 +21,7 @@ class App:
         else:
           now = time(NULL)
           if now - lastpress > TIMEOUT:
-            proc::launch_sketchy()
+            proc::launch_harmony()
 
   def run():
     while true:

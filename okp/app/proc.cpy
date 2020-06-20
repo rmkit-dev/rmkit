@@ -18,11 +18,11 @@ namespace proc:
     sprintf(command, "ps | grep -v grep | grep %s 2>&1 > /dev/null", name.c_str());
     return 0 == system(command);
 
-  void launch_sketchy():
-    if check_process("sketchy"):
-      print "SKETCHY IS ALREADY RUNNING"
+  void launch_harmony():
+    if check_process("harmony"):
+      print "HARMONY IS ALREADY RUNNING"
       return
 
-    print "LAUNCHING SKETCHY"
-    if system("./sketchy") != 0:
-      print "COULDN'T LAUNCH SKETCHY..."
+    print "LAUNCHING HARMONY"
+    if system("./harmony") != 0:
+      print "COULDN'T LAUNCH HARMONY..."
