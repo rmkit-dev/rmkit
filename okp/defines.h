@@ -1,6 +1,8 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
+#define SAVE_DIR "./saved_images"
+
 // {{{ CANVAS RELATED DEFINES
 #define WHITE remarkable_color(0x000FFFFF)
 #define GRAY remarkable_color(0x4444)

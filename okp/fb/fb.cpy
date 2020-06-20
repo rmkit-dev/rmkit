@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <sys/mman.h>
 #include <sys/ioctl.h>
+#include <ctime>
 
 // for parsing virtual_size of framebuffer
 #include <fstream>
@@ -236,8 +237,32 @@ namespace framebuffer:
 
       ret = system("pnmtopng fb.pnm > fb.png 2>/dev/null")
 
+    string get_date():
+      time_t rawtime;
+      struct tm * timeinfo;
+      char buffer[80];
+
+      time (&rawtime);
+      timeinfo = localtime(&rawtime);
+
+      strftime(buffer,sizeof(buffer),"%d-%m-%Y-%H:%M:%S",timeinfo);
+      std::string str(buffer);
+
+      return str
+
+
     void save_lodepng():
-      const char *filename = "image.png"
+      char filename[100]
+      char full_filename[100]
+      char mkdir_cmd[100]
+
+      datestr = self.get_date()
+      datecstr = datestr.c_str()
+
+      sprintf(mkdir_cmd, "mkdir %s 2>/dev/null", SAVE_DIR)
+      err = system(mkdir_cmd)
+      sprintf(filename, "%s/%s-%s", SAVE_DIR, datecstr, "image.png")
+
       buf = vector<unsigned char>(self.width * self.height * 4)
       i = 0
       for y 0 self.height:
