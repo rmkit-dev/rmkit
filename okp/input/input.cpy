@@ -96,6 +96,7 @@ $     int bytes = read(fd, ev_data, sizeof(input_event) * 64);
       #ifdef DEV
       self.monitor(self.button.fd = open(DEV_KBD, O_RDONLY))
       #endif
+      return
 
 
     ~Input():
