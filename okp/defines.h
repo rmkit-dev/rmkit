@@ -55,4 +55,9 @@
 #define WACOM_X_SCALAR (float(DISPLAYWIDTH) / float(WACOMWIDTH));
 #define WACOM_Y_SCALAR (float(DISPLAYHEIGHT) / float(WACOMHEIGHT));
 // }}}
+
+inline int fastrand() {
+  static int g_seed = (214013*g_seed+2531011);
+  return (g_seed>>16)&0x7FFF;
+}
 #endif

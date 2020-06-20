@@ -26,7 +26,7 @@ namespace app_ui:
       px_width, px_height = self.fb->get_display_size()
       self.byte_size = px_width * px_height * sizeof(remarkable_color)
       vfb = make_shared<framebuffer::VirtualFB>()
-      self.mem = (remarkable_color*) malloc(sizeof(remarkable_color) * w * h)
+      self.mem = (remarkable_color*) malloc(sizeof(remarkable_color) * px_width * px_height)
       fbcopy = shared_ptr<remarkable_color>((remarkable_color*) malloc(self.byte_size))
       memcpy(fbcopy.get(), self.fb->fbmem, self.byte_size)
       memcpy(vfb->fbmem, self.fb->fbmem, self.byte_size)
@@ -71,7 +71,7 @@ namespace app_ui:
 
     void on_mouse_move(input::SynEvent &ev):
       brush = self.erasing ? self.eraser : self.curr_brush
-      brush->stroke(ev.x, ev.y)
+      brush->stroke(ev.x, ev.y, ev.tilt_x, ev.tilt_y, ev.pressure)
       brush->update_last_pos(ev.x, ev.y)
       self.dirty = 1
 

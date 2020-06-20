@@ -72,7 +72,7 @@ namespace app_ui:
     virtual void stroke_start(int x, y):
       pass
 
-    virtual void stroke(int x, y):
+    virtual void stroke(int x, y, tilt_x, tilt_y, pressure):
       pass
 
     virtual void stroke_end():
@@ -108,7 +108,7 @@ namespace app_ui:
     void stroke_start(int x, y):
       pass
 
-    void stroke(int x, y):
+    void stroke(int x, y, tilt_x, tilt_y, pressure):
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width, self.color)
 
@@ -119,7 +119,7 @@ namespace app_ui:
     public:
 
     BallpointPen(): Brush():
-      self.name = "ballpoint pen"
+      self.name = "ballpoint"
 
     ~BallpointPen():
       pass
@@ -130,7 +130,7 @@ namespace app_ui:
     void stroke_start(int x, y):
       pass
 
-    void stroke(int x, y):
+    void stroke(int x, y, tilt_x, tilt_y, pressure):
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width, self.color)
 
@@ -152,7 +152,7 @@ namespace app_ui:
     void stroke_start(int x, y):
       pass
 
-    void stroke(int x, y):
+    void stroke(int x, y, tilt_x, tilt_y, pressure):
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width, self.color)
 
@@ -174,7 +174,7 @@ namespace app_ui:
     void stroke_start(int x, y):
       pass
 
-    void stroke(int x, y):
+    void stroke(int x, y, tilt_x, tilt_y, pressure):
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width, self.color)
 
@@ -198,7 +198,7 @@ namespace app_ui:
     void stroke_start(int x, y):
       pass
 
-    void stroke(int x, y):
+    void stroke(int x, y, tilt_x, tilt_y, pressure):
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width,\
         ERASER_STYLUS)
@@ -227,7 +227,7 @@ namespace app_ui:
     void stroke_start(int x, y):
       pass
 
-    void stroke(int x, y):
+    void stroke(int x, y, tilt_x, tilt_y, pressure):
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width,\
         ERASER_RUBBER)
@@ -258,7 +258,7 @@ namespace app_ui:
     void stroke_start(int x, y):
       pass
 
-    void stroke(int x, y):
+    void stroke(int x, y, tilt_x, tilt_y, pressure):
       dist = 1000 * MULTIPLIER
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, self.color)
@@ -287,7 +287,7 @@ namespace app_ui:
     void stroke_start(int x, y):
       pass
 
-    void stroke(int x, y):
+    void stroke(int x, y, tilt_x, tilt_y, pressure):
       dist = 4000 * MULTIPLIER
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, self.color)
@@ -322,7 +322,7 @@ namespace app_ui:
     void stroke_start(int x, y):
       pass
 
-    void stroke(int x, y):
+    void stroke(int x, y, tilt_x, tilt_y, pressure):
       dist = 4000 * MULTIPLIER
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, self.color)
@@ -357,7 +357,6 @@ namespace app_ui:
     static Brush *PAINTBRUSH    = new PaintBrush()
 
 
-
-    static vector<Brush*> N_BRUSHES = { PENCIL, BALLPOINT, FINELINER, PAINTBRUSH }
-    static vector<Brush*> BRUSHES = { SKETCHY, SHADED, FUR }
+    static vector<Brush*> NP_BRUSHES = { PENCIL, BALLPOINT, FINELINER, PAINTBRUSH }
+    static vector<Brush*> P_BRUSHES = { SKETCHY, SHADED, FUR }
     static vector<Brush*> ERASERS = { ERASER, RUBBER_ERASER }

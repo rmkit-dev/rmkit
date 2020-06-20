@@ -145,7 +145,7 @@ namespace input:
 
   class WacomEvent: public Event:
     public:
-    int x = -1, y = -1, pressure = 0
+    int x = -1, y = -1, pressure = -1
     int tilt_x = -1, tilt_y = -1
     int btn_touch = -1
     int eraser = -1
@@ -159,7 +159,12 @@ namespace input:
         self.btn_touch = prev.btn_touch
       if self.eraser == -1:
         self.eraser = prev.eraser
+      if self.pressure == -1 || self.pressure == 0:
+        self.pressure = prev.pressure
 
+      syn_ev.pressure = self.pressure
+      syn_ev.tilt_x = self.tilt_x
+      syn_ev.tilt_y = self.tilt_y
       syn_ev.left = self.btn_touch
       syn_ev.eraser = self.eraser
       syn_ev.set_original(new WacomEvent(*self))

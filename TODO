@@ -3,7 +3,6 @@ NEXT:
 * add a clock
 * add battery percentage
 * move toolbar to side and use pixmaps (noun project?)
-* button capture + launcher for xochitl / sketchy
 * implement keyboard capture + shortcuts
 * show mouse in dev mode?
 * implement non-procedural brushes pencil, fineliner, paintbrush, etc
@@ -103,3 +102,4 @@ x add color dropdown
 
 x save canvas to a file on remarkable
 x exit dialog widget
+x button capture + launcher for xochitl / sketchy

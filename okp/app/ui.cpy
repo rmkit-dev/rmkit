@@ -14,8 +14,8 @@ namespace app_ui:
     Canvas *canvas
     ToolButton(int x, y, w, h, Canvas *c): ui::DropdownButton<Brush*>(x, y, w, h, {}):
       vector<Brush*> brushes
-      brushes.insert(brushes.end(), brush::BRUSHES.begin(), brush::BRUSHES.end())
-      brushes.insert(brushes.end(), brush::N_BRUSHES.begin(), brush::N_BRUSHES.end())
+      brushes.insert(brushes.end(), brush::P_BRUSHES.begin(), brush::P_BRUSHES.end())
+      brushes.insert(brushes.end(), brush::NP_BRUSHES.begin(), brush::NP_BRUSHES.end())
       brushes.insert(brushes.end(), brush::ERASERS.begin(), brush::ERASERS.end())
 
       self.options = brushes
