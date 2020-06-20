@@ -26,7 +26,7 @@ compile_arm: export CPP_FLAGS += -I../vendor/freetype2/install/usr/local/include
 compile_arm:
 	cd okp/ && CXX=arm-linux-gnueabihf-g++ okp ${OKP_FLAGS} -- -D"REMARKABLE=1" ${CPP_FLAGS}
 copy_arm: compile_arm
-	scp sketchy root@${HOST}:sketchy
+	scp -C sketchy root@${HOST}:sketchy
 test_arm: compile_arm copy_arm
 	HOST=${HOST} bash scripts/run_sketchy_arm.sh || true
 
@@ -40,7 +40,7 @@ launcher_arm:
 stop_launcher:
 	ssh root@${HOST} killall launcher
 copy_launcher: compile_arm stop_launcher
-	scp launcher root@${HOST}:launcher
+	scp -C launcher root@${HOST}:launcher
 test_launcher: launcher_arm copy_launcher
 	HOST=${HOST} bash scripts/run_launcher_arm.sh || true
 

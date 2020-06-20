@@ -117,7 +117,7 @@ namespace framebuffer:
     virtual tuple<int, int> get_display_size():
       return self.width, self.height
 
-    inline void do_dithering(remarkable_color *ptr, int i, j, color):
+    inline void do_dithering(remarkable_color *ptr, int i, j, color, float dither=1.0):
       switch color:
         case GRAY:
           if (i + j) % 2 == 0:
@@ -137,13 +137,17 @@ namespace framebuffer:
               ptr[i+j*self.width] = WHITE
           break
         default:
-          ptr[i + j*self.width] = color
+          if dither != 1.0:
+            if fast_rand() / float(32768) < dither:
+              ptr[i + j*self.width] = color
+          else:
+              ptr[i + j*self.width] = color
 
     inline void draw_pixel(remarkable_color *ptr, int x, y, color):
       ptr[y * self.width + x] = color
       update_dirty(dirty_area, x, y)
 
-    inline void draw_rect(int o_x, o_y, w, h, color, fill=true):
+    inline void draw_rect(int o_x, o_y, w, h, color, fill=true, float dither=1.0):
       self.dirty = 1
       remarkable_color* ptr = self.fbmem
       #ifdef DEBUG_FB
@@ -164,7 +168,7 @@ namespace framebuffer:
             break
 
           if fill || (j == 0 || i == 0 || j == h-1 || i == w-1):
-            do_dithering(self.fbmem, i+o_x, j+o_y, color)
+            do_dithering(self.fbmem, i+o_x, j+o_y, color, dither)
 
     def draw_bitmap(freetype::image_data &image, int o_x, int o_y):
       remarkable_color* ptr = self.fbmem
@@ -244,7 +248,7 @@ namespace framebuffer:
 
       lodepng::encode(filename, buf, self.width, self.height);
 
-    def draw_line(int x0,y0,x1,y1,width,color):
+    def draw_line(int x0,y0,x1,y1,width,color,float dither=1.0):
       #ifdef DEBUG_FB
       printf("DRAWING LINE %i %i %i %i\n", x0, y0, x1, y1)
       #endif
@@ -255,7 +259,7 @@ namespace framebuffer:
       sy = y0<y1 ? 1 : -1
       err = dx+dy  /* error value e_xy */
       while (true):   /* loop */
-        self.draw_rect(x0, y0, width, width, color)
+        self.draw_rect(x0, y0, width, width, color,true,dither)
         // self.fbmem[y0*self.width + x0] = color
         if (x0==x1 && y0==y1) break;
         e2 = 2*err

@@ -110,7 +110,8 @@ namespace app_ui:
 
     void stroke(int x, y, tilt_x, tilt_y, pressure):
       if self.last_x != -1:
-        self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width, self.color)
+        dither = pressure / float(4096)
+        self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width, self.color, dither)
 
     void stroke_end():
       self.points.clear()
@@ -132,7 +133,8 @@ namespace app_ui:
 
     void stroke(int x, y, tilt_x, tilt_y, pressure):
       if self.last_x != -1:
-        self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width, self.color)
+        dither = pressure / float(2048)
+        self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width, self.color, dither)
 
     void stroke_end():
       self.points.clear()
@@ -164,6 +166,7 @@ namespace app_ui:
 
     PaintBrush(): Brush():
       self.name = "paint brush"
+      sw_thin = 15, sw_medium = 25, sw_thick = 50
 
     ~PaintBrush():
       pass
