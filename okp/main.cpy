@@ -88,13 +88,26 @@ class App:
           ui::MainLoop::refresh()
           break
         case KEY_LEFT:
-          ui::MainLoop::toggle_overlay(save_dialog)
+          input::MouseEvent::tilt_x -= 100
           break
         case KEY_RIGHT:
-          ui::MainLoop::toggle_overlay(open_dialog)
+          input::MouseEvent::tilt_x += 100
+          break
+        case KEY_DOWN:
+          input::MouseEvent::tilt_y -= 100
+          break
+        case KEY_UP:
+          input::MouseEvent::tilt_y += 100
+          break
+        case KEY_F1:
+          input::MouseEvent::pressure -= 100
+          break
+        case KEY_F2:
+          input::MouseEvent::pressure += 100
           break
         default:
           ui::MainLoop::handle_key_event(key_ev)
+    print input::MouseEvent::tilt_x, input::MouseEvent::tilt_y, input::MouseEvent::pressure
 
 
   def handle_motion_event(input::SynEvent &syn_ev):

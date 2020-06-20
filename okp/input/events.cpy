@@ -98,6 +98,10 @@ namespace input:
     signed char dx = 0, dy = 0
     int left = 0 , right = 0 , middle = 0
     static int width, height
+    static int tilt_x
+    static int tilt_y
+    static int pressure
+
 
     static void set_screen_size(int w, h):
       width = w
@@ -132,6 +136,9 @@ namespace input:
       syn_ev.y = o_y
       syn_ev.left = self.left
       syn_ev.right = self.right
+      syn_ev.pressure = MouseEvent::pressure
+      syn_ev.tilt_x = MouseEvent::tilt_x
+      syn_ev.tilt_y = MouseEvent::tilt_y
 
       if self.right:
         syn_ev.eraser = ERASER_STYLUS
@@ -208,3 +215,6 @@ namespace input:
         case 3:
           self.handle_abs(data)
 
+  int MouseEvent::pressure = 2000
+  int MouseEvent::tilt_x = 0
+  int MouseEvent::tilt_y = 0
