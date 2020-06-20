@@ -1,3 +1,4 @@
+#include <ctime>
 #include "../ui/button.h"
 #include "../ui/scene.h"
 #include "../ui/ui.h"
@@ -189,3 +190,19 @@ namespace app_ui:
     void redraw():
       self.text = self.toolbar->visible ? "v" : "^"
       ui::Button::redraw()
+
+  class Clock: public ui::Text:
+    public:
+    Clock(int x, y, w, h): Text(x,y,w,h,"clock"):
+      pass
+
+    void before_redraw():
+      time_t rawtime;
+      struct tm * timeinfo;
+      char buffer[80];
+
+      time (&rawtime);
+      timeinfo = localtime(&rawtime);
+
+      strftime(buffer,sizeof(buffer),"%H:%M",timeinfo);
+      self.text = std::string(buffer)

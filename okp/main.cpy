@@ -48,6 +48,7 @@ class App:
     minibar_area = new ui::VerticalLayout(0, 0, w, h, notebook)
     topbar = new ui::HorizontalLayout(0, 0, w, 50, notebook)
     minibar = new ui::HorizontalLayout(0, 0, w, 50, notebook)
+    clockbar = new ui::HorizontalLayout(0, 0, w, 50, notebook)
 
 
     // aligns the topbar to the bottom of the screen by packing end
@@ -68,6 +69,7 @@ class App:
     topbar->pack_end(new app_ui::ManageButton(0, 0, 100, 50, canvas))
     topbar->pack_end(new app_ui::RedoButton(0, 0, 100, 50, canvas))
     topbar->pack_end(new app_ui::UndoButton(0, 0, 100, 50, canvas))
+    clockbar->pack_end(new app_ui::Clock(0, 0, 150, 50))
 
     notebook->add(canvas)
 
