@@ -139,7 +139,7 @@ namespace framebuffer:
           break
         default:
           if dither != 1.0:
-            if fast_rand() / float(32768) < dither:
+            if fast_rand() / float(2 << 15) < dither:
               ptr[i + j*self.width] = color
           else:
               ptr[i + j*self.width] = color

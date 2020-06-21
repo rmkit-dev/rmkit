@@ -10,22 +10,38 @@
 
 namespace app_ui:
 
-  class ToolButton: public ui::DropdownButton<Brush*>:
+  class ToolButton: public ui::TextDropdown:
     public:
     Canvas *canvas
-    ToolButton(int x, y, w, h, Canvas *c): \
-               ui::DropdownButton<Brush*>(x, y, w, h, {}, "tools"):
-      vector<Brush*> brushes
-      brushes.insert(brushes.end(), brush::P_BRUSHES.begin(), brush::P_BRUSHES.end())
-      brushes.insert(brushes.end(), brush::NP_BRUSHES.begin(), brush::NP_BRUSHES.end())
-      brushes.insert(brushes.end(), brush::ERASERS.begin(), brush::ERASERS.end())
+    ToolButton(int x, int y, int w, int h, Canvas *c): \
+               ui::TextDropdown(x, y, w, h, "tools"):
 
-      self.options = brushes
+      for auto b : brush::NP_BRUSHES:
+        self.add_options({b->name})
+      self.add_section("brushes")
+
+      for auto b : brush::P_BRUSHES:
+        self.add_options({b->name})
+      self.add_section("procedural")
+
+      for auto b : brush::ERASERS:
+        self.add_options({b->name})
+      self.add_section("erasers")
+
       self.canvas = c
       self.select(0)
 
     void on_select(int idx):
-      self.canvas->set_brush(self.options[idx])
+      name = self.options[idx]->name
+      for auto b : brush::P_BRUSHES:
+        if b->name == name:
+          self.canvas->set_brush(b)
+      for auto b : brush::ERASERS:
+        if b->name == name:
+          self.canvas->set_brush(b)
+      for auto b : brush::NP_BRUSHES:
+        if b->name == name:
+          self.canvas->set_brush(b)
 
 
   class BrushConfigButton: public ui::TextDropdown:
@@ -117,7 +133,6 @@ namespace app_ui:
         self.set_title("Exit?")
 
       void on_button_selected(string t):
-        print "BUTTON SELECTED"
         if t == "OK":
           proc::start_xochitl()
           exit(0)
@@ -194,7 +209,7 @@ namespace app_ui:
   class Clock: public ui::Text:
     public:
     Clock(int x, y, w, h): Text(x,y,w,h,"clock"):
-      pass
+      self.justify = ui::Text::JUSTIFY::RIGHT
 
     void before_redraw():
       time_t rawtime;
@@ -204,5 +219,5 @@ namespace app_ui:
       time (&rawtime);
       timeinfo = localtime(&rawtime);
 
-      strftime(buffer,sizeof(buffer),"%H:%M",timeinfo);
+      strftime(buffer,sizeof(buffer),"%H:%M ",timeinfo);
       self.text = std::string(buffer)
