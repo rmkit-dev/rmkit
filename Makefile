@@ -45,6 +45,10 @@ copy_launcher: compile_arm stop_launcher harmony_dir
 	scp -C launcher root@${HOST}:harmony/launcher
 test_launcher: launcher_arm copy_launcher
 	HOST=${HOST} bash scripts/run_launcher_arm.sh || true
+install_service:
+	scp contrib/harmony.service root@${HOST}:/etc/systemd/system/
+start_service:
+	ssh root@{HOST} systemctl enable --now harmony
 
 # }}}
 

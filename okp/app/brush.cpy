@@ -112,6 +112,25 @@ namespace app_ui:
     on_stroke_end():
       self.points.clear()
 
+  class MechPencil: public Brush:
+    public:
+
+    MechPencil(): Brush():
+      self.name = "mech. pencil"
+
+    ~MechPencil():
+      pass
+
+    void stroke(int x, y, tilt_x, tilt_y, pressure):
+      if self.last_x != -1:
+        s_mod = (abs(tilt_x) + abs(tilt_y)) / 512
+        sw = self.stroke_width
+        dither = pressure / (float(MAX_PRESSURE/1.5) * s_mod)
+        self.fb->draw_line(self.last_x, self.last_y, x, y, sw, self.color, dither)
+
+    on_stroke_end():
+      self.points.clear()
+
   class Marker: public Brush:
     public:
 
@@ -390,12 +409,13 @@ namespace app_ui:
 
     // RM STYLE BRUSHES
     static Brush *PENCIL        = new Pencil()
+    static Brush *MECHPENCIL    = new MechPencil()
     static Brush *MARKER        = new Marker()
     static Brush *BALLPOINT     = new BallpointPen()
     static Brush *FINELINER     = new FineLiner()
     static Brush *PAINTBRUSH    = new PaintBrush()
 
 
-    static vector<Brush*> NP_BRUSHES = { PENCIL, BALLPOINT, FINELINER, MARKER, PAINTBRUSH }
+    static vector<Brush*> NP_BRUSHES = { PENCIL, MECHPENCIL, BALLPOINT, FINELINER, MARKER, PAINTBRUSH }
     static vector<Brush*> P_BRUSHES = { SKETCHY, SHADED, CHROME, FUR, LONGFUR, WEB }
     static vector<Brush*> ERASERS = { ERASER, RUBBER_ERASER }
