@@ -13,6 +13,7 @@ namespace app_ui:
     deque<shared_ptr<remarkable_color>> undo_stack;
     deque<shared_ptr<remarkable_color>> redo_stack;
     int byte_size
+    int stroke_width = 1, stroke_color = BLACK
 
     bool erasing = false
 
@@ -44,12 +45,14 @@ namespace app_ui:
       self.mem = NULL
 
     void set_stroke_width(int s):
+      self.stroke_width = s
       self.curr_brush->set_stroke_width(s)
 
     auto get_stroke_width():
       return self.curr_brush->stroke_val
 
     void set_stroke_color(int color):
+      self.stroke_color = color
       self.curr_brush->color = color
 
     auto get_stroke_color():
@@ -64,6 +67,8 @@ namespace app_ui:
     void set_brush(Brush* brush):
       self.curr_brush = brush
       brush->reset()
+      brush->color = self.stroke_color
+      brush->set_stroke_width(self.stroke_width)
       brush->set_framebuffer(self.vfb.get())
 
     bool ignore_event(input::SynEvent &ev):

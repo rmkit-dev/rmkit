@@ -19,10 +19,10 @@ namespace proc:
     return 0 == system(command);
 
   void launch_harmony():
-    if check_process("./harmony/harmony"):
+    if check_process("/home/root/harmony/harmony"):
       print "HARMONY IS ALREADY RUNNING"
       return
 
     print "LAUNCHING HARMONY"
-    if system("./harmony/harmony") != 0:
+    if system("/home/root/harmony/harmony") != 0:
       print "COULDN'T LAUNCH HARMONY..."
