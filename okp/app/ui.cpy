@@ -209,7 +209,7 @@ namespace app_ui:
   class Clock: public ui::Text:
     public:
     Clock(int x, y, w, h): Text(x,y,w,h,"clock"):
-      self.justify = ui::Text::JUSTIFY::RIGHT
+      self.justify = ui::Text::JUSTIFY::CENTER
 
     void before_redraw():
       time_t rawtime;

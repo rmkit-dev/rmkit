@@ -46,30 +46,33 @@ class App:
 
     toolbar_area = new ui::VerticalLayout(0, 0, w, h, notebook)
     minibar_area = new ui::VerticalLayout(0, 0, w, h, notebook)
-    topbar = new ui::HorizontalLayout(0, 0, w, 50, notebook)
+    toolbar = new ui::HorizontalLayout(0, 0, w, 50, notebook)
     minibar = new ui::HorizontalLayout(0, 0, w, 50, notebook)
     clockbar = new ui::HorizontalLayout(0, 0, w, 50, notebook)
 
+    // clockbar is at the top of the screen
+    clockbar->pack_center(new app_ui::Clock(0, 0, 150, 50))
 
-    // aligns the topbar to the bottom of the screen by packing end
-    // this is an example of nesting a layout
-    toolbar_area->pack_end(topbar)
+    // aligns the toolbar to the bottom of the screen by packing end
+    // inside toolbar_area
+    // NOTE: this is an example of nesting layouts
+    toolbar_area->pack_end(toolbar)
     minibar_area->pack_end(minibar)
     minibar->hide()
 
 
-    // we always have to pack layouts in order, i believe
-    minibar->pack_start(new app_ui::HideButton(0, 0, 50, 50, topbar, minibar), 20)
+    // we always have to pack layouts in order
+    minibar->pack_start(new app_ui::HideButton(0, 0, 50, 50, toolbar, minibar), 20)
 
+    toolbar->pack_start(new app_ui::HideButton(0, 0, 50, 50, toolbar, minibar), 20)
+    toolbar->pack_start(new app_ui::ToolButton(0, 0, 200, 50, canvas))
+    toolbar->pack_start(new app_ui::BrushConfigButton(0, 0, 250, 50, canvas))
+    toolbar->pack_center(new app_ui::LiftBrushButton(0, 0, 114, 100, canvas))
     // because we pack end, we go in reverse order
-    topbar->pack_start(new app_ui::HideButton(0, 0, 50, 50, topbar, minibar), 20)
-    topbar->pack_start(new app_ui::ToolButton(0, 0, 200, 50, canvas))
-    topbar->pack_start(new app_ui::BrushConfigButton(0, 0, 250, 50, canvas))
-    topbar->pack_center(new app_ui::LiftBrushButton(0, 0, 114, 100, canvas))
-    topbar->pack_end(new app_ui::ManageButton(0, 0, 100, 50, canvas))
-    topbar->pack_end(new app_ui::RedoButton(0, 0, 100, 50, canvas))
-    topbar->pack_end(new app_ui::UndoButton(0, 0, 100, 50, canvas))
-    clockbar->pack_end(new app_ui::Clock(0, 0, 150, 50))
+    toolbar->pack_end(new app_ui::ManageButton(0, 0, 100, 50, canvas))
+    toolbar->pack_end(new app_ui::RedoButton(0, 0, 100, 50, canvas))
+    toolbar->pack_end(new app_ui::UndoButton(0, 0, 100, 50, canvas))
+
 
     notebook->add(canvas)
 
