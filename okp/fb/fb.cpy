@@ -317,6 +317,28 @@ namespace framebuffer:
       else:
         self.draw_circle_outline(x0, y0, r, stroke, color)
 
+    def draw_line_circle(int x0,y0,x1,y1,width,color,float dither=1.0):
+      #ifdef DEBUG_FB
+      printf("DRAWING LINE %i %i %i %i\n", x0, y0, x1, y1)
+      #endif
+      self.dirty = 1
+      dx =  abs(x1-x0)
+      sx = x0<x1 ? 1 : -1
+      dy = -abs(y1-y0)
+      sy = y0<y1 ? 1 : -1
+      err = dx+dy  /* error value e_xy */
+      while (true):   /* loop */
+        self.draw_circle(x0, y0, width/2, 1, color,true)
+        // self.fbmem[y0*self.width + x0] = color
+        if (x0==x1 && y0==y1) break;
+        e2 = 2*err
+        if (e2 >= dy):
+          err += dy /* e_xy+e_x > 0 */
+          x0 += sx
+        if (e2 <= dx): /* e_xy+e_y < 0 */
+          err += dx
+          y0 += sy
+
     def draw_line(int x0,y0,x1,y1,width,color,float dither=1.0):
       #ifdef DEBUG_FB
       printf("DRAWING LINE %i %i %i %i\n", x0, y0, x1, y1)

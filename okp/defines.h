@@ -61,6 +61,9 @@
 #define WACOM_Y_SCALAR (float(DISPLAYHEIGHT) / float(WACOMHEIGHT));
 // }}}
 
+// {{{ FAST RANd
+
+#define FAST_RAND_MAX float(2<<15)
 static unsigned int g_seed;
 
 inline void fast_srand(int seed) {
