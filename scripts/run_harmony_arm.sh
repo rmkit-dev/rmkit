@@ -13,4 +13,4 @@ trap cleanup SIGINT
 
 kill_remote_harmony
 echo "RUNNING SKETCHY"
-ssh root@${HOST} ./harmony
+ssh root@${HOST} ./harmony/harmony

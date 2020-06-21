@@ -25,8 +25,8 @@ compile_dev:
 compile_arm: export CPP_FLAGS += -I../vendor/freetype2/install/usr/local/include/freetype2 -L../vendor/freetype2/install/usr/local/lib/ -lfreetype -I../vendor/lodepng
 compile_arm:
 	cd okp/ && CXX=arm-linux-gnueabihf-g++ okp ${OKP_FLAGS} -- -D"REMARKABLE=1" ${CPP_FLAGS}
-copy_arm: compile_arm
-	scp -C harmony root@${HOST}:harmony
+copy_arm: compile_arm harmony_dir
+	scp -C harmony root@${HOST}:harmony/harmony
 test_arm: compile_arm copy_arm
 	HOST=${HOST} bash scripts/run_harmony_arm.sh || true
 
@@ -35,12 +35,14 @@ view:
 # }}}
 
 # {{{ LAUNCHER COMPILATION
+harmony_dir:
+	ssh root@${HOST} mkdir harmony 2>/dev/null || true
 launcher_arm:
 	cd okp/ && CXX=arm-linux-gnueabihf-g++ okp ${LAUNCHER_FLAGS} -- -D"REMARKABLE=1" ${CPP_FLAGS}
 stop_launcher:
-	ssh root@${HOST} killall launcher
-copy_launcher: compile_arm stop_launcher
-	scp -C launcher root@${HOST}:launcher
+	ssh root@${HOST} killall launcher || true
+copy_launcher: compile_arm stop_launcher harmony_dir
+	scp -C launcher root@${HOST}:harmony/launcher
 test_launcher: launcher_arm copy_launcher
 	HOST=${HOST} bash scripts/run_launcher_arm.sh || true
 

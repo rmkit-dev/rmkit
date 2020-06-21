@@ -13,4 +13,4 @@ trap cleanup SIGINT
 
 kill_remote_launcher
 echo "RUNNING LAUNCHER"
-ssh root@${HOST} ./launcher
+ssh root@${HOST} ./harmony/launcher
