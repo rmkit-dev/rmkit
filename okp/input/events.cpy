@@ -21,7 +21,7 @@ namespace input:
     int x = -1, y = -1
     int left = 0, right = 0, middle = 0
     int eraser = 0
-    int pressure = -1, tilt_x = -1, tilt_y = -1
+    int pressure = -1, tilt_x = 0xFFFF, tilt_y = 0xFFFF
     Event *original
     SynEvent(){}
 
@@ -153,7 +153,7 @@ namespace input:
   class WacomEvent: public Event:
     public:
     int x = -1, y = -1, pressure = -1
-    int tilt_x = -1, tilt_y = -1
+    int tilt_x = 0xFFFF, tilt_y = 0xFFFF
     int btn_touch = -1
     int eraser = -1
 
@@ -168,6 +168,10 @@ namespace input:
         self.eraser = prev.eraser
       if self.pressure == -1 || self.pressure == 0:
         self.pressure = prev.pressure
+      if self.tilt_x == 0xFFFF:
+        self.tilt_x = prev.tilt_x
+      if self.tilt_y == 0xFFFF:
+        self.tilt_y = prev.tilt_y
 
       syn_ev.pressure = self.pressure
       syn_ev.tilt_x = self.tilt_x
@@ -175,6 +179,7 @@ namespace input:
       syn_ev.left = self.btn_touch
       syn_ev.eraser = self.eraser
       syn_ev.set_original(new WacomEvent(*self))
+
       return syn_ev
 
     handle_key(input_event data):

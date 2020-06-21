@@ -107,7 +107,6 @@ class App:
           break
         default:
           ui::MainLoop::handle_key_event(key_ev)
-    print input::MouseEvent::tilt_x, input::MouseEvent::tilt_y, input::MouseEvent::pressure
 
 
   def handle_motion_event(input::SynEvent &syn_ev):

@@ -2,7 +2,6 @@
 
 This repo contains code for drawing to the remarkable framebuffer.
 
-
 ## Status
 
 Approaching first release. Stay tuned!

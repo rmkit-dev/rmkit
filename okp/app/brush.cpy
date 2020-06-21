@@ -110,8 +110,33 @@ namespace app_ui:
 
     void stroke(int x, y, tilt_x, tilt_y, pressure):
       if self.last_x != -1:
-        dither = pressure / float(4096)
-        self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width, self.color, dither)
+        s_mod = (abs(tilt_x) + abs(tilt_y)) / 512
+        sw = self.stroke_width + s_mod
+        dither = pressure / (float(MAX_PRESSURE) * s_mod)
+        self.fb->draw_line(self.last_x, self.last_y, x, y, sw, self.color, dither)
+
+    void stroke_end():
+      self.points.clear()
+
+  class Marker: public Brush:
+    public:
+
+    Marker(): Brush():
+      self.name = "marker"
+
+    ~Marker():
+      pass
+
+    void destroy():
+      pass
+
+    void stroke_start(int x, y):
+      pass
+
+    void stroke(int x, y, tilt_x, tilt_y, pressure):
+      if self.last_x != -1:
+        sw = self.stroke_width + (abs(tilt_x) + abs(tilt_y)) / 512
+        self.fb->draw_line(self.last_x, self.last_y, x, y, sw, self.color)
 
     void stroke_end():
       self.points.clear()
@@ -133,7 +158,7 @@ namespace app_ui:
 
     void stroke(int x, y, tilt_x, tilt_y, pressure):
       if self.last_x != -1:
-        dither = pressure / float(2048*1.5)
+        dither = pressure / float(MAX_PRESSURE) * 1.5
         self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width, self.color, dither)
 
     void stroke_end():
@@ -355,11 +380,12 @@ namespace app_ui:
 
     // RM STYLE BRUSHES
     static Brush *PENCIL        = new Pencil()
+    static Brush *MARKER        = new Marker()
     static Brush *BALLPOINT     = new BallpointPen()
     static Brush *FINELINER     = new FineLiner()
     static Brush *PAINTBRUSH    = new PaintBrush()
 
 
-    static vector<Brush*> NP_BRUSHES = { PENCIL, BALLPOINT, FINELINER, PAINTBRUSH }
+    static vector<Brush*> NP_BRUSHES = { PENCIL, BALLPOINT, FINELINER, MARKER, PAINTBRUSH }
     static vector<Brush*> P_BRUSHES = { SKETCHY, SHADED, FUR }
     static vector<Brush*> ERASERS = { ERASER, RUBBER_ERASER }
