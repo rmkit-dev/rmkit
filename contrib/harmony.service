@@ -1,0 +1,10 @@
+[Unit]
+Description=Harmony Launcher
+
+[Service]
+ExecStart=/home/root/harmony/launcher
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
