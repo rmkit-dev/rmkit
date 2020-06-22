@@ -83,7 +83,7 @@ class App:
     open_dialog->add(new ui::Text(w / 2 - 100, 10, w, 50, "OPEN DIALOG"))
 
 
-  def handle_key_event(input::KeyEvent &key_ev):
+  def handle_key_event(input::SynKeyEvent &key_ev):
     if key_ev.is_pressed:
       switch key_ev.key:
         case KEY_HOME:
@@ -112,7 +112,7 @@ class App:
           ui::MainLoop::handle_key_event(key_ev)
 
 
-  def handle_motion_event(input::SynEvent &syn_ev):
+  def handle_motion_event(input::SynMouseEvent &syn_ev):
     #ifdef DEBUG_INPUT
     if (auto m_ev = input::is_mouse_event(syn_ev)):
       print "MOUSE EVENT"

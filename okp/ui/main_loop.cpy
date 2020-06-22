@@ -45,7 +45,7 @@ namespace ui:
       Widget::fb->clear_screen()
       MainLoop::refresh()
 
-    static void handle_key_event(input::KeyEvent &ev):
+    static void handle_key_event(input::SynKeyEvent &ev):
       display_scene = scene
       if overlay_is_visible:
         display_scene = overlay
@@ -55,7 +55,7 @@ namespace ui:
 
     // iterate over all widgets and dispatch mouse events
     // TODO: refactor this into cleaner code
-    static bool handle_motion_event(input::SynEvent &ev):
+    static bool handle_motion_event(input::SynMouseEvent &ev):
       display_scene = scene
       if overlay_is_visible:
         display_scene = overlay
@@ -70,6 +70,9 @@ namespace ui:
         if widget->ignore_event(ev) || !widget->visible:
           continue
 
+        if ev.stop_propagation:
+          break
+
         is_hit = widget->is_hit(ev.x, ev.y)
 
         prev_mouse_down = widget->mouse_down
@@ -80,7 +83,7 @@ namespace ui:
         widget->mouse_down = mouse_down && is_hit
         widget->mouse_inside = is_hit
 
-        if is_hit && !hit_widget:
+        if is_hit:
           if widget->mouse_down:
             widget->mouse_x = ev.x
             widget->mouse_y = ev.y

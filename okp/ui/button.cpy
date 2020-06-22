@@ -20,21 +20,25 @@ namespace ui:
       self.set_justification(ui::Text::JUSTIFY::CENTER)
       print self.text, "=", input::get_key_str(self.key)
 
-    void on_mouse_down(input::SynEvent &ev):
+    void on_mouse_move(input::SynMouseEvent &ev):
+      ev.stop_propagation = true
+
+    void on_mouse_down(input::SynMouseEvent &ev):
+      ev.stop_propagation = true
       self.dirty = 1
 
-    void on_mouse_up(input::SynEvent &ev):
+    void on_mouse_up(input::SynMouseEvent &ev):
       self.dirty = 1
 
-    void on_mouse_leave(input::SynEvent &ev):
+    void on_mouse_leave(input::SynMouseEvent &ev):
       self.dirty = 1
 
-    void on_mouse_enter(input::SynEvent &ev):
+    void on_mouse_enter(input::SynMouseEvent &ev):
       self.dirty = 1
 
-    void on_key_pressed(input::KeyEvent &ev):
+    void on_key_pressed(input::SynKeyEvent &ev):
       if ev.key == key && ev.is_pressed:
-        input::SynEvent fake
+        input::SynMouseEvent fake
         self.on_mouse_click(fake)
 
     void set_justification(Text::JUSTIFY j):

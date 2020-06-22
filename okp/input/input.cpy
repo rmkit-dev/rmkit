@@ -75,13 +75,13 @@ $     int bytes = read(fd, ev_data, sizeof(input_event) * 64);
     int max_fd
     fd_set rdfs
 
-    InputClass<WacomEvent, SynEvent> wacom
-    InputClass<MouseEvent, SynEvent> mouse
-    InputClass<TouchEvent, SynEvent> touch
-    InputClass<ButtonEvent, KeyEvent> button
+    InputClass<WacomEvent, SynMouseEvent> wacom
+    InputClass<MouseEvent, SynMouseEvent> mouse
+    InputClass<TouchEvent, SynMouseEvent> touch
+    InputClass<ButtonEvent, SynKeyEvent> button
 
-    vector<SynEvent> all_motion_events
-    vector<KeyEvent> all_key_events
+    vector<SynMouseEvent> all_motion_events
+    vector<SynKeyEvent> all_key_events
 
     Input():
       printf("Initializing input\n")
@@ -149,11 +149,11 @@ $     int bytes = read(fd, ev_data, sizeof(input_event) * 64);
         self.all_key_events.push_back(self.button.marshal(ev))
 
 
-  // TODO: should we just put this in the SynEvent?
-  static WacomEvent* is_wacom_event(SynEvent &syn_ev):
+  // TODO: should we just put this in the SynMouseEvent?
+  static WacomEvent* is_wacom_event(SynMouseEvent &syn_ev):
     return dynamic_cast<WacomEvent*>(syn_ev.original)
-  static MouseEvent* is_mouse_event(SynEvent &syn_ev):
+  static MouseEvent* is_mouse_event(SynMouseEvent &syn_ev):
     return dynamic_cast<MouseEvent*>(syn_ev.original)
-  static TouchEvent* is_touch_event(SynEvent &syn_ev):
+  static TouchEvent* is_touch_event(SynMouseEvent &syn_ev):
     return dynamic_cast<TouchEvent*>(syn_ev.original)
 

@@ -11,7 +11,7 @@ namespace ui:
       self.mouse_inside = true
       self.textWidget->justify = ui::Text::JUSTIFY::CENTER
 
-    bool ignore_event(input::SynEvent &ev):
+    bool ignore_event(input::SynMouseEvent &ev):
       return true
 
   template<typename T>
@@ -26,7 +26,7 @@ namespace ui:
       self.x_padding = 10
       self.set_justification(ui::Text::JUSTIFY::LEFT)
 
-    void on_mouse_click(input::SynEvent &ev):
+    void on_mouse_click(input::SynMouseEvent &ev):
       self.tb->select(self.idx)
       self.dirty = 1
 
@@ -41,7 +41,7 @@ namespace ui:
                    options(options), ui::Button(x,y,w,h,name):
       self.select(0)
 
-    void on_mouse_click(input::SynEvent&):
+    void on_mouse_click(input::SynMouseEvent&):
       self.show_options()
 
     void show_options():

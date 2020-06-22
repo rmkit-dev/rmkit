@@ -12,7 +12,7 @@ namespace ui:
     DialogButton(int x, y, w, h, T *d, string t): Button(x,y,w,h,t):
       self.dialog = d
 
-    void on_mouse_click(input::SynEvent&):
+    void on_mouse_click(input::SynMouseEvent&):
       self.dialog->on_button_selected(self.text)
 
   class Dialog: public Widget:
@@ -41,7 +41,7 @@ namespace ui:
       button_bar->pack_start(new DialogButton<Dialog>(20, 0, 100, 50, self, "CANCEL"))
       self.scene->add(self)
 
-    bool ignore_event(input::SynEvent&):
+    bool ignore_event(input::SynMouseEvent&):
       return true
 
     virtual void on_button_selected(string s):

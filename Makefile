@@ -1,7 +1,7 @@
 FILES=main.cpy ../vendor/lodepng/lodepng.cpp
 HOST?=10.11.99.1
 EXE="harmony"
-CPP_FLAGS=-O3 -g -lfreetype -I../vendor/lodepng
+CPP_FLAGS=-O3 -g
 OKP_FLAGS=-for -d ../cpp/ -o ../${EXE} -nr ${FILES}
 LAUNCHER_FLAGS=-d ../cpp -o ../launcher -for -nr launcher.cpy
 CXX=arm-linux-gnueabihf-g++
@@ -14,15 +14,15 @@ harmony_fb: compile_x86
 harmony_dev: compile_dev
 harmony_arm: compile_arm
 
-compile_x86: export CPP_FLAGS += -I/usr/include/freetype2
+compile_x86: export CPP_FLAGS += -I/usr/include/freetype2 -lfreetype -I../vendor/lodepng
 compile_x86:
 	cd okp/ && okp ${OKP_FLAGS} -- ${CPP_FLAGS}
 
-compile_dev: export CPP_FLAGS += -I/usr/include/freetype2
+compile_dev: export CPP_FLAGS += -I/usr/include/freetype2 -lfreetype -I../vendor/lodepng
 compile_dev:
 	cd okp/ && okp ${OKP_FLAGS} -- -D"DEV=1" ${CPP_FLAGS}
 
-compile_arm: export CPP_FLAGS += -I../vendor/freetype2/install/usr/local/include/freetype2 -L../vendor/freetype2/install/usr/local/lib/
+compile_arm: export CPP_FLAGS += -I../vendor/freetype2/install/usr/local/include/freetype2 -L../vendor/freetype2/install/usr/local/lib/ -lfreetype -I../vendor/lodepng
 compile_arm:
 	cd okp/ && CXX=arm-linux-gnueabihf-g++ okp ${OKP_FLAGS} -- -D"REMARKABLE=1" ${CPP_FLAGS}
 copy_arm: compile_arm harmony_dir

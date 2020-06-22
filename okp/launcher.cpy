@@ -12,7 +12,7 @@ class App:
   App():
     pass
 
-  def handle_key_event(input::KeyEvent &ev):
+  def handle_key_event(input::SynKeyEvent &ev):
     static int lastpress = RAND_MAX
     switch ev.key:
       case KEY_HOME:

@@ -16,19 +16,20 @@ namespace input:
 
     virtual ~Event() = default
 
-  class SynEvent: public Event:
+  class SynMouseEvent: public Event:
     public:
     int x = -1, y = -1
     int left = 0, right = 0, middle = 0
     int eraser = 0
     int pressure = -1, tilt_x = 0xFFFF, tilt_y = 0xFFFF
+    bool stop_propagation = false
     Event *original
-    SynEvent(){}
+    SynMouseEvent(){}
 
     def set_original(Event *ev):
       self.original = ev
 
-  class KeyEvent: public Event:
+  class SynKeyEvent: public Event:
     public:
     int key, is_pressed
 
@@ -44,7 +45,7 @@ namespace input:
       self.print_event(data)
 
     def marshal(ButtonEvent &prev):
-      KeyEvent key_ev
+      SynKeyEvent key_ev
       key_ev.key = self.key
       key_ev.is_pressed = self.is_pressed
       return key_ev
@@ -68,7 +69,7 @@ namespace input:
 
 
     def marshal(TouchEvent &prev):
-      SynEvent syn_ev;
+      SynMouseEvent syn_ev;
       syn_ev.left = self.left
 
       // if there's no left click, we re-use the last x,y coordinate
@@ -131,7 +132,7 @@ namespace input:
       if o_y >= self.height - 1:
         o_y = self.height - 5
 
-      SynEvent syn_ev;
+      SynMouseEvent syn_ev;
       syn_ev.x = o_x
       syn_ev.y = o_y
       syn_ev.left = self.left
@@ -158,7 +159,7 @@ namespace input:
     int eraser = -1
 
     def marshal(WacomEvent &prev):
-      SynEvent syn_ev;
+      SynMouseEvent syn_ev;
       syn_ev.x = self.x
       syn_ev.y = self.y
 

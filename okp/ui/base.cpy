@@ -33,31 +33,31 @@ namespace ui:
       self.dirty = 1
 
     // {{{ SIGNAL HANDLERS
-    virtual bool ignore_event(input::SynEvent &ev):
+    virtual bool ignore_event(input::SynMouseEvent &ev):
       return false
 
-    virtual void on_mouse_enter(input::SynEvent &ev):
+    virtual void on_mouse_enter(input::SynMouseEvent &ev):
       pass
 
-    virtual void on_mouse_leave(input::SynEvent &ev):
+    virtual void on_mouse_leave(input::SynMouseEvent &ev):
       pass
 
-    virtual void on_mouse_click(input::SynEvent &ev):
+    virtual void on_mouse_click(input::SynMouseEvent &ev):
       pass
 
-    virtual void on_mouse_down(input::SynEvent &ev):
+    virtual void on_mouse_down(input::SynMouseEvent &ev):
       pass
 
-    virtual void on_mouse_up(input::SynEvent &ev):
+    virtual void on_mouse_up(input::SynMouseEvent &ev):
       pass
 
-    virtual void on_mouse_move(input::SynEvent &ev):
+    virtual void on_mouse_move(input::SynMouseEvent &ev):
       pass
 
-    virtual void on_mouse_hover(input::SynEvent &ev):
+    virtual void on_mouse_hover(input::SynMouseEvent &ev):
       pass
 
-    virtual void on_key_pressed(input::KeyEvent &ev):
+    virtual void on_key_pressed(input::SynKeyEvent &ev):
       pass
     // }}}
 

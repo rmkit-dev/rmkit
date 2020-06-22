@@ -115,7 +115,7 @@ namespace app_ui:
         ui::Button(x,y,w,h,"lift"):
       self.canvas = c
 
-    void on_mouse_click(input::SynEvent &ev):
+    void on_mouse_click(input::SynMouseEvent &ev):
       self.dirty = 1
       self.canvas->curr_brush->reset()
 
@@ -169,7 +169,7 @@ namespace app_ui:
     UndoButton(int x, y, w, h, Canvas *c): ui::Button(x,y,w,h,"undo"):
       self.canvas = c
 
-    void on_mouse_click(input::SynEvent &ev):
+    void on_mouse_click(input::SynMouseEvent &ev):
       self.dirty = 1
       self.canvas->undo()
 
@@ -179,7 +179,7 @@ namespace app_ui:
     RedoButton(int x, y, w, h, Canvas *c): ui::Button(x,y,w,h,"redo"):
       self.canvas = c
 
-    void on_mouse_click(input::SynEvent &ev):
+    void on_mouse_click(input::SynMouseEvent &ev):
       self.dirty = 1
       self.canvas->redo()
 
@@ -190,7 +190,7 @@ namespace app_ui:
       self.toolbar = l
       self.minibar = m
 
-    void on_mouse_click(input::SynEvent &ev):
+    void on_mouse_click(input::SynMouseEvent &ev):
       self.dirty = 1
 
       if self.toolbar->visible:

@@ -14,7 +14,7 @@ namespace proc:
     return
 
   bool check_process(string name):
-    char command[64]
+    char command[128]
     sprintf(command, "ps | grep -v grep | grep %s 2>&1 > /dev/null", name.c_str());
     return 0 == system(command);
 

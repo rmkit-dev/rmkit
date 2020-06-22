@@ -28,7 +28,7 @@ namespace ui:
       self.visible = true
 
     // Layouts generally don't receive events
-    bool ignore_event(input::SynEvent &ev):
+    bool ignore_event(input::SynMouseEvent &ev):
       return true
 
   class AbsLayout: public Layout:

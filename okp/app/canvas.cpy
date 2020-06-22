@@ -71,16 +71,16 @@ namespace app_ui:
       brush->set_stroke_width(self.stroke_width)
       brush->set_framebuffer(self.vfb.get())
 
-    bool ignore_event(input::SynEvent &ev):
+    bool ignore_event(input::SynMouseEvent &ev):
       return input::is_touch_event(ev) != NULL
 
-    void on_mouse_move(input::SynEvent &ev):
+    void on_mouse_move(input::SynMouseEvent &ev):
       brush = self.erasing ? self.eraser : self.curr_brush
       brush->stroke(ev.x, ev.y, ev.tilt_x, ev.tilt_y, ev.pressure)
       brush->update_last_pos(ev.x, ev.y)
       self.dirty = 1
 
-    void on_mouse_up(input::SynEvent &ev):
+    void on_mouse_up(input::SynMouseEvent &ev):
       brush = self.erasing ? self.eraser : self.curr_brush
       brush->stroke_end()
       self.push_undo()
@@ -88,10 +88,10 @@ namespace app_ui:
       self.dirty = 1
       ui::MainLoop::full_refresh()
 
-    void on_mouse_hover(input::SynEvent &ev):
+    void on_mouse_hover(input::SynMouseEvent &ev):
       pass
 
-    void on_mouse_down(input::SynEvent &ev):
+    void on_mouse_down(input::SynMouseEvent &ev):
       self.erasing = ev.eraser && ev.eraser != -1
       brush = self.erasing ? self.eraser : self.curr_brush
       brush->stroke_start(ev.x, ev.y)
