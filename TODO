@@ -5,7 +5,6 @@ NEXT:
 * download icons for brushes
 * selection tool (lasso?) + all it entails (copy, cut, rotate, etc?)
 * stroke list (for saving replays) or just saving space
-* easy installation script
 * github releases
 * about dialog (with URLs / credits?)
 * finish brushes + add more:
@@ -117,3 +116,4 @@ x implement non-procedural brushes pencil, fineliner, paintbrush, etc
 x mouse up when any button pressed
 x system service
 x add systemd service for launcher
+x easy installation script

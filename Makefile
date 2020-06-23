@@ -26,7 +26,7 @@ compile_arm: export CPP_FLAGS += -I../vendor/freetype2/install/usr/local/include
 compile_arm:
 	cd okp/ && CXX=arm-linux-gnueabihf-g++ okp ${OKP_FLAGS} -- -D"REMARKABLE=1" ${CPP_FLAGS}
 copy_arm: compile_arm harmony_dir
-	scp -C harmony root@${HOST}:harmony/harmony
+	scp -C build/bin/harmony root@${HOST}:harmony/harmony
 test_arm: compile_arm copy_arm
 	HOST=${HOST} bash scripts/run_harmony_arm.sh || true
 
@@ -49,7 +49,7 @@ launcher_arm:
 stop_launcher:
 	ssh root@${HOST} killall launcher || true
 copy_launcher: launcher_arm stop_launcher harmony_dir
-	scp -C launcher root@${HOST}:harmony/launcher
+	scp -C build/bin/launcher root@${HOST}:harmony/launcher
 test_launcher: launcher_arm copy_launcher
 	HOST=${HOST} bash scripts/run_launcher_arm.sh || true
 install_service:

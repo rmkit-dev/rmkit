@@ -31,7 +31,7 @@ Implemented:
 with framebuffer:
 
 * compile with real framebuffer: `make harmony_x86`
-* switch to virtual terminal and run `./harmony`
+* switch to virtual terminal and run `./build/bin/harmony`
 
 with image framebuffer:
 

@@ -52,9 +52,9 @@ namespace ui:
         image = freetype::get_text_size(w.c_str())
         image.buffer = (uint32_t*) malloc(sizeof(uint32_t) * image.w * image.h)
         memset(image.buffer, WHITE, sizeof(uint32_t) * image.w * image.h)
-        if cur_x + image.w >= self.w:
+        if cur_x + image.w + 10 >= self.w:
           cur_x = 0
-          cur_y += 24
+          cur_y += image.h
         self.fb->draw_text(w, self.x + cur_x, self.y + cur_y, image)
         free(image.buffer)
         cur_x += image.w

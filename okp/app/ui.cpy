@@ -7,6 +7,7 @@
 #include "brush.h"
 #include "canvas.h"
 #include "proc.h"
+#include "dialogs.h"
 
 namespace app_ui:
 
@@ -127,40 +128,26 @@ namespace app_ui:
       else if self.mouse_inside:
           self->fb->draw_rect(self.x, self.y, self.w, self.h, GRAY, false)
 
-  class SaveDialog: public ui::Dialog:
-    public:
-      SaveDialog(int x, y, w, h): ui::Dialog(x, y, w, h):
-        pass
-
-      void on_button_selected(string t):
-        ui::MainLoop::hide_overlay()
-
-  class ExitDialog: public ui::Dialog:
-    public:
-      ExitDialog(int x, y, w, h): ui::Dialog(x, y, w, h):
-        self.set_title("Exit?")
-
-      void on_button_selected(string t):
-        if t == "OK":
-          proc::start_xochitl()
-          exit(0)
-        if t == "CANCEL":
-          ui::MainLoop::hide_overlay()
-
-  string CLEAR = "clear", SAVE = "save", DOTS = "...", QUIT="exit"
+  string ABOUT = "about", CLEAR = "clear", DOTS = "...", QUIT="exit", SAVE = "save"
   class ManageButton: public ui::TextDropdown:
     public:
     Canvas *canvas
 
+    AboutDialog *ad
     ExitDialog *ed
     SaveDialog *sd
+
     ManageButton(int x, y, w, h, Canvas *c): TextDropdown(x,y,w,h,"...")
       self.canvas = c
-      self.add_options({DOTS, CLEAR, SAVE, QUIT})
+      self.add_options({DOTS, CLEAR, SAVE, QUIT, DOTS, ABOUT})
       self.text = "..."
 
     void on_select(int i):
       option = self.options[i]->name
+      if option == ABOUT:
+        if self.ad == NULL:
+          self.ad = new AboutDialog(0, 0, 500, 500)
+        self.ad->show()
       if option == CLEAR:
         self.canvas->reset()
       if option == QUIT:

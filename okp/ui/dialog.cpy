@@ -17,12 +17,18 @@ namespace ui:
 
   class Dialog: public Widget:
     public:
-    string title
+    string title = "", content = ""
     MultiText *titleWidget
+    MultiText *contentWidget
     Scene scene
-
+    vector<string> buttons
 
     Dialog(int x, y, w, h): Widget(x,y,w,h):
+      self.buttons = { "OK", "CANCEL" }
+      self.titleWidget = new MultiText(20, 20, self.w, 50, self.title)
+      self.contentWidget = new MultiText(20, 20, self.w, self.h - 100, self.content)
+
+    void build_dialog():
       self.scene = ui::make_scene()
       width, height = self.fb->get_display_size()
       v_layout = ui::VerticalLayout(0, 0, width, height, self.scene)
@@ -32,13 +38,15 @@ namespace ui:
       h_layout.pack_center(self)
 
       a_layout = ui::VerticalLayout(self.x, self.y, self.w, self.h, self.scene)
-      self.titleWidget = new MultiText(20, 20, self.w, 50, self.title)
-      a_layout.pack_start(self.titleWidget, 20)
+      a_layout.pack_start(self.titleWidget)
+
+      a_layout.pack_start(self.contentWidget)
 
       button_bar = new HorizontalLayout(0, 0, self.w, 50, self.scene)
       a_layout.pack_end(button_bar, 10)
-      button_bar->pack_start(new DialogButton<Dialog>(20, 0, 100, 50, self, "OK"))
-      button_bar->pack_start(new DialogButton<Dialog>(20, 0, 100, 50, self, "CANCEL"))
+
+      for auto b : self.buttons:
+        button_bar->pack_start(new DialogButton<Dialog>(20, 0, 100, 50, self, b))
       self.scene->add(self)
 
     bool ignore_event(input::SynMouseEvent&):
@@ -54,5 +62,24 @@ namespace ui:
     void set_title(string s):
       self.titleWidget->text = s
 
+    void set_content(string s):
+      self.contentWidget->text = s
+
     void show():
+      if self.scene == NULL:
+        self.build_dialog()
+
       MainLoop::show_overlay(self.scene)
+
+  class ConfirmationDialog: public Dialog:
+    public:
+    ConfirmationDialog(int x, y, w, h): Dialog(x, y, w, h):
+      self.buttons = { "OK", "CANCEL" }
+
+  class InfoDialog: public Dialog:
+    public:
+    InfoDialog(int x, y, w, h): Dialog(x, y, w, h):
+      self.buttons = { "OK" }
+
+    void on_button_selected(string t):
+      ui::MainLoop::hide_overlay()
