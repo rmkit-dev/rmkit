@@ -2,8 +2,8 @@ FILES=main.cpy ../vendor/lodepng/lodepng.cpp
 HOST?=10.11.99.1
 EXE="harmony"
 CPP_FLAGS=-O3 -g
-OKP_FLAGS=-for -d ../cpp/ -o ../${EXE} -nr ${FILES}
-LAUNCHER_FLAGS=-d ../cpp -o ../launcher -for -nr launcher.cpy
+OKP_FLAGS=-for -d ../cpp/ -o ../build/bin/${EXE} -nr ${FILES}
+LAUNCHER_FLAGS=-d ../cpp -o ../build/bin/launcher -for -nr launcher.cpy
 CXX=arm-linux-gnueabihf-g++
 CC = arm-linux-gnueabihf-gcc
 
@@ -32,6 +32,13 @@ test_arm: compile_arm copy_arm
 
 view:
 	python scripts/viewer.py
+
+bundle: compile_arm launcher_arm
+	mkdir -p build/harmony 2>/dev/null || true
+	cp build/bin/harmony build/bin/launcher build/harmony/
+	cp contrib/harmony.service build/harmony/
+	cd build; zip release.zip -r harmony/
+
 # }}}
 
 # {{{ LAUNCHER COMPILATION
@@ -41,7 +48,7 @@ launcher_arm:
 	cd okp/ && CXX=arm-linux-gnueabihf-g++ okp ${LAUNCHER_FLAGS} -- -D"REMARKABLE=1" ${CPP_FLAGS}
 stop_launcher:
 	ssh root@${HOST} killall launcher || true
-copy_launcher: compile_arm stop_launcher harmony_dir
+copy_launcher: launcher_arm stop_launcher harmony_dir
 	scp -C launcher root@${HOST}:harmony/launcher
 test_launcher: launcher_arm copy_launcher
 	HOST=${HOST} bash scripts/run_launcher_arm.sh || true
@@ -49,7 +56,6 @@ install_service:
 	scp contrib/harmony.service root@${HOST}:/etc/systemd/system/
 start_service:
 	ssh root@{HOST} systemctl enable --now harmony
-
 # }}}
 
 # {{{ VENDOR BUILDS

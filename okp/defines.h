@@ -1,8 +1,13 @@
 #ifndef DEFINES_H
 #define DEFINES_H
+#include <vector>
+#include <sstream>
 
 #define SAVE_DIR "./saved_images"
+#ifdef DEV
 // #define DEV_KBD "/dev/input/by-path/pci-0000:24:00.3-usb-0:3.2:1.0-event-kbd"
+// #define DEV_KBD "/dev/input/by-path/platform-i8042-serio-0-event-kbd"
+#endif
 
 // {{{ CANVAS RELATED DEFINES
 #define WHITE remarkable_color(0x000FFFFF)
@@ -61,6 +66,8 @@
 #define WACOM_Y_SCALAR (float(DISPLAYHEIGHT) / float(WACOMHEIGHT));
 // }}}
 
+// {{{ Helper Functions
+
 // {{{ FAST RANd
 
 #define FAST_RAND_MAX float(2<<15)
@@ -76,4 +83,19 @@ inline int fast_rand(void) {
   g_seed = (214013*g_seed+2531011);
   return (g_seed>>16)&0x7FFF;
 }
+// }}}
+
+std::vector<std::string> split (const std::string &s, char delim) {
+  std::vector<std::string> result;
+  std::stringstream ss (s);
+  std::string item;
+
+  while (getline (ss, item, delim)) {
+    result.push_back (item);
+  }
+
+  return result;
+}
+
+// }}}
 #endif

@@ -251,7 +251,7 @@ namespace framebuffer:
       return str
 
 
-    void save_lodepng():
+    string save_lodepng():
       char filename[100]
       char full_filename[100]
       char mkdir_cmd[100]
@@ -261,7 +261,7 @@ namespace framebuffer:
 
       sprintf(mkdir_cmd, "mkdir %s 2>/dev/null", SAVE_DIR)
       err = system(mkdir_cmd)
-      sprintf(filename, "%s/%s-%s", SAVE_DIR, datecstr, "image.png")
+      sprintf(filename, "%s/%s%s", SAVE_DIR, datecstr, ".png")
 
       buf = vector<unsigned char>(self.width * self.height * 4)
       i = 0
@@ -275,6 +275,7 @@ namespace framebuffer:
       buf[i] = 0
 
       lodepng::encode(filename, buf, self.width, self.height);
+      return string(filename)
 
     // bresenham's outline
     def draw_circle_outline(int x0, y0, r, stroke,color):

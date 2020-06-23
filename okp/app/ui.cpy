@@ -127,6 +127,14 @@ namespace app_ui:
       else if self.mouse_inside:
           self->fb->draw_rect(self.x, self.y, self.w, self.h, GRAY, false)
 
+  class SaveDialog: public ui::Dialog:
+    public:
+      SaveDialog(int x, y, w, h): ui::Dialog(x, y, w, h):
+        pass
+
+      void on_button_selected(string t):
+        ui::MainLoop::hide_overlay()
+
   class ExitDialog: public ui::Dialog:
     public:
       ExitDialog(int x, y, w, h): ui::Dialog(x, y, w, h):
@@ -145,6 +153,7 @@ namespace app_ui:
     Canvas *canvas
 
     ExitDialog *ed
+    SaveDialog *sd
     ManageButton(int x, y, w, h, Canvas *c): TextDropdown(x,y,w,h,"...")
       self.canvas = c
       self.add_options({DOTS, CLEAR, SAVE, QUIT})
@@ -159,7 +168,15 @@ namespace app_ui:
           self.ed = new ExitDialog(0, 0, 500, 500)
         self.ed->show()
       if option == SAVE:
-        self.canvas->save()
+        filename = self.canvas->save()
+        if self.sd == NULL:
+          self.sd = new SaveDialog(0, 0, 600, 500)
+
+        title = "Saved as " + filename
+        self.sd->set_title(title)
+        self.sd->show()
+
+
 
       self.text = "..."
 

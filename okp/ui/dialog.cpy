@@ -18,7 +18,7 @@ namespace ui:
   class Dialog: public Widget:
     public:
     string title
-    Text *titleWidget
+    MultiText *titleWidget
     Scene scene
 
 
@@ -32,7 +32,7 @@ namespace ui:
       h_layout.pack_center(self)
 
       a_layout = ui::VerticalLayout(self.x, self.y, self.w, self.h, self.scene)
-      self.titleWidget = new Text(0, 20, self.w, 50, self.title)
+      self.titleWidget = new MultiText(20, 20, self.w, 50, self.title)
       a_layout.pack_start(self.titleWidget, 20)
 
       button_bar = new HorizontalLayout(0, 0, self.w, 50, self.scene)

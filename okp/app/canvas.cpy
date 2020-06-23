@@ -145,6 +145,6 @@ namespace app_ui:
         self.undo_stack.push_back(redofb)
         ui::MainLoop::full_refresh()
 
-    void save():
-      self.vfb->save_lodepng()
+    string save():
+      return self.vfb->save_lodepng()
     // }}}

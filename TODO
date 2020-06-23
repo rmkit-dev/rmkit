@@ -1,19 +1,18 @@
-* finish brushes + add more:
-  * web, long fur, circles, rectangles
-  * paintbrush, hard pencil, ballpoint
-  * make "eraser" be a color
-* icons + left sidebar
-* fixing draw / redraw
-* mouse up when any button pressed
-* system service / easy installation
-
 NEXT:
 
 * add battery percentage
 * move toolbar to side and use pixmaps (noun project?)
+* download icons for brushes
 * selection tool (lasso?) + all it entails (copy, cut, rotate, etc?)
 * stroke list (for saving replays) or just saving space
-* add systemd service for launcher
+* easy installation script
+* github releases
+* about dialog (with URLs / credits?)
+* finish brushes + add more:
+  * web, long fur, circles, rectangles
+  * paintbrush, hard pencil, ballpoint
+  * make "eraser" be a color
+* fix undo / redo
 
 DESIRED FEATURES:
 
@@ -115,3 +114,6 @@ x implement keyboard capture + shortcuts
 x better image saving
 x add a clock
 x implement non-procedural brushes pencil, fineliner, paintbrush, etc
+x mouse up when any button pressed
+x system service
+x add systemd service for launcher
