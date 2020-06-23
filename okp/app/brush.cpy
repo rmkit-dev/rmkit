@@ -93,13 +93,13 @@ namespace app_ui:
       self.stroke_width = self.get_stroke_width(s)
 
 // {{{ NON PROCEDURAL
-  class Pencil: public Brush:
+  class Charcoal: public Brush:
     public:
 
-    Pencil(): Brush():
-      self.name = "pencil"
+    Charcoal(): Brush():
+      self.name = "charcoal"
 
-    ~Pencil():
+    ~Charcoal():
       pass
 
     void stroke(int x, y, tilt_x, tilt_y, pressure):
@@ -112,13 +112,13 @@ namespace app_ui:
     on_stroke_end():
       self.points.clear()
 
-  class MechPencil: public Brush:
+  class Pencil: public Brush:
     public:
 
-    MechPencil(): Brush():
-      self.name = "mech. pencil"
+    Pencil(): Brush():
+      self.name = "pencil"
 
-    ~MechPencil():
+    ~Pencil():
       pass
 
     void stroke(int x, y, tilt_x, tilt_y, pressure):
@@ -408,14 +408,14 @@ namespace app_ui:
     static Brush *RUBBER_ERASER = new RubberEraser()
 
     // RM STYLE BRUSHES
-    static Brush *PENCIL        = new Pencil()
-    static Brush *MECHPENCIL    = new MechPencil()
+    static Brush *CHARCOAL        = new Charcoal()
+    static Brush *PENCIL          = new Pencil()
     static Brush *MARKER        = new Marker()
     static Brush *BALLPOINT     = new BallpointPen()
     static Brush *FINELINER     = new FineLiner()
     static Brush *PAINTBRUSH    = new PaintBrush()
 
 
-    static vector<Brush*> NP_BRUSHES = { PENCIL, MECHPENCIL, BALLPOINT, FINELINER, MARKER, PAINTBRUSH }
+    static vector<Brush*> NP_BRUSHES = { PENCIL, BALLPOINT, FINELINER, CHARCOAL, MARKER, PAINTBRUSH }
     static vector<Brush*> P_BRUSHES = { SKETCHY, SHADED, CHROME, FUR, LONGFUR, WEB }
     static vector<Brush*> ERASERS = { ERASER, RUBBER_ERASER }
