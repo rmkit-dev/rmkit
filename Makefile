@@ -1,7 +1,7 @@
 FILES=main.cpy ../vendor/lodepng/lodepng.cpp
 HOST?=10.11.99.1
 EXE="harmony"
-CPP_FLAGS=-O3 -g
+CPP_FLAGS=-O3 -g -lpthread
 OKP_FLAGS=-for -d ../cpp/ -o ../build/bin/${EXE} -nr ${FILES}
 LAUNCHER_FLAGS=-d ../cpp -o ../build/bin/launcher -for -nr launcher.cpy
 CXX=arm-linux-gnueabihf-g++
@@ -44,6 +44,8 @@ bundle: compile_arm launcher_arm
 # {{{ LAUNCHER COMPILATION
 harmony_dir:
 	ssh root@${HOST} mkdir harmony 2>/dev/null || true
+launcher_dev:
+	cd okp/ && okp ${LAUNCHER_FLAGS} -- -D"DEV=1" ${CPP_FLAGS}
 launcher_arm:
 	cd okp/ && CXX=arm-linux-gnueabihf-g++ okp ${LAUNCHER_FLAGS} -- -D"REMARKABLE=1" ${CPP_FLAGS}
 stop_launcher:

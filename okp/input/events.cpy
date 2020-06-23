@@ -3,6 +3,11 @@
 namespace input:
   class Event:
     public:
+    static int next_id
+    unsigned int id
+    Event():
+      self.id = Event::next_id++
+
     def update(input_event data)
     def print_event(input_event &data):
       #ifdef DEBUG_INPUT_EVENT
@@ -15,6 +20,7 @@ namespace input:
       pass
 
     virtual ~Event() = default
+  int Event::next_id = 0
 
   class SynMouseEvent: public Event:
     public:
