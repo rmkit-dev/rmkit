@@ -209,6 +209,22 @@ namespace framebuffer:
       freetype::render_text((char*)text.c_str(), x, y, image)
       draw_bitmap(image, x, y)
 
+    freetype::image_data draw_png(string filename):
+      freetype::image_data image;
+      vector<unsigned char> png;
+      vector<unsigned char> out;
+      unsigned ow, oh;
+      if lodepng::load_file(png, "vendor/" + filename):
+        print "COULDNT LOAD IMAGE", "vendor/" + filename
+
+      lodepng::decode(out, ow, oh, png)
+      image.buffer = (uint32_t *) malloc(sizeof(uint32_t) * ow * oh)
+      memcpy(image.buffer, reinterpret_cast<char*>(out.data()), ow*oh*sizeof(uint32_t))
+      image.w = ow
+      image.h = oh
+      return image
+
+
     void save_png():
       // save the buffer to pnm format
       fd = open("fb.pnm", O_CREAT|O_RDWR, 0755)
