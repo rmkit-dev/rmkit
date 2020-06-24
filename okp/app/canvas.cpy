@@ -59,10 +59,10 @@ namespace app_ui:
       return self.curr_brush->color
 
     void reset():
-      push_undo()
       memset(self.fb->fbmem, WHITE, self.byte_size)
       memset(vfb->fbmem, WHITE, self.byte_size)
       self.curr_brush->reset()
+      push_undo()
 
     void set_brush(Brush* brush):
       self.curr_brush = brush

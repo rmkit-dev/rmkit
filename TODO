@@ -9,7 +9,6 @@ NEXT:
 * about dialog (with URLs / credits?)
 * finish brushes + add more:
   * web, long fur, circles, rectangles
-  * paintbrush, hard pencil, ballpoint
   * make "eraser" be a color
 * fix undo / redo
 
@@ -117,3 +116,4 @@ x mouse up when any button pressed
 x system service
 x add systemd service for launcher
 x easy installation script
+x paintbrush, hard pencil, ballpoint

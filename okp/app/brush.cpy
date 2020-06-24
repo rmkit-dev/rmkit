@@ -170,7 +170,7 @@ namespace app_ui:
 
     void _stroke(int x, y, tilt_x, tilt_y, pressure):
       if self.last_x != -1:
-        dither = pressure / float(MAX_PRESSURE) * 1.5
+        dither = pressure / (float(MAX_PRESSURE) * 1.2)
         self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width, self.color, dither)
 
   class FineLiner: public Brush:
@@ -201,7 +201,7 @@ namespace app_ui:
 
     void _stroke(int x, y, tilt_x, tilt_y, pressure):
       fpressure = float(max(128, pressure))
-      fpressure /= float(4096)
+      fpressure /= float(MAX_PRESSURE)
       s_mod = (abs(tilt_x) + abs(tilt_y)) / 512
       sw = int(self.stroke_width * fpressure) + (s_mod * fpressure)
       if sw < 1:
@@ -242,22 +242,35 @@ namespace app_ui:
     public:
     RubberEraser(): Brush():
       self.name = "rubber"
-      sw_thin = 5; sw_medium = 10; sw_thick = 15
+      sw_thin = 15; sw_medium = 25; sw_thick = 50
 
     ~RubberEraser():
       pass
 
     void _stroke(int x, y, tilt_x, tilt_y, pressure):
       if self.last_x != -1:
-        self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width,\
-        ERASER_RUBBER)
+        fpressure = float(max(128, pressure))
+        fpressure /= float(MAX_PRESSURE)
+        s_mod = (abs(tilt_x) + abs(tilt_y)) / 512
+        sw = int(self.stroke_width * fpressure) + (s_mod * fpressure)
+        if sw >= 1:
+          self.fb->draw_line(self.last_x, self.last_y, x, y, sw, ERASER_RUBBER)
 
     void _stroke_end():
       Point last_p = Point{-1,-1}
       for auto point: self.points:
         if last_p.x != -1:
-          self.fb->draw_line(last_p.x, last_p.y, point.x, point.y, \
-          self.stroke_width, WHITE)
+          tilt_x = point.tilt_x
+          tilt_y = point.tilt_y
+          pressure = point.pressure
+
+          fpressure = float(max(128, pressure))
+          fpressure /= float(MAX_PRESSURE)
+          s_mod = (abs(tilt_x) + abs(tilt_y)) / 512
+          sw = int(self.stroke_width * fpressure) + (s_mod * fpressure)
+          if sw >= 1:
+            self.fb->draw_line(last_p.x, last_p.y, point.x, point.y, \
+          sw, WHITE)
         last_p = point
       self.points.clear()
 // }}}
@@ -293,7 +306,8 @@ namespace app_ui:
       pass
 
     void _stroke(int x, y, tilt_x, tilt_y, pressure):
-      dist = 4000 * MULTIPLIER
+      effect_strength  = pressure / (float(MAX_PRESSURE))
+      dist = 4000 * MULTIPLIER * effect_strength
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, self.color)
 
@@ -319,7 +333,9 @@ namespace app_ui:
       pass
 
     void _stroke(int x, y, tilt_x, tilt_y, pressure):
-      dist = 5500 * MULTIPLIER
+      s_mod = (abs(tilt_x) + abs(tilt_y)) / 512
+      effect_strength = pressure / float(MAX_PRESSURE)
+      dist = 5500 * MULTIPLIER * effect_strength
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, self.color)
 
@@ -340,7 +356,8 @@ namespace app_ui:
       pass
 
     void _stroke(int x, y, tilt_x, tilt_y, pressure):
-      dist = 1000 * MULTIPLIER
+      effect_strength  = pressure / (float(MAX_PRESSURE))
+      dist = 2000 * MULTIPLIER * effect_strength
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, self.color)
 
@@ -367,7 +384,9 @@ namespace app_ui:
       pass
 
     void _stroke(int x, y, tilt_x, tilt_y, pressure):
-      dist = 4000 * MULTIPLIER
+      effect_strength  = pressure / (float(MAX_PRESSURE))
+      dist = 4000 * MULTIPLIER * effect_strength
+
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, self.color)
 
@@ -389,7 +408,8 @@ namespace app_ui:
       pass
 
     void _stroke(int x, y, tilt_x, tilt_y, pressure):
-      dist = 4000 * MULTIPLIER
+      effect_strength  = pressure / (float(MAX_PRESSURE))
+      dist = 4000 * MULTIPLIER * effect_strength
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, self.color)
 
