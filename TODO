@@ -2,15 +2,12 @@ NEXT:
 
 * add battery percentage
 * move toolbar to side and use pixmaps (noun project?)
-* download icons for brushes
 * selection tool (lasso?) + all it entails (copy, cut, rotate, etc?)
 * stroke list (for saving replays) or just saving space
-* github releases
-* about dialog (with URLs / credits?)
 * finish brushes + add more:
-  * web, long fur, circles, rectangles
-  * make "eraser" be a color
+  * ribbon, circles, rectangles
 * fix undo / redo
+* github releases
 
 DESIRED FEATURES:
 
@@ -102,7 +99,7 @@ x connect brush stroke and brush in UI
 x clear canvas button
 x figure out how to dither grayscale
 x add color dropdown
-
+x make "eraser" be a color
 x save canvas to a file on remarkable
 x exit dialog widget
 x button capture + launcher for xochitl / sketchy
@@ -117,3 +114,5 @@ x system service
 x add systemd service for launcher
 x easy installation script
 x paintbrush, hard pencil, ballpoint
+x download icons for brushes
+x about dialog (with URLs / credits?)
