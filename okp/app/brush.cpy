@@ -31,6 +31,7 @@ namespace app_ui:
   struct Point
     int x = 0
     int y = 0
+    int tilt_x, tilt_y, pressure;
   ;
 
   class Brush:
@@ -69,20 +70,30 @@ namespace app_ui:
     virtual void destroy():
       pass
 
-    virtual void stroke_start(int x, y):
+    void stroke(int x, y, tilt_x, tilt_y, pressure):
+      self._stroke(x,y,tilt_x, tilt_y, pressure)
+      self.update_last_pos(x, y, tilt_x, tilt_y, pressure)
+    void stroke_start(int x, y, tilt_x, tilt_y, pressure):
+      self._stroke_start(x,y,tilt_x, tilt_y, pressure)
+      self.update_last_pos(x, y, tilt_x, tilt_y, pressure)
+    void stroke_end():
+      self._stroke_end()
+      self.update_last_pos(-1, -1, -1, -1, -1)
+
+    virtual void _stroke_start(int x, y, tilt_x, tilt_y, pressure):
       pass
 
-    virtual void stroke(int x, y, tilt_x, tilt_y, pressure):
+    virtual void _stroke(int x, y, tilt_x, tilt_y, pressure):
       pass
 
-    virtual void stroke_end():
+    virtual void _stroke_end():
       // TODO return dirty_rect
       pass
 
-    void update_last_pos(int x, int y):
+    void update_last_pos(int x, int y, tilt_x, tilt_y, pressure):
       self.last_x = x
       self.last_y = y
-      p = Point{x,y}
+      p = Point{x,y,tilt_x,tilt_y,pressure}
       self.points.push_back(p)
 
     void set_framebuffer(framebuffer::FB *f):
@@ -102,14 +113,14 @@ namespace app_ui:
     ~Charcoal():
       pass
 
-    void stroke(int x, y, tilt_x, tilt_y, pressure):
+    void _stroke(int x, y, tilt_x, tilt_y, pressure):
       if self.last_x != -1:
         s_mod = (abs(tilt_x) + abs(tilt_y)) / 512
         sw = self.stroke_width + s_mod
         dither = pressure / (float(MAX_PRESSURE) * s_mod)
         self.fb->draw_line(self.last_x, self.last_y, x, y, sw, self.color, dither)
 
-    on_stroke_end():
+    void _stroke_end():
       self.points.clear()
 
   class Pencil: public Brush:
@@ -121,14 +132,14 @@ namespace app_ui:
     ~Pencil():
       pass
 
-    void stroke(int x, y, tilt_x, tilt_y, pressure):
+    void _stroke(int x, y, tilt_x, tilt_y, pressure):
       if self.last_x != -1:
         s_mod = (abs(tilt_x) + abs(tilt_y)) / 512
         sw = self.stroke_width
         dither = pressure / (float(MAX_PRESSURE/1.5) * s_mod)
         self.fb->draw_line(self.last_x, self.last_y, x, y, sw, self.color, dither)
 
-    on_stroke_end():
+    void _stroke_end():
       self.points.clear()
 
   class Marker: public Brush:
@@ -140,12 +151,12 @@ namespace app_ui:
     ~Marker():
       pass
 
-    void stroke(int x, y, tilt_x, tilt_y, pressure):
+    void _stroke(int x, y, tilt_x, tilt_y, pressure):
       if self.last_x != -1:
         sw = self.stroke_width + (abs(tilt_x) + abs(tilt_y)) / 512
         self.fb->draw_line(self.last_x, self.last_y, x, y, sw, self.color)
 
-    on_stroke_end():
+    void _stroke_end():
       self.points.clear()
 
   class BallpointPen: public Brush:
@@ -157,7 +168,7 @@ namespace app_ui:
     ~BallpointPen():
       pass
 
-    void stroke(int x, y, tilt_x, tilt_y, pressure):
+    void _stroke(int x, y, tilt_x, tilt_y, pressure):
       if self.last_x != -1:
         dither = pressure / float(MAX_PRESSURE) * 1.5
         self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width, self.color, dither)
@@ -171,11 +182,11 @@ namespace app_ui:
     ~FineLiner():
       pass
 
-    void stroke(int x, y, tilt_x, tilt_y, pressure):
+    void _stroke(int x, y, tilt_x, tilt_y, pressure):
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width, self.color)
 
-    on_stroke_end():
+    void _stroke_end():
       self.points.clear()
 
   class PaintBrush: public Brush:
@@ -188,19 +199,18 @@ namespace app_ui:
     ~PaintBrush():
       pass
 
-    void stroke(int x, y, tilt_x, tilt_y, pressure):
+    void _stroke(int x, y, tilt_x, tilt_y, pressure):
       fpressure = float(max(128, pressure))
       fpressure /= float(4096)
       s_mod = (abs(tilt_x) + abs(tilt_y)) / 512
       sw = int(self.stroke_width * fpressure) + (s_mod * fpressure)
-      print "SW", sw, fpressure
       if sw < 1:
         return
 
       if self.last_x != -1:
         self.fb->draw_line_circle(self.last_x, self.last_y, x, y, sw, self.color)
 
-    on_stroke_end():
+    void _stroke_end():
       self.points.clear()
 // }}}
 
@@ -214,12 +224,12 @@ namespace app_ui:
     ~Eraser():
       pass
 
-    void stroke(int x, y, tilt_x, tilt_y, pressure):
+    void _stroke(int x, y, tilt_x, tilt_y, pressure):
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width,\
         ERASER_STYLUS)
 
-    void stroke_end():
+    void _stroke_end():
       Point last_p = Point{-1,-1}
       for auto point: self.points:
         if last_p.x != -1:
@@ -237,12 +247,12 @@ namespace app_ui:
     ~RubberEraser():
       pass
 
-    void stroke(int x, y, tilt_x, tilt_y, pressure):
+    void _stroke(int x, y, tilt_x, tilt_y, pressure):
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width,\
         ERASER_RUBBER)
 
-    void stroke_end():
+    void _stroke_end():
       Point last_p = Point{-1,-1}
       for auto point: self.points:
         if last_p.x != -1:
@@ -262,7 +272,7 @@ namespace app_ui:
     ~Shaded():
       pass
 
-    void stroke(int x, y, tilt_x, tilt_y, pressure):
+    void _stroke(int x, y, tilt_x, tilt_y, pressure):
       dist = 1000 * MULTIPLIER
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, self.color)
@@ -282,7 +292,7 @@ namespace app_ui:
     ~Sketchy():
       pass
 
-    void stroke(int x, y, tilt_x, tilt_y, pressure):
+    void _stroke(int x, y, tilt_x, tilt_y, pressure):
       dist = 4000 * MULTIPLIER
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, self.color)
@@ -308,7 +318,7 @@ namespace app_ui:
     ~Web():
       pass
 
-    void stroke(int x, y, tilt_x, tilt_y, pressure):
+    void _stroke(int x, y, tilt_x, tilt_y, pressure):
       dist = 5500 * MULTIPLIER
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, self.color)
@@ -329,7 +339,7 @@ namespace app_ui:
     ~Chrome():
       pass
 
-    void stroke(int x, y, tilt_x, tilt_y, pressure):
+    void _stroke(int x, y, tilt_x, tilt_y, pressure):
       dist = 1000 * MULTIPLIER
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, self.color)
@@ -351,12 +361,12 @@ namespace app_ui:
   class Fur: public Brush:
     public:
     Fur(): Brush():
-      self.name = "fur"
+      self.name = "uniform fur"
 
     ~Fur():
       pass
 
-    void stroke(int x, y, tilt_x, tilt_y, pressure):
+    void _stroke(int x, y, tilt_x, tilt_y, pressure):
       dist = 4000 * MULTIPLIER
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, self.color)
@@ -373,12 +383,12 @@ namespace app_ui:
   class LongFur: public Brush:
     public:
     LongFur(): Brush():
-      self.name = "long fur"
+      self.name = "random fur"
 
     ~LongFur():
       pass
 
-    void stroke(int x, y, tilt_x, tilt_y, pressure):
+    void _stroke(int x, y, tilt_x, tilt_y, pressure):
       dist = 4000 * MULTIPLIER
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, self.color)

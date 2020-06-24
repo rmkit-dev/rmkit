@@ -77,14 +77,14 @@ namespace app_ui:
     void on_mouse_move(input::SynMouseEvent &ev):
       brush = self.erasing ? self.eraser : self.curr_brush
       brush->stroke(ev.x, ev.y, ev.tilt_x, ev.tilt_y, ev.pressure)
-      brush->update_last_pos(ev.x, ev.y)
+      brush->update_last_pos(ev.x, ev.y, ev.tilt_x, ev.tilt_y, ev.pressure)
       self.dirty = 1
 
     void on_mouse_up(input::SynMouseEvent &ev):
       brush = self.erasing ? self.eraser : self.curr_brush
       brush->stroke_end()
       self.push_undo()
-      brush->update_last_pos(-1,-1)
+      brush->update_last_pos(-1,-1,-1,-1,-1)
       self.dirty = 1
       ui::MainLoop::full_refresh()
 
@@ -94,8 +94,7 @@ namespace app_ui:
     void on_mouse_down(input::SynMouseEvent &ev):
       self.erasing = ev.eraser && ev.eraser != -1
       brush = self.erasing ? self.eraser : self.curr_brush
-      brush->stroke_start(ev.x, ev.y)
-      brush->update_last_pos(ev.x, ev.y)
+      brush->stroke_start(ev.x, ev.y,ev.tilt_x, ev.tilt_y, ev.pressure)
 
     void mark_redraw():
       self.dirty = 1

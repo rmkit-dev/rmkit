@@ -7,7 +7,7 @@ namespace ui:
     public:
     string text
     int x_padding = 0
-    int y_padding = 0
+    int y_padding = 10
     shared_ptr<Text> textWidget
     int key
     static int key_ctr
