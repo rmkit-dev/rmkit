@@ -146,13 +146,13 @@ namespace app_ui:
       option = self.options[i]->name
       if option == ABOUT:
         if self.ad == NULL:
-          self.ad = new AboutDialog(0, 0, 500, 500)
+          self.ad = new AboutDialog(0, 0, 600, 500)
         self.ad->show()
       if option == CLEAR:
         self.canvas->reset()
       if option == QUIT:
         if self.ed == NULL:
-          self.ed = new ExitDialog(0, 0, 500, 500)
+          self.ed = new ExitDialog(0, 0, 600, 500)
         self.ed->show()
       if option == SAVE:
         filename = self.canvas->save()

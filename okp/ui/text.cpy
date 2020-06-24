@@ -46,15 +46,21 @@ namespace ui:
     void redraw():
       cur_x = 0
       cur_y = 0
-      tokens = split(self.text, ' ')
-      for auto w: tokens:
-        w += " "
-        image = freetype::get_text_size(w.c_str())
-        image.buffer = (uint32_t*) malloc(sizeof(uint32_t) * image.w * image.h)
-        memset(image.buffer, WHITE, sizeof(uint32_t) * image.w * image.h)
-        if cur_x + image.w + 10 >= self.w:
-          cur_x = 0
-          cur_y += image.h
-        self.fb->draw_text(w, self.x + cur_x, self.y + cur_y, image)
-        free(image.buffer)
-        cur_x += image.w
+      lines = split(self.text, '\n')
+      for auto line: lines:
+        cur_x = 0
+        tokens = split(line, ' ')
+        int max_h = 0
+        for auto w: tokens:
+          w += " "
+          image = freetype::get_text_size(w.c_str())
+          image.buffer = (uint32_t*) malloc(sizeof(uint32_t) * image.w * image.h)
+          max_h = max(image.h, max_h)
+          memset(image.buffer, WHITE, sizeof(uint32_t) * image.w * image.h)
+          if cur_x + image.w + 10 >= self.w:
+            cur_x = 0
+            cur_y += max_h
+          self.fb->draw_text(w, self.x + cur_x, self.y + cur_y, image)
+          free(image.buffer)
+          cur_x += image.w
+        cur_y += max_h
