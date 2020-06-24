@@ -262,8 +262,9 @@ namespace framebuffer:
       sprintf(mkdir_cmd, "mkdir %s 2>/dev/null", SAVE_DIR)
       err = system(mkdir_cmd)
       sprintf(filename, "%s/%s%s", SAVE_DIR, datecstr, ".png")
+      px_w, px_h = self.get_display_size()
 
-      buf = vector<unsigned char>(self.width * self.height * 4)
+      buf = vector<unsigned char>(px_w * px_h * 4)
       i = 0
       for y 0 self.height:
         for x 0 self.width:
