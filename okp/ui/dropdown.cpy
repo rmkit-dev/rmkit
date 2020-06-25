@@ -34,6 +34,7 @@ namespace ui:
   class DropdownButton: public ui::Button:
     public:
     int selected
+    int option_width, option_height, option_x, option_y
     vector<O> options
     ui::Scene scene = NULL
 
@@ -41,23 +42,36 @@ namespace ui:
                    options(options), ui::Button(x,y,w,h,name):
       self.select(0)
 
+      self.set_option_offset(0, 0)
+      self.set_option_size(w, h)
+
     void on_mouse_click(input::SynMouseEvent&):
       self.show_options()
 
-    void show_options():
+    void set_option_offset(int x, y):
+      self.option_x = x
+      self.option_y = y
 
+    void set_option_size(int width, height):
+      self.option_width = width
+      self.option_height = height
+
+    void show_options():
       if self.scene == NULL:
         width, height = self.fb->get_display_size()
+        ow = self.option_width
+        oh = self.option_height
+
         self.scene = ui::make_scene()
         // this leaks layout, but i'm fine with it
-        layout = VerticalLayout(x, 0, w, height, self.scene)
+        layout = VerticalLayout(x + self.option_x, self.option_y, ow, height, self.scene)
         i = 0
         for auto option: self.options:
           if option->name.find("===") == 0:
-            section = new OptionSection(0, 0, w, h, option->name.substr(3))
+            section = new OptionSection(0, 0, ow, oh, option->name.substr(3))
             layout.pack_end(section)
           else:
-            option_btn = new OptionButton<DropdownButton>(0, 0, w, h, self, option->name, i)
+            option_btn = new OptionButton<DropdownButton>(0, 0, ow, oh, self, option->name, i)
             if option->icon != NULL:
               option_btn->set_icon(option->icon)
             layout.pack_end(option_btn)

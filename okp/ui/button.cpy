@@ -58,11 +58,14 @@ namespace ui:
 
         lodepng::decode(out, iconw, iconh, self.icon->data, self.icon->len)
         image = freetype::image_data{(uint32_t*) out.data(),iconw,iconh}
-        fb->draw_bitmap(image, x, y+y_padding)
+        px = 0
+        if self.text == "":
+          px = 10
+        fb->draw_bitmap(image, x+x_padding+px, y+y_padding)
 
       self.textWidget->text = text
-      self.textWidget->set_coords(x+x_padding+iconw, y+y_padding, \
-        self.w - x_padding-iconw, self.h - y_padding)
+      self.textWidget->set_coords(x+x_padding+iconw+10, y+y_padding, \
+        self.w - x_padding-iconw-10, self.h - y_padding)
       self.textWidget->redraw()
 
       color = WHITE

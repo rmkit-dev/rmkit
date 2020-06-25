@@ -36,6 +36,9 @@ class App:
     w, h = fb->get_display_size()
     input::MouseEvent::set_screen_size(w, h)
 
+    TOOLBAR_HEIGHT = 50
+    ICON_WIDTH = 70
+
     fb->clear_screen()
     fb->redraw_screen()
 
@@ -46,12 +49,12 @@ class App:
 
     toolbar_area = new ui::VerticalLayout(0, 0, w, h, notebook)
     minibar_area = new ui::VerticalLayout(0, 0, w, h, notebook)
-    toolbar = new ui::HorizontalLayout(0, 0, w, 50, notebook)
-    minibar = new ui::HorizontalLayout(0, 0, w, 50, notebook)
-    clockbar = new ui::HorizontalLayout(0, 0, w, 50, notebook)
+    toolbar = new ui::HorizontalLayout(0, 0, w, TOOLBAR_HEIGHT, notebook)
+    minibar = new ui::HorizontalLayout(0, 0, w, TOOLBAR_HEIGHT, notebook)
+    clockbar = new ui::HorizontalLayout(0, 0, w, TOOLBAR_HEIGHT, notebook)
 
     // clockbar is at the top of the screen
-    clockbar->pack_center(new app_ui::Clock(0, 0, 150, 50))
+    clockbar->pack_center(new app_ui::Clock(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT))
 
     // aligns the toolbar to the bottom of the screen by packing end
     // inside toolbar_area
@@ -62,25 +65,34 @@ class App:
 
 
     // we always have to pack layouts in order
-    minibar->pack_start(new app_ui::HideButton(0, 0, 50, 50, toolbar, minibar), 20)
+//    minibar->pack_start(new app_ui::HideButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, toolbar, minibar))
+//    toolbar->pack_start(new app_ui::HideButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, toolbar, minibar))
 
-    toolbar->pack_start(new app_ui::HideButton(0, 0, 50, 50, toolbar, minibar), 20)
-    toolbar->pack_start(new app_ui::ToolButton(0, 0, 200, 50, canvas))
-    toolbar->pack_start(new app_ui::BrushConfigButton(0, 0, 250, 50, canvas))
+    tool_button = new app_ui::ToolButton(0, 0, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, canvas)
+    tool_button->set_option_size(250, TOOLBAR_HEIGHT)
+    tool_button->set_option_offset(0, -TOOLBAR_HEIGHT)
+    toolbar->pack_start(tool_button, 20)
+
+    brush_config_button = new app_ui::BrushConfigButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, canvas)
+    brush_config_button->set_option_size(200, TOOLBAR_HEIGHT)
+    brush_config_button->set_option_offset(0, -TOOLBAR_HEIGHT)
+    toolbar->pack_start(brush_config_button, 20)
+
     toolbar->pack_center(new app_ui::LiftBrushButton(0, 0, 114, 100, canvas))
+
     // because we pack end, we go in reverse order
-    toolbar->pack_end(new app_ui::ManageButton(0, 0, 100, 50, canvas))
-    toolbar->pack_end(new app_ui::RedoButton(0, 0, 100, 50, canvas))
-    toolbar->pack_end(new app_ui::UndoButton(0, 0, 100, 50, canvas))
+    toolbar->pack_end(new app_ui::ManageButton(0, 0, 100, TOOLBAR_HEIGHT, canvas))
+    toolbar->pack_end(new app_ui::RedoButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, canvas))
+    toolbar->pack_end(new app_ui::UndoButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, canvas))
 
 
     notebook->add(canvas)
 
     save_dialog = ui::make_scene()
-    save_dialog->add(new ui::Text(w / 2 - 100, 10, w, 50, "SAVE DIALOG"))
+    save_dialog->add(new ui::Text(w / 2 - 100, 10, w, TOOLBAR_HEIGHT, "SAVE DIALOG"))
 
     open_dialog = ui::make_scene()
-    open_dialog->add(new ui::Text(w / 2 - 100, 10, w, 50, "OPEN DIALOG"))
+    open_dialog->add(new ui::Text(w / 2 - 100, 10, w, TOOLBAR_HEIGHT, "OPEN DIALOG"))
 
 
   def handle_key_event(input::SynKeyEvent &key_ev):

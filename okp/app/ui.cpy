@@ -32,6 +32,10 @@ namespace app_ui:
       self.canvas = c
       self.select(0)
 
+    void before_redraw():
+      if self.icon != NULL:
+        self.text = ""
+
     void on_select(int idx):
       name = self.options[idx]->name
       for auto b : brush::P_BRUSHES:
@@ -85,29 +89,38 @@ namespace app_ui:
 
       self.before_redraw()
 
-    // sync the brush stroke to the canvas
-    void before_redraw():
-      string size_text, color_text
-
+    void redraw():
+      sw = 1
       for auto size : stroke::SIZES:
         if canvas->get_stroke_width() == size->val:
-          size_text = size->name
+          sw = (size->val+1) * 3
           break
 
+      color = BLACK
+      bg_color = WHITE
       for auto size : stroke::SIZES:
         if canvas->curr_brush->color == BLACK:
-          color_text = "black"
+          color = BLACK
+          bg_color = WHITE
           break
         if canvas->curr_brush->color == WHITE:
-          color_text = "white"
+          color = WHITE
+          bg_color = BLACK
           break
         if canvas->curr_brush->color == GRAY:
-          color_text = "gray"
+          color = GRAY
+          bg_color = WHITE
           break
 
-      self.text = size_text + " " + color_text
+      self.fb->draw_rect(self.x, self.y, self.w, self.h, WHITE, true)
 
+      if self.mouse_inside:
+        self.fb->draw_rect(self.x, self.y, self.w, self.h, BLACK, false)
 
+      mid_y = (self.h - sw) / 2
+
+      self.fb->draw_line(self.x+3, self.y+mid_y-2, self.x+self.w-sw-3, self.y+mid_y-2, sw+4, bg_color)
+      self.fb->draw_line(self.x+5, self.y+mid_y, self.x+self.w-sw-5, self.y+mid_y, sw, color)
 
   class LiftBrushButton: public ui::Button:
     public:
@@ -172,6 +185,8 @@ namespace app_ui:
     Canvas *canvas
     UndoButton(int x, y, w, h, Canvas *c): ui::Button(x,y,w,h,"undo"):
       self.canvas = c
+      self.icon = ICON(icons::vendor_icons_fa_arrow_left_solid_png)
+      self.text = ""
 
     void on_mouse_click(input::SynMouseEvent &ev):
       self.dirty = 1
@@ -182,6 +197,9 @@ namespace app_ui:
     Canvas *canvas
     RedoButton(int x, y, w, h, Canvas *c): ui::Button(x,y,w,h,"redo"):
       self.canvas = c
+      self.icon = ICON(icons::vendor_icons_fa_arrow_right_solid_png)
+      self.text = ""
+      self.text = ""
 
     void on_mouse_click(input::SynMouseEvent &ev):
       self.dirty = 1

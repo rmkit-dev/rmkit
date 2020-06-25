@@ -31,9 +31,9 @@ if __name__ == "__main__":
             return True
 
         width, height = WIN.get_size()
-        i_width = img.get_width()
-        scalar = i_width / float(width)
-        img = img.scale_simple(width, int(height/scalar), InterpType.BILINEAR)
+        i_height = img.get_height()
+        scalar = i_height / float(height)
+        img = img.scale_simple(int(height/scalar), height, InterpType.BILINEAR)
 
         IMG.set_from_pixbuf(img)
         IMG.queue_draw()

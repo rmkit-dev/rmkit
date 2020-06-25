@@ -15,16 +15,17 @@ namespace app_ui:
       public:
       BrushSize val
       string name
+      icons::Icon *icon
       const static BrushSize FINE = 0;
       const static BrushSize MEDIUM = 1;
       const static BrushSize WIDE = 2;
 
-      Size(int val, string name): val(val), name(name):
+      Size(int val, string name, icons::Icon *icon): val(val), name(name), icon(icon):
         pass
 
-    static Size FINE   = Size(Size::FINE, "fine")
-    static Size MEDIUM = Size(Size::MEDIUM,"medium")
-    static Size WIDE   = Size(Size::WIDE, "wide")
+    static Size FINE   = Size(Size::FINE, "fine", ICON(icons::vendor_icons_fa_spider_solid_png))
+    static Size MEDIUM = Size(Size::MEDIUM,"medium", ICON(icons::vendor_icons_fa_spider_solid_png))
+    static Size WIDE = Size(Size::WIDE,"wide", ICON(icons::vendor_icons_fa_spider_solid_png))
 
     static vector<Size*> SIZES = { &FINE, &MEDIUM, &WIDE }
 
@@ -201,7 +202,7 @@ namespace app_ui:
     PaintBrush(): Brush():
       self.name = "paint brush"
       sw_thin = 15, sw_medium = 25, sw_thick = 50
-      self.icon = ICON(icons::vendor_icons_fa_brush_solid_png)
+      self.icon = ICON(icons::vendor_icons_fa_paint_brush_solid_png)
 
     ~PaintBrush():
       pass

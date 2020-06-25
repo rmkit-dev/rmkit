@@ -48,7 +48,8 @@ with image framebuffer:
 * test on remarkable over wifi: `HOST=192.168.1.10 make test_arm`
 
 
-#### References
+#### acknowledgements
 
-* [libremarkable](https://github.com/canselcik/libremarkable)
+* [fontawesome](https://fontawesome.com)
 * [harmony](https://github.com/mrdoob/harmony)
+* [libremarkable](https://github.com/canselcik/libremarkable)

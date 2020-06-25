@@ -41,10 +41,7 @@ APP:
 
 * highlight dropdown box
 * implement listbox widget
-* implement pop-over for buttons (Select / Dropdown button)
 * implement brushes
-  * web
-  * long fur
   * squares
   * circles
 
@@ -116,3 +113,6 @@ x easy installation script
 x paintbrush, hard pencil, ballpoint
 x download icons for brushes
 x about dialog (with URLs / credits?)
+x implement pop-over for buttons (Select / Dropdown button)
+x web brush
+x long fur brush
