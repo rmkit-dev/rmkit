@@ -58,6 +58,8 @@ namespace ui:
             layout.pack_end(section)
           else:
             option_btn = new OptionButton<DropdownButton>(0, 0, w, h, self, option->name, i)
+            if option->icon != NULL:
+              option_btn->set_icon(option->icon)
             layout.pack_end(option_btn)
           i++
 
@@ -78,6 +80,8 @@ namespace ui:
   class TextOption:
     public:
     string name
+    icons::Icon *icon
+    TextOption(string n, icons::Icon *i): name(n), icon(i) {}
     TextOption(string n): name(n) {}
 
 
@@ -101,3 +105,10 @@ namespace ui:
     void add_options(vector<string> opts):
       for auto opt: opts:
         self.options.push_back(new ui::TextOption(opt))
+
+    void add_options(vector<pair<string, icons::Icon*>> pairs):
+      for auto pair: pairs:
+        opt = pair.first
+        icon = pair.second
+        textopt = new ui::TextOption(opt, icon)
+        self.options.push_back(textopt)

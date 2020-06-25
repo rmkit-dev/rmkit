@@ -18,7 +18,7 @@ namespace app_ui:
                ui::TextDropdown(x, y, w, h, "tools"):
 
       for auto b : brush::NP_BRUSHES:
-        self.add_options({b->name})
+        self.add_options({make_pair(b->name, b->icon)})
       self.add_section("brushes")
 
       for auto b : brush::P_BRUSHES:

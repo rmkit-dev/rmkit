@@ -11,6 +11,10 @@ namespace ui:
     shared_ptr<Text> textWidget
     int key
     static int key_ctr
+    icons::Icon *icon = NULL
+
+    void set_icon(icons::Icon *icon):
+      self.icon = icon
 
     Button(int x, y, w, h, string t): Widget(x,y,w,h):
       self.key = Button::key_ctr
@@ -45,11 +49,20 @@ namespace ui:
       self.textWidget->justify = j
 
     void redraw():
-
       fb->draw_rect(self.x, self.y, self.w, self.h, WHITE, true)
+
+      unsigned int iconw = 0
+      unsigned int iconh = 0
+      if self.icon != NULL:
+        vector<unsigned char> out
+
+        lodepng::decode(out, iconw, iconh, self.icon->data, self.icon->len)
+        image = freetype::image_data{(uint32_t*) out.data(),iconw,iconh}
+        fb->draw_bitmap(image, x, y+y_padding)
+
       self.textWidget->text = text
-      self.textWidget->set_coords(x+x_padding, y+y_padding, \
-        self.w - x_padding, self.h - y_padding)
+      self.textWidget->set_coords(x+x_padding+iconw, y+y_padding, \
+        self.w - x_padding-iconw, self.h - y_padding)
       self.textWidget->redraw()
 
       color = WHITE

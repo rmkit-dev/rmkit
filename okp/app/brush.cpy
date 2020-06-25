@@ -42,6 +42,7 @@ namespace app_ui:
     vector<Point> points
     string name = "brush"
     int color = BLACK
+    icons::Icon *icon
 
     // stroke sizing
     int stroke_width = 1
@@ -195,6 +196,7 @@ namespace app_ui:
     PaintBrush(): Brush():
       self.name = "paint brush"
       sw_thin = 15, sw_medium = 25, sw_thick = 50
+      self.icon = ICON(icons::vendor_icons_fa_brush_solid_png)
 
     ~PaintBrush():
       pass

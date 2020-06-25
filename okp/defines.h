@@ -2,6 +2,9 @@
 #define DEFINES_H
 #include <vector>
 #include <sstream>
+#include "ui/icons.h"
+
+#define ICON(name) new icons::Icon { name, name ## _len }
 
 #define SAVE_DIR "./saved_images"
 #ifdef DEV

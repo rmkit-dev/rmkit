@@ -438,6 +438,9 @@ namespace framebuffer:
   class FileFB: public FB:
     public:
     FileFB(): FB():
+      self.width = DISPLAYWIDTH
+      self.height = DISPLAYHEIGHT
+      self.byte_size = self.width * self.height * sizeof(remarkable_color)
       // make an empty file of the right size
       std::ofstream ofs("fb.raw", std::ios::binary | std::ios::out);
       ofs.seekp(self.byte_size);
@@ -455,6 +458,9 @@ namespace framebuffer:
   class VirtualFB: public FB:
     public:
     VirtualFB(): FB():
+      self.width = DISPLAYWIDTH
+      self.height = DISPLAYHEIGHT
+      self.byte_size = self.width * self.height * sizeof(remarkable_color)
       self.fbmem = (remarkable_color*) malloc(self.byte_size)
       self.fd = -1
 
