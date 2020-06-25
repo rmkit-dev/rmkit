@@ -70,6 +70,8 @@ namespace ui:
       self.selected = idx
       ui::MainLoop::hide_overlay()
       if idx < self.options.size():
+        option = self.options[idx]
+        self.icon = option->icon
         self.text = self.options[idx]->name
 
       self.on_select(idx)

@@ -90,9 +90,12 @@ $     int bytes = read(fd, ev_data, sizeof(input_event) * 64);
       // dev only
       self.monitor(self.mouse.fd = open("/dev/input/mice", O_RDONLY))
       // used by remarkable
+      #ifdef REMARKABLE
       self.monitor(self.wacom.fd = open("/dev/input/event0", O_RDONLY))
       self.monitor(self.touch.fd = open("/dev/input/event1", O_RDONLY))
       self.monitor(self.button.fd = open("/dev/input/event2", O_RDONLY))
+      #endif
+
       #ifdef DEV_KBD
       self.monitor(self.button.fd = open(DEV_KBD, O_RDONLY))
       #endif

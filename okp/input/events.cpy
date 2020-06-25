@@ -8,7 +8,9 @@ namespace input:
     Event():
       self.id = Event::next_id++
 
-    def update(input_event data)
+    def update(input_event data):
+      pass
+
     def print_event(input_event &data):
       #ifdef DEBUG_INPUT_EVENT
       printf("Event: time %ld, type: %x, code :%x, value %d\n", \
@@ -146,11 +148,6 @@ namespace input:
       syn_ev.pressure = MouseEvent::pressure
       syn_ev.tilt_x = MouseEvent::tilt_x
       syn_ev.tilt_y = MouseEvent::tilt_y
-
-      if self.right:
-        syn_ev.eraser = ERASER_STYLUS
-      if self.middle:
-        syn_ev.eraser = ERASER_RUBBER
 
       syn_ev.set_original(new MouseEvent(*self))
       return syn_ev

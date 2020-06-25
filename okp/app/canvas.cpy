@@ -26,7 +26,7 @@ namespace app_ui:
     Canvas(int x, y, w, h): ui::Widget(x,y,w,h):
       px_width, px_height = self.fb->get_display_size()
       self.byte_size = px_width * px_height * sizeof(remarkable_color)
-      vfb = make_shared<framebuffer::VirtualFB>()
+      vfb = make_shared<framebuffer::VirtualFB>(self.fb->width, self.fb->height)
       self.mem = (remarkable_color*) malloc(sizeof(remarkable_color) * px_width * px_height)
       fbcopy = shared_ptr<remarkable_color>((remarkable_color*) malloc(self.byte_size))
       memcpy(fbcopy.get(), self.fb->fbmem, self.byte_size)

@@ -457,9 +457,9 @@ namespace framebuffer:
 
   class VirtualFB: public FB:
     public:
-    VirtualFB(): FB():
-      self.width = DISPLAYWIDTH
-      self.height = DISPLAYHEIGHT
+    VirtualFB(int w, h): FB():
+      self.width = w
+      self.height = h
       self.byte_size = self.width * self.height * sizeof(remarkable_color)
       self.fbmem = (remarkable_color*) malloc(self.byte_size)
       self.fd = -1
