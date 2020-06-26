@@ -113,6 +113,9 @@ namespace framebuffer:
       width = stoi(width_s)
       height = stoi(height_s)
 
+      #ifdef REMARKABLE
+      height /= 2
+      #endif
       return width, height
 
     virtual tuple<int, int> get_display_size():
@@ -337,7 +340,7 @@ namespace framebuffer:
 
     def draw_line_circle(int x0,y0,x1,y1,width,color,float dither=1.0):
       #ifdef DEBUG_FB
-      printf("DRAWING LINE %i %i %i %i\n", x0, y0, x1, y1)
+      printf("DRAWING LINE w. CIRCLES %i %i %i %i\n", x0, y0, x1, y1)
       #endif
       self.dirty = 1
       dx =  abs(x1-x0)

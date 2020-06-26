@@ -93,7 +93,7 @@ namespace app_ui:
       sw = 1
       for auto size : stroke::SIZES:
         if canvas->get_stroke_width() == size->val:
-          sw = (size->val+1) * 3
+          sw = (size->val+1) * 5
           break
 
       color = BLACK

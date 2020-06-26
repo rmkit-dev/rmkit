@@ -111,7 +111,7 @@ namespace app_ui:
 
     Charcoal(): Brush():
       self.name = "charcoal"
-      self.icon = ICON(icons::vendor_icons_fa_spray_can_solid_png)
+      self.icon = ICON(icons::vendor_icons_fa_mortar_pestle_solid_png)
 
     ~Charcoal():
       pass
@@ -251,7 +251,7 @@ namespace app_ui:
     public:
     RubberEraser(): Brush():
       self.name = "rubber"
-      self.icon = ICON(icons::vendor_icons_fa_eraser_solid_png)
+      self.icon = ICON(icons::vendor_icons_fa_magic_solid_png)
       sw_thin = 15; sw_medium = 25; sw_thick = 50
 
     ~RubberEraser():
