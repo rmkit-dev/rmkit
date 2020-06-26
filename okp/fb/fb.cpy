@@ -419,11 +419,14 @@ namespace framebuffer:
         update_rect.height = DISPLAYHEIGHT
 
       update_data.update_region = update_rect
-      update_data.waveform_mode = WAVEFORM_MODE_DU
+      update_data.waveform_mode = WAVEFORM_MODE_AUTO
       update_data.update_mode = UPDATE_MODE_PARTIAL
       update_data.dither_mode = EPDC_FLAG_EXP1
       update_data.temp = TEMP_USE_REMARKABLE_DRAW
       update_data.flags = 0
+
+      if update_rect.height == 0 || update_rect.width == 0:
+        return um
 
       update_data.update_marker = 0
       if wait_for_refresh:
