@@ -46,6 +46,7 @@ class App:
     ui::MainLoop::set_scene(notebook)
 
     canvas = new app_ui::Canvas(0, 0, fb->width, fb->height)
+    notebook->add(canvas)
 
     toolbar_area = new ui::VerticalLayout(0, 0, w, h, notebook)
     minibar_area = new ui::VerticalLayout(0, 0, w, h, notebook)
@@ -84,9 +85,6 @@ class App:
     toolbar->pack_end(new app_ui::ManageButton(0, 0, 100, TOOLBAR_HEIGHT, canvas))
     toolbar->pack_end(new app_ui::RedoButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, canvas))
     toolbar->pack_end(new app_ui::UndoButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, canvas))
-
-
-    notebook->add(canvas)
 
     save_dialog = ui::make_scene()
     save_dialog->add(new ui::Text(w / 2 - 100, 10, w, TOOLBAR_HEIGHT, "SAVE DIALOG"))

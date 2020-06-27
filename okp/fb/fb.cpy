@@ -264,10 +264,25 @@ namespace framebuffer:
       time (&rawtime);
       timeinfo = localtime(&rawtime);
 
-      strftime(buffer,sizeof(buffer),"%d-%m-%Y-%H:%M:%S",timeinfo);
+      strftime(buffer,sizeof(buffer),"%Y-%m-%d-%H:%M:%S",timeinfo);
       std::string str(buffer);
 
       return str
+
+    // replace the contents of the framebuffer with the png
+    void load_from_png(string filename):
+      char full_path[100]
+      unsigned char* buffer
+      vector<unsigned char> raw
+      size_t outsize
+      unsigned int neww, newh
+
+      sprintf(full_path, "%s/%s", SAVE_DIR, filename.c_str())
+      load_ret = lodepng_load_file(&buffer, &outsize, full_path)
+      decode_ret = lodepng::decode(raw, neww, newh, buffer, outsize)
+
+      image = freetype::image_data{(uint32_t*) raw.data(),neww,newh}
+      self->draw_bitmap(image, 0,0)
 
 
     string save_lodepng():

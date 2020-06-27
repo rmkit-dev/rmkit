@@ -141,7 +141,12 @@ namespace app_ui:
       else if self.mouse_inside:
           self->fb->draw_rect(self.x, self.y, self.w, self.h, GRAY, false)
 
-  string ABOUT = "about", CLEAR = "clear", DOTS = "...", QUIT="exit", SAVE = "save"
+  string  ABOUT = "about",\
+          CLEAR = "clear",\
+          DOTS  = "...",\
+          QUIT  = "exit",\
+          SAVE  = "save",\
+          LOAD  = "load"
   class ManageButton: public ui::TextDropdown:
     public:
     Canvas *canvas
@@ -149,10 +154,11 @@ namespace app_ui:
     AboutDialog *ad
     ExitDialog *ed
     SaveDialog *sd
+    LoadDialog *ld
 
     ManageButton(int x, y, w, h, Canvas *c): TextDropdown(x,y,w,h,"...")
       self.canvas = c
-      self.add_options({DOTS, CLEAR, SAVE, QUIT, DOTS, ABOUT})
+      self.add_options({DOTS, CLEAR, SAVE, LOAD, QUIT, DOTS, ABOUT})
       self.text = "..."
 
     void on_select(int i):
@@ -171,12 +177,15 @@ namespace app_ui:
         filename = self.canvas->save()
         if self.sd == NULL:
           self.sd = new SaveDialog(0, 0, 600, 500)
-
         title = "Saved as " + filename
         self.sd->set_title(title)
         self.sd->show()
-
-
+      if option == LOAD:
+        if self.ld == NULL:
+          self.ld = new LoadDialog(0, 0, 600, 500, self.canvas)
+        self.ld->populate()
+        self.ld->setup_for_render()
+        self.ld->show()
 
       self.text = "..."
 

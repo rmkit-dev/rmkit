@@ -12,7 +12,7 @@ namespace ui:
       widgets.push_back(w)
 
     static void redraw(vector<shared_ptr<Widget>> &widgets):
-      for auto it = widgets.rbegin(); it != widgets.rend(); it++:
+      for auto it = widgets.begin(); it != widgets.end(); it++:
         auto &widget = *it
         if !widget->visible:
           continue

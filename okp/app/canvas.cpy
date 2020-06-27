@@ -146,4 +146,9 @@ namespace app_ui:
 
     string save():
       return self.vfb->save_lodepng()
+
+    void load_from_png(string filename):
+      self.vfb->load_from_png(filename)
+      self.dirty = 1
+      ui::MainLoop::full_refresh()
     // }}}

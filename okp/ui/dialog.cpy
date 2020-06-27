@@ -19,7 +19,7 @@ namespace ui:
     public:
     string title = "", content = ""
     MultiText *titleWidget
-    MultiText *contentWidget
+    Widget *contentWidget
     Scene scene
     vector<string> buttons
 
@@ -27,9 +27,9 @@ namespace ui:
       self.buttons = { "OK", "CANCEL" }
       self.titleWidget = new MultiText(20, 20, self.w, 50, self.title)
       self.contentWidget = new MultiText(20, 20, self.w, self.h - 100, self.content)
+      self.scene = ui::make_scene()
 
     void build_dialog():
-      self.scene = ui::make_scene()
       width, height = self.fb->get_display_size()
       v_layout = ui::VerticalLayout(0, 0, width, height, self.scene)
       v_layout.pack_center(self)
@@ -61,9 +61,6 @@ namespace ui:
 
     void set_title(string s):
       self.titleWidget->text = s
-
-    void set_content(string s):
-      self.contentWidget->text = s
 
     void show():
       if self.scene == NULL:
