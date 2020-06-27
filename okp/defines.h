@@ -6,7 +6,11 @@
 
 #define ICON(name) new icons::Icon { name, name ## _len }
 
+#ifdef REMARKABLE
+#define SAVE_DIR "/home/root/harmony/saved_images"
+#else
 #define SAVE_DIR "./saved_images"
+#endif
 #ifdef DEV
 // #define DEV_KBD "/dev/input/by-path/pci-0000:24:00.3-usb-0:3.2:1.0-event-kbd"
 // #define DEV_KBD "/dev/input/by-path/platform-i8042-serio-0-event-kbd"
