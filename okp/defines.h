@@ -41,17 +41,17 @@
 // {{{ VARIABLE SIZE DEFINES
 #ifdef REMARKABLE
 // remarkable uses rgb565_le but is grayscale
-#ifdef GRAYSCALE_8BIT
-  #define remarkable_color uint8_t
-#else
-  #define remarkable_color uint16_t
-#endif
+  #ifdef GRAYSCALE_8BIT
+    #define remarkable_color uint8_t
+  #else
+    #define remarkable_color uint16_t
+  #endif
 
-#define pointer_size uint32_t
+  #define pointer_size uint32_t
 #else
-// on linux framebuffer we have 32bit colors
-#define remarkable_color uint32_t
-#define pointer_size uint64_t
+  // on linux framebuffer we have 32bit colors
+  #define remarkable_color uint32_t
+  #define pointer_size uint64_t
 #endif
 // }}}
 
