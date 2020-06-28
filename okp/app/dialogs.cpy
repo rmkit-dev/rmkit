@@ -40,8 +40,8 @@ namespace app_ui:
 
       LoadDialog(int x, y, w, h, Canvas *c): ui::InfoDialog(x, y, w, h):
         self.canvas = c
-        self.buttons = {"OK", "PREV", "NEXT"}
-        page_size = (self.h - self.opt_h*2) / self.opt_h
+        self.buttons = {"PREV", "NEXT"}
+        self.page_size = (self.h - self.opt_h*2) / self.opt_h
 
       void setup_for_render(int page=0):
         if page >= 0 and page <= (self.filenames.size() / self.page_size):
@@ -87,13 +87,10 @@ namespace app_ui:
         else if name == "PREV":
           self.setup_for_render(self.curr_page-1)
           self.show()
-          self.dirty = 1
-          ui::MainLoop::refresh()
         else if name == "NEXT":
           self.setup_for_render(self.curr_page+1)
           self.show()
-          self.dirty = 1
-          ui::MainLoop::refresh()
         else:
           self.canvas->load_from_png(name)
           ui::MainLoop::hide_overlay()
+        ui::MainLoop::refresh()

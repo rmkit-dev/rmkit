@@ -106,6 +106,15 @@ namespace app_ui:
       self.fb->dirty = 1
       framebuffer::reset_dirty(vfb->dirty_area)
 
+    // {{{ SAVING / LOADING
+    string save():
+      return self.vfb->save_lodepng()
+
+    void load_from_png(string filename):
+      self.vfb->load_from_png(filename)
+      self.dirty = 1
+      ui::MainLoop::full_refresh()
+    // }}}
 
     // {{{ UNDO / REDO STUFF
     void trim_stacks():
@@ -143,12 +152,4 @@ namespace app_ui:
         memcpy(vfb->fbmem, redofb.get(), self.byte_size)
         self.undo_stack.push_back(redofb)
         ui::MainLoop::full_refresh()
-
-    string save():
-      return self.vfb->save_lodepng()
-
-    void load_from_png(string filename):
-      self.vfb->load_from_png(filename)
-      self.dirty = 1
-      ui::MainLoop::full_refresh()
     // }}}
