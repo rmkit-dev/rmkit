@@ -69,6 +69,8 @@ namespace app_ui:
       void populate():
         DIR *dir
         struct dirent *ent
+
+        self.filenames.clear()
         if ((dir = opendir (SAVE_DIR)) != NULL):
           while ((ent = readdir (dir)) != NULL):
             str_d_name = string(ent->d_name)

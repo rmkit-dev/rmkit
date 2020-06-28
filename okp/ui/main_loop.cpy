@@ -66,7 +66,10 @@ namespace ui:
         return false
 
       mouse_down = ev.left || ev.right || ev.middle
-      for auto widget: display_scene->widgets:
+
+      auto widgets = display_scene->widgets;
+      for auto it = widgets.rbegin(); it != widgets.rend(); it++:
+        widget = *it
         if widget->ignore_event(ev) || !widget->visible:
           continue
 

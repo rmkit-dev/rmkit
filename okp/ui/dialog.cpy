@@ -27,9 +27,11 @@ namespace ui:
       self.buttons = { "OK", "CANCEL" }
       self.titleWidget = new MultiText(20, 20, self.w, 50, self.title)
       self.contentWidget = new MultiText(20, 20, self.w, self.h - 100, self.content)
-      self.scene = ui::make_scene()
 
     void build_dialog():
+      self.scene = ui::make_scene()
+      self.scene->add(self)
+
       width, height = self.fb->get_display_size()
       v_layout = ui::VerticalLayout(0, 0, width, height, self.scene)
       v_layout.pack_center(self)
@@ -47,7 +49,6 @@ namespace ui:
 
       for auto b : self.buttons:
         button_bar->pack_start(new DialogButton<Dialog>(20, 0, 100, 50, self, b))
-      self.scene->add(self)
 
     bool ignore_event(input::SynMouseEvent&):
       return true
