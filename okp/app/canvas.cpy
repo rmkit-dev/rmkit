@@ -114,6 +114,7 @@ namespace app_ui:
       self.vfb->load_from_png(filename)
       self.dirty = 1
       ui::MainLoop::full_refresh()
+      self.push_undo()
     // }}}
 
     // {{{ UNDO / REDO STUFF
@@ -130,6 +131,7 @@ namespace app_ui:
       fbcopy = shared_ptr<remarkable_color>((remarkable_color*) malloc(self.byte_size))
       memcpy(fbcopy.get(), vfb->fbmem, self.byte_size)
       self.undo_stack.push_back(fbcopy)
+      self.redo_stack.clear()
 
       trim_stacks()
       reset_dirty(self.dirty_rect)

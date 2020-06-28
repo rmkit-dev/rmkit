@@ -151,10 +151,10 @@ namespace app_ui:
     public:
     Canvas *canvas
 
-    AboutDialog *ad
-    ExitDialog *ed
-    SaveDialog *sd
-    LoadDialog *ld
+    AboutDialog *ad = NULL
+    ExitDialog *ed = NULL
+    SaveDialog *sd = NULL
+    LoadDialog *ld = NULL
 
     ManageButton(int x, y, w, h, Canvas *c): TextDropdown(x,y,w,h,"...")
       self.canvas = c

@@ -298,7 +298,7 @@ namespace framebuffer:
       sprintf(filename, "%s/%s%s", SAVE_DIR, datecstr, ".png")
       px_w, px_h = self.get_display_size()
 
-      buf = vector<unsigned char>(px_w * px_h * 4)
+      buf = vector<unsigned char>(px_w * px_h * 4+1)
       i = 0
       for y 0 self.height:
         for x 0 self.width:

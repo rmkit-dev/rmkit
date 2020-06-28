@@ -63,7 +63,6 @@ namespace ui:
         oh = self.option_height
 
         self.scene = ui::make_scene()
-        // this leaks layout, but i'm fine with it
         layout = VerticalLayout(x + self.option_x, self.option_y, ow, height, self.scene)
         i = 0
         for auto option: self.options:

@@ -20,6 +20,7 @@ namespace ui:
       self.key = Button::key_ctr
       Button::key_ctr++
       self.text = t
+      self.icon = NULL
       self.textWidget = make_shared<Text>(x, y, w, h, t)
       self.set_justification(ui::Text::JUSTIFY::CENTER)
       print self.text, "=", input::get_key_str(self.key)

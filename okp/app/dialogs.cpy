@@ -61,9 +61,9 @@ namespace app_ui:
         end = min(start+page_size, (int)self.filenames.size())
         for i start end:
           filename = self.filenames[i]
-          layout->pack_start(\
-            new ui::DialogButton<ui::Dialog>(\
-              5,0, self.w-10, self.opt_h, self,filename))
+          d = new ui::DialogButton<ui::Dialog>(20,0, self.w-30, self.opt_h, self, filename)
+          d->set_justification(ui::Text::JUSTIFY::LEFT)
+          layout->pack_start(d)
 
 
       void populate():

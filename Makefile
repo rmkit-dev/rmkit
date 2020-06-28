@@ -6,6 +6,7 @@ OKP_FLAGS=-for -d ../cpp/ -o ../build/bin/${EXE} -nr ${FILES}
 LAUNCHER_FLAGS=-d ../cpp -o ../build/bin/launcher -for -nr launcher.cpy
 CXX=arm-linux-gnueabihf-g++
 CC = arm-linux-gnueabihf-gcc
+KBD=`ls /dev/input/by-path/*kbd | head -n1`
 
 # {{{ SKETCHY MAIN CODE
 default: harmony_dev
@@ -20,7 +21,7 @@ compile_x86:
 
 compile_dev: export CPP_FLAGS += -I/usr/include/freetype2 -lfreetype -I../vendor/lodepng
 compile_dev:
-	cd okp/ && okp ${OKP_FLAGS} -- -D"DEV=1" ${CPP_FLAGS}
+	cd okp/ && okp ${OKP_FLAGS} -- -D"DEV=1" ${CPP_FLAGS} -D"DEV_KBD=\"${KBD}\""
 
 compile_arm: export CPP_FLAGS += -I../vendor/freetype2/install/usr/local/include/freetype2 -L../vendor/freetype2/install/usr/local/lib/ -lfreetype -I../vendor/lodepng
 compile_arm:
