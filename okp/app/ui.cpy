@@ -197,6 +197,10 @@ namespace app_ui:
       self.icon = ICON(icons::vendor_icons_fa_arrow_left_solid_png)
       self.text = ""
 
+    void redraw():
+      if self.canvas->undo_stack.size() > 1:
+        ui::Button::redraw()
+
     void on_mouse_click(input::SynMouseEvent &ev):
       self.dirty = 1
       self.canvas->undo()
@@ -209,6 +213,10 @@ namespace app_ui:
       self.icon = ICON(icons::vendor_icons_fa_arrow_right_solid_png)
       self.text = ""
       self.text = ""
+
+    void redraw():
+      if self.canvas->redo_stack.size():
+        ui::Button::redraw()
 
     void on_mouse_click(input::SynMouseEvent &ev):
       self.dirty = 1
