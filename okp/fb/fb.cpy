@@ -281,7 +281,7 @@ namespace framebuffer:
       load_ret = lodepng_load_file(&buffer, &outsize, full_path)
       decode_ret = lodepng::decode(raw, neww, newh, buffer, outsize)
 
-      image = freetype::image_data{(uint32_t*) raw.data(),neww,newh}
+      image = freetype::image_data{(uint32_t*) raw.data(), (int) neww, (int) newh}
       self->draw_bitmap(image, 0,0)
 
 

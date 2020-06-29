@@ -30,12 +30,41 @@ namespace ui:
       self.tb->select(self.idx)
       self.dirty = 1
 
+  class TextOption:
+    public:
+    string name
+    icons::Icon *icon
+    TextOption(string n, icons::Icon *i): name(n), icon(i) {}
+    TextOption(string n): name(n) {}
+
+  template<class T>
+  class DropdownSection:
+    public:
+    string name
+    vector<shared_ptr<T>> options
+    DropdownSection(string n): name(n):
+      pass
+
+    void add_options(vector<string> opts):
+      for auto opt: opts:
+        self.options.push_back(make_shared<T>(opt))
+
+    void add_options(vector<pair<string, icons::Icon*>> pairs):
+      for auto pair: pairs:
+        opt = pair.first
+        icon = pair.second
+        textopt = make_shared<T>(opt, icon)
+        self.options.push_back(textopt)
+
   template<class O>
   class DropdownButton: public ui::Button:
     public:
     int selected
     int option_width, option_height, option_x, option_y
+    enum DIRECTION { UP, DOWN }
+    DIRECTION dir = DIRECTION::UP
     vector<O> options
+    vector<shared_ptr<DropdownSection<O>>> sections;
     ui::Scene scene = NULL
 
     DropdownButton(int x, y, w, h, vector<O> options, string name):\
@@ -61,20 +90,32 @@ namespace ui:
         width, height = self.fb->get_display_size()
         ow = self.option_width
         oh = self.option_height
+        self.options.clear()
 
         self.scene = ui::make_scene()
         layout = VerticalLayout(x + self.option_x, self.option_y, ow, height, self.scene)
+
         i = 0
-        for auto option: self.options:
-          if option->name.find("===") == 0:
-            section = new OptionSection(0, 0, ow, oh, option->name.substr(3))
-            layout.pack_end(section)
-          else:
+        for auto section: self.sections:
+          OptionSection *os
+          if section->name != "":
+            os = new OptionSection(0, 0, ow, oh, section->name)
+            if self.dir == DIRECTION::DOWN:
+              layout.pack_start(os)
+
+          opts = section->options
+
+          for auto option: opts:
             option_btn = new OptionButton<DropdownButton>(0, 0, ow, oh, self, option->name, i)
             if option->icon != NULL:
               option_btn->set_icon(option->icon)
             layout.pack_end(option_btn)
-          i++
+            self.options.push_back(*option)
+            i++
+
+          if section->name != "":
+            if self.dir == DIRECTION::UP:
+              layout.pack_end(os)
 
 
       ui::MainLoop::show_overlay(self.scene)
@@ -84,46 +125,22 @@ namespace ui:
       ui::MainLoop::hide_overlay()
       if idx < self.options.size():
         option = self.options[idx]
-        self.icon = option->icon
-        self.text = self.options[idx]->name
+        self.icon = option.icon
+        self.text = option.name
 
-      self.on_select(idx)
+        self.on_select(idx)
 
     virtual void on_select(int idx):
       pass
 
-  class TextOption:
+  class TextDropdown: public ui::DropdownButton<ui::TextOption>:
     public:
-    string name
-    icons::Icon *icon
-    TextOption(string n, icons::Icon *i): name(n), icon(i) {}
-    TextOption(string n): name(n) {}
-
-
-  def make_options(vector<string> options):
-    vector<TextOption*> ret
-    for auto o: options:
-      ret.push_back(new TextOption(o))
-    return ret
-
-  class TextDropdown: public ui::DropdownButton<ui::TextOption*>:
-    public:
-    vector<string> text_options
     TextDropdown(int x, y, w, h, string t): \
-      ui::DropdownButton<ui::TextOption*>(x,y,w,h,{},t)
+      ui::DropdownButton<ui::TextOption>(x,y,w,h,{},t)
       self.text = t
 
-    void add_section(string t):
-        string s = "===" + t
-        self.options.push_back(new TextOption(s))
+    shared_ptr<DropdownSection<TextOption>> add_section(string t):
+        ds = make_shared<DropdownSection<TextOption>>(t)
+        self.sections.push_back(ds)
+        return ds
 
-    void add_options(vector<string> opts):
-      for auto opt: opts:
-        self.options.push_back(new ui::TextOption(opt))
-
-    void add_options(vector<pair<string, icons::Icon*>> pairs):
-      for auto pair: pairs:
-        opt = pair.first
-        icon = pair.second
-        textopt = new ui::TextOption(opt, icon)
-        self.options.push_back(textopt)

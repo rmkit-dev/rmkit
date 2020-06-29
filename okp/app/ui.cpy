@@ -17,17 +17,17 @@ namespace app_ui:
     ToolButton(int x, int y, int w, int h, Canvas *c): \
                ui::TextDropdown(x, y, w, h, "tools"):
 
+      ds = self.add_section("brushes")
       for auto b : brush::NP_BRUSHES:
-        self.add_options({make_pair(b->name, b->icon)})
-      self.add_section("brushes")
+        ds->add_options({make_pair(b->name, b->icon)})
 
+      ds = self.add_section("procedural")
       for auto b : brush::P_BRUSHES:
-        self.add_options({make_pair(b->name, b->icon)})
-      self.add_section("procedural")
+        ds->add_options({make_pair(b->name, b->icon)})
 
+      ds = self.add_section("erasers")
       for auto b : brush::ERASERS:
-        self.add_options({make_pair(b->name, b->icon)})
-      self.add_section("erasers")
+        ds->add_options({make_pair(b->name, b->icon)})
 
       self.canvas = c
       self.select(0)
@@ -37,7 +37,7 @@ namespace app_ui:
         self.text = ""
 
     void on_select(int idx):
-      name = self.options[idx]->name
+      name = self.options[idx].name
       for auto b : brush::P_BRUSHES:
         if b->name == name:
           self.canvas->set_brush(b)
@@ -56,15 +56,16 @@ namespace app_ui:
       ui::TextDropdown(x,y,w,h,"brush config")
       self.canvas = c
 
-      for auto b : stroke::SIZES:
-        self.add_options({b->name})
-      self.add_section("size")
 
-      self.add_options({"black", "gray", "white"})
-      self.add_section("color")
+      ds = self.add_section("size")
+      for auto b : stroke::SIZES:
+        ds->add_options({b->name})
+
+      ds = add_section("color")
+      ds->add_options({"black", "gray", "white"})
 
     void on_select(int i):
-      option = self.options[i]->name
+      option = self.options[i].name
       do {
         if option == stroke::FINE.name:
           self.canvas->set_stroke_width(stroke::FINE.val)
@@ -158,11 +159,12 @@ namespace app_ui:
 
     ManageButton(int x, y, w, h, Canvas *c): TextDropdown(x,y,w,h,"...")
       self.canvas = c
-      self.add_options({DOTS, CLEAR, SAVE, LOAD, QUIT, DOTS, ABOUT})
+      ds = self.add_section("")
+      ds->add_options({DOTS, CLEAR, SAVE, LOAD, QUIT, DOTS, ABOUT})
       self.text = "..."
 
     void on_select(int i):
-      option = self.options[i]->name
+      option = self.options[i].name
       if option == ABOUT:
         if self.ad == NULL:
           self.ad = new AboutDialog(0, 0, 600, 500)
