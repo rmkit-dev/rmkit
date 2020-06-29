@@ -176,7 +176,9 @@ namespace app_ui:
 
     void _stroke(int x, y, tilt_x, tilt_y, pressure):
       if self.last_x != -1:
-        dither = pressure / (float(MAX_PRESSURE) * 1.2)
+        s_mod = 4
+        sw = self.stroke_width
+        dither = pressure / (float(MAX_PRESSURE) * 1.2 * s_mod)
         self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width, self.color, dither)
 
   class FineLiner: public Brush:

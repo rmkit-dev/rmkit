@@ -1,7 +1,11 @@
 NEXT:
 
+* filter pngs
+* remove clock (because it has wrong time)
 * add battery percentage
 * move toolbar to side
+* fix dropdown to use sections
+* fix dropdown for multiple layout styles
 * selection tool (lasso?) + all it entails (copy, cut, rotate, etc?)
 * stroke list (for saving replays) or just saving space
 * finish brushes + add more:

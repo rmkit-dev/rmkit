@@ -26,6 +26,8 @@ namespace ui:
       if page >= 0 and page <= (self.options.size() / self.page_size):
         self.curr_page = page
       self.scene = ui::make_scene()
+      self.titleWidget->x = 0
+      self.titleWidget->y = 0
       self.contentWidget->x = 0
       self.contentWidget->y = 0
       self.build_dialog()
