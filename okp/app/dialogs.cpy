@@ -1,4 +1,5 @@
 #include "../ui/dialog.h"
+#include "../ui/pager.h"
 #include <dirent.h>
 #include <algorithm>
 
@@ -31,66 +32,32 @@ namespace app_ui:
       SaveDialog(int x, y, w, h): ui::InfoDialog(x, y, w, h):
         pass
 
-  class LoadDialog: public ui::InfoDialog:
+  class LoadDialog: public ui::Pager<LoadDialog>:
     public:
-      ui::VerticalLayout *layout
-      int page_size, curr_page = 0, opt_h = 50
       Canvas *canvas
-      vector<string> filenames
 
-      LoadDialog(int x, y, w, h, Canvas *c): ui::InfoDialog(x, y, w, h):
+      LoadDialog(int x, y, w, h, Canvas *c): ui::Pager<LoadDialog>(x, y, w, h, self):
         self.canvas = c
         self.buttons = {"PREV", "NEXT"}
         self.page_size = (self.h - self.opt_h*2) / self.opt_h
-
-      void setup_for_render(int page=0):
-        if page >= 0 and page <= (self.filenames.size() / self.page_size):
-          self.curr_page = page
-        self.scene = ui::make_scene()
-        self.contentWidget->x = 0
-        self.contentWidget->y = 0
-        self.build_dialog()
-        self.layout = new ui::VerticalLayout(\
-           self.contentWidget->x,\
-           self.contentWidget->y,\
-           self.contentWidget->w,\
-           self.contentWidget->h,\
-           self.scene)
-
-        start = self.curr_page*page_size
-        end = min(start+page_size, (int)self.filenames.size())
-        for i start end:
-          filename = self.filenames[i]
-          d = new ui::DialogButton<ui::Dialog>(20,0, self.w-30, self.opt_h, self, filename)
-          d->set_justification(ui::Text::JUSTIFY::LEFT)
-          layout->pack_start(d)
-
 
       void populate():
         DIR *dir
         struct dirent *ent
 
-        self.filenames.clear()
+        vector<string> filenames
         if ((dir = opendir (SAVE_DIR)) != NULL):
           while ((ent = readdir (dir)) != NULL):
             str_d_name = string(ent->d_name)
             if str_d_name != "." and str_d_name != "..":
-              self.filenames.push_back(str_d_name)
+              filenames.push_back(str_d_name)
           closedir (dir)
         else:
           perror ("")
-        sort(self.filenames.begin(),self.filenames.end())
+        sort(filenames.begin(),filenames.end())
+        self.options = filenames
 
-      void on_button_selected(string name):
-        if name == "OK":
-          ui::MainLoop::hide_overlay()
-        else if name == "PREV":
-          self.setup_for_render(self.curr_page-1)
-          self.show()
-        else if name == "NEXT":
-          self.setup_for_render(self.curr_page+1)
-          self.show()
-        else:
-          self.canvas->load_from_png(name)
-          ui::MainLoop::hide_overlay()
-        ui::MainLoop::refresh()
+      void on_row_selected(string name):
+        self.canvas->load_from_png(name)
+        ui::MainLoop::hide_overlay()
+
