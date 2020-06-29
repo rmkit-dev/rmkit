@@ -13,11 +13,14 @@ namespace ui:
 
     Pager(int x, y, w, h, T *d): ui::Dialog(x, y, w, h):
       self.dialog = d
+      self.set_title("Select a png file...")
       self.page_size = (self.h - self.opt_h*2) / self.opt_h
 
     void add_buttons(HorizontalLayout *button_bar):
-      button_bar->pack_start(new DialogButton<Dialog>(0, 0, 100, 50, self, PREV), 10)
-      button_bar->pack_end(new DialogButton<Dialog>(0, 0, 100, 50, self, NEXT), 10)
+      if curr_page > 0:
+        button_bar->pack_start(new DialogButton<Dialog>(0, 0, 100, 50, self, PREV), 10)
+      if curr_page < self.options.size() / self.page_size:
+        button_bar->pack_end(new DialogButton<Dialog>(0, 0, 100, 50, self, NEXT), 10)
 
     void setup_for_render(int page=0):
       if page >= 0 and page <= (self.options.size() / self.page_size):

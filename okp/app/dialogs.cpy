@@ -39,7 +39,6 @@ namespace app_ui:
 
       LoadDialog(int x, y, w, h, Canvas *c): ui::Pager<LoadDialog>(x, y, w, h, self):
         self.canvas = c
-        self.buttons = {"PREV", "NEXT"}
         self.page_size = (self.h - self.opt_h*2) / self.opt_h
 
       void populate():
