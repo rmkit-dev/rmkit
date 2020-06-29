@@ -33,8 +33,8 @@ namespace ui:
   class TextOption:
     public:
     string name
-    icons::Icon *icon = NULL
-    TextOption(string n, icons::Icon *i): name(n), icon(i) {}
+    icons::Icon icon = {NULL, 0}
+    TextOption(string n, icons::Icon i): name(n), icon(i) {}
     TextOption(string n): name(n) {}
 
   template<class T>
@@ -49,7 +49,7 @@ namespace ui:
       for auto opt: opts:
         self.options.push_back(make_shared<T>(opt))
 
-    void add_options(vector<pair<string, icons::Icon*>> pairs):
+    void add_options(vector<pair<string, icons::Icon>> pairs):
       for auto pair: pairs:
         opt = pair.first
         icon = pair.second
@@ -107,7 +107,7 @@ namespace ui:
 
           for auto option: opts:
             option_btn = new OptionButton<DropdownButton>(0, 0, ow, oh, self, option->name, i)
-            if option->icon != NULL:
+            if option->icon.data != NULL:
               option_btn->set_icon(option->icon)
             layout.pack_end(option_btn)
             self.options.push_back(*option)

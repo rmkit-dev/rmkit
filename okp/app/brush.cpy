@@ -15,12 +15,12 @@ namespace app_ui:
       public:
       BrushSize val
       string name
-      icons::Icon *icon
+      icons::Icon icon
       const static BrushSize FINE = 0;
       const static BrushSize MEDIUM = 1;
       const static BrushSize WIDE = 2;
 
-      Size(int val, string name, icons::Icon *icon): val(val), name(name), icon(icon):
+      Size(int val, string name, icons::Icon icon): val(val), name(name), icon(icon):
         pass
 
     static Size FINE   = Size(Size::FINE, "fine", ICON(icons::vendor_icons_fa_spider_solid_png))
@@ -43,7 +43,7 @@ namespace app_ui:
     vector<Point> points
     string name = "brush"
     int color = BLACK
-    icons::Icon *icon
+    icons::Icon icon
 
     // stroke sizing
     int stroke_width = 1

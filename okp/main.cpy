@@ -16,8 +16,6 @@ class App:
   input::Input in
 
   ui::Scene notebook
-  ui::Scene save_dialog
-  ui::Scene open_dialog
 
   int x = 0
   int y = 0
@@ -52,10 +50,10 @@ class App:
     minibar_area = new ui::VerticalLayout(0, 0, w, h, notebook)
     toolbar = new ui::HorizontalLayout(0, 0, w, TOOLBAR_HEIGHT, notebook)
     minibar = new ui::HorizontalLayout(0, 0, w, TOOLBAR_HEIGHT, notebook)
-    clockbar = new ui::HorizontalLayout(0, 0, w, TOOLBAR_HEIGHT, notebook)
 
     // clockbar is at the top of the screen
-    clockbar->pack_center(new app_ui::Clock(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT))
+    // clockbar = new ui::HorizontalLayout(0, 0, w, TOOLBAR_HEIGHT, notebook)
+    // clockbar->pack_center(new app_ui::Clock(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT))
 
     // aligns the toolbar to the bottom of the screen by packing end
     // inside toolbar_area
@@ -86,20 +84,10 @@ class App:
     toolbar->pack_end(new app_ui::RedoButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, canvas))
     toolbar->pack_end(new app_ui::UndoButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, canvas))
 
-    save_dialog = ui::make_scene()
-    save_dialog->add(new ui::Text(w / 2 - 100, 10, w, TOOLBAR_HEIGHT, "SAVE DIALOG"))
-
-    open_dialog = ui::make_scene()
-    open_dialog->add(new ui::Text(w / 2 - 100, 10, w, TOOLBAR_HEIGHT, "OPEN DIALOG"))
-
-
   def handle_key_event(input::SynKeyEvent &key_ev):
     if key_ev.is_pressed:
       switch key_ev.key:
-        case KEY_HOME:
-          fb->clear_screen()
-          ui::MainLoop::refresh()
-          break
+        #ifdef DEV
         case KEY_LEFT:
           input::MouseEvent::tilt_x -= 100
           break
@@ -117,6 +105,16 @@ class App:
           break
         case KEY_F2:
           input::MouseEvent::pressure += 100
+          break
+        #elif REMARKABLE
+        case KEY_LEFT:
+          break
+        case KEY_RIGHT:
+          break
+        #endif
+        case KEY_HOME:
+          fb->clear_screen()
+          ui::MainLoop::refresh()
           break
         default:
           ui::MainLoop::handle_key_event(key_ev)

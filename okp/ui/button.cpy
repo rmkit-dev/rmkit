@@ -11,16 +11,15 @@ namespace ui:
     shared_ptr<Text> textWidget
     int key
     static int key_ctr
-    icons::Icon *icon = NULL
+    icons::Icon icon = {NULL, 0}
 
-    void set_icon(icons::Icon *icon):
+    void set_icon(icons::Icon icon):
       self.icon = icon
 
     Button(int x, y, w, h, string t): Widget(x,y,w,h):
       self.key = Button::key_ctr
       Button::key_ctr++
       self.text = t
-      self.icon = NULL
       self.textWidget = make_shared<Text>(x, y, w, h, t)
       self.set_justification(ui::Text::JUSTIFY::CENTER)
       print self.text, "=", input::get_key_str(self.key)
@@ -54,10 +53,10 @@ namespace ui:
 
       unsigned int iconw = 0
       unsigned int iconh = 0
-      if self.icon != NULL:
+      if self.icon.data != NULL:
         vector<unsigned char> out
 
-        lodepng::decode(out, iconw, iconh, self.icon->data, self.icon->len)
+        lodepng::decode(out, iconw, iconh, self.icon.data, self.icon.len)
         image = freetype::image_data{(uint32_t*) out.data(), (int) iconw, (int) iconh}
         px = 0
         if self.text == "":

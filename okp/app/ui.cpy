@@ -33,7 +33,7 @@ namespace app_ui:
       self.select(0)
 
     void before_redraw():
-      if self.icon != NULL:
+      if self.icon.data != NULL:
         self.text = ""
 
     void on_select(int idx):

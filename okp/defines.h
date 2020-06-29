@@ -4,7 +4,7 @@
 #include <sstream>
 #include "ui/icons.h"
 
-#define ICON(name) new icons::Icon { name, name ## _len }
+#define ICON(name) icons::Icon { name, name ## _len }
 
 #ifdef REMARKABLE
 #define SAVE_DIR "/home/root/harmony/saved_images"
