@@ -154,9 +154,9 @@ $     int bytes = read(fd, ev_data, sizeof(input_event) * 64);
 
   // TODO: should we just put this in the SynMouseEvent?
   static WacomEvent* is_wacom_event(SynMouseEvent &syn_ev):
-    return dynamic_cast<WacomEvent*>(syn_ev.original)
+    return dynamic_cast<WacomEvent*>(syn_ev.original.get())
   static MouseEvent* is_mouse_event(SynMouseEvent &syn_ev):
-    return dynamic_cast<MouseEvent*>(syn_ev.original)
+    return dynamic_cast<MouseEvent*>(syn_ev.original.get())
   static TouchEvent* is_touch_event(SynMouseEvent &syn_ev):
-    return dynamic_cast<TouchEvent*>(syn_ev.original)
+    return dynamic_cast<TouchEvent*>(syn_ev.original.get())
 

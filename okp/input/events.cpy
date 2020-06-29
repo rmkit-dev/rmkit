@@ -31,11 +31,11 @@ namespace input:
     int eraser = 0
     int pressure = -1, tilt_x = 0xFFFF, tilt_y = 0xFFFF
     bool stop_propagation = false
-    Event *original
+    shared_ptr<Event> original
     SynMouseEvent(){}
 
     def set_original(Event *ev):
-      self.original = ev
+      self.original = shared_ptr<Event>(ev)
 
   class SynKeyEvent: public Event:
     public:
