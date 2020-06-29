@@ -47,11 +47,14 @@ namespace ui:
       button_bar = new HorizontalLayout(0, 0, self.w, 50, self.scene)
       a_layout.pack_end(button_bar, 10)
 
-      for auto b : self.buttons:
-        button_bar->pack_start(new DialogButton<Dialog>(20, 0, 100, 50, self, b))
+      self.add_buttons(button_bar)
 
     bool ignore_event(input::SynMouseEvent&):
       return true
+
+    virtual void add_buttons(HorizontalLayout *button_bar):
+      for auto b : self.buttons:
+        button_bar->pack_start(new DialogButton<Dialog>(20, 0, 100, 50, self, b))
 
     virtual void on_button_selected(string s):
       pass

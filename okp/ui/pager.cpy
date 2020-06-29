@@ -1,6 +1,8 @@
 #include "dialog.h"
 
 namespace ui:
+  const string PREV = "PREV"
+  const string NEXT = "NEXT"
   template<class T>
   class Pager: public ui::Dialog:
     public:
@@ -10,9 +12,12 @@ namespace ui:
     T *dialog
 
     Pager(int x, y, w, h, T *d): ui::Dialog(x, y, w, h):
-      self.buttons = {"PREV", "NEXT"}
       self.dialog = d
       self.page_size = (self.h - self.opt_h*2) / self.opt_h
+
+    void add_buttons(HorizontalLayout *button_bar):
+      button_bar->pack_start(new DialogButton<Dialog>(0, 0, 100, 50, self, PREV), 10)
+      button_bar->pack_end(new DialogButton<Dialog>(0, 0, 100, 50, self, NEXT), 10)
 
     void setup_for_render(int page=0):
       if page >= 0 and page <= (self.options.size() / self.page_size):
@@ -41,10 +46,10 @@ namespace ui:
       pass
 
     void on_button_selected(string name):
-      if name == "PREV":
+      if name == PREV:
         self.setup_for_render(self.curr_page-1)
         self.show()
-      else if name == "NEXT":
+      else if name == NEXT:
         self.setup_for_render(self.curr_page+1)
         self.show()
       else:
