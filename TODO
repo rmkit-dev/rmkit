@@ -1,13 +1,11 @@
 NEXT:
 
-* credit fontawesome
 * add battery percentage
 * move toolbar to side
 * selection tool (lasso?) + all it entails (copy, cut, rotate, etc?)
 * stroke list (for saving replays) or just saving space
 * finish brushes + add more:
   * ribbon, circles, rectangles
-* fix undo / redo
 * github releases
 
 DESIRED FEATURES:
@@ -117,3 +115,5 @@ x about dialog (with URLs / credits?)
 x implement pop-over for buttons (Select / Dropdown button)
 x web brush
 x long fur brush
+x fix undo / redo
+x credit fontawesome
