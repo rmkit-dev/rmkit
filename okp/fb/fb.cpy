@@ -284,6 +284,8 @@ namespace framebuffer:
       image = freetype::image_data{(uint32_t*) raw.data(), (int) neww, (int) newh}
       self->draw_bitmap(image, 0,0)
 
+      free(buffer)
+
 
     string save_lodepng():
       char filename[100]

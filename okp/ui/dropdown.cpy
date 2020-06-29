@@ -33,7 +33,7 @@ namespace ui:
   class TextOption:
     public:
     string name
-    icons::Icon *icon
+    icons::Icon *icon = NULL
     TextOption(string n, icons::Icon *i): name(n), icon(i) {}
     TextOption(string n): name(n) {}
 

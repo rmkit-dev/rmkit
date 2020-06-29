@@ -6,7 +6,7 @@ namespace ui:
   template<class T>
   class Pager: public ui::Dialog:
     public:
-    ui::VerticalLayout *layout
+    shared_ptr<ui::VerticalLayout> layout
     int page_size, curr_page = 0, opt_h = 50
     vector<string> options
     T *dialog
@@ -26,12 +26,10 @@ namespace ui:
       if page >= 0 and page <= (self.options.size() / self.page_size):
         self.curr_page = page
       self.scene = ui::make_scene()
-      self.titleWidget->x = 0
-      self.titleWidget->y = 0
-      self.contentWidget->x = 0
-      self.contentWidget->y = 0
+      self.titleWidget->restore_coords()
+      self.contentWidget->restore_coords()
       self.build_dialog()
-      self.layout = new ui::VerticalLayout(\
+      self.layout = make_shared<ui::VerticalLayout>(\
          self.contentWidget->x,\
          self.contentWidget->y,\
          self.contentWidget->w,\

@@ -7,11 +7,12 @@ namespace ui:
     vector<shared_ptr<Widget>> children
 
     int x, y, w, h
+    int _x, _y, _w, _h // the original values the widget was instantiated with
     int mouse_down = false, mouse_inside = false, mouse_x, mouse_y
     int dirty = 1
     bool visible = true
 
-    Widget(int x,y,w,h): x(x), y(y), w(w), h(h):
+    Widget(int x,y,w,h): x(x), y(y), w(w), h(h), _x(x), _y(y), _w(w), _h(h):
       pass
 
     virtual void before_redraw():
@@ -77,5 +78,11 @@ namespace ui:
         self.w = c
       if d != -1:
         self.h = d
+
+    void restore_coords():
+      x = _x
+      y = _y
+      w = _w
+      h = _h
 
   framebuffer::FB* Widget::fb = NULL
