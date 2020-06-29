@@ -67,10 +67,10 @@ class App:
 //    minibar->pack_start(new app_ui::HideButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, toolbar, minibar))
 //    toolbar->pack_start(new app_ui::HideButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, toolbar, minibar))
 
-    tool_button = new app_ui::ToolButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, canvas)
+    tool_button = new app_ui::ToolButton(0, 0, ICON_WIDTH*2, TOOLBAR_HEIGHT, canvas)
     tool_button->set_option_size(250, TOOLBAR_HEIGHT)
     tool_button->set_option_offset(0, -TOOLBAR_HEIGHT)
-    toolbar->pack_start(tool_button, 20)
+    toolbar->pack_start(tool_button)
 
     brush_config_button = new app_ui::BrushConfigButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, canvas)
     brush_config_button->set_option_size(200, TOOLBAR_HEIGHT)

@@ -214,7 +214,6 @@ namespace app_ui:
       self.canvas = c
       self.icon = ICON(icons::vendor_icons_fa_arrow_right_solid_png)
       self.text = ""
-      self.text = ""
 
     void redraw():
       if self.canvas->redo_stack.size():

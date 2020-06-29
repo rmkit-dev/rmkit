@@ -14,7 +14,7 @@ namespace ui:
     Pager(int x, y, w, h, T *d): ui::Dialog(x, y, w, h):
       self.dialog = d
       self.set_title("Select a png file...")
-      self.page_size = (self.h - self.opt_h*2) / self.opt_h
+      self.page_size = self.h / self.opt_h - 3
 
     void add_buttons(HorizontalLayout *button_bar):
       if curr_page > 0:
@@ -40,7 +40,7 @@ namespace ui:
       end = min(start+page_size, (int)self.options.size())
       for i start end:
         option = self.options[i]
-        d = new ui::DialogButton<ui::Dialog>(20,0, self.w-30, self.opt_h, self, option)
+        d = new ui::DialogButton<ui::Dialog>(20,0, self.w-60, self.opt_h, self, option)
         d->set_justification(ui::Text::JUSTIFY::LEFT)
         layout->pack_start(d)
 
