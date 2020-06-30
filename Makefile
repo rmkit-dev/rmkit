@@ -1,7 +1,7 @@
 FILES=main.cpy ../vendor/lodepng/lodepng.cpp
 HOST?=10.11.99.1
 EXE="harmony"
-CPP_FLAGS=-O3 -g -lpthread
+CPP_FLAGS=-Og
 OKP_FLAGS=-for -d ../cpp/ -o ../build/bin/${EXE} -nr ${FILES}
 LAUNCHER_FLAGS=-d ../cpp -o ../build/bin/launcher -for -nr launcher.cpy
 CXX=arm-linux-gnueabihf-g++
@@ -23,7 +23,7 @@ compile_dev: export CPP_FLAGS += -I/usr/include/freetype2 -lfreetype -I../vendor
 compile_dev:
 	cd okp/ && okp ${OKP_FLAGS} -- -D"DEV=1" ${CPP_FLAGS} -D"DEV_KBD=\"${KBD}\""
 
-compile_arm: export CPP_FLAGS += -I../vendor/freetype2/install/usr/local/include/freetype2 -L../vendor/freetype2/install/usr/local/lib/ -lfreetype -I../vendor/lodepng
+compile_arm: export CPP_FLAGS += -I../vendor/freetype2/install/usr/local/include/freetype2 -L../vendor/freetype2/install/usr/local/lib/ -lfreetype -I../vendor/lodepng -O3
 compile_arm:
 	cd okp/ && CXX=arm-linux-gnueabihf-g++ okp ${OKP_FLAGS} -- -D"REMARKABLE=1" ${CPP_FLAGS}
 copy_arm: compile_arm harmony_dir
@@ -46,9 +46,9 @@ bundle: compile_arm launcher_arm
 harmony_dir:
 	ssh root@${HOST} mkdir harmony 2>/dev/null || true
 launcher_dev:
-	cd okp/ && okp ${LAUNCHER_FLAGS} -- -D"DEV=1" ${CPP_FLAGS}
+	cd okp/ && okp ${LAUNCHER_FLAGS} -- -D"DEV=1" ${CPP_FLAGS} -O3 -lpthread
 launcher_arm:
-	cd okp/ && CXX=arm-linux-gnueabihf-g++ okp ${LAUNCHER_FLAGS} -- -D"REMARKABLE=1" ${CPP_FLAGS}
+	cd okp/ && CXX=arm-linux-gnueabihf-g++ okp ${LAUNCHER_FLAGS} -- -D"REMARKABLE=1" ${CPP_FLAGS} -O3 -lpthread
 stop_launcher:
 	ssh root@${HOST} killall launcher || true
 copy_launcher: launcher_arm stop_launcher harmony_dir

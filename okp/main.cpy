@@ -34,9 +34,6 @@ class App:
     w, h = fb->get_display_size()
     input::MouseEvent::set_screen_size(w, h)
 
-    TOOLBAR_HEIGHT = 50
-    ICON_WIDTH = 70
-
     fb->clear_screen()
     fb->redraw_screen()
 
@@ -72,10 +69,10 @@ class App:
     tool_button->set_option_offset(0, -TOOLBAR_HEIGHT)
     toolbar->pack_start(tool_button)
 
-    brush_config_button = new app_ui::BrushConfigButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, canvas)
+    brush_config_button = new app_ui::BrushConfigButton(0, 0, ICON_WIDTH*2, TOOLBAR_HEIGHT, canvas)
     brush_config_button->set_option_size(200, TOOLBAR_HEIGHT)
     brush_config_button->set_option_offset(0, -TOOLBAR_HEIGHT)
-    toolbar->pack_start(brush_config_button, 20)
+    toolbar->pack_start(brush_config_button)
 
     toolbar->pack_center(new app_ui::LiftBrushButton(0, 0, 114, 100, canvas))
 

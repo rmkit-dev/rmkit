@@ -136,6 +136,7 @@ namespace app_ui:
 
     void redraw():
       self->fb->draw_rect(self.x, self.y, self.w, self.h, WHITE, true)
+      ui::Button::redraw()
       self->fb->draw_rect(self.x, self.y, self.w, self.h, BLACK, false)
       if self.mouse_down:
         self->fb->draw_rect(self.x, self.y, self.w, self.h, BLACK, true)

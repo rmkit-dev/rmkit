@@ -77,6 +77,9 @@ struct image_data {
 #define MT_Y_SCALAR (float(DISPLAYHEIGHT) / float(MTHEIGHT));
 #define WACOM_X_SCALAR (float(DISPLAYWIDTH) / float(WACOMWIDTH));
 #define WACOM_Y_SCALAR (float(DISPLAYHEIGHT) / float(WACOMHEIGHT));
+
+#define TOOLBAR_HEIGHT 50
+#define ICON_WIDTH 70
 // }}}
 
 // {{{ Helper Functions

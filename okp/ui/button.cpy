@@ -60,7 +60,16 @@ namespace ui:
         image = image_data{(uint32_t*) out.data(), (int) iconw, (int) iconh}
         px = 0
         if self.text == "":
-          px = 10
+          switch self.textWidget->justify:
+            case ui::Text::JUSTIFY::LEFT:
+              px = 10
+              break
+            case ui::Text::JUSTIFY::CENTER:
+              px = (self.w - iconw) / 2
+              break
+            case ui::Text::JUSTIFY::RIGHT:
+              px = self.w - iconw
+              break
         fb->draw_bitmap(image, x+x_padding+px, y+y_padding)
 
       self.textWidget->text = text
