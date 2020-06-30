@@ -177,7 +177,7 @@ namespace framebuffer:
           if fill || (j == 0 || i == 0 || j == h-1 || i == w-1):
             do_dithering(self.fbmem, i+o_x, j+o_y, color, dither)
 
-    def draw_bitmap(freetype::image_data &image, int o_x, int o_y):
+    def draw_bitmap(image_data &image, int o_x, int o_y):
       remarkable_color* ptr = self.fbmem
       ptr += (o_x + o_y * self.width)
       src = image.buffer
@@ -197,7 +197,7 @@ namespace framebuffer:
         ptr += self.width
         src += image.w
 
-    def get_last_pixels(freetype::image_data image):
+    def get_last_pixels(image_data image):
       int max_x = 0
       int max_y = 0
       for i 0 image.w:
@@ -208,12 +208,12 @@ namespace framebuffer:
 
       return max_x, max_y
 
-    void draw_text(string text, int x, int y, freetype::image_data &image):
+    void draw_text(string text, int x, int y, image_data &image):
       freetype::render_text((char*)text.c_str(), x, y, image)
       draw_bitmap(image, x, y)
 
-    freetype::image_data draw_png(string filename):
-      freetype::image_data image;
+    image_data draw_png(string filename):
+      image_data image;
       vector<unsigned char> png;
       vector<unsigned char> out;
       unsigned ow, oh;
@@ -281,7 +281,7 @@ namespace framebuffer:
       load_ret = lodepng_load_file(&buffer, &outsize, full_path)
       decode_ret = lodepng::decode(raw, neww, newh, buffer, outsize)
 
-      image = freetype::image_data{(uint32_t*) raw.data(), (int) neww, (int) newh}
+      image = image_data{(uint32_t*) raw.data(), (int) neww, (int) newh}
       self->draw_bitmap(image, 0,0)
 
       free(buffer)

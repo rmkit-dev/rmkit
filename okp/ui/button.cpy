@@ -57,7 +57,7 @@ namespace ui:
         vector<unsigned char> out
 
         lodepng::decode(out, iconw, iconh, self.icon.data, self.icon.len)
-        image = freetype::image_data{(uint32_t*) out.data(), (int) iconw, (int) iconh}
+        image = image_data{(uint32_t*) out.data(), (int) iconw, (int) iconh}
         px = 0
         if self.text == "":
           px = 10

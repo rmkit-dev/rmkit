@@ -20,12 +20,6 @@ namespace freetype {
   const char *filename = "/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf";
   #endif
 
-  struct image_data {
-    uint32_t* buffer;
-    int w;
-    int h;
-  };
-
   void show_image(image_data image) {
     int i, j;
 

@@ -4,6 +4,12 @@
 #include <sstream>
 #include "ui/icons.h"
 
+struct image_data {
+  uint32_t* buffer;
+  int w;
+  int h;
+};
+
 #define ICON(name) icons::Icon { name, name ## _len }
 
 #ifdef REMARKABLE
