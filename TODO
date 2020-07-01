@@ -1,11 +1,9 @@
 NEXT:
 
+* Box / Frame class for adding outlines
+* Expander class: for packing then centering group? or should pack_center just take an array
 * filter pngs
-* remove clock (because it has wrong time)
 * add battery percentage
-* move toolbar to side
-* fix dropdown to use sections
-* fix dropdown for multiple layout styles
 * selection tool (lasso?) + all it entails (copy, cut, rotate, etc?)
 * stroke list (for saving replays) or just saving space
 * finish brushes + add more:
@@ -121,3 +119,7 @@ x web brush
 x long fur brush
 x fix undo / redo
 x credit fontawesome
+x move toolbar to side (didn't go with this)
+x fix dropdown to use sections
+x fix dropdown for multiple layout styles (halfway done)
+x remove clock (because it has wrong time)
