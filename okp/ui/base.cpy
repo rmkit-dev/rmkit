@@ -21,6 +21,9 @@ namespace ui:
     virtual void redraw():
       pass
 
+    virtual tuple<int, int> get_render_size():
+      return self.w, self.h
+
     virtual void undraw():
       self.fb->draw_rect(self.x, self.y, self.w, self.h, WHITE, true)
 

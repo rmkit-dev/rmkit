@@ -108,7 +108,7 @@ namespace ui:
           for auto option: opts:
             option_btn = new OptionButton<DropdownButton>(0, 0, ow, oh, self, option->name, i)
             if option->icon.data != NULL:
-              option_btn->set_icon(option->icon)
+              option_btn->icon = option->icon
             layout.pack_end(option_btn)
             self.options.push_back(*option)
             i++

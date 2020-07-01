@@ -32,10 +32,6 @@ namespace app_ui:
       self.canvas = c
       self.select(0)
 
-    void before_redraw():
-      if self.icon.data != NULL:
-        self.text = ""
-
     void on_select(int idx):
       name = self.options[idx].name
       for auto b : brush::P_BRUSHES:
@@ -47,6 +43,7 @@ namespace app_ui:
       for auto b : brush::NP_BRUSHES:
         if b->name == name:
           self.canvas->set_brush(b)
+      self.text = ""
 
 
   class BrushConfigButton: public ui::TextDropdown:

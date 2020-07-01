@@ -1,4 +1,5 @@
 #include "base.h"
+#include "scene.h"
 #include "../input/events.h"
 
 #define DEBUG_LAYOUT

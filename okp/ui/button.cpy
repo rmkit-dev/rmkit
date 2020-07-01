@@ -1,8 +1,34 @@
 #include "base.h"
+#include "layouts.h"
 #include "text.h"
 #include "../input/keycodes.h"
 
 namespace ui:
+  class Pixmap: public Widget:
+    public:
+    icons::Icon icon = {NULL, 0}
+    Pixmap(int x, y, w, h, unsigned char *buf, unsigned int len): Widget(x,y,w,h):
+      self.icon = {buf, len}
+
+    tuple<int, int> get_render_size():
+      unsigned int iconw = 0
+      unsigned int iconh = 0
+      if self.icon.data != NULL:
+        vector<unsigned char> out
+
+        lodepng::decode(out, iconw, iconh, self.icon.data, self.icon.len)
+        return iconw, iconh
+
+    void redraw():
+      unsigned int iconw = 0
+      unsigned int iconh = 0
+      if self.icon.data != NULL:
+        vector<unsigned char> out
+
+        lodepng::decode(out, iconw, iconh, self.icon.data, self.icon.len)
+        image = image_data{(uint32_t*) out.data(), (int) iconw, (int) iconh}
+        fb->draw_bitmap(image, x, y)
+
   class Button: public Widget:
     public:
     string text
@@ -12,9 +38,8 @@ namespace ui:
     int key
     static int key_ctr
     icons::Icon icon = {NULL, 0}
+    shared_ptr<Pixmap> iconWidget
 
-    void set_icon(icons::Icon icon):
-      self.icon = icon
 
     Button(int x, y, w, h, string t): Widget(x,y,w,h):
       self.key = Button::key_ctr
@@ -48,33 +73,45 @@ namespace ui:
     void set_justification(Text::JUSTIFY j):
       self.textWidget->justify = j
 
+    void before_redraw():
+      has_icon = false
+      has_text = false
+      if self.icon.data != NULL:
+        self.iconWidget = make_shared<Pixmap>(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, \
+          icon.data, icon.len)
+        has_icon = true
+      if self.textWidget != nullptr:
+        self.textWidget->restore_coords()
+        self.textWidget->text = text
+        if text != "":
+          has_text = true
+
+      if has_icon && has_text:
+        self.iconWidget->x = self.x + x_padding
+        self.iconWidget->y = self.y + y_padding
+        self.textWidget->x = self.x + self.iconWidget->w
+        self.textWidget->y = self.y + y_padding
+      else if has_icon:
+        rw, rh = self.iconWidget->get_render_size()
+        padding = self.w - rw
+        if padding > 0:
+          padding /= 2
+        else:
+          padding = 0
+        self.iconWidget->x = self.x + x_padding + padding
+        self.iconWidget->y = self.y + y_padding
+      else if has_text:
+        self.textWidget->x = self.x + x_padding
+        self.textWidget->y = self.y + y_padding
+
+
     void redraw():
+
       fb->draw_rect(self.x, self.y, self.w, self.h, WHITE, true)
 
-      unsigned int iconw = 0
-      unsigned int iconh = 0
-      if self.icon.data != NULL:
-        vector<unsigned char> out
+      if self.iconWidget.get() != nullptr:
+        self.iconWidget->redraw()
 
-        lodepng::decode(out, iconw, iconh, self.icon.data, self.icon.len)
-        image = image_data{(uint32_t*) out.data(), (int) iconw, (int) iconh}
-        px = 0
-        if self.text == "":
-          switch self.textWidget->justify:
-            case ui::Text::JUSTIFY::LEFT:
-              px = 10
-              break
-            case ui::Text::JUSTIFY::CENTER:
-              px = (self.w - iconw) / 2
-              break
-            case ui::Text::JUSTIFY::RIGHT:
-              px = self.w - iconw
-              break
-        fb->draw_bitmap(image, x+x_padding+px, y+y_padding)
-
-      self.textWidget->text = text
-      self.textWidget->set_coords(x+x_padding+iconw+10, y+y_padding, \
-        self.w - x_padding-iconw-10, self.h - y_padding)
       self.textWidget->redraw()
 
       color = WHITE

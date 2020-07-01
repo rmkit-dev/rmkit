@@ -12,6 +12,9 @@ namespace ui:
     Text(int x, y, w, h, string t): Widget(x, y, w, h):
       self.text = t
 
+    tuple<int, int> get_render_size():
+      image = freetype::get_text_size(self.text.c_str())
+      return image.w, image.h
     // TODO: cache the image buffer
     void redraw():
       image = freetype::get_text_size(self.text.c_str())
