@@ -14,11 +14,11 @@ namespace ui:
     static void redraw(vector<shared_ptr<Widget>> &widgets):
       for auto it = widgets.begin(); it != widgets.end(); it++:
         auto &widget = *it
+        widget->before_redraw()
         if !widget->visible:
           continue
 
         if widget->dirty:
-          widget->before_redraw()
           widget->redraw()
           widget->dirty = 0
 

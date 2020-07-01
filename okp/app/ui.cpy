@@ -134,6 +134,11 @@ namespace app_ui:
       self.dirty = 1
       self.canvas->curr_brush->reset()
 
+    void before_redraw():
+      f = std::find(brush::P_BRUSHES.begin(), brush::P_BRUSHES.end(), \
+                    self.canvas->curr_brush)
+      self.visible = f != brush::P_BRUSHES.end()
+
     void redraw():
       self->fb->draw_rect(self.x, self.y, self.w, self.h, WHITE, true)
       ui::Button::redraw()
