@@ -39,6 +39,7 @@ namespace app_ui:
 
       LoadDialog(int x, y, w, h, Canvas *c): ui::Pager<LoadDialog>(x, y, w, h, self):
         self.canvas = c
+        self.set_title("Select a png file...")
 
       void populate():
         DIR *dir

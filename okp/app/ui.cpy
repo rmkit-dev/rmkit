@@ -9,6 +9,8 @@
 #include "proc.h"
 #include "dialogs.h"
 
+#define DIALOG_WIDTH 600
+#define DIALOG_HEIGHT 500
 namespace app_ui:
 
   class ToolButton: public ui::TextDropdown:
@@ -135,6 +137,7 @@ namespace app_ui:
       f = std::find(brush::P_BRUSHES.begin(), brush::P_BRUSHES.end(), \
                     self.canvas->curr_brush)
       self.visible = f != brush::P_BRUSHES.end()
+      ui::Button::before_redraw()
 
     void redraw():
       self->fb->draw_rect(self.x, self.y, self.w, self.h, WHITE, true)
@@ -170,24 +173,24 @@ namespace app_ui:
       option = self.options[i].name
       if option == ABOUT:
         if self.ad == NULL:
-          self.ad = new AboutDialog(0, 0, 600, 500)
+          self.ad = new AboutDialog(0, 0, DIALOG_WIDTH, DIALOG_HEIGHT)
         self.ad->show()
       if option == CLEAR:
         self.canvas->reset()
       if option == QUIT:
         if self.ed == NULL:
-          self.ed = new ExitDialog(0, 0, 600, 500)
+          self.ed = new ExitDialog(0, 0, DIALOG_WIDTH, DIALOG_HEIGHT)
         self.ed->show()
       if option == SAVE:
         filename = self.canvas->save()
         if self.sd == NULL:
-          self.sd = new SaveDialog(0, 0, 600, 500)
+          self.sd = new SaveDialog(0, 0, DIALOG_WIDTH, DIALOG_HEIGHT)
         title = "Saved as " + filename
         self.sd->set_title(title)
         self.sd->show()
       if option == LOAD:
         if self.ld == NULL:
-          self.ld = new LoadDialog(0, 0, 1200, 1500, self.canvas)
+          self.ld = new LoadDialog(0, 0, DIALOG_WIDTH, DIALOG_HEIGHT, self.canvas)
         self.ld->populate()
         self.ld->setup_for_render()
         self.ld->show()

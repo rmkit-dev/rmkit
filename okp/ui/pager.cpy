@@ -8,13 +8,12 @@ namespace ui:
   class Pager: public ui::Dialog:
     public:
     shared_ptr<ui::VerticalLayout> layout
-    int page_size, curr_page = 0, opt_h = 150
+    int page_size, curr_page = 0, opt_h = 50
     vector<string> options
     T *dialog
 
     Pager(int x, y, w, h, T *d): ui::Dialog(x, y, w, h):
       self.dialog = d
-      self.set_title("Select a png file...")
       self.page_size = self.h / self.opt_h - 3
 
     void add_buttons(HorizontalLayout *button_bar):
@@ -23,6 +22,10 @@ namespace ui:
       if curr_page < self.options.size() / self.page_size:
         button_bar->pack_end(new DialogButton<Dialog>(0, 0, 100, 50, self, NEXT), 10)
 
+    virtual void render_row(string option):
+      d = new ui::DialogButton<ui::Dialog>(20,0, self.w - 80, self.opt_h, self, option)
+      d->set_justification(ui::Text::JUSTIFY::LEFT)
+      layout->pack_start(d)
 
     void setup_for_render(int page=0):
       if page >= 0 and page <= (self.options.size() / self.page_size):
@@ -48,12 +51,8 @@ namespace ui:
           187,\
           self.scene)
         option = self.options[i]
-        ui::Thumbnail *tn = new ui::Thumbnail(0,0,140,187, option)
-        d = new ui::DialogButton<ui::Dialog>(20,0, self.w-200, self.opt_h, self, option)
-        d->set_justification(ui::Text::JUSTIFY::LEFT)
-        layout->pack_start(row)
-        row->pack_start(tn)
-        row->pack_start(d)
+
+        self.render_row(option)
 
 
     virtual void populate():
