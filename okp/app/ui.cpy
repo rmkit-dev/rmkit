@@ -187,7 +187,7 @@ namespace app_ui:
         self.sd->show()
       if option == LOAD:
         if self.ld == NULL:
-          self.ld = new LoadDialog(0, 0, 600, 500, self.canvas)
+          self.ld = new LoadDialog(0, 0, 1200, 1500, self.canvas)
         self.ld->populate()
         self.ld->setup_for_render()
         self.ld->show()

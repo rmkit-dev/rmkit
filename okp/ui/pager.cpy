@@ -1,4 +1,5 @@
 #include "dialog.h"
+#include "thumbnail.h"
 
 namespace ui:
   const string PREV = "PREV"
@@ -7,7 +8,7 @@ namespace ui:
   class Pager: public ui::Dialog:
     public:
     shared_ptr<ui::VerticalLayout> layout
-    int page_size, curr_page = 0, opt_h = 50
+    int page_size, curr_page = 0, opt_h = 150
     vector<string> options
     T *dialog
 
@@ -21,6 +22,7 @@ namespace ui:
         button_bar->pack_start(new DialogButton<Dialog>(0, 0, 100, 50, self, PREV), 10)
       if curr_page < self.options.size() / self.page_size:
         button_bar->pack_end(new DialogButton<Dialog>(0, 0, 100, 50, self, NEXT), 10)
+
 
     void setup_for_render(int page=0):
       if page >= 0 and page <= (self.options.size() / self.page_size):
@@ -39,10 +41,19 @@ namespace ui:
       start = self.curr_page*page_size
       end = min(start+page_size, (int)self.options.size())
       for i start end:
+        ui::HorizontalLayout *row = new ui::HorizontalLayout(\
+          0,\
+          0,\
+          self.contentWidget->w-200,\
+          187,\
+          self.scene)
         option = self.options[i]
-        d = new ui::DialogButton<ui::Dialog>(20,0, self.w-60, self.opt_h, self, option)
+        ui::Thumbnail *tn = new ui::Thumbnail(0,0,140,187, option)
+        d = new ui::DialogButton<ui::Dialog>(20,0, self.w-200, self.opt_h, self, option)
         d->set_justification(ui::Text::JUSTIFY::LEFT)
-        layout->pack_start(d)
+        layout->pack_start(row)
+        row->pack_start(tn)
+        row->pack_start(d)
 
 
     virtual void populate():
