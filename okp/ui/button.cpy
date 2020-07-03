@@ -47,7 +47,10 @@ namespace ui:
       self.text = t
       self.textWidget = make_shared<Text>(x, y, w, h, t)
       self.set_justification(ui::Text::JUSTIFY::CENTER)
+      #ifdef DEV
       print self.text, "=", input::get_key_str(self.key)
+      #endif
+      return
 
     void on_mouse_move(input::SynMouseEvent &ev):
       ev.stop_propagation = true
