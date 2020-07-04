@@ -1,3 +1,8 @@
+* charcoal with gray
+* fix previews to be faster (or not lock the UI)
+* performance analysis
+* effect strength toggle in brush config dropdown
+
 NEXT:
 
 * Box / Frame class for adding outlines

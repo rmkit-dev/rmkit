@@ -1,8 +1,13 @@
 #ifndef DEFINES_H
 #define DEFINES_H
+#define VERSION "0.0.1"
+
 #include <vector>
 #include <sstream>
 #include "ui/icons.h"
+
+
+// #define PERF_BUILD
 
 struct image_data {
   uint32_t* buffer;
@@ -10,7 +15,7 @@ struct image_data {
   int h;
 };
 
-#define ICON(name) icons::Icon { name, name ## _len }
+#define ICON(name) icons::Icon { name, name ## _len, #name}
 
 #ifdef REMARKABLE
 #define SAVE_DIR "/home/root/harmony/saved_images"

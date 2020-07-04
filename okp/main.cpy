@@ -7,7 +7,6 @@
 #include "app/proc.h"
 #include "app/canvas.h"
 
-
 using namespace std
 
 class App:

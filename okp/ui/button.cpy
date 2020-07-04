@@ -1,34 +1,9 @@
 #include "base.h"
-#include "layouts.h"
+#include "pixmap.h"
 #include "text.h"
 #include "../input/keycodes.h"
 
 namespace ui:
-  class Pixmap: public Widget:
-    public:
-    icons::Icon icon = {NULL, 0}
-    Pixmap(int x, y, w, h, unsigned char *buf, unsigned int len): Widget(x,y,w,h):
-      self.icon = {buf, len}
-
-    tuple<int, int> get_render_size():
-      unsigned int iconw = 0
-      unsigned int iconh = 0
-      if self.icon.data != NULL:
-        vector<unsigned char> out
-
-        lodepng::decode(out, iconw, iconh, self.icon.data, self.icon.len)
-        return iconw, iconh
-
-    void redraw():
-      unsigned int iconw = 0
-      unsigned int iconh = 0
-      if self.icon.data != NULL:
-        vector<unsigned char> out
-
-        lodepng::decode(out, iconw, iconh, self.icon.data, self.icon.len)
-        image = image_data{(uint32_t*) out.data(), (int) iconw, (int) iconh}
-        fb->draw_bitmap(image, x, y)
-
   class Button: public Widget:
     public:
     string text
@@ -80,8 +55,7 @@ namespace ui:
       has_icon = false
       has_text = false
       if self.icon.data != NULL:
-        self.iconWidget = make_shared<Pixmap>(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, \
-          icon.data, icon.len)
+        self.iconWidget = make_shared<Pixmap>(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, icon)
         has_icon = true
       if self.textWidget != nullptr:
         self.textWidget->restore_coords()

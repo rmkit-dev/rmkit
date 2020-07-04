@@ -197,36 +197,9 @@ namespace framebuffer:
         ptr += self.width
         src += image.w
 
-    def get_last_pixels(image_data image):
-      int max_x = 0
-      int max_y = 0
-      for i 0 image.w:
-        for j 0 image.h:
-          if image.buffer[j*image.w + i] == 0:
-            max_x = max(i, max_x)
-            max_y = max(j, max_y)
-
-      return max_x, max_y
-
     void draw_text(string text, int x, int y, image_data &image):
       freetype::render_text((char*)text.c_str(), x, y, image)
       draw_bitmap(image, x, y)
-
-    image_data draw_png(string filename):
-      image_data image;
-      vector<unsigned char> png;
-      vector<unsigned char> out;
-      unsigned ow, oh;
-      if lodepng::load_file(png, "vendor/" + filename):
-        print "COULDNT LOAD IMAGE", "vendor/" + filename
-
-      lodepng::decode(out, ow, oh, png)
-      image.buffer = (uint32_t *) malloc(sizeof(uint32_t) * ow * oh)
-      memcpy(image.buffer, reinterpret_cast<char*>(out.data()), ow*oh*sizeof(uint32_t))
-      image.w = ow
-      image.h = oh
-      return image
-
 
     void save_png():
       // save the buffer to pnm format
@@ -474,8 +447,10 @@ namespace framebuffer:
       self.fbmem = (remarkable_color*) mmap(NULL, self.byte_size, PROT_WRITE, MAP_SHARED, self.fd, 0)
 
     int perform_redraw(bool, bool):
+      #ifndef PERF_BUILD
       msync(self.fbmem, self.byte_size, MS_SYNC)
       self.save_png()
+      #endif
       return 0
 
   class VirtualFB: public FB:
