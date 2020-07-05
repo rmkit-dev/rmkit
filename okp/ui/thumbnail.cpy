@@ -1,6 +1,7 @@
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
 #include "../../vendor/stb/image_resize.h"
 #include <lodepng.h>
+#include <thread>
 
 namespace ui:
   class Thumbnail: public Widget:
@@ -9,7 +10,17 @@ namespace ui:
     image_data image;
     Thumbnail(int x, y, w, h, string f): Widget(x,y,w,h):
       self.filename = f
+      thread *th = new thread([&]() {
+        self.load_file()
+        ui::MainLoop::refresh()
+      });
 
+    void redraw():
+      if image.buffer != NULL:
+        self.fb->draw_bitmap(self.image, self.x, self.y)
+        self.fb->draw_rect(self.x, self.y, self.w, self.h,3,BLACK)
+
+    void load_file():
       char full_path[100]
       unsigned char *load_buffer, *resize_buffer
       vector<unsigned char> raw
@@ -41,8 +52,3 @@ namespace ui:
         rgba_buf[j++] = resize_buffer[i]
 
       self.image = image_data{(uint32_t*) rgba_buf, (int) self.w, (int) self.h}
-
-    void redraw():
-      self.fb->draw_bitmap(self.image, self.x, self.y)
-      self.fb->draw_rect(self.x, self.y, self.w, self.h,3,BLACK)
-
