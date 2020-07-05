@@ -50,6 +50,7 @@ namespace framebuffer:
     int width=0, height=0, fd=-1
     int byte_size = 0, dirty = 0
     int update_marker = 1
+    int waveform_mode = WAVEFORM_MODE_DU
     remarkable_color* fbmem
     FBRect dirty_area
 
@@ -83,7 +84,7 @@ namespace framebuffer:
     void clear_screen():
       self.draw_rect(0, 0, self.width, self.height, WHITE)
 
-    int redraw_screen(bool full_screen=false, wait_for_refresh=false):
+    int redraw_screen(bool full_screen=false):
       if dirty == 0:
         return 0
 
@@ -93,9 +94,9 @@ namespace framebuffer:
       if dirty_area.y1 == 0 || dirty_area.x1 == 0:
         return 0
 
-      return self.perform_redraw(full_screen, wait_for_refresh)
+      return self.perform_redraw(full_screen)
 
-    virtual int perform_redraw(bool, bool):
+    virtual int perform_redraw(bool):
       return 0
 
 
@@ -395,7 +396,7 @@ namespace framebuffer:
 
       return vinfo.xres, vinfo.yres
 
-    int perform_redraw(bool full_screen=false, wait_for_refresh=false):
+    int perform_redraw(bool full_screen=false):
       um = 0
       mxcfb_update_data update_data
       mxcfb_rect update_rect
@@ -411,19 +412,17 @@ namespace framebuffer:
         update_rect.width = DISPLAYWIDTH
         update_rect.height = DISPLAYHEIGHT
 
+      update_data.update_marker = 0
       update_data.update_region = update_rect
-      update_data.waveform_mode = WAVEFORM_MODE_DU
+      update_data.waveform_mode = self.waveform_mode
       update_data.update_mode = UPDATE_MODE_PARTIAL
       update_data.dither_mode = EPDC_FLAG_EXP1
       update_data.temp = TEMP_USE_REMARKABLE_DRAW
       update_data.flags = 0
+      self.waveform_mode = WAVEFORM_MODE_DU
 
       if update_rect.height == 0 || update_rect.width == 0:
         return um
-
-      update_data.update_marker = 0
-      if wait_for_refresh:
-        update_data.update_marker = self.update_marker++
 
       ioctl(self.fd, MXCFB_SEND_UPDATE, &update_data)
       um = update_data.update_marker
@@ -446,7 +445,7 @@ namespace framebuffer:
       self.fd = open("./fb.raw", O_RDWR)
       self.fbmem = (remarkable_color*) mmap(NULL, self.byte_size, PROT_WRITE, MAP_SHARED, self.fd, 0)
 
-    int perform_redraw(bool, bool):
+    int perform_redraw(bool):
       #ifndef PERF_BUILD
       msync(self.fbmem, self.byte_size, MS_SYNC)
       self.save_png()
