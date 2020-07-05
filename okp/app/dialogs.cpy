@@ -2,6 +2,7 @@
 #include "../ui/pager.h"
 #include <dirent.h>
 #include <algorithm>
+#include "../defines.h"
 
 string ABOUT_TEXT = "\
 rmHarmony is a sketching app based on libremarkable and mr. doob's harmony. \
@@ -49,7 +50,7 @@ namespace app_ui:
         if ((dir = opendir (SAVE_DIR)) != NULL):
           while ((ent = readdir (dir)) != NULL):
             str_d_name = string(ent->d_name)
-            if str_d_name != "." and str_d_name != "..":
+            if str_d_name != "." and str_d_name != ".." and ends_with(str_d_name, "png"):
               filenames.push_back(str_d_name)
           closedir (dir)
         else:
