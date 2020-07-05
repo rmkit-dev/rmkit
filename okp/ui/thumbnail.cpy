@@ -2,9 +2,11 @@
 #include "../../vendor/stb/image_resize.h"
 #include <lodepng.h>
 #include <thread>
+#include <mutex>
 
 namespace ui:
   class Thumbnail: public Widget:
+    static std::mutex mainloop_mutex
     public:
     string filename
     image_data image;
@@ -12,6 +14,7 @@ namespace ui:
       self.filename = f
       thread *th = new thread([&]() {
         self.load_file()
+        std::lock_guard<std::mutex>guard(Thumbnail::mainloop_mutex)
         ui::MainLoop::refresh()
       });
 
@@ -52,3 +55,5 @@ namespace ui:
         rgba_buf[j++] = resize_buffer[i]
 
       self.image = image_data{(uint32_t*) rgba_buf, (int) self.w, (int) self.h}
+
+  std::mutex Thumbnail::mainloop_mutex

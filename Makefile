@@ -1,7 +1,7 @@
 FILES=main.cpy ../vendor/lodepng/lodepng.cpp
 HOST?=10.11.99.1
 EXE="harmony"
-CPP_FLAGS=-Og -lpthread
+CPP_FLAGS=-Og -pthread -lpthread
 OKP_FLAGS=-for -d ../cpp/ -o ../build/bin/${EXE} -nr ${FILES}
 LAUNCHER_FLAGS=-d ../cpp -o ../build/bin/launcher -for -nr launcher.cpy
 CXX=arm-linux-gnueabihf-g++
