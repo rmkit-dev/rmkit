@@ -128,7 +128,8 @@ $     int bytes = read(fd, ev_data, sizeof(input_event) * 64);
 
       rdfs_cp = rdfs
 
-      retval = select(max_fd, &rdfs_cp, NULL, NULL, NULL)
+      timeval timeout = timeval{0,500}
+      retval = select(max_fd, &rdfs_cp, NULL, NULL, &timeout)
       if retval > 0:
         if FD_ISSET(self.mouse.fd, &rdfs_cp):
           self.mouse.handle_mouse_fd()
