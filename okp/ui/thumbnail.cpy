@@ -27,6 +27,16 @@ namespace ui:
       err = stbir_resize_uint8(raw.data() , fw , fh , 0,\
                          resize_buffer, self.w, self.h, 0, num_channels /* this is wrong? */)
 
+      // make resize_buffer's yellow go to black
+      for (int i=0; i< resize_len; i++):
+        if i%4 == 0:
+          pix_sum = 0
+          for (int j=0; j<4; j++):
+            pix_sum += resize_buffer[i+j]
+          if pix_sum != 4*255:
+          for (int j=0; j<4; j++):
+            resize_buffer[i+j] = 0
+
       self.image = image_data{(uint32_t*) resize_buffer, (int) self.w, (int) self.h}
 
     void redraw():

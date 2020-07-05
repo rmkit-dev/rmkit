@@ -10,7 +10,7 @@
 #include "dialogs.h"
 
 #define DIALOG_WIDTH 600
-#define DIALOG_HEIGHT 500
+#define DIALOG_HEIGHT 1000
 namespace app_ui:
 
   class ToolButton: public ui::TextDropdown:

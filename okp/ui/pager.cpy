@@ -8,13 +8,13 @@ namespace ui:
   class Pager: public ui::Dialog:
     public:
     shared_ptr<ui::VerticalLayout> layout
-    int page_size, curr_page = 0, opt_h = 50
+    int page_size, curr_page = 0, opt_h = 187
     vector<string> options
     T *dialog
 
     Pager(int x, y, w, h, T *d): ui::Dialog(x, y, w, h):
       self.dialog = d
-      self.page_size = self.h / self.opt_h - 3
+      self.page_size = self.h / self.opt_h - 1
 
     void add_buttons(HorizontalLayout *button_bar):
       if curr_page > 0:
