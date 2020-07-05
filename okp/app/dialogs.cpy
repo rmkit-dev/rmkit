@@ -61,3 +61,10 @@ namespace app_ui:
         self.canvas->load_from_png(name)
         ui::MainLoop::hide_overlay()
 
+      void render_row(ui::HorizontalLayout *row, string option):
+        ui::Thumbnail *tn = new ui::Thumbnail(0, 0, 140, self.opt_h, option)
+        d = new ui::DialogButton<ui::Dialog>(20, 0, self.w-200, self.opt_h, self, option)
+        layout->pack_start(row)
+        row->pack_start(tn)
+        row->pack_start(d)
+
