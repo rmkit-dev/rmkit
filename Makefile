@@ -9,7 +9,12 @@ CC = arm-linux-gnueabihf-gcc
 KBD=`ls /dev/input/by-path/*kbd | head -n1`
 
 # {{{ SKETCHY MAIN CODE
+
 default: harmony_dev
+
+clean:
+	rm cpp/ -fr
+	mkdir build/bin -p
 
 harmony_fb: compile_x86
 harmony_dev: compile_dev
@@ -76,4 +81,14 @@ freetype_x86:
 
 	cd vendor/freetype2 && make -j4
 	cd vendor/freetype2 && DESTDIR=$(shell readlink -f vendor/freetype2/install) make install
+# }}}
+
+
+# {{{ DOCKER BUILD
+docker:
+	docker build --tag rmharmony:latest .
+	bash scripts/docker_release.sh
+
+docker_install: docker
+	echo "Not implemented yet"
 # }}}

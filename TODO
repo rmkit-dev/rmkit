@@ -1,7 +1,13 @@
+
 * charcoal with gray
-* fix previews to be faster (or not lock the UI)
-* performance analysis
+* fix previews to be faster (or not lock the UI) (threading?)
 * effect strength toggle in brush config dropdown
+* write resize from scratch (play with different algos first?)
+* script for testing (without installation)
+* multiple layers
+* instruction list of strokes and so on
+* filter pngs
+* separate color areas that can be clicked?
 
 NEXT:
 
@@ -128,3 +134,4 @@ x move toolbar to side (didn't go with this)
 x fix dropdown to use sections
 x fix dropdown for multiple layout styles (halfway done)
 x remove clock (because it has wrong time)
+x performance analysis
