@@ -280,12 +280,10 @@ namespace framebuffer:
         for x 0 self.width:
           d = self.fbmem[y*self.width + x] == 0 ? 0 : 0xff
           buf[i++] = d
-          buf[i++] = d
-          buf[i++] = d
-          buf[i++] = 0xff
       buf[i] = 0
 
-      lodepng::encode(filename, buf, self.width, self.height);
+      lodepng::encode(filename, buf, self.width, self.height,
+                      LodePNGColorType::LCT_GREY, 8);
       return string(filename)
 
     // bresenham's outline
