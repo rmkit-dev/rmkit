@@ -2,6 +2,8 @@
 #include <unistd.h>
 #include <sys/select.h>
 #include <linux/input.h>
+#include <sys/types.h>
+#include <sys/socket.h>
 
 #include "../defines.h"
 #include "events.h"
@@ -10,6 +12,8 @@ using namespace std
 
 //#define DEBUG_INPUT_EVENT 1
 namespace input:
+  static int ipc_fd[2] = { -1, -1 };
+
   template<class T, class EV>
   class InputClass:
     public:
@@ -99,6 +103,11 @@ $     int bytes = read(fd, ev_data, sizeof(input_event) * 64);
       #ifdef DEV_KBD
       self.monitor(self.button.fd = open(DEV_KBD, O_RDONLY))
       #endif
+
+      if ipc_fd[0] == -1:
+        pipe(ipc_fd)
+
+      self.monitor(input::ipc_fd[0])
       return
 
 
@@ -121,6 +130,13 @@ $     int bytes = read(fd, ev_data, sizeof(input_event) * 64);
       FD_SET(fd,&rdfs)
       max_fd = max(max_fd, fd+1)
 
+    def handle_ipc():
+      char buf[1024];
+      $ int bytes = read(input::ipc_fd[0], buf, 1024);
+
+      return
+
+
     def listen_all():
       fd_set rdfs_cp
       int retval
@@ -128,8 +144,7 @@ $     int bytes = read(fd, ev_data, sizeof(input_event) * 64);
 
       rdfs_cp = rdfs
 
-      timeval timeout = timeval{0,500}
-      retval = select(max_fd, &rdfs_cp, NULL, NULL, &timeout)
+      retval = select(max_fd, &rdfs_cp, NULL, NULL, NULL)
       if retval > 0:
         if FD_ISSET(self.mouse.fd, &rdfs_cp):
           self.mouse.handle_mouse_fd()
@@ -139,6 +154,8 @@ $     int bytes = read(fd, ev_data, sizeof(input_event) * 64);
           self.touch.handle_event_fd()
         if FD_ISSET(self.button.fd, &rdfs_cp):
           self.button.handle_event_fd()
+        if FD_ISSET(input::ipc_fd[0], &rdfs_cp):
+          self.handle_ipc()
 
       for auto ev : self.wacom.events:
         self.all_motion_events.push_back(self.wacom.marshal(ev))
@@ -160,4 +177,5 @@ $     int bytes = read(fd, ev_data, sizeof(input_event) * 64);
     return dynamic_cast<MouseEvent*>(syn_ev.original.get())
   static TouchEvent* is_touch_event(SynMouseEvent &syn_ev):
     return dynamic_cast<TouchEvent*>(syn_ev.original.get())
+
 

@@ -1,22 +1,14 @@
 
 * charcoal with gray
-* fix previews to be faster (or not lock the UI) (threading?)
 * effect strength toggle in brush config dropdown
-* write resize from scratch (play with different algos first?)
 * script for testing (without installation)
-* multiple layers
-* instruction list of strokes and so on
-* filter pngs
 * separate color areas that can be clicked?
 
 NEXT:
 
 * Box / Frame class for adding outlines
 * Expander class: for packing then centering group? or should pack_center just take an array
-* filter pngs
 * add battery percentage
-* selection tool (lasso?) + all it entails (copy, cut, rotate, etc?)
-* stroke list (for saving replays) or just saving space
 * finish brushes + add more:
   * ribbon, circles, rectangles
 * github releases
@@ -74,6 +66,11 @@ PUNT:
 
 * put brushes into own dir
 * show mouse in dev mode?
+* write resize from scratch (play with different algos first?)
+* multiple layers
+* instruction list of strokes and so on
+* selection tool (lasso?) + all it entails (copy, cut, rotate, etc?)
+* stroke list (for saving replays) or just saving space
 
 DONE:
 
@@ -135,3 +132,5 @@ x fix dropdown to use sections
 x fix dropdown for multiple layout styles (halfway done)
 x remove clock (because it has wrong time)
 x performance analysis
+x fix previews to be faster (or not lock the UI) (threading?)
+x filter pngs

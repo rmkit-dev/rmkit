@@ -2,15 +2,57 @@
 
 #include "../input/input.h"
 #include "scene.h"
+#include "base.h"
+#include <unistd.h>
+#include <functional>
+
+#include <thread>
+#include <mutex>
 
 namespace ui:
+  class TaskQueue:
+    public:
+    static deque<std::function<void()>> tasks
+    static std::mutex task_m
+
+    static void wakeup():
+      write(input::ipc_fd[1], "WAKEUP", sizeof("WAKEUP"));
+
+    static void add_task(std::function<void()> t):
+      TaskQueue::tasks.push_back(t)
+
+    static void run_task():
+      if TaskQueue::tasks.size() == 0:
+        return
+
+      t = TaskQueue::tasks.front()
+      TaskQueue::tasks.pop_front()
+      auto th = new thread([=]() {
+        lock_guard<mutex> guard(task_m)
+        t()
+        TaskQueue::wakeup()
+      })
+
+
   class MainLoop:
     public:
     static Scene scene
     static Scene overlay
     static bool overlay_is_visible
 
+    static bool is_visible(Widget *w):
+      if overlay_is_visible:
+        for auto widget : overlay->widgets:
+          if widget.get() == w:
+            return true
+      for auto widget : scene->widgets:
+        if widget.get() == w:
+          return true
+
+      return false
+
     static void main():
+      TaskQueue::run_task()
       scene->redraw()
       if overlay_is_visible:
         overlay->redraw()
@@ -40,6 +82,7 @@ namespace ui:
         overlay_is_visible = false
         Widget::fb->clear_screen()
         MainLoop::refresh()
+
 
     static void full_refresh():
       Widget::fb->clear_screen()
@@ -122,7 +165,11 @@ namespace ui:
 
       return hit_widget
 
+
   Scene MainLoop::scene = make_scene()
   Scene MainLoop::overlay = make_scene()
   bool MainLoop::overlay_is_visible = false
+
+  std::mutex TaskQueue::task_m = {}
+  deque<std::function<void()>> TaskQueue::tasks = {}
 

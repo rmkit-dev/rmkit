@@ -10,7 +10,8 @@
 #include "dialogs.h"
 
 #define DIALOG_WIDTH 600
-#define DIALOG_HEIGHT 1000
+#define DIALOG_HEIGHT 500
+#define LOAD_DIALOG_HEIGHT 1000
 namespace app_ui:
 
   class ToolButton: public ui::TextDropdown:
@@ -190,7 +191,7 @@ namespace app_ui:
         self.sd->show()
       if option == LOAD:
         if self.ld == NULL:
-          self.ld = new LoadDialog(0, 0, DIALOG_WIDTH, DIALOG_HEIGHT, self.canvas)
+          self.ld = new LoadDialog(0, 0, DIALOG_WIDTH, LOAD_DIALOG_HEIGHT, self.canvas)
         self.ld->populate()
         self.ld->setup_for_render()
         self.ld->show()
