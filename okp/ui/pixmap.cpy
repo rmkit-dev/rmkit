@@ -3,10 +3,33 @@
 #include "text.h"
 
 namespace ui:
-  class CachedIcon: public icons::Icon:
+  class ImageCache:
     public:
-    image_data *image = NULL
-    static map<string, image_data*> CACHE
+    static map<string, image_data> CACHE
+    image_data image = { NULL, 0 }
+    ImageCache():
+      pass
+
+    virtual image_data get(string name):
+      it = CACHE.find(name)
+      if it == CACHE.end():
+        im = self.fetch(name)
+        if im.buffer != NULL:
+          CACHE[name] = im
+          self.image = im
+      else:
+        self.image = it->second
+
+      return self.image
+
+
+    virtual image_data fetch(string t) {};
+
+  map<string, image_data> ImageCache::CACHE = {}
+
+
+  class CachedIcon: public icons::Icon, public ImageCache:
+    public:
 
     CachedIcon(unsigned char *d, int l):
       self.data = d
@@ -17,20 +40,19 @@ namespace ui:
       self.data = d
       self.len = l
       self.name = n
-      self.decode_cached()
+      self.get(self.name)
       return
 
     ~CachedIcon():
-      if self.name == NULL && self.image != NULL:
-        free(self.image->buffer)
-        delete self.image
+      if self.name == NULL && self.image.buffer != NULL:
+        free(self.image.buffer)
 
 
-    void decode():
+    image_data fetch(string t):
       if self.data == NULL:
-        return
-      if self.image != NULL:
-        return
+        return image_data({ NULL, 0 })
+      if self.image.buffer != NULL:
+        return self.image
 
       unsigned int iconw = 0
       unsigned int iconh = 0
@@ -40,25 +62,9 @@ namespace ui:
       lodepng::decode(out, iconw, iconh, self.data, self.len)
       buf = (uint32_t*) malloc(iconw*iconh*sizeof(uint32_t))
       buf = (uint32_t*) memcpy(buf, out.data(), out.size())
-      self.image = new image_data{(uint32_t*) buf, (int) iconw, (int) iconh}
+      self.image = image_data{(uint32_t*) buf, (int) iconw, (int) iconh}
+      return self.image
 
-    void decode_cached():
-      if self.name == NULL:
-        self.decode()
-        return
-      if self.data == NULL:
-        return
-      if self.image != NULL:
-        return
-
-      it = CACHE.find(self.name)
-      if it != CACHE.end():
-        self.image = it->second
-      else:
-        self.decode()
-        CACHE[self.name] = self.image
-
-  map<string, image_data*> CachedIcon::CACHE = {}
 
 
   class Pixmap: public Widget:
@@ -68,12 +74,14 @@ namespace ui:
       self.icon = CachedIcon({ico.data, (int) ico.len, ico.name})
 
     tuple<int, int> get_render_size():
-      if self.icon.image != NULL:
-        return self.icon.image->w, self.icon.image->h
+      if self.icon.image.buffer != NULL:
+        return self.icon.image.w, self.icon.image.h
 
       return 0, 0
 
     void redraw():
-      if self.icon.image != NULL:
-        fb->draw_bitmap(*self.icon.image, x, y)
+      if self.icon.data == NULL || self.icon.image.buffer == NULL:
+        return
+
+      fb->draw_bitmap(self.icon.image, x, y)
 

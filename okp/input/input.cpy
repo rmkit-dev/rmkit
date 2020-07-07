@@ -105,7 +105,7 @@ $     int bytes = read(fd, ev_data, sizeof(input_event) * 64);
       #endif
 
       if ipc_fd[0] == -1:
-        pipe(ipc_fd)
+        socketpair(AF_UNIX, SOCK_STREAM, 0, ipc_fd)
 
       self.monitor(input::ipc_fd[0])
       return

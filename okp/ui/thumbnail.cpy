@@ -1,17 +1,17 @@
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
 #include "../../vendor/stb/image_resize.h"
 #include <lodepng.h>
+#include "pixmap.h"
 
 namespace ui:
-  class Thumbnail: public Widget:
+  class Thumbnail: public Widget, public ImageCache:
     public:
     string filename
-    image_data image;
     Thumbnail(int x, y, w, h, string f): Widget(x,y,w,h):
       self.filename = f
       self.image.buffer = NULL
       ui::TaskQueue::add_task([=]() {
-        self.load_file()
+        self.get(self.filename)
         self.dirty = 1
       });
 
@@ -25,9 +25,9 @@ namespace ui:
         self.fb->draw_bitmap(self.image, self.x, self.y)
         self.fb->draw_rect(self.x, self.y, self.w, self.h,3,BLACK)
 
-    void load_file():
+    image_data fetch(string t):
       if !MainLoop::is_visible(self):
-        return
+        return image_data({ NULL, 0 })
 
       char full_path[100]
       unsigned char *load_buffer, *resize_buffer
@@ -60,3 +60,4 @@ namespace ui:
         rgba_buf[j++] = resize_buffer[i]
 
       self.image = image_data{(uint32_t*) rgba_buf, (int) self.w, (int) self.h}
+      return self.image

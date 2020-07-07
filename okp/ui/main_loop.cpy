@@ -27,11 +27,16 @@ namespace ui:
 
       t = TaskQueue::tasks.front()
       TaskQueue::tasks.pop_front()
-      auto th = new thread([=]() {
-        lock_guard<mutex> guard(task_m)
-        t()
+      try:
+        thread *th = new thread([=]() {
+          lock_guard<mutex> guard(task_m)
+          t()
+          TaskQueue::wakeup()
+        })
+        th->detach()
+      known catch (const std::exception& e):
+        print "NEW THREAD EXC", e.what()
         TaskQueue::wakeup()
-      })
 
 
   class MainLoop:
