@@ -170,6 +170,10 @@ namespace app_ui:
       ds->add_options({DOTS, CLEAR, SAVE, LOAD, QUIT, DOTS, ABOUT})
       self.text = "..."
 
+    void select_exit():
+      if self.ed == NULL:
+        self.ed = new ExitDialog(0, 0, DIALOG_WIDTH, DIALOG_HEIGHT)
+      self.ed->show()
     void on_select(int i):
       option = self.options[i].name
       if option == ABOUT:
@@ -179,9 +183,7 @@ namespace app_ui:
       if option == CLEAR:
         self.canvas->reset()
       if option == QUIT:
-        if self.ed == NULL:
-          self.ed = new ExitDialog(0, 0, DIALOG_WIDTH, DIALOG_HEIGHT)
-        self.ed->show()
+        self.select_exit()
       if option == SAVE:
         filename = self.canvas->save()
         if self.sd == NULL:

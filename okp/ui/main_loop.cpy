@@ -16,7 +16,7 @@ namespace ui:
     static std::mutex task_m
 
     static void wakeup():
-      write(input::ipc_fd[1], "WAKEUP", sizeof("WAKEUP"));
+      _ = write(input::ipc_fd[1], "WAKEUP", sizeof("WAKEUP"));
 
     static void add_task(std::function<void()> t):
       TaskQueue::tasks.push_back(t)

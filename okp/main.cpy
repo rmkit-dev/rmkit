@@ -16,6 +16,8 @@ class App:
 
   ui::Scene notebook
 
+  app_ui::ManageButton *manage_button
+
   int x = 0
   int y = 0
 
@@ -76,7 +78,7 @@ class App:
     toolbar->pack_center(new app_ui::LiftBrushButton(0, 0, 114, 100, canvas))
 
     // because we pack end, we go in reverse order
-    toolbar->pack_end(new app_ui::ManageButton(0, 0, 100, TOOLBAR_HEIGHT, canvas))
+    toolbar->pack_end(manage_button = new app_ui::ManageButton(0, 0, 100, TOOLBAR_HEIGHT, canvas))
     toolbar->pack_end(new app_ui::RedoButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, canvas))
     toolbar->pack_end(new app_ui::UndoButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, canvas))
 
@@ -108,6 +110,9 @@ class App:
         case KEY_RIGHT:
           break
         #endif
+        case KEY_POWER:
+          manage_button->select_exit()
+          break
         case KEY_HOME:
           fb->clear_screen()
           ui::MainLoop::refresh()

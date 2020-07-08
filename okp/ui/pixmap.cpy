@@ -23,7 +23,7 @@ namespace ui:
       return self.image
 
 
-    virtual image_data fetch(string t) {};
+    virtual image_data fetch(string t) { return { NULL, 0 }; };
 
   map<string, image_data> ImageCache::CACHE = {}
 
