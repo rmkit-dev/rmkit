@@ -17,3 +17,7 @@ sudo perf report
 `pidstat -u -C harmony -h 3` : count CPU usage on a 3 second basis for harmony
 binary. this is most useful when SSHing into the tablet to analyze the CPU
 consumption while activity is being performed
+
+## Valgrind
+
+`sudo valgrind --leak-check=full --track-origins=yes ./build/bin/harmony` to find memory leaks

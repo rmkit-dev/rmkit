@@ -8,9 +8,9 @@ function cleanup() {
   exit 0
 }
 
-trap cleanup EXIT 
-trap cleanup SIGINT 
+trap cleanup EXIT
+trap cleanup SIGINT
 
 kill_remote_harmony
-echo "RUNNING SKETCHY"
+echo "RUNNING HARMONY"
 ssh root@${HOST} ./harmony/harmony
