@@ -2,6 +2,8 @@
 
 rmHarmony is a drawing app for the remarkable tablet
 
+![](https://i.imgur.com/KJlWdAAl.png)
+
 ## Status
 
 Approaching first release. Stay tuned!
@@ -28,6 +30,12 @@ run `wget -O- https://raw.githubusercontent.com/raisjn/rmHarmony/master/scripts/
 
 to launch harmony, hold the center button for 2+ seconds. To exit harmony,
 press the power button to bring up the exit dialog.
+
+### Manual Installation
+
+* download or build the binaries for harmony (see docs/BUILDING.md)
+* copy `harmony` to /home/root/harmony/harmony on the remarkable
+* launch `/home/root/harmony/harmony` through SSH
 
 ## Compilation
 
