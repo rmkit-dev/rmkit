@@ -216,6 +216,23 @@ namespace app_ui:
       self.dirty = 1
       self.canvas->undo()
 
+  template<class T>
+  class PalmButton: public ui::Button:
+    T *t
+    public:
+    PalmButton(int x, y, w, h, T *t): t(t), ui::Button(x,y,w,h,"reject palm"):
+      self.icon = ICON(icons::vendor_icons_fa_hand_paper_solid_png)
+      self.text = ""
+
+    void redraw():
+      ui::Button::redraw()
+      if t->reject_touch:
+        self.fb->draw_rect(self.x, self.y, self.w, 5, BLACK, true)
+
+    void on_mouse_click(input::SynMouseEvent &ev):
+      t->reject_touch = !t->reject_touch
+      self.dirty = 1
+
   class RedoButton: public ui::Button:
     public:
     Canvas *canvas

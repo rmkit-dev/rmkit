@@ -61,7 +61,7 @@ namespace ui:
     public:
     int selected
     int option_width, option_height, option_x, option_y
-    enum DIRECTION { UP, DOWN }
+    enum DIRECTION { UP }
     DIRECTION dir = DIRECTION::UP
     vector<O> options
     vector<shared_ptr<DropdownSection<O>>> sections;
@@ -100,8 +100,6 @@ namespace ui:
           OptionSection *os
           if section->name != "":
             os = new OptionSection(0, 0, ow, oh, section->name)
-            if self.dir == DIRECTION::DOWN:
-              layout.pack_start(os)
 
           opts = section->options
 
@@ -114,8 +112,7 @@ namespace ui:
             i++
 
           if section->name != "":
-            if self.dir == DIRECTION::UP:
-              layout.pack_end(os)
+            layout.pack_end(os)
 
 
       ui::MainLoop::show_overlay(self.scene)

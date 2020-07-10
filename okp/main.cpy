@@ -18,8 +18,8 @@ class App:
 
   app_ui::ManageButton *manage_button
 
-  int x = 0
-  int y = 0
+  // do we accept finger touch events
+  bool reject_touch = false
 
 
   App():
@@ -81,6 +81,7 @@ class App:
     toolbar->pack_end(manage_button = new app_ui::ManageButton(0, 0, 100, TOOLBAR_HEIGHT, canvas))
     toolbar->pack_end(new app_ui::RedoButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, canvas))
     toolbar->pack_end(new app_ui::UndoButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, canvas))
+    toolbar->pack_end(new app_ui::PalmButton<App>(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, self))
 
   def handle_key_event(input::SynKeyEvent &key_ev):
     if key_ev.is_pressed:
@@ -130,6 +131,9 @@ class App:
     else if (auto w_ev = input::is_wacom_event(syn_ev)):
       print "WACOM EVENT"
     #endif
+
+    if reject_touch && input::is_touch_event(syn_ev):
+      return
 
     ui::MainLoop::handle_motion_event(syn_ev)
 
