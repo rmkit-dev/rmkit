@@ -36,7 +36,7 @@ namespace input:
       return syn_ev
 
     void handle_event_fd():
-$     int bytes = read(fd, ev_data, sizeof(input_event) * 64);
+      int bytes = read(fd, ev_data, sizeof(input_event) * 64);
       if bytes < sizeof(struct input_event) || bytes == -1:
         return
 
@@ -55,7 +55,7 @@ $     int bytes = read(fd, ev_data, sizeof(input_event) * 64);
     // not going to use this on remarkable
     void handle_mouse_fd():
       unsigned char data[3]
-  $   int bytes = read(self.fd, data, sizeof(data));
+      int bytes = read(self.fd, data, sizeof(data));
 
       #ifdef REMARKABLE
       // we return after reading so that the socket is not indefinitely active
@@ -132,7 +132,7 @@ $     int bytes = read(fd, ev_data, sizeof(input_event) * 64);
 
     def handle_ipc():
       char buf[1024];
-      $ int bytes = read(input::ipc_fd[0], buf, 1024);
+      int bytes = read(input::ipc_fd[0], buf, 1024);
 
       return
 
