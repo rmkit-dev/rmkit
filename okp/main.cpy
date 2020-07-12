@@ -31,7 +31,7 @@ class App:
     fb = make_shared<framebuffer::HardwareFB>()
     #endif
 
-    known ui::Widget::fb = fb.get()
+    ui::Widget::fb = fb.get()
     w, h = fb->get_display_size()
     input::MouseEvent::set_screen_size(w, h)
 

@@ -34,7 +34,7 @@ namespace ui:
           TaskQueue::wakeup()
         })
         th->detach()
-      known catch (const std::exception& e):
+      catch (const std::exception& e):
         print "NEW THREAD EXC", e.what()
         TaskQueue::wakeup()
 
