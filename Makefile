@@ -7,6 +7,7 @@ LAUNCHER_FLAGS=-d ../cpp -o ../build/bin/launcher -for -nr launcher.cpy
 CXX=arm-linux-gnueabihf-g++
 CC = arm-linux-gnueabihf-gcc
 KBD=`ls /dev/input/by-path/*kbd | head -n1`
+VERSION=$(shell cat okp/version.cpy | sed 's/__version__=//;s/"//g')
 
 # {{{ SKETCHY MAIN CODE
 
@@ -43,7 +44,9 @@ bundle: compile_arm launcher_arm
 	mkdir -p build/harmony 2>/dev/null || true
 	cp build/bin/harmony build/bin/launcher build/harmony/
 	cp contrib/harmony.service build/harmony/
-	cd build; zip release.zip -r harmony/
+	cd build; zip release-${VERSION}.zip -r harmony/
+	cat scripts/install_harmony.sh.template | sed 's/VERSION/${VERSION}/g' > scripts/install_harmony.sh
+	cat scripts/try_harmony.sh.template | sed 's/VERSION/${VERSION}/g' > scripts/try_harmony.sh
 
 # }}}
 
