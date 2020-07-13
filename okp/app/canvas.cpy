@@ -1,4 +1,5 @@
 #include "../ui/base.h"
+#include "state.h"
 #include "brush.h"
 
 #ifdef REMARKABLE
@@ -25,6 +26,10 @@ namespace app_ui:
     Brush* eraser
 
     Canvas(int x, y, w, h): ui::Widget(x,y,w,h):
+      STATE.brush(PLS_DELEGATE(self.set_brush))
+      STATE.color(PLS_DELEGATE(self.set_stroke_color))
+      STATE.stroke_width(PLS_DELEGATE(self.set_stroke_width))
+
       px_width, px_height = self.fb->get_display_size()
       self.byte_size = px_width * px_height * sizeof(remarkable_color)
       vfb = make_shared<framebuffer::VirtualFB>(self.fb->width, self.fb->height)

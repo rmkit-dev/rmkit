@@ -6,8 +6,10 @@
 #include "app/ui.h"
 #include "app/proc.h"
 #include "app/canvas.h"
+#include "app/state.h"
 
 using namespace std
+using app_ui::STATE
 
 class App:
   public:
@@ -19,8 +21,6 @@ class App:
   app_ui::ManageButton *manage_button
 
   // do we accept finger touch events
-  bool reject_touch = false
-
 
   App():
     #ifdef REMARKABLE
@@ -30,6 +30,7 @@ class App:
     #else
     fb = make_shared<framebuffer::HardwareFB>()
     #endif
+
 
     ui::Widget::fb = fb.get()
     w, h = fb->get_display_size()
@@ -65,12 +66,12 @@ class App:
 //    minibar->pack_start(new app_ui::HideButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, toolbar, minibar))
 //    toolbar->pack_start(new app_ui::HideButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, toolbar, minibar))
 
-    tool_button = new app_ui::ToolButton(0, 0, ICON_WIDTH*2, TOOLBAR_HEIGHT, canvas)
+    tool_button = new app_ui::ToolButton(0, 0, ICON_WIDTH*2, TOOLBAR_HEIGHT)
     tool_button->set_option_size(250, TOOLBAR_HEIGHT)
     tool_button->set_option_offset(0, -TOOLBAR_HEIGHT)
     toolbar->pack_start(tool_button)
 
-    brush_config_button = new app_ui::BrushConfigButton(0, 0, ICON_WIDTH*2, TOOLBAR_HEIGHT, canvas)
+    brush_config_button = new app_ui::BrushConfigButton(0, 0, ICON_WIDTH*2, TOOLBAR_HEIGHT)
     brush_config_button->set_option_size(200, TOOLBAR_HEIGHT)
     brush_config_button->set_option_offset(0, -TOOLBAR_HEIGHT)
     toolbar->pack_start(brush_config_button)
@@ -81,7 +82,7 @@ class App:
     toolbar->pack_end(manage_button = new app_ui::ManageButton(0, 0, 100, TOOLBAR_HEIGHT, canvas))
     toolbar->pack_end(new app_ui::RedoButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, canvas))
     toolbar->pack_end(new app_ui::UndoButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, canvas))
-    toolbar->pack_end(new app_ui::PalmButton<App>(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, self))
+    toolbar->pack_end(new app_ui::PalmButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT))
 
   def handle_key_event(input::SynKeyEvent &key_ev):
     if key_ev.is_pressed:
@@ -132,7 +133,7 @@ class App:
       print "WACOM EVENT"
     #endif
 
-    if reject_touch && input::is_touch_event(syn_ev):
+    if STATE.reject_touch && input::is_touch_event(syn_ev):
       return
 
     ui::MainLoop::handle_motion_event(syn_ev)

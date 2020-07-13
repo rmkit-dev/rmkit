@@ -8,6 +8,7 @@
 #include "canvas.h"
 #include "proc.h"
 #include "dialogs.h"
+#include "state.h"
 
 #define DIALOG_WIDTH 600
 #define DIALOG_HEIGHT 500
@@ -16,8 +17,7 @@ namespace app_ui:
 
   class ToolButton: public ui::TextDropdown:
     public:
-    Canvas *canvas
-    ToolButton(int x, int y, int w, int h, Canvas *c): \
+    ToolButton(int x, int y, int w, int h): \
                ui::TextDropdown(x, y, w, h, "tools"):
 
       ds = self.add_section("brushes")
@@ -32,31 +32,26 @@ namespace app_ui:
       for auto b : brush::ERASERS:
         ds->add_options({make_pair(b->name, b->icon)})
 
-      self.canvas = c
       self.select(0)
 
     void on_select(int idx):
       name = self.options[idx].name
       for auto b : brush::P_BRUSHES:
         if b->name == name:
-          self.canvas->set_brush(b)
+          STATE.brush = b
       for auto b : brush::ERASERS:
         if b->name == name:
-          self.canvas->set_brush(b)
+          STATE.brush = b
       for auto b : brush::NP_BRUSHES:
         if b->name == name:
-          self.canvas->set_brush(b)
+          STATE.brush = b
       self.text = ""
 
 
   class BrushConfigButton: public ui::TextDropdown:
     public:
-    Canvas *canvas
-    BrushConfigButton(int x, y, w, h, Canvas *c): \
-      ui::TextDropdown(x,y,w,h,"brush config")
-      self.canvas = c
-
-
+    BrushConfigButton(int x, y, w, h): \
+      ui::TextDropdown(x,y,w,h,"brush config"):
       ds = self.add_section("size")
       for auto b : stroke::SIZES:
         ds->add_options({b->name})
@@ -68,23 +63,23 @@ namespace app_ui:
       option = self.options[i].name
       do {
         if option == stroke::FINE.name:
-          self.canvas->set_stroke_width(stroke::FINE.val)
+          STATE.stroke_width = stroke::FINE.val
           break
         if option == stroke::MEDIUM.name:
-          self.canvas->set_stroke_width(stroke::MEDIUM.val)
+          STATE.stroke_width = stroke::MEDIUM.val
           break
         if option == stroke::WIDE.name:
-          self.canvas->set_stroke_width(stroke::WIDE.val)
+          STATE.stroke_width = stroke::WIDE.val
           break
 
         if option == "black":
-          self.canvas->set_stroke_color(BLACK)
+          STATE.color = BLACK
           break
         if option == "white":
-          self.canvas->set_stroke_color(WHITE)
+          STATE.color = WHITE
           break
         if option == "gray":
-          self.canvas->set_stroke_color(GRAY)
+          STATE.color = GRAY
           break
       } while(false);
 
@@ -93,25 +88,21 @@ namespace app_ui:
     void redraw():
       sw = 1
       for auto size : stroke::SIZES:
-        if canvas->get_stroke_width() == size->val:
+        if STATE.stroke_width == size->val:
           sw = (size->val+1) * 5
           break
 
       color = BLACK
       bg_color = WHITE
-      for auto size : stroke::SIZES:
-        if canvas->curr_brush->color == BLACK:
-          color = BLACK
-          bg_color = WHITE
-          break
-        if canvas->curr_brush->color == WHITE:
-          color = WHITE
-          bg_color = BLACK
-          break
-        if canvas->curr_brush->color == GRAY:
-          color = GRAY
-          bg_color = WHITE
-          break
+      if STATE.color == BLACK:
+        color = BLACK
+        bg_color = WHITE
+      if STATE.color == WHITE:
+        color = WHITE
+        bg_color = BLACK
+      if STATE.color == GRAY:
+        color = GRAY
+        bg_color = WHITE
 
       self.fb->draw_rect(self.x, self.y, self.w, self.h, WHITE, true)
 
@@ -216,21 +207,19 @@ namespace app_ui:
       self.dirty = 1
       self.canvas->undo()
 
-  template<class T>
   class PalmButton: public ui::Button:
-    T *t
     public:
-    PalmButton(int x, y, w, h, T *t): t(t), ui::Button(x,y,w,h,"reject palm"):
+    PalmButton(int x, y, w, h): ui::Button(x,y,w,h,"reject palm"):
       self.icon = ICON(icons::vendor_icons_fa_hand_paper_solid_png)
       self.text = ""
 
     void redraw():
       ui::Button::redraw()
-      if t->reject_touch:
+      if STATE.reject_touch:
         self.fb->draw_rect(self.x, self.y, self.w, 5, BLACK, true)
 
     void on_mouse_click(input::SynMouseEvent &ev):
-      t->reject_touch = !t->reject_touch
+      STATE.reject_touch = !STATE.reject_touch
       self.dirty = 1
 
   class RedoButton: public ui::Button:
