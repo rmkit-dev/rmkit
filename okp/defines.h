@@ -6,6 +6,8 @@
 #include <sstream>
 #include "ui/icons.h"
 
+#define STB_IMAGE_RESIZE_IMPLEMENTATION
+
 
 // #define PERF_BUILD
 

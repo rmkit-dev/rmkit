@@ -12,7 +12,7 @@
 #include "../defines.h"
 #include "mxcfb.h"
 #include "text.h"
-#include <lodepng.h>
+#include "../../vendor/lodepng/lodepng.h"
 
 using namespace std
 

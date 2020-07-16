@@ -1,3 +1,6 @@
+#include <linux/input.h>
+#include "../defines.h"
+
 //#define DEBUG_INPUT_EVENT 1
 
 namespace input:

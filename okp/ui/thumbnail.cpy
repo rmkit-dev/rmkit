@@ -1,6 +1,5 @@
-#define STB_IMAGE_RESIZE_IMPLEMENTATION
 #include "../../vendor/stb/image_resize.h"
-#include <lodepng.h>
+#include "../../vendor/lodepng/lodepng.h"
 #include "pixmap.h"
 
 namespace ui:

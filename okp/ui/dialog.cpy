@@ -2,6 +2,8 @@
 #include "scene.h"
 #include "main_loop.h"
 #include "../input/events.h"
+#include "../ui/button.h"
+#include "../ui/base.h"
 
 
 namespace ui:
