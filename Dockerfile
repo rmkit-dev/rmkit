@@ -8,5 +8,4 @@ RUN apt-get install -y automake m4 libtool zip
 WORKDIR /rmHarmony
 COPY . /rmHarmony/
 RUN pip3 install okp
-RUN make freetype_arm
 RUN make clean

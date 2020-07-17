@@ -11,8 +11,6 @@ This is the easiest way to compile for the tablet if you have docker installed.
 ### Linux
 
 * install okp: `sudo pip install okp`
-* install freetype library:
-  * on ubuntu: `sudo apt install libfreetype6-dev`
 
 with framebuffer:
 
@@ -30,8 +28,6 @@ with image framebuffer:
 * install okp: `sudo pip install okp`
 * install arm toolchain
   * on ubuntu: `sudo apt install g++-arm-linux-gnueabihf`
-* checkout freetype into repo: `git submodule init`
-* compile freetype library: `make freetype_arm`
 * compile harmony for remarkable: `make harmony_arm`
 * test on remarkable: `make test_arm` - assumes that the remarkable is plugged in on USB
 * test on remarkable over wifi: `HOST=192.168.1.10 make test_arm`

@@ -1,6 +1,6 @@
 #include "base.h"
-#include "../fb/text.h"
 #include "../defines.h"
+#include "../fb/stb_text.h"
 
 namespace ui:
   class Text: public Widget:
@@ -13,11 +13,11 @@ namespace ui:
       self.text = t
 
     tuple<int, int> get_render_size():
-      image = freetype::get_text_size(self.text.c_str())
+      image = stbtext::get_text_size(self.text.c_str())
       return image.w, image.h
     // TODO: cache the image buffer
     void redraw():
-      image = freetype::get_text_size(self.text.c_str())
+      image = stbtext::get_text_size(self.text.c_str())
 
       image.buffer = (uint32_t*) malloc(sizeof(uint32_t) * image.w * image.h)
       memset(image.buffer, WHITE, sizeof(uint32_t) * image.w * image.h)
@@ -56,7 +56,7 @@ namespace ui:
         int max_h = 0
         for auto w: tokens:
           w += " "
-          image = freetype::get_text_size(w.c_str())
+          image = stbtext::get_text_size(w.c_str())
           image.buffer = (uint32_t*) malloc(sizeof(uint32_t) * image.w * image.h)
           max_h = max(image.h, max_h)
           memset(image.buffer, WHITE, sizeof(uint32_t) * image.w * image.h)

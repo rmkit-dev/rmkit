@@ -11,7 +11,7 @@
 
 #include "../defines.h"
 #include "mxcfb.h"
-#include "text.h"
+#include "stb_text.h"
 #include "../../vendor/lodepng/lodepng.h"
 
 using namespace std
@@ -199,7 +199,7 @@ namespace framebuffer:
         src += image.w
 
     void draw_text(string text, int x, int y, image_data &image):
-      freetype::render_text((char*)text.c_str(), x, y, image)
+      stbtext::render_text((char*)text.c_str(), image)
       draw_bitmap(image, x, y)
 
     void save_png():

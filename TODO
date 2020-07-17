@@ -1,5 +1,5 @@
-* replace freetype2
 * use combine headers successfully
+* rmux
 
 * next and prev button functions
 * charcoal with gray
@@ -137,3 +137,4 @@ x remove clock (because it has wrong time)
 x performance analysis
 x fix previews to be faster (or not lock the UI) (threading?)
 x filter pngs
+x replace freetype2

@@ -21,15 +21,15 @@ harmony_fb: compile_x86
 harmony_dev: compile_dev
 harmony_arm: compile_arm
 
-compile_x86: export CPP_FLAGS += -I/usr/include/freetype2 -lfreetype -I../vendor/lodepng
+compile_x86:
 compile_x86:
 	cd okp/ && okp ${OKP_FLAGS} -- ${CPP_FLAGS}
 
-compile_dev: export CPP_FLAGS += -I/usr/include/freetype2 -lfreetype -I../vendor/lodepng
+compile_dev:
 compile_dev:
 	cd okp/ && okp ${OKP_FLAGS} -- -D"DEV=1" ${CPP_FLAGS} -D"DEV_KBD=\"${KBD}\""
 
-compile_arm: export CPP_FLAGS += -I../vendor/freetype2/install/usr/local/include/freetype2 -L../vendor/freetype2/install/usr/local/lib/ -lfreetype -I../vendor/lodepng -O3
+compile_arm:
 compile_arm:
 	cd okp/ && CXX=arm-linux-gnueabihf-g++ okp ${OKP_FLAGS} -- -D"REMARKABLE=1" ${CPP_FLAGS}
 copy_arm: compile_arm harmony_dir
@@ -68,24 +68,6 @@ install_service:
 start_service:
 	ssh root@{HOST} systemctl enable --now harmony
 # }}}
-
-# {{{ VENDOR BUILDS
-FREETYPE_PATH = ./vendor/freetype2
-freetype_arm:
-	cd vendor/freetype2 && bash autogen.sh
-	cd vendor/freetype2 && CXX=${CXX} CC=${CC} ./configure --without-zlib --without-png --without-bzip2 --without-brotli --without-harfbuzz --host=arm-linux-gnueabihf --enable-static=yes --enable-shared=no
-
-	cd vendor/freetype2 && CXX=${CXX} CC=${CC} make -j4
-	cd vendor/freetype2 && DESTDIR=$(shell readlink -f vendor/freetype2/install) make install
-
-freetype_x86:
-	cd vendor/freetype2 && bash autogen.sh
-	cd vendor/freetype2 && ./configure --without-zlib --without-png --enable-static=yes --enable-shared=no  --without-bzip2
-
-	cd vendor/freetype2 && make -j4
-	cd vendor/freetype2 && DESTDIR=$(shell readlink -f vendor/freetype2/install) make install
-# }}}
-
 
 # {{{ DOCKER BUILD
 docker:

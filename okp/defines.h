@@ -7,6 +7,7 @@
 #include "ui/icons.h"
 
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
+#define STB_TRUETYPE_IMPLEMENTATION
 
 
 // #define PERF_BUILD

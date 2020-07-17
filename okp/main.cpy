@@ -7,6 +7,7 @@
 #include "app/proc.h"
 #include "app/canvas.h"
 #include "app/state.h"
+#include "fb/stb_text.h"
 
 using namespace std
 using app_ui::STATE
