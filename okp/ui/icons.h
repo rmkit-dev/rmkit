@@ -1,3 +1,5 @@
+#ifndef ICONS_H
+#define ICONS_H
 namespace icons {
 struct Icon { unsigned char* data = NULL; unsigned int len = 0; const char* name = NULL;};
 unsigned char vendor_icons_fa_arrow_alt_circle_left_regular_png[] = {
@@ -1698,3 +1700,4 @@ unsigned char vendor_icons_fa_vr_cardboard_solid_png[] = {
 };
 unsigned int vendor_icons_fa_vr_cardboard_solid_png_len = 539;
 };
+#endif
