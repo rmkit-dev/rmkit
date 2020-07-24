@@ -185,6 +185,7 @@ namespace app_ui:
       if option == LOAD:
         if self.ld == NULL:
           self.ld = new LoadDialog(0, 0, DIALOG_WIDTH, LOAD_DIALOG_HEIGHT, self.canvas)
+          self.ld->opt_h = 187
         self.ld->populate()
         self.ld->setup_for_render()
         self.ld->show()

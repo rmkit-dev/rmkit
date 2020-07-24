@@ -8,7 +8,7 @@ namespace ui:
   class Pager: public ui::Dialog:
     public:
     shared_ptr<ui::VerticalLayout> layout
-    int page_size, curr_page = 0, opt_h = 187
+    int page_size, curr_page = 0, opt_h = 50
     vector<string> options
     T *dialog
 

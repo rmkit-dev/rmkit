@@ -198,8 +198,8 @@ namespace framebuffer:
         ptr += self.width
         src += image.w
 
-    void draw_text(string text, int x, int y, image_data &image):
-      stbtext::render_text((char*)text.c_str(), image)
+    void draw_text(string text, int x, int y, image_data &image, int font_size=24):
+      stbtext::render_text((char*)text.c_str(), image, font_size)
       draw_bitmap(image, x, y)
 
     void save_png():
@@ -490,3 +490,19 @@ namespace framebuffer:
       vinfo.bits_per_pixel = 16;
       vinfo.grayscale = 0
       retval = ioctl(self.fd, FBIOPUT_VSCREENINFO, &vinfo);
+
+
+  static shared_ptr<FB> _FB
+  static shared_ptr<FB> get():
+    if _FB != nullptr && _FB.get() != nullptr:
+      return _FB
+
+    #ifdef REMARKABLE
+    _FB = make_shared<framebuffer::RemarkableFB>()
+    #elif DEV
+    _FB = make_shared<framebuffer::FileFB>()
+    #else
+    _FB = make_shared<framebuffer::HardwareFB>()
+    #endif
+
+    return _FB

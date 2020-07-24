@@ -5,6 +5,7 @@
 namespace ui:
   class Text: public Widget:
     public:
+    static int FS
     enum JUSTIFY { LEFT, CENTER, RIGHT }
     string text
     JUSTIFY justify = JUSTIFY::CENTER
@@ -13,11 +14,11 @@ namespace ui:
       self.text = t
 
     tuple<int, int> get_render_size():
-      image = stbtext::get_text_size(self.text.c_str())
+      image = stbtext::get_text_size(self.text.c_str(), FS)
       return image.w, image.h
     // TODO: cache the image buffer
     void redraw():
-      image = stbtext::get_text_size(self.text.c_str())
+      image = stbtext::get_text_size(self.text.c_str(), FS)
 
       image.buffer = (uint32_t*) malloc(sizeof(uint32_t) * image.w * image.h)
       memset(image.buffer, WHITE, sizeof(uint32_t) * image.w * image.h)
@@ -37,7 +38,7 @@ namespace ui:
             padding_x = leftover_x
           break
 
-      fb->draw_text(self.text, self.x + padding_x, self.y, image)
+      fb->draw_text(self.text, self.x + padding_x, self.y, image, FS)
 
       free(image.buffer)
 
@@ -56,14 +57,16 @@ namespace ui:
         int max_h = 0
         for auto w: tokens:
           w += " "
-          image = stbtext::get_text_size(w.c_str())
+          image = stbtext::get_text_size(w.c_str(), FS)
           image.buffer = (uint32_t*) malloc(sizeof(uint32_t) * image.w * image.h)
           max_h = max(image.h, max_h)
           memset(image.buffer, WHITE, sizeof(uint32_t) * image.w * image.h)
           if cur_x + image.w + 10 >= self.w:
             cur_x = 0
             cur_y += max_h
-          self.fb->draw_text(w, self.x + cur_x, self.y + cur_y, image)
+          self.fb->draw_text(w, self.x + cur_x, self.y + cur_y, image, FS)
           free(image.buffer)
           cur_x += image.w
         cur_y += max_h
+
+  int Text::FS = 24

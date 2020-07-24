@@ -24,15 +24,7 @@ class App:
   // do we accept finger touch events
 
   App():
-    #ifdef REMARKABLE
-    fb = make_shared<framebuffer::RemarkableFB>()
-    #elif DEV
-    fb = make_shared<framebuffer::FileFB>()
-    #else
-    fb = make_shared<framebuffer::HardwareFB>()
-    #endif
-
-
+    fb = framebuffer::get()
     ui::Widget::fb = fb.get()
     w, h = fb->get_display_size()
     input::MouseEvent::set_screen_size(w, h)
