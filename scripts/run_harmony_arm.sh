@@ -1,5 +1,5 @@
 function kill_remote_harmony() {
-  ssh root@${HOST} killall harmony 2> /dev/null
+  ssh root@${HOST} killall harmony.exe 2> /dev/null
 }
 
 function cleanup() {
@@ -11,6 +11,8 @@ function cleanup() {
 trap cleanup EXIT
 trap cleanup SIGINT
 
+ARCH=arm make harmony
+scp src/build/harmony.exe root@${HOST}:harmony/harmony.exe
 kill_remote_harmony
 echo "RUNNING HARMONY"
-ssh root@${HOST} ./harmony/harmony
+ssh root@${HOST} ./harmony/harmony.exe

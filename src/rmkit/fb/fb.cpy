@@ -468,9 +468,9 @@ namespace framebuffer:
         printf("Could not get screen vinfo for %s\n", "/dev/fb0")
         exit(0)
 
-      #ifdef GRAYSCALE_8BIT
+      #ifdef USE_GRAYSCALE_8BIT
       vinfo.bits_per_pixel = 8;
-      vinfo.grayscale = GRAYSCALE_8BIT;
+      vinfo.grayscale = 1;
       #else
       vinfo.bits_per_pixel = 16;
       vinfo.grayscale = 0;

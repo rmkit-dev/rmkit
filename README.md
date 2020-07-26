@@ -1,19 +1,7 @@
-# About
+# rMkit
 
-rmHarmony is a drawing app for the remarkable tablet
-
-![](https://i.imgur.com/KJlWdAAl.png)
-
-## Status
-
-Approaching first release. Stay tuned!
-
-### Implemented
-
-* Tilt + pressure sensitive brushes
-* Procedural brushes
-* Drawing in 3 colors: white, gray & black
-* Saving + loading pngs
+This repo contains applications for the remarkable tablet. See the README for
+in each application's directory to learn more.
 
 ## Installation
 
@@ -25,29 +13,26 @@ To exit harmony, press the power button to bring up the exit dialog.
 
 ### Install
 
-run `wget -O- https://raw.githubusercontent.com/raisjn/rmHarmony/master/scripts/install_harmony.sh -q | sh -` to install the harmony launcher until the next time the device is updated
+run `wget -O- https://raw.githubusercontent.com/raisjn/rmHarmony/master/scripts/install_harmony.sh -q | sh -` to install the remux app launcher until the next time the device is updated
 
 
-to launch harmony, hold the center button for 2+ seconds. To exit harmony,
-press the power button to bring up the exit dialog.
+to launch remux, hold the center button for 2+ seconds.
 
-### Manual Installation
+## Existing Apps
 
-* download or build the binaries for harmony (see docs/BUILDING.md)
-* copy `harmony` to /home/root/harmony/harmony on the remarkable
-* launch `/home/root/harmony/harmony` through SSH
+### [harmony](src/harmony)
 
-## Compilation
+A low latency drawing app that includes procedural brushes.
 
-see docs/BUILDING.md
+### [remux](src/remux)
 
-## License
+An app switcher for switching between apps on the remarkable
 
-MIT except where noted otherwise
+### [rmkit](src/rmkit)
 
-## acknowledgements
+A batteries included library for building remarkable apps
 
-* [fontawesome](https://fontawesome.com) for their icons
-* [harmony](https://github.com/mrdoob/harmony) for the idea of procedural brushes
-* [libremarkable](https://github.com/canselcik/libremarkable) for reverse engineering remarkable IO
-* [stb](https://github.com/nothings/stb) for image resizing and font rendering libraries
+## Have ideas or want to code your own apps?
+
+If you have ideas for new apps or features for the remarkable, please open an issue
+or get in touch. We're happy to help!

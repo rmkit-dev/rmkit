@@ -1,14 +1,13 @@
 #!/bin/bash
 
-ICONSH=okp/ui/icons.h
+ICONSH=src/harmony/app/icons.h
 
 echo "#ifndef ICONS_H" > ${ICONSH}
 echo "#define ICONS_H" >> ${ICONSH}
 echo "namespace icons {" >> ${ICONSH}
-echo "struct Icon { unsigned char* data = NULL; unsigned int len = 0; const char* name = NULL;};" >> ${ICONSH}
 
-for ICON in $(ls vendor/icons/fa/*.png); do
-  xxd -i ${ICON} >> ${ICONSH}
+for ICON in $(ls src/vendor/icons/fa/*.png); do
+  xxd -i ${ICON} | sed 's/src_//'>> ${ICONSH}
 done
 
 echo "};" >> ${ICONSH}

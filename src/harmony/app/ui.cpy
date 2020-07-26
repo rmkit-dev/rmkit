@@ -1,12 +1,6 @@
 #include <ctime>
-#include "../ui/button.h"
-#include "../ui/scene.h"
-#include "../ui/ui.h"
-#include "../ui/dropdown.h"
-#include "../ui/dialog.h"
 #include "brush.h"
 #include "canvas.h"
-#include "proc.h"
 #include "dialogs.h"
 #include "state.h"
 
@@ -185,7 +179,6 @@ namespace app_ui:
       if option == LOAD:
         if self.ld == NULL:
           self.ld = new LoadDialog(0, 0, DIALOG_WIDTH, LOAD_DIALOG_HEIGHT, self.canvas)
-          self.ld->opt_h = 187
         self.ld->populate()
         self.ld->setup_for_render()
         self.ld->show()

@@ -7,5 +7,5 @@ RUN apt-get install -y automake m4 libtool zip
 
 WORKDIR /rmHarmony
 COPY . /rmHarmony/
-RUN pip3 install okp
-RUN make clean
+RUN pip3 install -r requirements.txt
+RUN rm src/build -fr

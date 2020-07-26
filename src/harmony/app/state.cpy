@@ -2,7 +2,6 @@
 // if planned right, we can serialize it down the line
 
 #include "brush.h"
-#include "../util/signals.h"
 
 namespace app_ui:
   using PLS::Observable

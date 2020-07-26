@@ -1,13 +1,11 @@
 #include <csignal>
 
-#include "fb/fb.h"
-#include "input/input.h"
-#include "ui/text.h"
+#include "../build/rmkit.h"
+#include "../shared/proc.h"
+
 #include "app/ui.h"
-#include "app/proc.h"
 #include "app/canvas.h"
 #include "app/state.h"
-#include "fb/stb_text.h"
 
 using namespace std
 using app_ui::STATE

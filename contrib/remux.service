@@ -1,8 +1,8 @@
 [Unit]
-Description=Harmony Launcher
+Description=ReMux Launcher
 
 [Service]
-ExecStart=/home/root/harmony/launcher
+ExecStart=/home/root/harmony/remux.exe
 Restart=on-failure
 
 [Install]

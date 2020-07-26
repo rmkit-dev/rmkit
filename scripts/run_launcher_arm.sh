@@ -1,9 +1,9 @@
-function kill_remote_launcher() {
-  ssh root@${HOST} killall launcher 2> /dev/null
+function kill_remote_remux() {
+  ssh root@${HOST} killall remux.exe 2> /dev/null
 }
 
 function cleanup() {
-  kill_remote_launcher
+  kill_remote_remux
   echo "FINISHED"
   exit 0
 }
@@ -11,6 +11,8 @@ function cleanup() {
 trap cleanup EXIT 
 trap cleanup SIGINT 
 
-kill_remote_launcher
+ARCH=arm make remux
+scp src/build/remux.exe root@${HOST}:harmony/remux.exe
+kill_remote_remux
 echo "RUNNING LAUNCHER"
-ssh root@${HOST} ./harmony/launcher
+ssh root@${HOST} ./harmony/remux.exe

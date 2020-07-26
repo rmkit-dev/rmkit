@@ -1,5 +1,5 @@
-#include "../fb/fb.h"
-#include "../defines.h"
+#include "icons.h"
+
 namespace app_ui:
   typedef int BrushSize
 

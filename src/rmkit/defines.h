@@ -59,7 +59,7 @@ struct image_data {
 // {{{ VARIABLE SIZE DEFINES
 #ifdef REMARKABLE
 // remarkable uses rgb565_le but is grayscale
-  #ifdef GRAYSCALE_8BIT
+  #ifdef USE_GRAYSCALE_8BIT
     #define remarkable_color uint8_t
   #else
     #define remarkable_color uint16_t

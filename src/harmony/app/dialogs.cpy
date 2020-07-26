@@ -1,8 +1,5 @@
-#include "../ui/dialog.h"
-#include "../ui/pager.h"
 #include <dirent.h>
 #include <algorithm>
-#include "../defines.h"
 
 string ABOUT_TEXT = "\
 rmHarmony is a sketching app based on libremarkable and mr. doob's harmony. \
@@ -39,8 +36,11 @@ namespace app_ui:
       Canvas *canvas
 
       LoadDialog(int x, y, w, h, Canvas *c): ui::Pager<LoadDialog>(x, y, w, h, self):
-        self.canvas = c
         self.set_title("Select a png file...")
+
+        self.canvas = c
+        self.opt_h = 187
+        self.page_size = self.h / self.opt_h - 1
 
       void populate():
         DIR *dir

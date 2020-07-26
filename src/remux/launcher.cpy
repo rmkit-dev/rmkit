@@ -4,14 +4,15 @@
 #include <thread>
 #include <chrono>
 
-#include "app/proc.h"
-#include "ui/main_loop.h"
-#include "ui/pager.h"
-#include "app/ui.h"
+#include "../shared/proc.h"
+#include "../build/rmkit.h"
 
 #define TIMEOUT 2
 
 #include "config.launcher.h"
+
+DIALOG_WIDTH=600
+DIALOG_HEIGHT=800
 
 class AppBackground: public ui::Widget:
   public:

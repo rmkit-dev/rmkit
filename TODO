@@ -1,10 +1,8 @@
-* use combine headers successfully
-* rmux
-
 * weird blank spot on OptionSection due to z-index ordering
 * next and prev button functions
-* charcoal with gray
+* charcoal with gray (hard to get low latency updates, perhaps spray gray then black and white?)
 * effect strength toggle in brush config dropdown
+* separate brush config into two buttons
 * script for testing (without installation)
 * separate color areas that can be clicked?
 
@@ -13,6 +11,7 @@ NEXT:
 * Box / Frame class for adding outlines
 * Expander class: for packing then centering group? or should pack_center just take an array
 * add battery percentage
+* automatic reflow
 * finish brushes + add more:
   * ribbon, circles, rectangles
 * github releases
@@ -139,3 +138,5 @@ x performance analysis
 x fix previews to be faster (or not lock the UI) (threading?)
 x filter pngs
 x replace freetype2
+x use combine headers successfully
+x rmux
