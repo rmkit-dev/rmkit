@@ -1,6 +1,7 @@
 * use combine headers successfully
 * rmux
 
+* weird blank spot on OptionSection due to z-index ordering
 * next and prev button functions
 * charcoal with gray
 * effect strength toggle in brush config dropdown

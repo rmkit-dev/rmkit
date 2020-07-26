@@ -21,6 +21,9 @@ harmony_fb: compile_x86
 harmony_dev: compile_dev
 harmony_arm: compile_arm
 
+rmkit.h:
+	cd okp && okp -for -sh rmkit.cpy -d ../cpp -o rmkit.h
+
 compile_x86:
 compile_x86:
 	cd okp/ && okp ${OKP_FLAGS} -- ${CPP_FLAGS}
