@@ -38,13 +38,13 @@ namespace ui:
 
     static void handle_events():
       for auto ev : motion_events:
-        if ev.stop_propagation:
+        if ev._stop_propagation:
           continue
         handle_motion_event(ev)
 
 
       for auto ev : key_events:
-        if ev.stop_propagation:
+        if ev._stop_propagation:
           continue
         handle_key_event(ev)
 
@@ -121,7 +121,7 @@ namespace ui:
         if widget->ignore_event(ev) || !widget->visible:
           continue
 
-        if ev.stop_propagation:
+        if ev._stop_propagation:
           break
 
         is_hit = widget->is_hit(ev.x, ev.y)

@@ -30,7 +30,9 @@ namespace input:
   class SynEvent: public Event:
     public:
     /// used for canceling event propagation in main_loop
-    bool stop_propagation = false
+    bool _stop_propagation = false
+    void stop_propagation():
+      _stop_propagation = true
     shared_ptr<Event> original
 
     def set_original(Event *ev):

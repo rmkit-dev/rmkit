@@ -28,10 +28,10 @@ namespace ui:
       return
 
     void on_mouse_move(input::SynMouseEvent &ev):
-      ev.stop_propagation = true
+      ev.stop_propagation()
 
     void on_mouse_down(input::SynMouseEvent &ev):
-      ev.stop_propagation = true
+      ev.stop_propagation()
       self.dirty = 1
 
     void on_mouse_up(input::SynMouseEvent &ev):

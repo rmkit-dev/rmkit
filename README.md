@@ -32,7 +32,11 @@ An app switcher for switching between apps on the remarkable
 
 A batteries included library for building remarkable apps
 
+### [demo](src/demo)
+
+A small example app to demonstrate how to build apps with rmKit
+
 ## Have ideas or want to code your own apps?
 
 If you have ideas for new apps or features for the remarkable, please open an issue
-or get in touch. We're happy to help!
+or get in touch

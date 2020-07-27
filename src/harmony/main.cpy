@@ -110,7 +110,7 @@ class App:
         default:
           ui::MainLoop::handle_key_event(key_ev)
           return
-      key_ev.stop_propagation = true
+      key_ev.stop_propagation()
 
 
   def handle_motion_event(input::SynMouseEvent &syn_ev):
@@ -124,7 +124,7 @@ class App:
     #endif
 
     if STATE.reject_touch && input::is_touch_event(syn_ev):
-      syn_ev.stop_propagation = 1
+      syn_ev.stop_propagation()
       return
 
     ui::MainLoop::handle_motion_event(syn_ev)
