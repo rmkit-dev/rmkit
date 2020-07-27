@@ -2,7 +2,7 @@ BUILD_DIR=src/build
 
 include src/common.make
 
-default: harmony.exe remux.exe
+default: harmony.exe remux.exe demo.exe
 
 dev: export ARCH=dev
 dev: default
