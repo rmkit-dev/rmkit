@@ -1,49 +1,26 @@
 #include "../defines.h"
 
 #include "../input/input.h"
+#include "../fb/fb.h"
 #include "scene.h"
 #include "base.h"
-#include <unistd.h>
-#include <functional>
+#include "task_queue.h"
 
-#include <thread>
-#include <mutex>
+#include <unistd.h>
 
 namespace ui:
-  class TaskQueue:
-    public:
-    static deque<std::function<void()>> tasks
-    static std::mutex task_m
-
-    static void wakeup():
-      _ = write(input::ipc_fd[1], "WAKEUP", sizeof("WAKEUP"));
-
-    static void add_task(std::function<void()> t):
-      TaskQueue::tasks.push_back(t)
-
-    static void run_task():
-      if TaskQueue::tasks.size() == 0:
-        return
-
-      t = TaskQueue::tasks.front()
-      TaskQueue::tasks.pop_front()
-      try:
-        thread *th = new thread([=]() {
-          lock_guard<mutex> guard(task_m)
-          t()
-          TaskQueue::wakeup()
-        })
-        th->detach()
-      catch (const std::exception& e):
-        print "NEW THREAD EXC", e.what()
-        TaskQueue::wakeup()
-
-
   class MainLoop:
     public:
+    // Display related
+    static shared_ptr<framebuffer::FB> fb
     static Scene scene
     static Scene overlay
     static bool overlay_is_visible
+
+    // Input related
+    static input::Input in
+    static vector<input::SynMouseEvent> motion_events
+    static vector<input::SynKeyEvent> key_events
 
     static bool is_visible(Widget *w):
       if overlay_is_visible:
@@ -56,12 +33,20 @@ namespace ui:
 
       return false
 
+    static void redraw():
+      fb->redraw_screen()
 
     static void main():
       TaskQueue::run_task()
       scene->redraw()
       if overlay_is_visible:
         overlay->redraw()
+
+    static void read_input():
+      in.listen_all()
+      motion_events = in.all_motion_events
+      key_events = in.all_key_events
+
 
     static void refresh():
       scene->refresh()
@@ -175,6 +160,10 @@ namespace ui:
   Scene MainLoop::scene = make_scene()
   Scene MainLoop::overlay = make_scene()
   bool MainLoop::overlay_is_visible = false
+  input::Input MainLoop::in = {}
+  vector<input::SynMouseEvent> MainLoop::motion_events = {}
+  vector<input::SynKeyEvent> MainLoop::key_events = {}
+  shared_ptr<framebuffer::FB> MainLoop::fb = framebuffer::get()
 
   std::mutex TaskQueue::task_m = {}
   deque<std::function<void()>> TaskQueue::tasks = {}

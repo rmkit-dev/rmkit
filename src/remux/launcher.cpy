@@ -107,7 +107,6 @@ class App:
                     app_bg->visible = true
                     app_dialog->show()
                   });
-                  ui::TaskQueue::wakeup()
           });
         else:
           event_press_id = 0
@@ -136,16 +135,19 @@ class App:
     app_dialog->setup_for_render()
 
     while true:
-      in.listen_all()
-      for auto ev : in.all_motion_events:
+      ui::MainLoop::main()
+
+      if app_bg->visible:
+        ui::MainLoop::redraw()
+
+      ui::MainLoop::read_input()
+
+      for auto ev : ui::MainLoop::motion_events:
         ui::MainLoop::handle_motion_event(ev)
 
-      for auto ev : in.all_key_events:
+      for auto ev : ui::MainLoop::key_events:
         self.handle_key_event(ev)
 
-      ui::MainLoop::main()
-      if app_bg->visible:
-        fb->redraw_screen()
 
 App app
 def main():

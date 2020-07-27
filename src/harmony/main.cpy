@@ -23,10 +23,10 @@ class App:
 
   App():
     fb = framebuffer::get()
-    w, h = fb->get_display_size()
-
     fb->clear_screen()
     fb->redraw_screen()
+
+    w, h = fb->get_display_size()
 
     notebook = ui::make_scene()
     ui::MainLoop::set_scene(notebook)
@@ -128,20 +128,17 @@ class App:
     ui::MainLoop::handle_motion_event(syn_ev)
 
   def run():
-    ui::MainLoop::main()
-    self.fb->redraw_screen()
-
-    printf("HANDLING RUN\n")
     while true:
-      in.listen_all()
-      for auto ev : in.all_motion_events:
+      ui::MainLoop::main()
+      ui::MainLoop::redraw()
+      ui::MainLoop::read_input()
+
+      for auto ev : ui::MainLoop::motion_events:
         self.handle_motion_event(ev)
 
-      for auto ev : in.all_key_events:
+      for auto ev : ui::MainLoop::key_events:
         self.handle_key_event(ev)
 
-      ui::MainLoop::main()
-      self.fb->redraw_screen()
 
 App app
 
