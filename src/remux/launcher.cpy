@@ -70,9 +70,7 @@ class App:
   public:
   App():
     fb = framebuffer::get()
-    ui::Widget::fb = fb.get()
     w, h = fb->get_display_size()
-    input::MouseEvent::set_screen_size(w, h)
 
     app_dialog = new AppDialog<App>(0, 0, DIALOG_WIDTH, DIALOG_HEIGHT, self)
     app_bg = new AppBackground(0, 0, w, h)

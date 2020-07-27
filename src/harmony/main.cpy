@@ -23,9 +23,7 @@ class App:
 
   App():
     fb = framebuffer::get()
-    ui::Widget::fb = fb.get()
     w, h = fb->get_display_size()
-    input::MouseEvent::set_screen_size(w, h)
 
     fb->clear_screen()
     fb->redraw_screen()

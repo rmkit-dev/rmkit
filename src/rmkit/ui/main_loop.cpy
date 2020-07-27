@@ -56,6 +56,7 @@ namespace ui:
 
       return false
 
+
     static void main():
       TaskQueue::run_task()
       scene->redraw()
@@ -169,7 +170,7 @@ namespace ui:
         MainLoop::hide_overlay()
 
       return hit_widget
-
+  ;
 
   Scene MainLoop::scene = make_scene()
   Scene MainLoop::overlay = make_scene()

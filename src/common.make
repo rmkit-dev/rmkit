@@ -44,9 +44,6 @@ stop:
 run: compile copy
 	HOST=${HOST} bash build/${EXE}
 
-harmony_dir:
-	ssh root@${HOST} mkdir harmony 2>/dev/null || true
-
 test: export ARCH=arm
 test: copy
 	HOST=${HOST} bash scripts/run_app_arm.sh ${EXE} || true

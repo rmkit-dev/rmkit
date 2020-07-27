@@ -23,6 +23,9 @@ harmony.exe:
 remux.exe:
 	cd src/remux && make
 
+demo.exe:
+	cd src/demo && make
+
 docker:
 	docker build --tag rmharmony:latest .
 	bash scripts/docker_release.sh
