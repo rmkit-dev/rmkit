@@ -88,7 +88,6 @@ namespace input:
     vector<SynKeyEvent> all_key_events
 
     Input():
-      printf("Initializing input\n")
       FD_ZERO(&rdfs)
 
       // dev only

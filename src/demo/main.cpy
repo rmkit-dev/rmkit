@@ -7,7 +7,6 @@ using namespace std
 class App:
   public:
   shared_ptr<framebuffer::FB> fb
-  input::Input in
 
   ui::Scene demo_scene
 
@@ -24,10 +23,9 @@ class App:
 
   def handle_key_event(input::SynKeyEvent &key_ev):
     print "KEY PRESSED", key_ev.key
-    ui::MainLoop::handle_key_event(key_ev)
 
   def handle_motion_event(input::SynMouseEvent &syn_ev):
-    ui::MainLoop::handle_motion_event(syn_ev)
+    pass
 
   def run():
     while true:

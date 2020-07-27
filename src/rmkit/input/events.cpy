@@ -27,20 +27,24 @@ namespace input:
     virtual ~Event() = default
   int Event::next_id = 0
 
-  class SynMouseEvent: public Event:
+  class SynEvent: public Event:
+    public:
+    /// used for canceling event propagation in main_loop
+    bool stop_propagation = false
+    shared_ptr<Event> original
+
+    def set_original(Event *ev):
+      self.original = shared_ptr<Event>(ev)
+
+  class SynMouseEvent: public SynEvent:
     public:
     int x = -1, y = -1
     int left = 0, right = 0, middle = 0
     int eraser = 0
     int pressure = -1, tilt_x = 0xFFFF, tilt_y = 0xFFFF
-    bool stop_propagation = false
-    shared_ptr<Event> original
-    SynMouseEvent(){}
 
-    def set_original(Event *ev):
-      self.original = shared_ptr<Event>(ev)
 
-  class SynKeyEvent: public Event:
+  class SynKeyEvent: public SynEvent:
     public:
     int key, is_pressed
 

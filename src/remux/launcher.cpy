@@ -60,7 +60,6 @@ class AppDialog: public ui::Pager<AppDialog<T>>:
       row->pack_start(d)
 
 class App:
-  input::Input in
   int lastpress
   int is_pressed = false
   AppDialog<App> *app_dialog
@@ -141,9 +140,6 @@ class App:
         ui::MainLoop::redraw()
 
       ui::MainLoop::read_input()
-
-      for auto ev : ui::MainLoop::motion_events:
-        ui::MainLoop::handle_motion_event(ev)
 
       for auto ev : ui::MainLoop::key_events:
         self.handle_key_event(ev)

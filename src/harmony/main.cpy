@@ -13,7 +13,6 @@ using app_ui::STATE
 class App:
   public:
   shared_ptr<framebuffer::FB> fb
-  input::Input in
 
   ui::Scene notebook
 
@@ -110,6 +109,8 @@ class App:
           break
         default:
           ui::MainLoop::handle_key_event(key_ev)
+          return
+      key_ev.stop_propagation = true
 
 
   def handle_motion_event(input::SynMouseEvent &syn_ev):
@@ -123,6 +124,7 @@ class App:
     #endif
 
     if STATE.reject_touch && input::is_touch_event(syn_ev):
+      syn_ev.stop_propagation = 1
       return
 
     ui::MainLoop::handle_motion_event(syn_ev)

@@ -4,7 +4,7 @@
 #include "ui/ui.h"
 #include "init.h"
 
-#ifdef NEVERDEF
+#ifdef RMKIT_BUILD
 def main():
   pass
 #endif

@@ -36,7 +36,21 @@ namespace ui:
     static void redraw():
       fb->redraw_screen()
 
+    static void handle_events():
+      for auto ev : motion_events:
+        if ev.stop_propagation:
+          continue
+        handle_motion_event(ev)
+
+
+      for auto ev : key_events:
+        if ev.stop_propagation:
+          continue
+        handle_key_event(ev)
+
     static void main():
+      handle_events()
+
       TaskQueue::run_task()
       scene->redraw()
       if overlay_is_visible:
