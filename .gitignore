@@ -1,4 +1,4 @@
-cpp/*
+src/cpp/*
 fb.png
 fb.pnm
 fb.raw
@@ -7,3 +7,4 @@ output
 tags
 tmp
 *.o
+src/build/
