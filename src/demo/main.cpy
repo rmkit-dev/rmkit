@@ -21,6 +21,16 @@ class App:
     demo_scene = ui::make_scene()
     ui::MainLoop::set_scene(demo_scene)
 
+    fb = framebuffer::get()
+    fb->clear_screen()
+    fb->redraw_screen()
+    w, h = fb->get_display_size()
+
+    h_layout = ui::HorizontalLayout(0, 0, w, h, demo_scene)
+    h_layout.pack_center(new ui::Text(0, 0, w, 50, "Hello World"))
+
+    ui::MainLoop::refresh()
+
   def handle_key_event(input::SynKeyEvent &key_ev):
     print "KEY PRESSED", key_ev.key
 
@@ -30,6 +40,7 @@ class App:
   def run():
     while true:
       ui::MainLoop::main()
+      ui::MainLoop::refresh()
       ui::MainLoop::redraw()
       ui::MainLoop::read_input()
 
