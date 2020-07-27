@@ -4,6 +4,11 @@ default: build
 
 include src/common.make
 
+.DEFAULT:
+	make rmkit.h
+	cd src/${@} && make
+
+
 build: rmkit.h
 	$(foreach app, $(APPS), cd src/${app} && make; cd ${ROOT}; )
 
