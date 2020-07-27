@@ -1,4 +1,4 @@
-include ../common.make
+include ../actions.make
 
 EXE=remux.exe
 FILES=launcher.cpy

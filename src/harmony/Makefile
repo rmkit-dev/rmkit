@@ -2,7 +2,7 @@
 EXE=harmony.exe
 FILES=main.cpy
 
-include ../common.make
+include ../actions.make
 
 # }}}
 

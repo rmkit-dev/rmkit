@@ -1,4 +1,4 @@
-include ../common.make
+include ../actions.make
 
 EXE=rmkit.h
 FILES=rmkit.cpy ../vendor/lodepng/lodepng.cpp
