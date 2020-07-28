@@ -51,9 +51,9 @@ namespace ui:
 
     void add_options(vector<pair<string, icons::Icon>> pairs):
       for auto pair: pairs:
-        opt = pair.first
-        icon = pair.second
-        textopt = make_shared<T>(opt, icon)
+        opt := pair.first
+        icon := pair.second
+        textopt := make_shared<T>(opt, icon)
         self.options.push_back(textopt)
 
   template<class O>
@@ -88,23 +88,23 @@ namespace ui:
     void show_options():
       if self.scene == NULL:
         width, height = self.fb->get_display_size()
-        ow = self.option_width
-        oh = self.option_height
+        ow := self.option_width
+        oh := self.option_height
         self.options.clear()
 
         self.scene = ui::make_scene()
-        layout = VerticalLayout(x + self.option_x, self.option_y, ow, height, self.scene)
+        layout := VerticalLayout(x + self.option_x, self.option_y, ow, height, self.scene)
 
-        i = 0
+        i := 0
         for auto section: self.sections:
           OptionSection *os
           if section->name != "":
             os = new OptionSection(0, 0, ow, oh, section->name)
 
-          opts = section->options
+          opts := section->options
 
           for auto option: opts:
-            option_btn = new OptionButton<DropdownButton>(0, 0, ow, oh, self, option->name, i)
+            option_btn := new OptionButton<DropdownButton>(0, 0, ow, oh, self, option->name, i)
             if option->icon.data != NULL:
               option_btn->icon = option->icon
             layout.pack_end(option_btn)
@@ -121,7 +121,7 @@ namespace ui:
       self.selected = idx
       ui::MainLoop::hide_overlay()
       if idx < self.options.size():
-        option = self.options[idx]
+        option := self.options[idx]
         self.icon = option.icon
         self.text = option.name
 
@@ -137,7 +137,7 @@ namespace ui:
       self.text = t
 
     shared_ptr<DropdownSection<TextOption>> add_section(string t):
-        ds = make_shared<DropdownSection<TextOption>>(t)
+        ds := make_shared<DropdownSection<TextOption>>(t)
         self.sections.push_back(ds)
         return ds
 

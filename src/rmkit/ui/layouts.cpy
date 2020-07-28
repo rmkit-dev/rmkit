@@ -14,7 +14,7 @@ namespace ui:
       pass
 
     void add(Widget *w):
-      sp = shared_ptr<Widget>(w)
+      sp := shared_ptr<Widget>(w)
       children.push_back(sp)
       scene->add(sp)
 
@@ -67,8 +67,8 @@ namespace ui:
       self.add(w)
 
     void pack_center(Widget *w):
-      leftover = self.h - w->h
-      padding_y = 0
+      leftover := self.h - w->h
+      padding_y := 0
       if leftover > 0:
         padding_y = leftover / 2
       w->y = self.y + padding_y
@@ -95,8 +95,8 @@ namespace ui:
       self.add(w)
 
     void pack_center(Widget *w):
-      leftover = self.w - w->w
-      padding_x = 0
+      leftover := self.w - w->w
+      padding_x := 0
       if leftover > 0:
         padding_x = leftover / 2
       w->x = self.x + padding_x

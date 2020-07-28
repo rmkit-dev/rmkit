@@ -11,8 +11,8 @@
 
 #include "config.launcher.h"
 
-DIALOG_WIDTH=600
-DIALOG_HEIGHT=800
+DIALOG_WIDTH  := 600
+DIALOG_HEIGHT := 800
 
 class AppBackground: public ui::Widget:
   public:
@@ -24,7 +24,7 @@ class AppBackground: public ui::Widget:
     buf = (char*) malloc(self.byte_size)
 
   def snapshot():
-    fb = framebuffer::get()
+    fb := framebuffer::get()
     memcpy(buf, fb->fbmem, self.byte_size)
 
   void redraw():
@@ -54,7 +54,7 @@ class AppDialog: public ui::Pager<AppDialog<T>>:
       app->selected(name)
 
     void render_row(ui::HorizontalLayout *row, string option):
-      d = new ui::DialogButton<ui::Dialog>(20, 0, self.w-200, self.opt_h, self, option)
+      d := new ui::DialogButton<ui::Dialog>(20, 0, self.w-200, self.opt_h, self, option)
       d->set_justification(ui::Text::JUSTIFY::LEFT)
       self.layout->pack_start(row)
       row->pack_start(d)
@@ -68,13 +68,13 @@ class App:
 
   public:
   App():
-    fb = framebuffer::get()
+    fb := framebuffer::get()
     w, h = fb->get_display_size()
 
     app_dialog = new AppDialog<App>(0, 0, DIALOG_WIDTH, DIALOG_HEIGHT, self)
     app_bg = new AppBackground(0, 0, w, h)
 
-    notebook = ui::make_scene()
+    notebook := ui::make_scene()
     notebook->add(app_bg)
     ui::MainLoop::set_scene(notebook)
 
@@ -98,7 +98,7 @@ class App:
           thread *th = new thread([=]() {
               this_thread::sleep_for(chrono::seconds(TIMEOUT));
               if is_pressed && event_press_id == ev.id
-                now = time(NULL)
+                now := time(NULL)
                 if now - lastpress > 1:
                   ui::TaskQueue::add_task([=] {
                     print "SHOWING DIALOG"
@@ -111,7 +111,8 @@ class App:
           event_press_id = 0
 
         is_pressed = ev.is_pressed
-    last_ev = &ev
+
+    last_ev := &ev
 
   def selected(string name):
     print "LAUNCHING APP", name

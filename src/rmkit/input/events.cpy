@@ -143,8 +143,8 @@ namespace input:
       if self.x >= self.width - 1:
         self.x = (int) self.width - 5
 
-      o_x = self.x
-      o_y = self.height - self.y
+      o_x := self.x
+      o_y := self.height - self.y
 
       if o_y >= self.height - 1:
         o_y = self.height - 5

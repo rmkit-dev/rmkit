@@ -94,7 +94,7 @@ namespace ui:
       MainLoop::refresh()
 
     static void handle_key_event(input::SynKeyEvent &ev):
-      display_scene = scene
+      display_scene := scene
       if overlay_is_visible:
         display_scene = overlay
 
@@ -104,7 +104,7 @@ namespace ui:
     // iterate over all widgets and dispatch mouse events
     // TODO: refactor this into cleaner code
     static bool handle_motion_event(input::SynMouseEvent &ev):
-      display_scene = scene
+      display_scene := scene
       if overlay_is_visible:
         display_scene = overlay
 
@@ -113,11 +113,11 @@ namespace ui:
       if ev.x == -1 || ev.y == -1:
         return false
 
-      mouse_down = ev.left || ev.right || ev.middle
+      mouse_down := ev.left || ev.right || ev.middle
 
-      auto widgets = display_scene->widgets;
+      widgets := display_scene->widgets;
       for auto it = widgets.rbegin(); it != widgets.rend(); it++:
-        widget = *it
+        widget := *it
         if widget->ignore_event(ev) || !widget->visible:
           continue
 
@@ -126,10 +126,10 @@ namespace ui:
 
         is_hit = widget->is_hit(ev.x, ev.y)
 
-        prev_mouse_down = widget->mouse_down
-        prev_mouse_inside = widget->mouse_inside
-        prev_mouse_x = widget->mouse_x
-        prev_mouse_y = widget->mouse_y
+        prev_mouse_down := widget->mouse_down
+        prev_mouse_inside := widget->mouse_inside
+        prev_mouse_x := widget->mouse_x
+        prev_mouse_y := widget->mouse_y
 
         widget->mouse_down = mouse_down && is_hit
         widget->mouse_inside = is_hit

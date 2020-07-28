@@ -30,13 +30,13 @@ class App:
     notebook = ui::make_scene()
     ui::MainLoop::set_scene(notebook)
 
-    canvas = new app_ui::Canvas(0, 0, fb->width, fb->height)
+    canvas := new app_ui::Canvas(0, 0, fb->width, fb->height)
     notebook->add(canvas)
 
-    toolbar_area = new ui::VerticalLayout(0, 0, w, h, notebook)
-    minibar_area = new ui::VerticalLayout(0, 0, w, h, notebook)
-    toolbar = new ui::HorizontalLayout(0, 0, w, TOOLBAR_HEIGHT, notebook)
-    minibar = new ui::HorizontalLayout(0, 0, w, TOOLBAR_HEIGHT, notebook)
+    toolbar_area := new ui::VerticalLayout(0, 0, w, h, notebook)
+    minibar_area := new ui::VerticalLayout(0, 0, w, h, notebook)
+    toolbar := new ui::HorizontalLayout(0, 0, w, TOOLBAR_HEIGHT, notebook)
+    minibar := new ui::HorizontalLayout(0, 0, w, TOOLBAR_HEIGHT, notebook)
 
     // clockbar is at the top of the screen
     // clockbar = new ui::HorizontalLayout(0, 0, w, TOOLBAR_HEIGHT, notebook)
@@ -54,12 +54,12 @@ class App:
 //    minibar->pack_start(new app_ui::HideButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, toolbar, minibar))
 //    toolbar->pack_start(new app_ui::HideButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, toolbar, minibar))
 
-    tool_button = new app_ui::ToolButton(0, 0, ICON_WIDTH*2, TOOLBAR_HEIGHT)
+    tool_button := new app_ui::ToolButton(0, 0, ICON_WIDTH*2, TOOLBAR_HEIGHT)
     tool_button->set_option_size(250, TOOLBAR_HEIGHT)
     tool_button->set_option_offset(0, -TOOLBAR_HEIGHT)
     toolbar->pack_start(tool_button)
 
-    brush_config_button = new app_ui::BrushConfigButton(0, 0, ICON_WIDTH*2, TOOLBAR_HEIGHT)
+    brush_config_button := new app_ui::BrushConfigButton(0, 0, ICON_WIDTH*2, TOOLBAR_HEIGHT)
     brush_config_button->set_option_size(200, TOOLBAR_HEIGHT)
     brush_config_button->set_option_offset(0, -TOOLBAR_HEIGHT)
     toolbar->pack_start(brush_config_button)

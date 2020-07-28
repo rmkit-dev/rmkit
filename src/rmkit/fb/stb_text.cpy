@@ -7,7 +7,7 @@
 
 
 namespace stbtext:
-  FONT_SIZE=24
+  FONT_SIZE := 24
   unsigned char font_buffer[24<<20] = {0};
   stbtt_fontinfo font;
   bool did_setup = false
@@ -28,7 +28,7 @@ namespace stbtext:
       #endif
 
      // TODO: fix the max size read to prevent overflows (or just abort on really large files)
-      _ = fread(font_buffer, 1, 24<<20, fopen(filename, "rb"));
+      _ := fread(font_buffer, 1, 24<<20, fopen(filename, "rb"));
       stbtt_InitFont(&font, font_buffer, 0);
       did_setup = true
 
@@ -56,7 +56,7 @@ namespace stbtext:
     stbtt_GetFontVMetrics(&font, &ascent,0,0);
     baseline = (int) (ascent*scale);
 
-    max_y = 0
+    max_y := 0
     while text[ch]:
       int advance,lsb,x0,y0,x1,y1;
       float x_shift = xpos - (float) floor(xpos);
@@ -92,7 +92,7 @@ namespace stbtext:
        stbtt_GetCodepointHMetrics(&font, text[ch], &advance, &lsb);
        stbtt_GetCodepointBitmapBox(&font, text[ch], scale,scale,&x0,&y0,&x1,&y1);
 
-       offset = (baseline+y0) * image.w + (int)xpos + x0
+       offset := (baseline+y0) * image.w + (int)xpos + x0
        stbtt_MakeCodepointBitmapSubpixel(&font, &text_buffer[baseline + y0][(int) xpos + x0], x1-x0,y1-y0, image.w, scale,scale,x_shift,0, text[ch]);
        // note that this stomps the old data, so where character boxes overlap (e.g. 'lj') it's wrong
        // because this API is really for baking character bitmaps into textures. if you want to render

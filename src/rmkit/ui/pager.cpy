@@ -23,7 +23,7 @@ namespace ui:
         button_bar->pack_end(new DialogButton<Dialog>(0, 0, 100, 50, self, NEXT), 10)
 
     virtual void render_row(ui::HorizontalLayout *row, string option):
-      d = new ui::DialogButton<ui::Dialog>(20,0, self.w - 80, self.opt_h, self, option)
+      d := new ui::DialogButton<ui::Dialog>(20,0, self.w - 80, self.opt_h, self, option)
       d->set_justification(ui::Text::JUSTIFY::LEFT)
       layout->pack_start(d)
 
@@ -41,8 +41,8 @@ namespace ui:
          self.contentWidget->h,\
          self.scene)
 
-      start = self.curr_page*page_size
-      end = min(start+page_size, (int)self.options.size())
+      start := self.curr_page*page_size
+      end := min(start+page_size, (int)self.options.size())
       for i start end:
         ui::HorizontalLayout *row = new ui::HorizontalLayout(\
           0,\
@@ -50,7 +50,7 @@ namespace ui:
           self.contentWidget->w-200,\
           self.opt_h,\
           self.scene)
-        option = self.options[i]
+        option := self.options[i]
 
         self.render_row(row, option)
 

@@ -2,7 +2,7 @@ namespace proc:
   def stop_programs(vector<string> programs):
     for auto s : programs:
       #ifdef REMARKABLE
-      cmd = "systemctl stop " + s + " 2> /dev/null"
+      cmd := "systemctl stop " + s + " 2> /dev/null"
       if system(cmd.c_str()) == 0:
         print "STOPPED", s
       cmd = "killall " + s + " 2> /dev/null"
@@ -37,7 +37,7 @@ namespace proc:
       return
 
     print "LAUNCHING", name
-    proc = name
+    proc := name
     if background:
       proc += "&"
 

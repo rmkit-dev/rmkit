@@ -52,8 +52,8 @@ namespace ui:
       self.textWidget->justify = j
 
     void before_redraw():
-      has_icon = false
-      has_text = false
+      has_icon := false
+      has_text := false
       if self.icon.data != NULL:
         self.iconWidget = make_shared<Pixmap>(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, icon)
         has_icon = true
@@ -70,7 +70,7 @@ namespace ui:
         self.textWidget->y = self.y + y_padding
       else if has_icon:
         rw, rh = self.iconWidget->get_render_size()
-        padding = self.w - rw
+        padding := self.w - rw
         if padding > 0:
           padding /= 2
         else:
@@ -91,10 +91,10 @@ namespace ui:
 
       self.textWidget->redraw()
 
-      color = WHITE
+      color := WHITE
       if self.mouse_inside:
         color = BLACK
-      fill = false
+      fill := false
       if self.mouse_down:
         fill = true
       fb->draw_rect(self.x, self.y, self.w, self.h, color, fill)

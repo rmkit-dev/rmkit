@@ -49,7 +49,7 @@ namespace app_ui:
         vector<string> filenames
         if ((dir = opendir (SAVE_DIR)) != NULL):
           while ((ent = readdir (dir)) != NULL):
-            str_d_name = string(ent->d_name)
+            str_d_name := string(ent->d_name)
             if str_d_name != "." and str_d_name != ".." and ends_with(str_d_name, "png"):
               filenames.push_back(str_d_name)
           closedir (dir)
@@ -64,7 +64,7 @@ namespace app_ui:
 
       void render_row(ui::HorizontalLayout *row, string option):
         ui::Thumbnail *tn = new ui::Thumbnail(0, 0, 140, self.opt_h, option)
-        d = new ui::DialogButton<ui::Dialog>(20, 0, self.w-200, self.opt_h, self, option)
+        d := new ui::DialogButton<ui::Dialog>(20, 0, self.w-200, self.opt_h, self, option)
         layout->pack_start(row)
         row->pack_start(tn)
         row->pack_start(d)

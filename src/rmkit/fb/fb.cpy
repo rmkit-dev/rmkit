@@ -60,7 +60,7 @@ namespace framebuffer:
       self.height = height
 
       printf("W: %i H: %i\n", width, height)
-      size = width*height*sizeof(remarkable_color)
+      size := width*height*sizeof(remarkable_color)
       self.byte_size = size
       reset_dirty(dirty_area)
 
@@ -89,7 +89,7 @@ namespace framebuffer:
         return 0
 
       dirty = 0
-      um = 0
+      um := 0
 
       if dirty_area.y1 == 0 || dirty_area.x1 == 0:
         return 0
@@ -105,7 +105,7 @@ namespace framebuffer:
         self.redraw_screen()
 
     tuple<int,int> get_size():
-      size_f = ifstream("/sys/class/graphics/fb0/virtual_size")
+      size_f := ifstream("/sys/class/graphics/fb0/virtual_size")
       string width_s, height_s
       char delim = ',';
       getline(size_f, width_s, delim)
@@ -181,7 +181,7 @@ namespace framebuffer:
     def draw_bitmap(image_data &image, int o_x, int o_y):
       remarkable_color* ptr = self.fbmem
       ptr += (o_x + o_y * self.width)
-      src = image.buffer
+      src := image.buffer
 
       update_dirty(dirty_area, o_x, o_y)
       update_dirty(dirty_area, o_x+image.w, o_y+image.h)
@@ -207,16 +207,16 @@ namespace framebuffer:
       fd = open("fb.pnm", O_CREAT|O_RDWR, 0755)
       lseek(fd, 0, 0)
       char c[100];
-      i = sprintf(c, "P6%d %d\n255\n", self.width, self.height)
-      wrote = write(fd, c, i-1)
+      i := sprintf(c, "P6%d %d\n255\n", self.width, self.height)
+      wrote := write(fd, c, i-1)
       if wrote == -1:
         printf("ERROR %i", errno)
-      buf = (char *) calloc(sizeof(char), self.width * self.height * 4)
+      buf := (char *) calloc(sizeof(char), self.width * self.height * 4)
       memset(buf, 0, sizeof(buf))
 
       for y 0 self.height:
         for x 0 self.width:
-          d = (char) self.fbmem[y*self.width + x]
+          d := (char) self.fbmem[y*self.width + x]
           buf[i++] = (d & 0xf800) >> 8
           buf[i++] = (d & 0x7e0) >> 3
           buf[i++] = (d & 0x1f) << 3
@@ -228,7 +228,7 @@ namespace framebuffer:
       close(fd)
       free(buf)
 
-      ret = system("pnmtopng fb.pnm > fb.png 2>/dev/null")
+      ret := system("pnmtopng fb.pnm > fb.png 2>/dev/null")
 
     string get_date():
       time_t rawtime;
@@ -252,10 +252,10 @@ namespace framebuffer:
       unsigned int neww, newh
 
       sprintf(full_path, "%s/%s", SAVE_DIR, filename.c_str())
-      load_ret = lodepng_load_file(&buffer, &outsize, full_path)
-      decode_ret = lodepng::decode(raw, neww, newh, buffer, outsize)
+      load_ret := lodepng_load_file(&buffer, &outsize, full_path)
+      decode_ret := lodepng::decode(raw, neww, newh, buffer, outsize)
 
-      image = image_data{(uint32_t*) raw.data(), (int) neww, (int) newh}
+      image := image_data{(uint32_t*) raw.data(), (int) neww, (int) newh}
       self->draw_bitmap(image, 0,0)
 
       free(buffer)
@@ -266,19 +266,19 @@ namespace framebuffer:
       char full_filename[100]
       char mkdir_cmd[100]
 
-      datestr = self.get_date()
-      datecstr = datestr.c_str()
+      datestr := self.get_date()
+      datecstr := datestr.c_str()
 
       sprintf(mkdir_cmd, "mkdir %s 2>/dev/null", SAVE_DIR)
-      err = system(mkdir_cmd)
+      err := system(mkdir_cmd)
       sprintf(filename, "%s/%s%s", SAVE_DIR, datecstr, ".png")
       px_w, px_h = self.get_display_size()
 
-      buf = vector<unsigned char>(px_w * px_h * 4+1)
-      i = 0
+      buf := vector<unsigned char>(px_w * px_h * 4+1)
+      i := 0
       for y 0 self.height:
         for x 0 self.width:
-          d = self.fbmem[y*self.width + x] == 0 ? 0 : 0xff
+          d := self.fbmem[y*self.width + x] == 0 ? 0 : 0xff
           buf[i++] = d
       buf[i] = 0
 
@@ -288,13 +288,13 @@ namespace framebuffer:
 
     // bresenham's outline
     def draw_circle_outline(int x0, y0, r, stroke,color):
-      y = r
-      x = 0;
-      w = stroke
-      h = stroke
+      y := r
+      x := 0;
+      w := stroke
+      h := stroke
 
       self.draw_rect(x, y, w, h, color, true);
-      d = (3-2*(int)r);
+      d := (3-2*(int)r);
       while (x <= y):
         if (d <= 0):
           d = d + (4*x + 6);
@@ -332,16 +332,16 @@ namespace framebuffer:
       printf("DRAWING LINE w. CIRCLES %i %i %i %i\n", x0, y0, x1, y1)
       #endif
       self.dirty = 1
-      dx =  abs(x1-x0)
-      sx = x0<x1 ? 1 : -1
-      dy = -abs(y1-y0)
-      sy = y0<y1 ? 1 : -1
-      err = dx+dy  /* error value e_xy */
+      dx :=  abs(x1-x0)
+      sx := x0<x1 ? 1 : -1
+      dy := -abs(y1-y0)
+      sy := y0<y1 ? 1 : -1
+      err := dx+dy  /* error value e_xy */
       while (true):   /* loop */
         self.draw_circle(x0, y0, width/2, 1, color,true)
         // self.fbmem[y0*self.width + x0] = color
         if (x0==x1 && y0==y1) break;
-        e2 = 2*err
+        e2 := 2*err
         if (e2 >= dy):
           err += dy /* e_xy+e_x > 0 */
           x0 += sx
@@ -354,16 +354,16 @@ namespace framebuffer:
       printf("DRAWING LINE %i %i %i %i\n", x0, y0, x1, y1)
       #endif
       self.dirty = 1
-      dx =  abs(x1-x0)
-      sx = x0<x1 ? 1 : -1
-      dy = -abs(y1-y0)
-      sy = y0<y1 ? 1 : -1
-      err = dx+dy  /* error value e_xy */
+      dx := abs(x1-x0)
+      sx := x0<x1 ? 1 : -1
+      dy := -abs(y1-y0)
+      sy := y0<y1 ? 1 : -1
+      err := dx+dy  /* error value e_xy */
       while (true):   /* loop */
         self.draw_rect(x0, y0, width, width, color,true,dither)
         // self.fbmem[y0*self.width + x0] = color
         if (x0==x1 && y0==y1) break;
-        e2 = 2*err
+        e2 := 2*err
         if (e2 >= dy):
           err += dy /* e_xy+e_x > 0 */
           x0 += sx
@@ -395,7 +395,7 @@ namespace framebuffer:
       return vinfo.xres, vinfo.yres
 
     int perform_redraw(bool full_screen=false):
-      um = 0
+      um := 0
       mxcfb_update_data update_data
       mxcfb_rect update_rect
 
@@ -474,10 +474,10 @@ namespace framebuffer:
       #else
       vinfo.bits_per_pixel = 16;
       vinfo.grayscale = 0;
-      retval = ioctl(self.fd, FBIOPUT_VSCREENINFO, &vinfo);
+      retval := ioctl(self.fd, FBIOPUT_VSCREENINFO, &vinfo);
       #endif
 
-      auto_update_mode = AUTO_UPDATE_MODE_AUTOMATIC_MODE
+      auto_update_mode := AUTO_UPDATE_MODE_AUTOMATIC_MODE
       ioctl(self.fd, MXCFB_SET_AUTO_UPDATE_MODE, (pointer_size) &auto_update_mode);
 
     void cleanup():
@@ -489,7 +489,7 @@ namespace framebuffer:
 
       vinfo.bits_per_pixel = 16;
       vinfo.grayscale = 0
-      retval = ioctl(self.fd, FBIOPUT_VSCREENINFO, &vinfo);
+      retval := ioctl(self.fd, FBIOPUT_VSCREENINFO, &vinfo);
 
 
   static shared_ptr<FB> _FB

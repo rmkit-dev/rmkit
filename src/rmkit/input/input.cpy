@@ -24,8 +24,7 @@ namespace input:
 
 
     InputClass():
-      last_ev = nullptr
-
+      pass
 
     clear():
       self.events.clear()
@@ -62,7 +61,7 @@ namespace input:
       return
       #endif
 
-      ev = T()
+      ev := T()
       if bytes > 0:
         ev.left = data[0]&0x1
         ev.right = data[0]&0x2

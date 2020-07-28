@@ -35,15 +35,15 @@ namespace ui:
       unsigned int fw, fh
 
       sprintf(full_path, "%s/%s", SAVE_DIR, self.filename.c_str())
-      load_ret = lodepng_load_file(&load_buffer, &outsize, full_path)
-      decode_ret = lodepng::decode(raw, fw, fh, load_buffer, outsize,
+      load_ret := lodepng_load_file(&load_buffer, &outsize, full_path)
+      decode_ret := lodepng::decode(raw, fw, fh, load_buffer, outsize,
                       LodePNGColorType::LCT_GREY, 8);
 
-      num_channels = 1
-      resize_len = self.w*self.h*sizeof(unsigned char)*num_channels
+      num_channels := 1
+      resize_len := self.w*self.h*sizeof(unsigned char)*num_channels
       resize_buffer = (unsigned char*)malloc(resize_len)
       memset(resize_buffer, 0, resize_len);
-      err = stbir_resize_uint8(raw.data() , fw , fh , 0,
+      err := stbir_resize_uint8(raw.data() , fw , fh , 0,
                          resize_buffer, self.w, self.h, 0, num_channels)
 
       for (int i=0; i< resize_len; i++):
@@ -51,7 +51,7 @@ namespace ui:
           resize_buffer[i] = 0
 
       unsigned char* rgba_buf = (unsigned char*)malloc(4*resize_len)
-      j = 0
+      j := 0
       for (int i=0; i< resize_len; i++):
         rgba_buf[j++] = resize_buffer[i]
         rgba_buf[j++] = resize_buffer[i]

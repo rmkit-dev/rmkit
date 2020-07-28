@@ -14,17 +14,17 @@ namespace ui:
       self.text = t
 
     tuple<int, int> get_render_size():
-      image = stbtext::get_text_size(self.text.c_str(), FS)
+      image := stbtext::get_text_size(self.text.c_str(), FS)
       return image.w, image.h
     // TODO: cache the image buffer
     void redraw():
-      image = stbtext::get_text_size(self.text.c_str(), FS)
+      image := stbtext::get_text_size(self.text.c_str(), FS)
 
       image.buffer = (uint32_t*) malloc(sizeof(uint32_t) * image.w * image.h)
       memset(image.buffer, WHITE, sizeof(uint32_t) * image.w * image.h)
 
-      leftover_x = self.w - image.w
-      padding_x = 0
+      leftover_x := self.w - image.w
+      padding_x := 0
 
       switch self.justify:
         case JUSTIFY::LEFT:
@@ -48,16 +48,16 @@ namespace ui:
       pass
 
     void redraw():
-      cur_x = 0
-      cur_y = 0
-      lines = split(self.text, '\n')
+      cur_x := 0
+      cur_y := 0
+      lines := split(self.text, '\n')
       for auto line: lines:
         cur_x = 0
-        tokens = split(line, ' ')
+        tokens := split(line, ' ')
         int max_h = 0
         for auto w: tokens:
           w += " "
-          image = stbtext::get_text_size(w.c_str(), FS)
+          image := stbtext::get_text_size(w.c_str(), FS)
           image.buffer = (uint32_t*) malloc(sizeof(uint32_t) * image.w * image.h)
           max_h = max(image.h, max_h)
           memset(image.buffer, WHITE, sizeof(uint32_t) * image.w * image.h)

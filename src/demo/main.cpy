@@ -26,7 +26,7 @@ class App:
     fb->redraw_screen()
     w, h = fb->get_display_size()
 
-    h_layout = ui::HorizontalLayout(0, 0, w, h, demo_scene)
+    h_layout := ui::HorizontalLayout(0, 0, w, h, demo_scene)
     h_layout.pack_center(new ui::Text(0, 0, w, 50, "Hello World"))
 
     ui::MainLoop::refresh()

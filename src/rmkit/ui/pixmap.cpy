@@ -11,9 +11,9 @@ namespace ui:
       pass
 
     virtual image_data get(string name):
-      it = CACHE.find(name)
+      it := CACHE.find(name)
       if it == CACHE.end():
-        im = self.fetch(name)
+        im := self.fetch(name)
         if im.buffer != NULL:
           CACHE[name] = im
           self.image = im

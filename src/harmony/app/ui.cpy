@@ -14,7 +14,7 @@ namespace app_ui:
     ToolButton(int x, int y, int w, int h): \
                ui::TextDropdown(x, y, w, h, "tools"):
 
-      ds = self.add_section("brushes")
+      ds := self.add_section("brushes")
       for auto b : brush::NP_BRUSHES:
         ds->add_options({make_pair(b->name, b->icon)})
 
@@ -29,7 +29,7 @@ namespace app_ui:
       self.select(0)
 
     void on_select(int idx):
-      name = self.options[idx].name
+      name := self.options[idx].name
       for auto b : brush::P_BRUSHES:
         if b->name == name:
           STATE.brush = b
@@ -46,7 +46,7 @@ namespace app_ui:
     public:
     BrushConfigButton(int x, y, w, h): \
       ui::TextDropdown(x,y,w,h,"brush config"):
-      ds = self.add_section("size")
+      ds := self.add_section("size")
       for auto b : stroke::SIZES:
         ds->add_options({b->name})
 
@@ -54,7 +54,7 @@ namespace app_ui:
       ds->add_options({"black", "gray", "white"})
 
     void on_select(int i):
-      option = self.options[i].name
+      option := self.options[i].name
       do {
         if option == stroke::FINE.name:
           STATE.stroke_width = stroke::FINE.val
@@ -80,14 +80,14 @@ namespace app_ui:
       self.before_redraw()
 
     void redraw():
-      sw = 1
+      sw := 1
       for auto size : stroke::SIZES:
         if STATE.stroke_width == size->val:
           sw = (size->val+1) * 5
           break
 
-      color = BLACK
-      bg_color = WHITE
+      color := BLACK
+      bg_color := WHITE
       if STATE.color == BLACK:
         color = BLACK
         bg_color = WHITE
@@ -103,7 +103,7 @@ namespace app_ui:
       if self.mouse_inside:
         self.fb->draw_rect(self.x, self.y, self.w, self.h, BLACK, false)
 
-      mid_y = (self.h - sw) / 2
+      mid_y := (self.h - sw) / 2
 
       self.fb->draw_line(self.x+3, self.y+mid_y-2, self.x+self.w-sw-3, self.y+mid_y-2, sw+4, bg_color)
       self.fb->draw_line(self.x+5, self.y+mid_y, self.x+self.w-sw-5, self.y+mid_y, sw, color)
@@ -120,8 +120,8 @@ namespace app_ui:
       self.canvas->curr_brush->reset()
 
     void before_redraw():
-      f = std::find(brush::P_BRUSHES.begin(), brush::P_BRUSHES.end(), \
-                    self.canvas->curr_brush)
+      f := std::find(brush::P_BRUSHES.begin(), brush::P_BRUSHES.end(), \
+                     self.canvas->curr_brush)
       self.visible = f != brush::P_BRUSHES.end()
       ui::Button::before_redraw()
 
@@ -151,7 +151,7 @@ namespace app_ui:
 
     ManageButton(int x, y, w, h, Canvas *c): TextDropdown(x,y,w,h,"...")
       self.canvas = c
-      ds = self.add_section("")
+      ds := self.add_section("")
       ds->add_options({DOTS, CLEAR, SAVE, LOAD, QUIT, DOTS, ABOUT})
       self.text = "..."
 
@@ -160,7 +160,7 @@ namespace app_ui:
         self.ed = new ExitDialog(0, 0, DIALOG_WIDTH, DIALOG_HEIGHT)
       self.ed->show()
     void on_select(int i):
-      option = self.options[i].name
+      option := self.options[i].name
       if option == ABOUT:
         if self.ad == NULL:
           self.ad = new AboutDialog(0, 0, DIALOG_WIDTH, DIALOG_HEIGHT)
@@ -170,10 +170,10 @@ namespace app_ui:
       if option == QUIT:
         self.select_exit()
       if option == SAVE:
-        filename = self.canvas->save()
+        filename := self.canvas->save()
         if self.sd == NULL:
           self.sd = new SaveDialog(0, 0, DIALOG_WIDTH, DIALOG_HEIGHT)
-        title = "Saved as " + filename
+        title := "Saved as " + filename
         self.sd->set_title(title)
         self.sd->show()
       if option == LOAD:

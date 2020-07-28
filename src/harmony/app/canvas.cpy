@@ -33,7 +33,7 @@ namespace app_ui:
       self.byte_size = px_width * px_height * sizeof(remarkable_color)
       vfb = make_shared<framebuffer::VirtualFB>(self.fb->width, self.fb->height)
       self.mem = (remarkable_color*) malloc(sizeof(remarkable_color) * px_width * px_height)
-      fbcopy = shared_ptr<remarkable_color>((remarkable_color*) malloc(self.byte_size))
+      fbcopy := shared_ptr<remarkable_color>((remarkable_color*) malloc(self.byte_size))
       memcpy(fbcopy.get(), self.fb->fbmem, self.byte_size)
       memcpy(vfb->fbmem, self.fb->fbmem, self.byte_size)
 
@@ -80,13 +80,13 @@ namespace app_ui:
       return input::is_touch_event(ev) != NULL
 
     void on_mouse_move(input::SynMouseEvent &ev):
-      brush = self.erasing ? self.eraser : self.curr_brush
+      brush := self.erasing ? self.eraser : self.curr_brush
       brush->stroke(ev.x, ev.y, ev.tilt_x, ev.tilt_y, ev.pressure)
       brush->update_last_pos(ev.x, ev.y, ev.tilt_x, ev.tilt_y, ev.pressure)
       self.dirty = 1
 
     void on_mouse_up(input::SynMouseEvent &ev):
-      brush = self.erasing ? self.eraser : self.curr_brush
+      brush := self.erasing ? self.eraser : self.curr_brush
       brush->stroke_end()
       self.push_undo()
       brush->update_last_pos(-1,-1,-1,-1,-1)
@@ -98,7 +98,7 @@ namespace app_ui:
 
     void on_mouse_down(input::SynMouseEvent &ev):
       self.erasing = ev.eraser && ev.eraser != -1
-      brush = self.erasing ? self.eraser : self.curr_brush
+      brush := self.erasing ? self.eraser : self.curr_brush
       brush->stroke_start(ev.x, ev.y,ev.tilt_x, ev.tilt_y, ev.pressure)
 
     void mark_redraw():
@@ -142,7 +142,7 @@ namespace app_ui:
       dirty_rect = self.vfb->dirty_area
       print "ADDING TO UNDO STACK, DIRTY AREA IS", \
         dirty_rect.x0, dirty_rect.y0, dirty_rect.x1, dirty_rect.y1
-      fbcopy = shared_ptr<remarkable_color>((remarkable_color*) malloc(self.byte_size))
+      fbcopy := shared_ptr<remarkable_color>((remarkable_color*) malloc(self.byte_size))
       memcpy(fbcopy.get(), vfb->fbmem, self.byte_size)
       self.undo_stack.push_back(fbcopy)
       self.redo_stack.clear()
@@ -155,14 +155,14 @@ namespace app_ui:
         // put last fb from undo stack into fb
         self.redo_stack.push_back(self.undo_stack.back())
         self.undo_stack.pop_back()
-        undofb = self.undo_stack.back()
+        undofb := self.undo_stack.back()
         memcpy(self.fb->fbmem, undofb.get(), self.byte_size)
         memcpy(vfb->fbmem, undofb.get(), self.byte_size)
         ui::MainLoop::full_refresh()
 
     void redo():
       if self.redo_stack.size() > 0:
-        redofb = self.redo_stack.back()
+        redofb := self.redo_stack.back()
         self.redo_stack.pop_back()
         memcpy(self.fb->fbmem, redofb.get(), self.byte_size)
         memcpy(vfb->fbmem, redofb.get(), self.byte_size)
