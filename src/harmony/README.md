@@ -3,6 +3,7 @@
 rmHarmony is a drawing app for the remarkable tablet
 
 ![](https://i.imgur.com/KJlWdAAl.png)
+![](https://i.imgur.com/KJ4rReu.gifv)
 
 ## Status
 
