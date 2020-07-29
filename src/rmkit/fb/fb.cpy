@@ -316,8 +316,8 @@ namespace framebuffer:
         self.draw_rect(-y+x0, -x+y0, w, h, color, true);
 
     def draw_circle_filled(int x0, y0, radius, stroke, color):
-      for int x = -radius; x <= radius; x++:
-        for y = -radius; y <= radius; y++:
+      for x := -radius; x <= radius; x++:
+        for y := -radius; y <= radius; y++:
           if (x*x+y*y) <= radius*radius:
             self.draw_rect(x+x0, y+y0, stroke, stroke, color, true)
 
