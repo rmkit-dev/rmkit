@@ -9,6 +9,7 @@ from gi.repository.GdkPixbuf import Pixbuf, InterpType
 
 
 import threading
+import os
 import sys
 import time
 
@@ -24,10 +25,24 @@ if __name__ == "__main__":
 
     WIN.show_all()
 
+    _last_mod = None
     def update_image():
-        try:
-            img = Pixbuf.new_from_file("./fb.png")
-        except Exception, e:
+        global _last_mod
+        statbuf = os.stat("./fb.png")
+        mod = statbuf.st_mtime
+        img = None
+        if statbuf.st_size == 0:
+            return True
+
+        if mod != _last_mod:
+            try:
+                img = Pixbuf.new_from_file("./fb.png")
+            except Exception, e:
+                print e
+                return True
+
+        _last_mod = mod
+        if not img:
             return True
 
         width, height = WIN.get_size()
@@ -41,7 +56,7 @@ if __name__ == "__main__":
 
     update_image()
 
-    glib.timeout_add(100, update_image)
+    glib.timeout_add(10, update_image)
 
     try:
         gtk.main()
