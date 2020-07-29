@@ -10,7 +10,7 @@ RMApp APP_XOCHITL      = %{
   .term = "systemctl stop xochitl; killall xochitl;"
 }
 RMApp APP_HARMONY      = %{
-  .bin="/home/root/harmony/harmony",
+  .bin="/home/root/harmony/harmony.exe",
   .name="Harmony" ,
   .term="killall harmony"}
 RMApp APP_KOREADER     = %{

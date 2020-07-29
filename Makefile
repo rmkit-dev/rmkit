@@ -7,7 +7,6 @@ APPS=harmony remux demo
 $(APPS): %: rmkit.h
 	cd src/${@} && make
 
-
 build: rmkit.h
 	$(foreach app, $(APPS), cd src/${app} && make; cd ${ROOT}; )
 
@@ -39,7 +38,7 @@ docker:
 docker_install: docker
 	echo "Not implemented yet"
 
-bundle: harmony.exe remux.exe
+bundle: harmony remux
 	#BUILDING V: ${VERSION} ARCH: ${ARCH}
 	mkdir -p ${BUILD_DIR}/harmony 2>/dev/null || true
 	# TODO: use ${APPS} here
