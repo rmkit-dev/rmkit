@@ -13,7 +13,7 @@ else
 	exit 1
 endif
 
-clean_exe:
+clean:
 	rm ../build/${EXE}
 
 compile_arm: export CPP_FLAGS += -O3

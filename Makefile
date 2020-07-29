@@ -1,11 +1,10 @@
-APPS=harmony remux demo
-
+#!/usr/bin/env bash
 default: build
-
 include src/common.make
 
-.DEFAULT:
-	make rmkit.h
+# Use `make <app>` to build any app individually
+APPS=harmony remux demo
+$(APPS): %: rmkit.h
 	cd src/${@} && make
 
 
@@ -16,7 +15,7 @@ install: rmkit.h
 	$(foreach app, $(APPS), cd src/${app} && make copy; cd ${ROOT}; )
 
 clean:
-	$(foreach app, $(APPS), cd src/${app} && make clean_exe; cd ${ROOT}; )
+	$(foreach app, $(APPS), cd src/${app} && make clean; cd ${ROOT}; )
 
 default: build
 
