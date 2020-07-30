@@ -1,0 +1,8 @@
+--languages=okp
+
+--langdef=okp
+--langmap=okp:.cpy.okp
+--regex-okp=/^[ \t]*def[ \t]*([a-zA-Z0-9_]+)/\1/d,definition/
+--regex-okp=/^[ \t]*[a-zA-Z0-9_]+[ \t]+([a-zA-Z0-9_]+)\(/\1/d,definition/
+--regex-okp=/^[ \t]*class[ \t]*([a-zA-Z0-9_]+)/\1/d,class/
+--regex-okp=/^[ \t]*struct[ \t]*([a-zA-Z0-9_]+)/\1/d,struct/
