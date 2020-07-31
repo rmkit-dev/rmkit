@@ -4,8 +4,18 @@ include src/common.make
 
 # Use `make <app>` to build any app individually
 APPS=harmony remux demo
+CLEAN_APPS=$(foreach app, $(APPS), clean_$(app))
+INSTALL_APPS=$(foreach app, $(APPS), install_$(app))
+
 $(APPS): %: rmkit.h
+	echo $(INSTALL_APPS)
 	cd src/${@} && make
+
+$(INSTALL_APPS): %: rmkit.h
+	cd src/$(@:install_%=%) && make install
+
+$(CLEAN_APPS): %:
+	cd src/$(@:clean_%=%) && make clean
 
 build: rmkit.h
 	$(foreach app, $(APPS), cd src/${app} && make; cd ${ROOT}; )
