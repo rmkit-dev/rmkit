@@ -2,7 +2,7 @@ HOST?=10.11.99.1
 ARCH?=arm
 CXX=arm-linux-gnueabihf-g++
 CC = arm-linux-gnueabihf-gcc
-CPP_FLAGS=-pthread -lpthread
+CPP_FLAGS=-pthread -lpthread -fdiagnostics-color=always
 
 # BUILD STUFF
 ROOT=${PWD}

@@ -34,26 +34,14 @@ class App:
     notebook->add(canvas)
 
     toolbar_area := new ui::VerticalLayout(0, 0, w, h, notebook)
-    minibar_area := new ui::VerticalLayout(0, 0, w, h, notebook)
     toolbar := new ui::HorizontalLayout(0, 0, w, TOOLBAR_HEIGHT, notebook)
-    minibar := new ui::HorizontalLayout(0, 0, w, TOOLBAR_HEIGHT, notebook)
 
-    // clockbar is at the top of the screen
-    // clockbar = new ui::HorizontalLayout(0, 0, w, TOOLBAR_HEIGHT, notebook)
-    // clockbar->pack_center(new app_ui::Clock(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT))
-
-    // aligns the toolbar to the bottom of the screen by packing end
-    // inside toolbar_area
+    // aligns the toolbar to the bottom of the screen using pack_end
     // NOTE: this is an example of nesting layouts
     toolbar_area->pack_end(toolbar)
-    minibar_area->pack_end(minibar)
-    minibar->hide()
 
 
     // we always have to pack layouts in order
-//    minibar->pack_start(new app_ui::HideButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, toolbar, minibar))
-//    toolbar->pack_start(new app_ui::HideButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, toolbar, minibar))
-
     tool_button := new app_ui::ToolButton(0, 0, ICON_WIDTH*2, TOOLBAR_HEIGHT)
     tool_button->set_option_size(250, TOOLBAR_HEIGHT)
     tool_button->set_option_offset(0, -TOOLBAR_HEIGHT)
