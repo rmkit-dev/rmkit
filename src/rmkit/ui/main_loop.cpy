@@ -9,6 +9,8 @@
 #include <unistd.h>
 
 namespace ui:
+  PLS_DEFINE_SIGNAL(KEY_EVENT, input::SynKeyEvent)
+  PLS_DEFINE_SIGNAL(MOUSE_EVENT, input::SynMouseEvent)
   class MainLoop:
     public:
     // Display related
@@ -19,8 +21,9 @@ namespace ui:
 
     // Input related
     static input::Input in
-    static vector<input::SynMouseEvent> motion_events
-    static vector<input::SynKeyEvent> key_events
+
+    static MOUSE_EVENT motion_event
+    static KEY_EVENT key_event
 
     static bool is_visible(Widget *w):
       if overlay_is_visible:
@@ -37,13 +40,15 @@ namespace ui:
       fb->redraw_screen()
 
     static void handle_events():
-      for auto ev : motion_events:
+      for auto ev : in.all_motion_events:
+        MainLoop::motion_event(ev)
         if ev._stop_propagation:
           continue
         handle_motion_event(ev)
 
 
-      for auto ev : key_events:
+      for auto ev : in.all_key_events:
+        MainLoop::key_event(ev)
         if ev._stop_propagation:
           continue
         handle_key_event(ev)
@@ -58,8 +63,6 @@ namespace ui:
 
     static void read_input():
       in.listen_all()
-      motion_events = in.all_motion_events
-      key_events = in.all_key_events
 
 
     static void refresh():
@@ -175,8 +178,10 @@ namespace ui:
   Scene MainLoop::overlay = make_scene()
   bool MainLoop::overlay_is_visible = false
   input::Input MainLoop::in = {}
-  vector<input::SynMouseEvent> MainLoop::motion_events = {}
-  vector<input::SynKeyEvent> MainLoop::key_events = {}
+
+  MOUSE_EVENT MainLoop::motion_event
+  KEY_EVENT MainLoop::key_event
+
   shared_ptr<framebuffer::FB> MainLoop::fb = framebuffer::get()
 
   std::mutex TaskQueue::task_m = {}

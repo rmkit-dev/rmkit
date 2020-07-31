@@ -38,17 +38,13 @@ class App:
     pass
 
   def run():
+    ui::MainLoop::key_event += PLS_DELEGATE(self.handle_key_event)
+    ui::MainLoop::motion_event += PLS_DELEGATE(self.handle_motion_event)
     while true:
       ui::MainLoop::main()
       ui::MainLoop::refresh()
       ui::MainLoop::redraw()
       ui::MainLoop::read_input()
-
-      for auto ev : ui::MainLoop::motion_events:
-        self.handle_motion_event(ev)
-
-      for auto ev : ui::MainLoop::key_events:
-        self.handle_key_event(ev)
 
 App app
 void signal_handler(int signum):

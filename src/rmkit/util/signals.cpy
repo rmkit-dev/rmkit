@@ -21,7 +21,7 @@ namespace PLS:
     void operator+=(std::function<void (T&)> f):
       cbs.push_back(f)
 
-    void operator()(T data):
+    void operator()(T &data):
       for auto cb : cbs:
         cb(data)
 

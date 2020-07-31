@@ -127,19 +127,15 @@ class App:
       syn_ev.stop_propagation()
       return
 
-    ui::MainLoop::handle_motion_event(syn_ev)
-
   def run():
+    ui::MainLoop::key_event += PLS_DELEGATE(self.handle_key_event)
+    ui::MainLoop::motion_event += PLS_DELEGATE(self.handle_motion_event)
     while true:
       ui::MainLoop::main()
       ui::MainLoop::redraw()
       ui::MainLoop::read_input()
 
-      for auto ev : ui::MainLoop::motion_events:
-        self.handle_motion_event(ev)
 
-      for auto ev : ui::MainLoop::key_events:
-        self.handle_key_event(ev)
 
 
 App app

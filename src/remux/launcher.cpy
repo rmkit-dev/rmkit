@@ -134,17 +134,12 @@ class App:
     app_dialog->populate()
     app_dialog->setup_for_render()
 
+    ui::MainLoop::key_event += PLS_DELEGATE(self.handle_key_event)
     while true:
       ui::MainLoop::main()
-
       if app_bg->visible:
         ui::MainLoop::redraw()
-
       ui::MainLoop::read_input()
-
-      for auto ev : ui::MainLoop::key_events:
-        self.handle_key_event(ev)
-
 
 App app
 def main():
