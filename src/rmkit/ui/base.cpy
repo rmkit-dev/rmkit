@@ -1,3 +1,6 @@
+// file: base.cpy
+// title: title
+
 #include "../fb/fb.h"
 
 namespace ui:
@@ -12,12 +15,26 @@ namespace ui:
     int dirty = 1
     bool visible = true
 
+    // Class: Widget
+    //
+    // The widget class is the base of all other widgets. A widget is typically
+    // a piece of UI that can receive inputs and draw to screen through the
+    // frame buffer
+    //
     Widget(int x,y,w,h): x(x), y(y), w(w), h(h), _x(x), _y(y), _w(w), _h(h):
       pass
 
+    // Function: before_redraw
+    // before_redraw is called on a widget before it is redrawn
+    // this function can be used by a widget query data that it needs to render
+    // itself and other ways
     virtual void before_redraw():
       pass
 
+    // Function: redraw
+    // redraw the widget. this function is responsible for redrawing the widget
+    // to the framebuffer using a combination of draw_line, draw_text and
+    // draw_rectangle calls
     virtual void redraw():
       pass
 
@@ -65,7 +82,8 @@ namespace ui:
       pass
     // }}}
 
-    // checks if this widget is hit by a button press
+    // Function: is_hit
+    // checks if this widget is hit by a touch event
     bool is_hit(int o_x, o_y):
       if o_x < x || o_y < y || o_x > x+w || o_y > y+h:
         return false

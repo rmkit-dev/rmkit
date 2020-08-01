@@ -62,4 +62,8 @@ bundle: harmony remux
 view:
 	python scripts/viewer.py
 
+NATURAL_DOCS?=mono ~/tonka/apps/Natural\ Docs/NaturalDocs.exe
+natural_docs:
+	${NATURAL_DOCS} -p config/ -i src/ -o html docs/html/ -xi src/cpp/ -xi src/build
+
 .PHONY:build view install

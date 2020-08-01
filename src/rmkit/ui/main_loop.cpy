@@ -1,3 +1,23 @@
+// file: main_loop.cpy
+//
+// Every app usually has a main loop. rMkit's main loop is managed with the
+// ui::MainLoop class. In general, an app should look like the following:
+//
+// --- Code
+// // build widgets and place them in scenes
+// my_scene = build_scene()
+// ui::MainLoop::set_scene(my_scene)
+//
+// while true:
+//   // perform app work, like dispatching events
+//   ui::MainLoop::main()
+//   // redraw any widgets that marked themselves dirty
+//   ui::MainLoop::redraw()
+//   // read input (blocking read)
+//   ui::MainLoop::read_input()
+// ---
+//
+
 #include "../defines.h"
 
 #include "../input/input.h"
@@ -11,20 +31,41 @@
 namespace ui:
   PLS_DEFINE_SIGNAL(KEY_EVENT, input::SynKeyEvent)
   PLS_DEFINE_SIGNAL(MOUSE_EVENT, input::SynMouseEvent)
+
+  // class: MainLoop
+  // The MainLoop is responsible for redrawing widgets, dispatching events, and
+  // other core work that happens on each iteration of the app.
   class MainLoop:
     public:
-    // Display related
     static shared_ptr<framebuffer::FB> fb
+
     static Scene scene
     static Scene overlay
     static bool overlay_is_visible
 
-    // Input related
     static input::Input in
 
+    // variable: motion_event
+    // motion_event is used for subscribing to motion_events
+    // simply use like:
+    // ---Code
+    // // d is of type input::SynMouseEvent
+    // MainLoop::motion_event += [=](auto &d) { };
+    // ---
     static MOUSE_EVENT motion_event
+
+    // variable: key_event
+    // key_event is used for subscribing to key_events
+    // simply use like:
+    // ---Code
+    // // d is of type input::SynKeyEvent
+    // MainLoop::key_event += [=](auto &d) { };
+    // ---
     static KEY_EVENT key_event
 
+    // function: is_visible
+    // returns
+    //     whether the supplied widget is visible
     static bool is_visible(Widget *w):
       if overlay_is_visible:
         for auto widget : overlay->widgets:
@@ -36,9 +77,15 @@ namespace ui:
 
       return false
 
+    // function: redraw
+    //   sync the framebuffer to the screen, required in order to update
+    //   what the screen is showing after any drawing calls
     static void redraw():
       fb->redraw_screen()
 
+    // dispatch input events to their widgets / if event.stop_propagation()
+    // was called in the event handler, / then the event will not be handled
+    // here.
     static void handle_events():
       for auto ev : in.all_motion_events:
         MainLoop::motion_event(ev)
@@ -53,6 +100,13 @@ namespace ui:
           continue
         handle_key_event(ev)
 
+    // function: main
+    //
+    // MainLoop's main function:
+    //* dispatches events
+    //* runs tasks in the task queue
+    //* refreshes the current scene and overlay's widgets
+    //
     static void main():
       handle_events()
 
@@ -61,15 +115,18 @@ namespace ui:
       if overlay_is_visible:
         overlay->redraw()
 
+    /// blocking read for input
     static void read_input():
       in.listen_all()
 
-
+    /// queue a redraw for all the widgets on the visible scenes
     static void refresh():
       scene->refresh()
       if overlay_is_visible:
         overlay->refresh()
 
+    // function: set_scene
+    // set the main scene for the app to display when drawing
     static void set_scene(Scene s):
       scene = s
 
@@ -79,23 +136,30 @@ namespace ui:
       else:
         hide_overlay()
 
+    // function: show_overlay
+    // set the main scene for the app to display when drawing
     static void show_overlay(Scene s):
       overlay = s
       overlay_is_visible = true
       Widget::fb->clear_screen()
       MainLoop::refresh()
 
+    // function: hide_overlay
+    // hide the overlay
     static void hide_overlay():
       if overlay_is_visible:
         overlay_is_visible = false
         Widget::fb->clear_screen()
         MainLoop::refresh()
 
-
+    // clear and refresh the widgets on screen
+    // useful if changing scenes or otherwise
+    // expecting the whole screen to change
     static void full_refresh():
       Widget::fb->clear_screen()
       MainLoop::refresh()
 
+    // dispatch button presses to their widgets
     static void handle_key_event(input::SynKeyEvent &ev):
       display_scene := scene
       if overlay_is_visible:
@@ -104,8 +168,8 @@ namespace ui:
       for auto widget: display_scene->widgets:
         widget->on_key_pressed(ev)
 
-    // iterate over all widgets and dispatch mouse events
     // TODO: refactor this into cleaner code
+    // dispatch mouse / touch events to their widgets
     static bool handle_motion_event(input::SynMouseEvent &ev):
       display_scene := scene
       if overlay_is_visible:

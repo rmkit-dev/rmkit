@@ -31,8 +31,11 @@ To exit harmony, press the power button to bring up the exit dialog.
 
 run `wget -O- https://raw.githack.com/raisjn/rMkit/master/scripts/install.sh -q | sh -` to install the remux app launcher until the next time the device is updated
 
-
 to launch remux and switch between apps, hold the center button for 2+ seconds.
+
+## Building from source
+
+see [BUILDING.md](docs/BUILDING.md)
 
 ## Have ideas or want to code your own apps?
 

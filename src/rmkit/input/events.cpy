@@ -29,7 +29,6 @@ namespace input:
 
   class SynEvent: public Event:
     public:
-    /// used for canceling event propagation in main_loop
     bool _stop_propagation = false
     void stop_propagation():
       _stop_propagation = true
@@ -38,6 +37,9 @@ namespace input:
     def set_original(Event *ev):
       self.original = shared_ptr<Event>(ev)
 
+  /// @class SynMouseEvent
+  /// A synthetic mouse event that covers
+  /// mouse events, touch events and stylus events
   class SynMouseEvent: public SynEvent:
     public:
     int x = -1, y = -1
