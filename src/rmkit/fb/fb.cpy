@@ -45,6 +45,17 @@ namespace framebuffer:
     dirty_rect.x1 = 0
     dirty_rect.y1 = 0
 
+  // class: framebuffer::FB
+  // FB is the main framebuffer that implements I/O primitives for the
+  // framebuffer. There are several subclasses of FB: VirtualFB, FileFB
+  // and HardwareFB.
+  //
+  // - The VirtualFB uses memory as the framebuffer
+  // - The FileFB is an mmap backed file, which can be used for debugging or emulating the
+  //    app. It saves the current framebuffer to fb.png every time the screen is refreshed
+  // - The HardwareFB interfaces with /dev/fb0, which is the linux framebuffer
+  //   device. In addition to mmaping /dev/fb0, HardwareFB also sends ioctl to
+  //   the FB
   class FB:
     public:
     int width=0, height=0, fd=-1
@@ -81,9 +92,14 @@ namespace framebuffer:
       return
 
 
+    // function: clear_screen
+    // blanks the framebuffer with WHITE pixels
     void clear_screen():
       self.draw_rect(0, 0, self.width, self.height, WHITE)
 
+    // function: redraw_screen
+    // if the framebuffer is dirty, redraws the dirty area
+    // of the framebuffer.
     int redraw_screen(bool full_screen=false):
       if dirty == 0:
         return 0
@@ -119,9 +135,13 @@ namespace framebuffer:
       #endif
       return width, height
 
+    // function: get_display_size
+    // get the size of the framebuffer's display
     virtual tuple<int, int> get_display_size():
       return self.width, self.height
 
+    // this function actually colors in a pixel. if dithering is supplied, it
+    // will try to dither the supplied color by only enabling some pixels
     inline void do_dithering(remarkable_color *ptr, int i, j, color, float dither=1.0):
       switch color:
         case GRAY:
@@ -148,10 +168,26 @@ namespace framebuffer:
           else:
               ptr[i + j*self.width] = color
 
-    inline void draw_pixel(remarkable_color *ptr, int x, y, color):
+    // function: draw_pixel
+    // draw a pixel at the x,y position
+    // of color COLOR.
+    //
+    // color must be one of BLACK or WHITE
+    inline void draw_pixel(int x, y, color):
+      ptr := self.fbmem
       ptr[y * self.width + x] = color
       update_dirty(dirty_area, x, y)
 
+    // function: draw_rect
+    // draws a rect on screen.
+    //
+    // Params:
+    // o_x - the x offset to draw the rectangle at
+    // o_y - the y offset to draw the rectangle at
+    // w - the width of the rectangle
+    // h - the height of the rectangle
+    // color - the color of the rect, can be WHITE, BLACK, GRAY, RUBBER or ERASER
+    // dither - how much dithering to apply to the pixels
     inline void draw_rect(int o_x, o_y, w, h, color, fill=true, float dither=1.0):
       self.dirty = 1
       remarkable_color* ptr = self.fbmem
@@ -201,6 +237,23 @@ namespace framebuffer:
     void draw_text(string text, int x, int y, image_data &image, int font_size=24):
       stbtext::render_text((char*)text.c_str(), image, font_size)
       draw_bitmap(image, x, y)
+
+    // function: draw_text
+    // a conveniece function for drawing text to the framebuffer
+    //
+    // parameters:
+    // x - the x offset
+    // y - the y offset
+    // text - the text to draw
+    // fs - the font size to draw at
+    void draw_text(int x, y, string text, int fs=24):
+      image := stbtext::get_text_size(text.c_str(), fs)
+
+      image.buffer = (uint32_t*) malloc(sizeof(uint32_t) * image.w * image.h)
+      memset(image.buffer, WHITE, sizeof(uint32_t) * image.w * image.h)
+      self.draw_text(text, x, y, image, fs)
+
+      free(image.buffer)
 
     void save_png():
       // save the buffer to pnm format
@@ -321,6 +374,15 @@ namespace framebuffer:
           if (x*x+y*y) <= radius*radius:
             self.draw_rect(x+x0, y+y0, stroke, stroke, color, true)
 
+    // function: draw_circle
+    //
+    // Parameters:
+    // x0 - the x origin of the circle
+    // y0 - the y origin of the circle
+    // r - the radius
+    // stroke - the stroke size of the circle outline
+    // color - the color of circle
+    // fill - whether to fill the circle or not
     def draw_circle(int x0, y0, r, stroke, color, fill=false):
       if fill:
         self.draw_circle_filled(x0, y0, r, stroke, color)
@@ -349,6 +411,8 @@ namespace framebuffer:
           err += dx
           y0 += sy
 
+    // function: draw_line
+    // draws a lne from x,0,y0 to x1,y1
     def draw_line(int x0,y0,x1,y1,width,color,float dither=1.0):
       #ifdef DEBUG_FB
       printf("DRAWING LINE %i %i %i %i\n", x0, y0, x1, y1)
@@ -493,6 +557,11 @@ namespace framebuffer:
 
 
   static shared_ptr<FB> _FB
+
+  // function: framebuffer::get
+  // this function returns the app's framebuffer
+  //
+  // NOTE: the framebuffer is a singleton
   static shared_ptr<FB> get():
     if _FB != nullptr && _FB.get() != nullptr:
       return _FB

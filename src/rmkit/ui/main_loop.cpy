@@ -20,10 +20,11 @@
 
 #include "../defines.h"
 
+#include "../util/signals.h"
 #include "../input/input.h"
 #include "../fb/fb.h"
 #include "scene.h"
-#include "base.h"
+#include "widget.h"
 #include "task_queue.h"
 
 #include <unistd.h>
@@ -32,7 +33,7 @@ namespace ui:
   PLS_DEFINE_SIGNAL(KEY_EVENT, input::SynKeyEvent)
   PLS_DEFINE_SIGNAL(MOUSE_EVENT, input::SynMouseEvent)
 
-  // class: MainLoop
+  // class: ui::MainLoop
   // The MainLoop is responsible for redrawing widgets, dispatching events, and
   // other core work that happens on each iteration of the app.
   class MainLoop:
@@ -47,7 +48,8 @@ namespace ui:
 
     // variable: motion_event
     // motion_event is used for subscribing to motion_events
-    // simply use like:
+    //
+    //
     // ---Code
     // // d is of type input::SynMouseEvent
     // MainLoop::motion_event += [=](auto &d) { };
@@ -56,16 +58,15 @@ namespace ui:
 
     // variable: key_event
     // key_event is used for subscribing to key_events
-    // simply use like:
+    //
+    //
     // ---Code
     // // d is of type input::SynKeyEvent
     // MainLoop::key_event += [=](auto &d) { };
     // ---
     static KEY_EVENT key_event
 
-    // function: is_visible
-    // returns
-    //     whether the supplied widget is visible
+    // returns whether the supplied widget is visible
     static bool is_visible(Widget *w):
       if overlay_is_visible:
         for auto widget : overlay->widgets:
@@ -79,7 +80,7 @@ namespace ui:
 
     // function: redraw
     //   sync the framebuffer to the screen, required in order to update
-    //   what the screen is showing after any drawing calls
+    //   what the screen is showing after any draw calls
     static void redraw():
       fb->redraw_screen()
 
@@ -102,11 +103,11 @@ namespace ui:
 
     // function: main
     //
-    // MainLoop's main function:
-    //* dispatches events
-    //* runs tasks in the task queue
-    //* refreshes the current scene and overlay's widgets
-    //
+    // this function does several thinsg:
+    // 
+    // - dispatches input events to widgets
+    // - runs tasks in the task queue
+    // - redraws the current scene and overlay's dirty widgets
     static void main():
       handle_events()
 

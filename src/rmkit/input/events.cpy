@@ -37,19 +37,33 @@ namespace input:
     def set_original(Event *ev):
       self.original = shared_ptr<Event>(ev)
 
-  /// @class SynMouseEvent
+  /// class: input::SynMouseEvent
   /// A synthetic mouse event that covers
   /// mouse events, touch events and stylus events
   class SynMouseEvent: public SynEvent:
     public:
     int x = -1, y = -1
+    // variables: SynMouseEvent
+    // left - is left mouse button pressed or the stylus touching the screen
+    // right - is the right mouse button pressed or the stylus hovering?
+    // middle - is the middle mouse button down?
+    // eraser - is the eraser button pressed
+    // pressure - what's the pressure of the stylus on the screen
+    // tilt_x - what's the tilt x of the stylus? can be up to 4096
+    // tilt_y - what's the tilt y of the stylus? can be up to 4096
     int left = 0, right = 0, middle = 0
     int eraser = 0
     int pressure = -1, tilt_x = 0xFFFF, tilt_y = 0xFFFF
 
 
+  // class: input::SynKeyEvent
+  // This represents a button press, can be from keyboard
+  // or from the hardware button on the remarkable
   class SynKeyEvent: public SynEvent:
     public:
+    // variables: SynKeyEvent
+    // key - which key is pressed? look at linux/input-event-codes.h to learn more
+    // is_pressed - whether the button is pressed or unpressed
     int key, is_pressed
 
   class ButtonEvent: public Event:

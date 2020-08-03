@@ -1,9 +1,9 @@
-#include "base.h"
+#include "widget.h"
 #include "scene.h"
 #include "main_loop.h"
 #include "../input/events.h"
 #include "../ui/button.h"
-#include "../ui/base.h"
+#include "../ui/widget.h"
 
 
 namespace ui:
@@ -17,6 +17,18 @@ namespace ui:
     void on_mouse_click(input::SynMouseEvent&):
       self.dialog->on_button_selected(self.text)
 
+  // class: ui::Dialog
+  // a dialog is used for display a centered frame on the screen
+  // the normal way to use a dialog is to instantiate it, then
+  // set its title and content widget values
+  //
+  // there are two defaut dialog types that supply buttons:
+  //
+  // - InfoDialog supplies an "OK" button only
+  // - ConfirmationDialog supplies an "OK" and "CANCEL" button
+  //
+  // when these buttons are clicked, the on_button_selected
+  // callback is called
   class Dialog: public Widget:
     public:
     string title = "", content = ""
@@ -30,6 +42,8 @@ namespace ui:
       self.titleWidget = new MultiText(20, 20, self.w, 50, self.title)
       self.contentWidget = new MultiText(20, 20, self.w, self.h - 100, self.content)
 
+    // this function actually builds the dialog scene and necessary widgets /
+    // and packings for the modal overlay
     void build_dialog():
       self.scene = ui::make_scene()
       self.scene->add(self)
@@ -58,6 +72,8 @@ namespace ui:
       for auto b : self.buttons:
         button_bar->pack_start(new DialogButton<Dialog>(20, 0, 100, 50, self, b))
 
+    // function: on_button_selected
+    // this is called when the dialog's buttons are pressed
     virtual void on_button_selected(string s):
       pass
 

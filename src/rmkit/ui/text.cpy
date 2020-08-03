@@ -1,21 +1,32 @@
-#include "base.h"
+#include "widget.h"
 #include "../defines.h"
 #include "../fb/stb_text.h"
 
 namespace ui:
+  // class: ui::Text
+  // the ui::Text class is a Widget that can render a single line of text.
   class Text: public Widget:
     public:
-    static int FS
     enum JUSTIFY { LEFT, CENTER, RIGHT }
+    static int FS
     string text
     JUSTIFY justify = JUSTIFY::CENTER
 
+    // function: Constructor
+    // parameters:
+    //
+    // x - x coord
+    // y - y coord
+    // w - width
+    // h - height
+    // t - the text to render in the widget
     Text(int x, y, w, h, string t): Widget(x, y, w, h):
       self.text = t
 
     tuple<int, int> get_render_size():
       image := stbtext::get_text_size(self.text.c_str(), FS)
       return image.w, image.h
+
     // TODO: cache the image buffer
     void redraw():
       image := stbtext::get_text_size(self.text.c_str(), FS)
@@ -42,6 +53,11 @@ namespace ui:
 
       free(image.buffer)
 
+  // class: ui::MultiText
+  // the MultiText class is for writing multiple lines of text, as it
+  // automatically inserts line breaks where appropriate when rendering
+  //
+  // currently, MultiText does not support justification
   class MultiText: public Text:
     public:
     MultiText(int x, y, w, h, string t): Text(x, y, w, h, t):

@@ -1,4 +1,4 @@
-#include "base.h"
+#include "widget.h"
 
 namespace ui:
   class InnerScene:

@@ -1,6 +1,6 @@
 #include <iostream>
 #include "fb/fb.h"
-#include "ui/base.h"
+#include "ui/widget.h"
 #include "input/input.h"
 
 static void _rmkit_init() __attribute__((constructor))

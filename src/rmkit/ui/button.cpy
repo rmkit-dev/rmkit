@@ -1,10 +1,13 @@
-#include "base.h"
+#include "widget.h"
 #include "pixmap.h"
 #include "text.h"
 #include "../input/keycodes.h"
 
 namespace ui:
-  class Button: public Widget:
+  // class: ui::Button
+  // This is a typical button. It optionally supports setting
+  // an ICON for the start of the button.
+  class Button: public Widget
     public:
     string text
     int x_padding = 0
@@ -16,6 +19,14 @@ namespace ui:
     shared_ptr<Pixmap> iconWidget
 
 
+    // function: Constructor
+    //
+    // Parameters:
+    // x - x coordinate of top left corner of button
+    // y - y coordinate of top left corner of button
+    // w - the width of the button
+    // h - the height of the button
+    // t - the text label for the button
     Button(int x, y, w, h, string t): Widget(x,y,w,h):
       self.key = Button::key_ctr
       Button::key_ctr++
@@ -48,6 +59,10 @@ namespace ui:
         input::SynMouseEvent fake
         self.on_mouse_click(fake)
 
+    // function: set_justification
+    //
+    //      sets the alignment of the text of the button. j is one of ::LEFT,
+    //      ::CENTER or ::RIGHT
     void set_justification(Text::JUSTIFY j):
       self.textWidget->justify = j
 

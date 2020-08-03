@@ -1,4 +1,4 @@
-#include "base.h"
+#include "widget.h"
 #include "scene.h"
 #include "../input/events.h"
 
@@ -48,24 +48,34 @@ namespace ui:
     virtual void pack_end(Widget *w, int padding=0):
       pass
 
+  // class: layouts::VerticalLayout
+  // the vertical layout is used for packing widgets
+  // vertically (top to bottom). it implements only 3 functionss: pack_start,
+  // pack_end and pack_center
   class VerticalLayout: public AutoLayout:
     public:
     VerticalLayout(int x, y, w, h, Scene s): AutoLayout(x,y,w,h,s):
       self.start = 0
       self.end = h
 
+    // function: pack_start
+    // put this widget at the start of the layout
     void pack_start(Widget *w, int padding=0):
       w->y += self.start + self.y + padding
       w->x += self.x
       self.start += w->h + padding
       self.add(w)
 
+    // function: pack_end
+    // put this widget at the end of the layout
     void pack_end(Widget *w, int padding=0):
       w->y = self.y + self.end - w->h - padding
       w->x += self.x
       self.end -= w->h + padding
       self.add(w)
 
+    // function: pack_center
+    // put this widget at the center of the layout
     void pack_center(Widget *w):
       leftover := self.h - w->h
       padding_y := 0
@@ -76,24 +86,34 @@ namespace ui:
 
       self.add(w)
 
+  // class: layouts::HorizontalLayout
+  // the horizontal layout is used for packing widgets
+  // horizontally (left to right). it implements only 3 functionss: pack_start,
+  // pack_end and pack_center
   class HorizontalLayout: public AutoLayout:
     public:
     HorizontalLayout(int x, y, w, h, Scene s): AutoLayout(x,y,w,h,s):
       self.start = 0
       self.end = w
 
+    // function: pack_start
+    // put this widget at the start of the layout
     void pack_start(Widget *w, int padding=0):
       w->x += self.start + self.x + padding
       w->y += self.y
       self.start += w->w + padding
       self.add(w)
 
+    // function: pack_end
+    // put this widget at the end of the layout
     void pack_end(Widget *w, int padding=0):
       w->x = self.x + self.end - w->w - padding
       w->y += self.y
       self.end -= w->w + padding
       self.add(w)
 
+    // function: pack_center
+    // put this widget in the center of the layout
     void pack_center(Widget *w):
       leftover := self.w - w->w
       padding_x := 0
