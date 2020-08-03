@@ -5,6 +5,9 @@
 
 namespace ui:
   // class: ui::Button
+  // --- Prototype ---
+  // class ui::Button extends ui::Widget; 
+  // -----------------
   // This is a typical button. It optionally supports setting
   // an ICON for the start of the button.
   class Button: public Widget
@@ -15,11 +18,13 @@ namespace ui:
     shared_ptr<Text> textWidget
     int key
     static int key_ctr
+
+    // variable: icon
     icons::Icon icon = {NULL, 0}
     shared_ptr<Pixmap> iconWidget
 
 
-    // function: Constructor
+    // function: Button
     //
     // Parameters:
     // x - x coordinate of top left corner of button

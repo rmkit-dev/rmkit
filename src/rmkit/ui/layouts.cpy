@@ -48,10 +48,18 @@ namespace ui:
     virtual void pack_end(Widget *w, int padding=0):
       pass
 
-  // class: layouts::VerticalLayout
+  // class: ui::VerticalLayout
   // the vertical layout is used for packing widgets
-  // vertically (top to bottom). it implements only 3 functionss: pack_start,
+  // vertically (top to bottom). it implements only 3 functions: pack_start,
   // pack_end and pack_center
+  // 
+  // parameters:
+  //
+  // y - y coord of the layout's top left corner
+  // x - x coord of the layout's top right corner
+  // w - width of the layout
+  // h - height of the layout
+  // s - the scene that the layout is adding widgets to
   class VerticalLayout: public AutoLayout:
     public:
     VerticalLayout(int x, y, w, h, Scene s): AutoLayout(x,y,w,h,s):
@@ -86,9 +94,9 @@ namespace ui:
 
       self.add(w)
 
-  // class: layouts::HorizontalLayout
+  // class: ui::HorizontalLayout
   // the horizontal layout is used for packing widgets
-  // horizontally (left to right). it implements only 3 functionss: pack_start,
+  // horizontally (left to right). it implements only 3 functions: pack_start,
   // pack_end and pack_center
   class HorizontalLayout: public AutoLayout:
     public:

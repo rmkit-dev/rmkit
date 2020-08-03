@@ -130,8 +130,27 @@ namespace ui:
     virtual void on_select(int idx):
       pass
 
+  // class: ui::TextDropdown
+  // --- Prototype ---
+  // class
+  // ----------------
+  // The TextDropdown is the most likely dropdown to use - 
+  // you supply a list of options and the on_select function
+  // will be called when one is selected.
+  // 
+  // ---
+  //   dropdown := new TextDropdown(0, 0, 200, 50, "options");
+  //   ds := dropdown->add_section("options");
+  //   ds->add_options({ "foo", "bar", "baz });
+  // ---
   class TextDropdown: public ui::DropdownButton<ui::TextOption>:
     public:
+    // function: TextDropdown
+    // x - 
+    // y -
+    // w - 
+    // h - 
+    // t - the name of the TextDropdown (used for debugging only)
     TextDropdown(int x, y, w, h, string t): \
       ui::DropdownButton<ui::TextOption>(x,y,w,h,{},t)
       self.text = t

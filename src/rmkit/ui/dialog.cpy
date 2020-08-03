@@ -18,6 +18,9 @@ namespace ui:
       self.dialog->on_button_selected(self.text)
 
   // class: ui::Dialog
+  // --- Prototype ---
+  // class dialog
+  // -----------------
   // a dialog is used for display a centered frame on the screen
   // the normal way to use a dialog is to instantiate it, then
   // set its title and content widget values

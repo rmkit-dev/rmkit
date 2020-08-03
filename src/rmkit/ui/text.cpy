@@ -4,9 +4,13 @@
 
 namespace ui:
   // class: ui::Text
+  // --- Prototype ---
+  // class Text
+  // -----------------
   // the ui::Text class is a Widget that can render a single line of text.
   class Text: public Widget:
     public:
+    // function: Text Dropdown
     enum JUSTIFY { LEFT, CENTER, RIGHT }
     static int FS
     string text

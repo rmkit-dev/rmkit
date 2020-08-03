@@ -66,7 +66,7 @@ have event callbacks for common touch events.
 Widgets can be simple or compound - a simple widget might be a Button or
 Textbox, while a compound widget may be a widget that contains several
 sub-widgets, like a modal dialog or toolbar. During a compound widget's redraw
-method, it will often have explicit calls to redraw it's children.
+method, the widget will often have explicit calls to redraw it's children.
 
 ### Layouts
 
