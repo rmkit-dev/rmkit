@@ -58,6 +58,9 @@ namespace ui:
       free(image.buffer)
 
   // class: ui::MultiText
+  // --- Prototype ---
+  // class ui::MultiText: public ui::Text:
+  // -----------------
   // the MultiText class is for writing multiple lines of text, as it
   // automatically inserts line breaks where appropriate when rendering
   //

@@ -5,6 +5,12 @@ namespace ui:
   const string PREV = "PREV"
   const string NEXT = "NEXT"
   template<class T>
+  // class: ui::Pager
+  // --- Prototype ---
+  // class ui::Pager: public ui::Dialog:
+  // -----------------
+  // a Pager is a modal dialog that lets one browse through
+  // multiple pages of results using a next and previous button.
   class Pager: public ui::Dialog:
     public:
     shared_ptr<ui::VerticalLayout> layout

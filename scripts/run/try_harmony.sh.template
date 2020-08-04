@@ -1,4 +1,4 @@
-# run with wget -O- https://raw.githubusercontent.com/raisjn/rmHarmony/master/scripts/try_harmony.sh -q | sh -
+# run with wget -O- https://raw.githubusercontent.com/raisjn/rmHarmony/master/scripts/run/try_harmony.sh -q | sh -
 
 function cleanup() {
   killall harmony

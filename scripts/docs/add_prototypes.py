@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+from __future__ import print_function
+
 # add the namespace qualifiers to classes, just in case they change
 def add_namespace_to_classes(lines):
     pass
@@ -48,4 +50,4 @@ def add_prototypes(lines):
 if __name__ == "__main__":
     import sys
     lines = sys.stdin.readlines()
-    print "".join(add_prototypes(lines)).rstrip()
+    print("".join(add_prototypes(lines)).rstrip())

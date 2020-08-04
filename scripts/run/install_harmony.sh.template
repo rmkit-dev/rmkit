@@ -1,4 +1,4 @@
-# run with wget -O- https://raw.githubusercontent.com/raisjn/rmHarmony/master/scripts/install_harmony.sh -q | sh -
+# run with wget -O- https://raw.githubusercontent.com/raisjn/rmHarmony/master/scripts/run/install_harmony.sh -q | sh -
 
 killall launcher
 killall harmony

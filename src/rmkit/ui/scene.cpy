@@ -1,13 +1,29 @@
 #include "widget.h"
 
 namespace ui:
+  // class: ui::Scene
+  // --- Prototype ---
+  // class ui::InnerScene:
+  // -----------------
+  //
+  // A scene is a collection of widgets that are drawn
+  // on screen. The MainLoop can display two scenes at a time,
+  // the main scene and the overlay scene (used for dialogs).
+  //
+  // Generally, you want to add stuff to a scene using a Layout,
+  // but if you want to absolutely position your elements, you can
+  // directly add them to the scene with add()
   class InnerScene:
     public:
     vector<shared_ptr<Widget>> widgets
 
+    // function: add
+    // adds a widget to the scene
     void add(Widget *w):
       widgets.push_back(shared_ptr<Widget>(w))
 
+    // function: add
+    // adds a widget to the scene
     void add(shared_ptr<Widget> w):
       widgets.push_back(w)
 

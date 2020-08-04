@@ -49,6 +49,9 @@ namespace ui:
       pass
 
   // class: ui::VerticalLayout
+  // --- Prototype ---
+  // class ui::VerticalLayout: public ui::AutoLayout:
+  // -----------------
   // the vertical layout is used for packing widgets
   // vertically (top to bottom). it implements only 3 functions: pack_start,
   // pack_end and pack_center
@@ -95,6 +98,9 @@ namespace ui:
       self.add(w)
 
   // class: ui::HorizontalLayout
+  // --- Prototype ---
+  // class ui::HorizontalLayout: public ui::AutoLayout:
+  // -----------------
   // the horizontal layout is used for packing widgets
   // horizontally (left to right). it implements only 3 functions: pack_start,
   // pack_end and pack_center

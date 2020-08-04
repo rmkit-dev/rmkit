@@ -64,6 +64,7 @@ view:
 
 NATURAL_DOCS?=mono ~/tonka/apps/Natural\ Docs/NaturalDocs.exe
 natural_docs:
+	bash scripts/docs/augment_docs.sh
 	${NATURAL_DOCS} -p config/ -i src/ -o html docs/html/ -xi src/cpp/ -xi src/build
 watch_docs:
 	find ./src/ ./config/ | while true; do entr -d make natural_docs; sleep 0.5; done
