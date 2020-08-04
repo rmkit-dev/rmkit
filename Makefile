@@ -43,7 +43,7 @@ rmkit.h:
 
 docker:
 	docker build --tag rmharmony:latest .
-	bash scripts/docker_release.sh
+	bash scripts/build/docker_release.sh
 
 docker_install: docker
 	echo "Not implemented yet"
@@ -56,11 +56,11 @@ bundle: harmony remux
 	cp contrib/remux.service ${BUILD_DIR}/harmony/
 
 	cd ${BUILD_DIR}; zip release-${VERSION}.zip -r harmony/
-	cat scripts/install_harmony.sh.template | sed 's/VERSION/${VERSION}/g' > scripts/install_harmony.sh
-	cat scripts/try_harmony.sh.template | sed 's/VERSION/${VERSION}/g' > scripts/try_harmony.sh
+	cat scripts/run/install_harmony.sh.template | sed 's/VERSION/${VERSION}/g' > scripts/run/install_harmony.sh
+	cat scripts/run/try_harmony.sh.template | sed 's/VERSION/${VERSION}/g' > scripts/run/try_harmony.sh
 
 view:
-	python scripts/viewer.py
+	python scripts/dev/viewer.py
 
 NATURAL_DOCS?=mono ~/tonka/apps/Natural\ Docs/NaturalDocs.exe
 natural_docs:
