@@ -251,4 +251,3 @@ namespace ui:
 
   std::mutex TaskQueue::task_m = {}
   deque<std::function<void()>> TaskQueue::tasks = {}
-

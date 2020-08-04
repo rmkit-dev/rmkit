@@ -84,4 +84,3 @@ namespace ui:
         return
 
       fb->draw_bitmap(self.icon.image, x, y)
-

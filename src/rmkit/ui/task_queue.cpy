@@ -34,5 +34,3 @@ namespace ui:
       catch (const std::exception& e):
         print "NEW THREAD EXC", e.what()
         TaskQueue::wakeup()
-
-

@@ -6,7 +6,7 @@
 namespace ui:
   // class: ui::Button
   // --- Prototype ---
-  // class ui::Button extends ui::Widget; 
+  // class ui::Button: public ui::Widget
   // -----------------
   // This is a typical button. It optionally supports setting
   // an ICON for the start of the button.

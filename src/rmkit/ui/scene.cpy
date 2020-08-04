@@ -40,4 +40,3 @@ namespace ui:
   typedef shared_ptr<InnerScene> Scene
   static Scene make_scene():
     return make_shared<InnerScene>()
-

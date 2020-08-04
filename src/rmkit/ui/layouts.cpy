@@ -130,4 +130,3 @@ namespace ui:
       w->x = self.x + padding_x
       w->y += self.y
       self.add(w)
-

@@ -175,5 +175,3 @@ namespace input:
     return dynamic_cast<MouseEvent*>(syn_ev.original.get())
   static TouchEvent* is_touch_event(SynMouseEvent &syn_ev):
     return dynamic_cast<TouchEvent*>(syn_ev.original.get())
-
-

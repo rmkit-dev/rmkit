@@ -5,7 +5,7 @@
 namespace ui:
   // class: ui::Text
   // --- Prototype ---
-  // class Text
+  // class ui::Text: public ui::Widget:
   // -----------------
   // the ui::Text class is a Widget that can render a single line of text.
   class Text: public Widget:

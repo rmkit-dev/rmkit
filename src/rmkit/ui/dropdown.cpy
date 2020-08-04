@@ -132,7 +132,7 @@ namespace ui:
 
   // class: ui::TextDropdown
   // --- Prototype ---
-  // class
+  // class ui::TextDropdown: public ui::DropdownButton<ui::TextOption>:
   // ----------------
   // The TextDropdown is the most likely dropdown to use - 
   // you supply a list of options and the on_select function
@@ -159,4 +159,3 @@ namespace ui:
         ds := make_shared<DropdownSection<TextOption>>(t)
         self.sections.push_back(ds)
         return ds
-
