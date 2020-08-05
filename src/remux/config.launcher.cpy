@@ -22,6 +22,6 @@ RMApp APP_KOREADER     = %{
 
 vector<RMApp> APPS = %{
    APP_XOCHITL
-  ,APP_HARMONY
+  // ,APP_HARMONY
   ,APP_KOREADER
 }

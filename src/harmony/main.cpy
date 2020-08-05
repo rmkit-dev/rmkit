@@ -1,5 +1,3 @@
-#include <csignal>
-
 #include "../build/rmkit.h"
 #include "../shared/proc.h"
 

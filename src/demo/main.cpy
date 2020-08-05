@@ -1,5 +1,3 @@
-#include <csignal>
-
 #include "../build/rmkit.h"
 
 using namespace std

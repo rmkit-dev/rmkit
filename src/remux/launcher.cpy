@@ -1,8 +1,12 @@
 // LAUNCHER FOR REMARKABLE
-#include <csignal>
 #include <time.h>
 #include <thread>
 #include <chrono>
+
+#include <sys/types.h>
+#include <dirent.h>
+#include <algorithm>
+#include <unordered_set>
 
 #include "../shared/proc.h"
 #include "../build/rmkit.h"
@@ -13,6 +17,12 @@
 
 DIALOG_WIDTH  := 600
 DIALOG_HEIGHT := 800
+
+#ifdef REMARKABLE
+#define BIN_DIR  "/home/root/harmony/bin"
+#else
+#define BIN_DIR  "./src/build/"
+#endif
 
 class AppBackground: public ui::Widget:
   public:
@@ -34,21 +44,59 @@ template<class T>
 class AppDialog: public ui::Pager<AppDialog<T>>:
   public:
     vector<string> binaries
+    vector<RMApp> apps
     T* app
 
     AppDialog(int x, y, w, h, T* a): ui::Pager<AppDialog>(x, y, w, h, self):
       self.set_title("Select an app...")
       self.app = a
+      self.apps = {}
+
+    def read_apps_from_dir(string bin_dir):
+      DIR *dir
+      struct dirent *ent
+
+      vector<string> filenames
+      char resolved_path[PATH_MAX];
+      if ((dir = opendir (bin_dir.c_str())) != NULL):
+        while ((ent = readdir (dir)) != NULL):
+          str_d_name := string(ent->d_name)
+          if str_d_name != "." and str_d_name != ".." and ends_with(str_d_name, ".exe"):
+            path := string(bin_dir) + string(ent->d_name)
+            _ := realpath(path.c_str(), resolved_path);
+            str_d_name = string(resolved_path)
+            filenames.push_back(str_d_name)
+        closedir (dir)
+      else:
+        perror ("")
+      sort(filenames.begin(),filenames.end())
+      return filenames
 
     void populate():
-      vector<string> apps
+      vector<string> binaries
+      unordered_set<string> seen
+      self.apps = {}
+
       for auto a : APPS:
+        self.apps.push_back(a)
+
+      bin_binaries := read_apps_from_dir(BIN_DIR)
+      for auto a : bin_binaries:
+        bin_str := string(a)
+        print "BINARY IS", bin_str
+        app_str := a.c_str()
+        base := basename(app_str)
+        app := (RMApp) { .bin=bin_str, .name=base }
+        self.apps.push_back(app)
+
+      for auto a : self.apps:
         auto name = a.name
+        seen.insert(a.bin)
         if name == "":
           name = a.bin
-        apps.push_back(name)
+        binaries.push_back(name)
 
-      self.options = apps
+      self.options = binaries
 
     void on_row_selected(string name):
       app->selected(name)
@@ -101,9 +149,10 @@ class App:
                 now := time(NULL)
                 if now - lastpress > 1:
                   ui::TaskQueue::add_task([=] {
-                    print "SHOWING DIALOG"
                     app_bg->snapshot()
                     app_bg->visible = true
+                    app_dialog->populate()
+                    app_dialog->setup_for_render()
                     app_dialog->show()
                   });
           });
@@ -118,12 +167,12 @@ class App:
     print "LAUNCHING APP", name
     string bin
 
-    for auto a : APPS:
+    for auto a : app_dialog->apps:
       if a.name == name:
         bin = a.bin
 
-    for auto a : APPS:
-      if a.name != name:
+    for auto a : app_dialog->apps:
+      if a.name != name && a.term != "":
         proc::launch_process(a.term, false)
 
     proc::launch_process(bin, true /* check running */, true /* background */)
@@ -131,13 +180,12 @@ class App:
 
   def run():
     ui::Text::FS = 32
-    app_dialog->populate()
-    app_dialog->setup_for_render()
 
     ui::MainLoop::key_event += PLS_DELEGATE(self.handle_key_event)
     while true:
       ui::MainLoop::main()
       if app_bg->visible:
+        ui::MainLoop::refresh()
         ui::MainLoop::redraw()
       ui::MainLoop::read_input()
 
