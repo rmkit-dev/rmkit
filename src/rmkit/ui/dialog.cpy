@@ -21,17 +21,20 @@ namespace ui:
   // --- Prototype ---
   // class ui::Dialog: public ui::Widget:
   // -----------------
-  // a dialog is used for display a centered frame on the screen
-  // the normal way to use a dialog is to instantiate it, then
-  // set its title and content widget values
+  // A dialog is used to display a centered frame on the screen.  The normal
+  // way to use a dialog is to instantiate it, then set its title and content
+  // widget values
   //
   // there are two defaut dialog types that supply buttons:
   //
   // - InfoDialog supplies an "OK" button only
   // - ConfirmationDialog supplies an "OK" and "CANCEL" button
   //
-  // when these buttons are clicked, the on_button_selected
-  // callback is called
+  // To setup custom buttons, `buttons` can be modified before the dialog is
+  // first shown.
+  //
+  // When these buttons are clicked, the on_button_selected callback in the
+  // Dialog will be called
   class Dialog: public Widget:
     public:
     string title = "", content = ""

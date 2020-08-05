@@ -214,6 +214,15 @@ namespace framebuffer:
           if fill || (j == 0 || i == 0 || j == h-1 || i == w-1):
             do_dithering(self.fbmem, i+o_x, j+o_y, color, dither)
 
+    // function: draw_bitmap
+    // this function draws the content of image into the framebuffer
+    //
+    // parameters:
+    //
+    // image - the image to write to the framebuffer. an image consists of a
+    // buffer and a width and height
+    // o_x - the x offset
+    // o_y - the y offset
     def draw_bitmap(image_data &image, int o_x, int o_y):
       remarkable_color* ptr = self.fbmem
       ptr += (o_x + o_y * self.width)
