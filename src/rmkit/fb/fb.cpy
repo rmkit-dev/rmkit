@@ -26,24 +26,12 @@ namespace framebuffer:
     int x, y, w, h
     remarkable_color *buffer
 
-
-  inline void update_dirty(FBRect &dirty_rect, int x, y):
-    dirty_rect.x0 = min(x, dirty_rect.x0)
-    dirty_rect.y0 = min(y, dirty_rect.y0)
-    dirty_rect.x0 = max(0, dirty_rect.x0)
-    dirty_rect.y0 = max(0, dirty_rect.y0)
-    dirty_rect.x1 = max(dirty_rect.x1, x)
-    dirty_rect.y1 = max(dirty_rect.y1, y)
-
-    // TODO: dont use DISPLAY* here
-    dirty_rect.x1 = min(dirty_rect.x1, int(DISPLAYWIDTH)-1)
-    dirty_rect.y1 = min(dirty_rect.y1, int(DISPLAYHEIGHT)-1)
-
   inline void reset_dirty(FBRect &dirty_rect):
     dirty_rect.x0 = DISPLAYWIDTH
     dirty_rect.y0 = DISPLAYHEIGHT
     dirty_rect.x1 = 0
     dirty_rect.y1 = 0
+
 
   // class: framebuffer::FB
   // FB is the main framebuffer that implements I/O primitives for the
@@ -115,6 +103,19 @@ namespace framebuffer:
     virtual int perform_redraw(bool):
       return 0
 
+
+    inline void update_dirty(FBRect &dirty_rect, int x, y):
+      self.dirty = 1
+      dirty_rect.x0 = min(x, dirty_rect.x0)
+      dirty_rect.y0 = min(y, dirty_rect.y0)
+      dirty_rect.x0 = max(0, dirty_rect.x0)
+      dirty_rect.y0 = max(0, dirty_rect.y0)
+      dirty_rect.x1 = max(dirty_rect.x1, x)
+      dirty_rect.y1 = max(dirty_rect.y1, y)
+
+      // TODO: dont use DISPLAY* here
+      dirty_rect.x1 = min(dirty_rect.x1, int(DISPLAYWIDTH)-1)
+      dirty_rect.y1 = min(dirty_rect.y1, int(DISPLAYHEIGHT)-1)
 
     def redraw_if_dirty():
       if self.dirty:
