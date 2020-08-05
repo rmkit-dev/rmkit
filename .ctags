@@ -1,3 +1,4 @@
+--langdef=okp
 --langmap=okp:.cpy.okp
 --regex-okp=/^\s*def\s*([a-zA-Z0-9_]+)/\1/d,definition/
 --regex-okp=/^\s*[a-zA-Z0-9_]+\s+([a-zA-Z0-9_]+)\(/\1/d,definition/

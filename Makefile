@@ -3,7 +3,7 @@ default: build
 include src/common.make
 
 # Use `make <app>` to build any app individually
-APPS=harmony remux demo
+APPS=harmony remux demo minesweeper
 CLEAN_APPS=$(foreach app, $(APPS), clean_$(app))
 INSTALL_APPS=$(foreach app, $(APPS), install_$(app))
 
@@ -12,7 +12,7 @@ $(APPS): %: rmkit.h
 	cd src/${@} && make
 
 $(INSTALL_APPS): %: rmkit.h
-	cd src/$(@:install_%=%) && make install
+	cd src/$(@:install_%=%) && make copy
 
 $(CLEAN_APPS): %:
 	cd src/$(@:clean_%=%) && make clean
