@@ -127,14 +127,6 @@ class App:
 
 
 App app
-
-void signal_handler(int signum):
-  app.fb->cleanup()
-  exit(signum)
-
 def main():
-  for auto s : { SIGINT, SIGTERM, SIGABRT}:
-    signal(s, signal_handler)
-
   proc::stop_xochitl()
   app.run()

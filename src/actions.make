@@ -28,11 +28,16 @@ compile_x86: export CPP_FLAGS += " -Og"
 compile_x86:
 	okp ${OKP_FLAGS} -- ${CPP_FLAGS}
 
+assets:
+	bash scripts/build/build_assets.sh
+
 copy:
 	ARCH=arm $(MAKE) compile
 	scp -C ../build/${EXE} root@${HOST}:harmony/${EXE}
+
 stop:
 	ssh root@${HOST} killall ${EXE} || true
+
 run: compile copy
 	HOST=${HOST} bash build/${EXE}
 
