@@ -1,4 +1,5 @@
 #include "../build/rmkit.h"
+#include "assets.h"
 
 using namespace std
 
@@ -24,8 +25,15 @@ class App:
     fb->redraw_screen()
     w, h = fb->get_display_size()
 
+    v_layout := ui::VerticalLayout(0, 0, w, h, demo_scene)
     h_layout := ui::HorizontalLayout(0, 0, w, h, demo_scene)
     h_layout.pack_center(new ui::Text(0, 0, w, 50, "Hello World"))
+
+    pixmap := new ui::Pixmap(0, 0, 50, 50, ICON(assets::hand_paper_solid_png))
+    h_layout.pack_center(pixmap)
+    v_layout.pack_center(pixmap)
+
+    demo_scene->add(pixmap)
 
     ui::MainLoop::refresh()
 

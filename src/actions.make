@@ -1,4 +1,7 @@
 include ../common.make
+SRC_DIR=$(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+ROOT_DIR=$(shell realpath -s ${SRC_DIR}/../)
+APP=$(EXE:.exe=)
 
 compile:
 	# $$ARCH is ${ARCH}
@@ -13,8 +16,9 @@ else
 	exit 1
 endif
 
+
 clean:
-	rm ../build/${EXE}
+	rm ${SRC_DIR}/build/${EXE}
 
 compile_arm: export CPP_FLAGS += -O3
 compile_arm:
@@ -29,7 +33,8 @@ compile_x86:
 	okp ${OKP_FLAGS} -- ${CPP_FLAGS}
 
 assets:
-	bash scripts/build/build_assets.sh
+	# ${SRC_DIR} ${APP}
+	bash ${ROOT_DIR}/scripts/build/build_assets.sh ${SRC_DIR}/${APP}/assets.h ${ASSET_DIR}
 
 copy:
 	ARCH=arm $(MAKE) compile
@@ -45,4 +50,5 @@ test: export ARCH=arm
 test: copy
 	HOST=${HOST} bash scripts/run_app_arm.sh ${EXE} || true
 
+.PHONY: assets clean
 # vim: syntax=make
