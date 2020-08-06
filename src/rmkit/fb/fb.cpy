@@ -224,7 +224,8 @@ namespace framebuffer:
     // buffer and a width and height
     // o_x - the x offset
     // o_y - the y offset
-    def draw_bitmap(image_data &image, int o_x, int o_y):
+    // alpha - the color to treat as an alpha blend (not painted into destination)
+    def draw_bitmap(image_data &image, int o_x, int o_y, int alpha=97):
       remarkable_color* ptr = self.fbmem
       ptr += (o_x + o_y * self.width)
       src := image.buffer
@@ -240,13 +241,14 @@ namespace framebuffer:
           if o_x + i >= self.width:
             break
 
-          ptr[i] = (remarkable_color) src[i]
+          if src[i] != alpha:
+            ptr[i] = (remarkable_color) src[i]
         ptr += self.width
         src += image.w
 
     void draw_text(string text, int x, int y, image_data &image, int font_size=24):
       stbtext::render_text((char*)text.c_str(), image, font_size)
-      draw_bitmap(image, x, y)
+      draw_bitmap(image, x, y,WHITE)
 
     // function: draw_text
     // a conveniece function for drawing text to the framebuffer
