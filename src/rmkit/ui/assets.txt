@@ -1,0 +1,23 @@
+title: Asset Pipeline
+
+About:
+
+rmKit has a basic asset pipeline that will package assets
+for the app into the binary itself.
+
+Usage:
+
+To use the asset pipeline, set `ASSET_DIR=asset_dir/` in the app's Makefile,
+like so:
+
+--- Code ---
+EXE=demo.exe
+FILES=main.cpy
+ASSET_DIR=assets/
+
+include ../actions.make
+------------
+
+Then run *wake assets* to generate an assets.h file. Each file that was in
+${ASSET_DIR} will now be available in the assets:: namespace, along with its
+size.

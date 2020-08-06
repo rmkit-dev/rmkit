@@ -1,0 +1,38 @@
+title: MainLoop
+
+Minimal Example of rmKit app with MainLoop::
+
+--- code ---
+#include "../build/rmkit.h"
+
+using namespace std
+
+int main()
+  // grab the framebuffer
+  fb := framebuffer::get()
+  // clear the framebuffer using a white rect
+  fb->clear_screen()
+
+  // make a new scene
+  scene := ui::make_scene()
+  // set the scene
+  ui::MainLoop::set_scene(scene)
+
+  // create a new text widget with text "Hello World"
+  // its absolutely positioned at 0, 0 with width 200 and height 50
+  text := new ui::Text(0, 0, 200, 50, "Hello World")
+
+  // add the text widget to our scene
+  scene->add(text)
+
+  while true:
+    // main() dispatches user input handlers, runs tasks in the task queue and so on
+    ui::MainLoop::main()
+
+    // goes through all widgets that were marked as dirty since
+    // the previous loop iteration and call their redraw() method
+    ui::MainLoop::redraw()
+    // wait for user input. the input will be handled by the next
+    // iteration of this loop
+    ui::MainLoop::read_input()
+-----------
