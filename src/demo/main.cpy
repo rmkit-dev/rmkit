@@ -29,7 +29,7 @@ class App:
     h_layout := ui::HorizontalLayout(0, 0, w, h, demo_scene)
     h_layout.pack_center(new ui::Text(0, 0, w, 50, "Hello World"))
 
-    pixmap := new ui::Pixmap(0, 0, 50, 50, ICON(assets::hand_paper_solid_png))
+    pixmap := new ui::Pixmap(0, 0, 50, 50, ICON(assets::flag_solid_png))
     h_layout.pack_center(pixmap)
     v_layout.pack_center(pixmap)
 
