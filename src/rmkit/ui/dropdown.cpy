@@ -132,7 +132,7 @@ namespace ui:
 
   // class: ui::TextDropdown
   // --- Prototype ---
-  // class ui::TextDropdown: public ui::DropdownButton<ui::TextOption>:
+  // class ui::TextDropdown: public ui::DropdownButton:
   // ----------------
   // The TextDropdown is the most likely dropdown to use - 
   // you supply a list of options and the on_select function

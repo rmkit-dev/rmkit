@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 from __future__ import print_function
 
+import re
+
 # add the namespace qualifiers to classes, just in case they change
 def add_namespace_to_classes(lines):
     pass
@@ -23,6 +25,7 @@ def add_prototypes(lines):
                     tokens = line.lstrip().split()
                     n_tokens = []
                     for tok in tokens:
+                        tok = re.sub("<.*>", "", tok)
                         if tok.find("::") != -1 or not namespace or \
                         tok in ["public", "private", "class", "struct"]:
                             n_tokens.append(tok)
