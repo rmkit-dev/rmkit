@@ -57,7 +57,7 @@ class Cell: public ui::Widget:
       color = GRAY
       fill = 1
     else if self.flagged && !self.opened:
-      color = BLACK
+      color = WHITE
       fill = 1
     self.fb->draw_rect(self.x, self.y, self.w, self.h, color, fill)
 
@@ -75,7 +75,7 @@ class Cell: public ui::Widget:
       self.textWidget->redraw()
 
     if self.flagged && !opened:
-      pixmap := ui::Pixmap(self.x, self.y, self.w, self.h, ICON(assets::flag_solid_png))
+      pixmap := ui::Pixmap(self.x+5, self.y+5, self.w-20, self.h-20, ICON(assets::flag_solid_png))
       pixmap.redraw()
 
   void on_mouse_click(input::SynMouseEvent &ev):
@@ -247,7 +247,8 @@ class App:
         grid->cells[i][j]->neighbors = "0"
 
   def handle_key_event(input::SynKeyEvent &key_ev):
-    print "KEY PRESSED", key_ev.key
+    // print "KEY PRESSED", key_ev.key
+    pass
 
   def handle_motion_event(input::SynMouseEvent &syn_ev):
     pass
