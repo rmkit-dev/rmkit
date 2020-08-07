@@ -9,6 +9,7 @@ using namespace std
 
 bool Mode = 1, won
 int nb_unopened = 0
+GRID_SIZE := 6
 
 int main()
 
@@ -140,7 +141,6 @@ class Grid: public ui::Widget:
     print "FLAGGED CELL", row, col
     
   void make_cells(ui::Scene s):
-    //# TODO: make cells here
     cells = vector<vector<Cell<Grid>*>> (n, vector<Cell<Grid>*>(n))
     jump := w/(n + 1)
     remainder := (w - jump * n) / (n + 1)
@@ -196,15 +196,12 @@ class FlagButton: public ui::Button:
   void on_mouse_click(input::SynMouseEvent &ev):
     Mode = 0
 
-grid := new Grid(0, 300, 1100, 1100, 1)
-m := 6
-n := 0
-
 class App:
   public:
   shared_ptr<framebuffer::FB> fb
 
   ui::Scene field_scene
+  Grid *grid
 
   App():
     fb = framebuffer::get()
@@ -217,7 +214,7 @@ class App:
     ui::MainLoop::set_scene(field_scene)
 
     // create the grid component and add it to the field
-    grid = new Grid(0, 300, 1100, 1100, n)
+    grid = new Grid(0, 300, 1100, 1100, GRID_SIZE)
     nb_unopened = 0
 
     h_layout := ui::HorizontalLayout(0, 0, w, h, field_scene)
@@ -241,18 +238,13 @@ class App:
   def reset():
     Mode = 1
     nb_unopened = 0
+    n := GRID_SIZE
     for int i = 0; i < n; i++
       for int j = 0; j < n; j++:
         grid->cells[i][j]->is_bomb = 0
         grid->cells[i][j]->opened = 0
         grid->cells[i][j]->flagged = 0
         grid->cells[i][j]->neighbors = "0"
-    n = m
-    grid = new Grid(0, 300, 1100, 1100, m)
-    w, h = fb->get_display_size()
-    h_layout := ui::HorizontalLayout(0, 0, w, h, field_scene)
-    h_layout.pack_center(grid)
-    grid->make_cells(field_scene)
 
   def handle_key_event(input::SynKeyEvent &key_ev):
     print "KEY PRESSED", key_ev.key
@@ -280,6 +272,7 @@ def main():
     signal(s, signal_handler)
   app.reset()
   app.fb->clear_screen()
+  ui::Text::FS = 32
   app.run()
 
 // vim:syntax=cpp
