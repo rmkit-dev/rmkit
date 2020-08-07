@@ -7,17 +7,17 @@
 
 using namespace std
 
-bool Mode = 1, won
-int nb_unopened = 0
+MODE := 1
+WON := false
 GRID_SIZE := 6
+NB_UNOPENED := 0
 
-int main()
-
+void new_game() // forward declaring main for usage here
 class GameOverDialog: public ui::ConfirmationDialog:
   public:
   GameOverDialog(int x, y, w, h): ui::ConfirmationDialog(x, y, w, h):
-    self.set_title(string((won?"You win!" : "You lose!")))
-    print won
+    self.set_title(string((WON?"You win!" : "You lose!")))
+    print WON
     self.buttons = { "NEW GAME" }
     text := "Your score is: NaN"
     self.contentWidget = new ui::MultiText(20, 20, self.w, self.h - 100, text)
@@ -25,7 +25,7 @@ class GameOverDialog: public ui::ConfirmationDialog:
   void on_button_selected(string text):
     if text == "NEW GAME":
       ui::MainLoop::hide_overlay()
-      main() // TEMPORARY
+      new_game() // TEMPORARY
       
   
 template<class T>
@@ -79,7 +79,7 @@ class Cell: public ui::Widget:
       pixmap.redraw()
 
   void on_mouse_click(input::SynMouseEvent &ev):
-    if (Mode)
+    if (MODE)
       grid->open_cell(self.i, self.j)
     else 
       grid->toggle_flag_cell(self.i, self.j)
@@ -101,8 +101,8 @@ class Grid: public ui::Widget:
       if min(t.first,t.second) < 0 || max(t.first,t.second) >= n || cells[t.first][t.second]->opened || cells[t.first][t.second]->is_bomb:
         continue
       cells[t.first][t.second]->opened = 1
-      nb_unopened--
-      print nb_unopened
+      NB_UNOPENED--
+      print NB_UNOPENED
       if cells[t.first][t.second]->neighbors[0]-'0'
         continue
       for int f = -1; f <= 1; f++:
@@ -116,11 +116,11 @@ class Grid: public ui::Widget:
     if cells[row][col]->is_bomb:
       cells[row][col]->opened = 1
       end_game(0)
-    if !nb_unopened:
+    if !NB_UNOPENED:
       for int i = 0; i < n; i++
         for int j = 0; j < n; j++:
           if abs(j - col) <= 1 && abs(i - row) <= 1:
-            nb_unopened++
+            NB_UNOPENED++
             continue
           int temp = rand()%100
           if temp < 15:
@@ -131,9 +131,9 @@ class Grid: public ui::Widget:
                   continue
                 cells[i+f][j+g]->neighbors[0]++
           else:
-            nb_unopened++
+            NB_UNOPENED++
     flood(row, col)
-    if !nb_unopened:
+    if !NB_UNOPENED:
       end_game(1)
 
   void toggle_flag_cell(int row, col):
@@ -158,7 +158,7 @@ class Grid: public ui::Widget:
         s->add(cells[i][j])
 
   void end_game(bool win):
-    won = win
+    WON = win
     self.gd = new GameOverDialog(0, 0, 800, 800)
     if !win:
       for int i = 0; i < n; i++:
@@ -179,10 +179,10 @@ class BombButton: public ui::Button:
   
   void redraw():
     ui::Button::redraw()
-    self.fb->draw_rect(self.x, self.y, self.w, self.h, GRAY, Mode)
+    self.fb->draw_rect(self.x, self.y, self.w, self.h, GRAY, MODE)
 
   void on_mouse_click(input::SynMouseEvent &ev):
-    Mode = 1
+    MODE = 1
 
 class FlagButton: public ui::Button:
   public:
@@ -191,10 +191,10 @@ class FlagButton: public ui::Button:
 
   void redraw():
     ui::Button::redraw()
-    self.fb->draw_rect(self.x, self.y, self.w, self.h, GRAY, !Mode)
+    self.fb->draw_rect(self.x, self.y, self.w, self.h, GRAY, !MODE)
 
   void on_mouse_click(input::SynMouseEvent &ev):
-    Mode = 0
+    MODE = 0
 
 class App:
   public:
@@ -215,7 +215,7 @@ class App:
 
     // create the grid component and add it to the field
     grid = new Grid(0, 300, 1100, 1100, GRID_SIZE)
-    nb_unopened = 0
+    NB_UNOPENED = 0
 
     h_layout := ui::HorizontalLayout(0, 0, w, h, field_scene)
     h_layout.pack_center(new ui::Text(0, 0, w, 50, "MineSweeper"))
@@ -236,8 +236,8 @@ class App:
     ui::MainLoop::refresh()
 
   def reset():
-    Mode = 1
-    nb_unopened = 0
+    MODE = 1
+    NB_UNOPENED = 0
     n := GRID_SIZE
     for int i = 0; i < n; i++
       for int j = 0; j < n; j++:
@@ -263,16 +263,13 @@ class App:
 
 
 App app
-void signal_handler(int signum):
-  app.fb->cleanup()
-  exit(signum)
-
-def main():
-  for auto s : { SIGINT, SIGTERM, SIGABRT}:
-    signal(s, signal_handler)
+void new_game():
   app.reset()
   app.fb->clear_screen()
+
+def main():
   ui::Text::FS = 32
+  new_game()
   app.run()
 
 // vim:syntax=cpp
