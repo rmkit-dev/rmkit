@@ -1,6 +1,7 @@
 #include "widget.h"
 #include "layouts.h"
 #include "text.h"
+#include "../util/image.h"
 
 namespace ui:
   class ImageCache:
@@ -59,7 +60,8 @@ namespace ui:
       vector<unsigned char> out
       uint32_t* buf
 
-      lodepng::decode(out, iconw, iconh, self.data, self.len)
+      lodepng::decode(out, iconw, iconh, self.data, self.len,
+        LodePNGColorType::LCT_GREY, 8)
       buf = (uint32_t*) malloc(iconw*iconh*sizeof(uint32_t))
       buf = (uint32_t*) memcpy(buf, out.data(), out.size())
       self.image = image_data{(uint32_t*) buf, (int) iconw, (int) iconh}
@@ -72,6 +74,7 @@ namespace ui:
     CachedIcon icon = {NULL, 0}
     Pixmap(int x, y, w, h, icons::Icon ico): Widget(x,y,w,h):
       self.icon = CachedIcon({ico.data, (int) ico.len, ico.name})
+      util::resize_image(self.icon.image, self.w, self.h)
 
     tuple<int, int> get_render_size():
       if self.icon.image.buffer != NULL:

@@ -1,5 +1,6 @@
 #include "../../vendor/stb/image_resize.h"
 #include "../../vendor/lodepng/lodepng.h"
+#include "../util/image.h"
 #include "pixmap.h"
 
 namespace ui:
@@ -39,24 +40,9 @@ namespace ui:
       decode_ret := lodepng::decode(raw, fw, fh, load_buffer, outsize,
                       LodePNGColorType::LCT_GREY, 8);
 
-      num_channels := 1
-      resize_len := self.w*self.h*sizeof(unsigned char)*num_channels
-      resize_buffer = (unsigned char*)malloc(resize_len)
-      memset(resize_buffer, 0, resize_len);
-      err := stbir_resize_uint8(raw.data() , fw , fh , 0,
-                         resize_buffer, self.w, self.h, 0, num_channels)
+      buf := (uint32_t*) malloc(fw*fh*sizeof(uint32_t))
+      buf = (uint32_t*) memcpy(buf, raw.data(), raw.size())
+      self.image = image_data{(uint32_t*) buf, (int) fw, (int) fh}
+      util::resize_image(self.image, self.w, self.h)
 
-      for (int i=0; i< resize_len; i++):
-        if resize_buffer[i] != 255:
-          resize_buffer[i] = 0
-
-      unsigned char* rgba_buf = (unsigned char*)malloc(4*resize_len)
-      j := 0
-      for (int i=0; i< resize_len; i++):
-        rgba_buf[j++] = resize_buffer[i]
-        rgba_buf[j++] = resize_buffer[i]
-        rgba_buf[j++] = resize_buffer[i]
-        rgba_buf[j++] = resize_buffer[i]
-
-      self.image = image_data{(uint32_t*) rgba_buf, (int) self.w, (int) self.h}
       return self.image

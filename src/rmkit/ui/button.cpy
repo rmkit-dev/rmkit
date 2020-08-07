@@ -75,7 +75,7 @@ namespace ui:
       has_icon := false
       has_text := false
       if self.icon.data != NULL:
-        self.iconWidget = make_shared<Pixmap>(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, icon)
+        self.iconWidget = make_shared<Pixmap>(0, 0, 20, 20, icon)
         has_icon = true
       if self.textWidget != nullptr:
         self.textWidget->restore_coords()
@@ -85,8 +85,8 @@ namespace ui:
 
       if has_icon && has_text:
         self.iconWidget->x = self.x + x_padding
-        self.iconWidget->y = self.y + y_padding
-        self.textWidget->x = self.x + self.iconWidget->w
+        self.iconWidget->y = self.y + y_padding + 5
+        self.textWidget->x = self.x + self.iconWidget->w + 20
         self.textWidget->y = self.y + y_padding
       else if has_icon:
         rw, rh = self.iconWidget->get_render_size()
