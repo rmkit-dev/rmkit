@@ -10,3 +10,4 @@ run:
 
 reboot:
 	ssh root@10.11.99.1 systemctl start xochitl
+ASSET_DIR=assets/

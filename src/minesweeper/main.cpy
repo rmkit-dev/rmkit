@@ -3,42 +3,59 @@
 #define false 0
 
 #include "../build/rmkit.h"
+#include "assets.h"
 
 using namespace std
 
-bool Mode = 1
-int nb_moves = 0
+bool Mode = 1, won
+int nb_unopened = 0
+
+int main()
 
 class GameOverDialog: public ui::ConfirmationDialog:
   public:
   GameOverDialog(int x, y, w, h): ui::ConfirmationDialog(x, y, w, h):
-    self.set_title(string("Game Over: ") + string("you lose"))
-    text := "Your score was: 0"
+    self.set_title(string((won?"You win!" : "You lose!")))
+    print won
+    self.buttons = { "NEW GAME" }
+    text := "Your score is: NaN"
     self.contentWidget = new ui::MultiText(20, 20, self.w, self.h - 100, text)
+
+  void on_button_selected(string text):
+    if text == "NEW GAME":
+      ui::MainLoop::hide_overlay()
+      main() // TEMPORARY
+      
   
 template<class T>
 class Cell: public ui::Widget:
   public:
   T *grid
   int i, j
-  bool flagged = false, is_bomb = 0, visited = 0, opened = 0
+  bool flagged = false, is_bomb = 0, opened = 0
   string neighbors = "0"
   ui::Text* textWidget
 
   Cell(int x, y, w, h, T *g, int i, j): grid(g), i(i), j(j), Widget(x, y, w, h):
     self.textWidget = new ui::Text(x, y, w, h, "")
     self.textWidget->justify = ui::Text::JUSTIFY::CENTER
+  
+  void reset():
+    self.flagged = 0
+    self.is_bomb = 0
+    self.opened = 0
+    self.neighbors = "0"
 
   void redraw():
     color := BLACK
     fill := 0
-    if is_bomb && opened:
+    if self.is_bomb && self.opened:
       color = WHITE
       fill = 1
-    else if !is_bomb && opened:
+    else if !self.is_bomb && self.opened:
       color = GRAY
       fill = 1
-    else if flagged && !opened:
+    else if self.flagged && !self.opened:
       color = BLACK
       fill = 1
     self.fb->draw_rect(self.x, self.y, self.w, self.h, color, fill)
@@ -53,8 +70,12 @@ class Cell: public ui::Widget:
     self.textWidget->x = self.x
     self.textWidget->y = self.y + padding_y
 
-    if self.opened && self.neighbors[0]-'0' > 0:
+    if self.opened && self.neighbors[0]-'0' > 0 && !self.is_bomb:
       self.textWidget->redraw()
+
+    if self.flagged && !opened:
+      pixmap := ui::Pixmap(self.x, self.y, self.w, self.h, ICON(assets::flag_solid_png))
+      pixmap.redraw()
 
   void on_mouse_click(input::SynMouseEvent &ev):
     if (Mode)
@@ -65,9 +86,10 @@ class Cell: public ui::Widget:
 class Grid: public ui::Widget:
   public:
   vector<vector<Cell<Grid>*>> cells
+  GameOverDialog *gd
   int n
   Grid(int x, y, w, h, n): n(n), Widget(x, y, w, h):
-    pass
+    self.gd = new GameOverDialog(0, 0, 800, 800)
 
   void flood(int i, int j):
     queue<pair<int,int>> qe
@@ -75,9 +97,11 @@ class Grid: public ui::Widget:
     while (qe.size()):
       t := qe.front()
       qe.pop()
-      if min(t.first,t.second) < 0 || max(t.first,t.second) >= n || cells[t.first][t.second]->opened:
+      if min(t.first,t.second) < 0 || max(t.first,t.second) >= n || cells[t.first][t.second]->opened || cells[t.first][t.second]->is_bomb:
         continue
       cells[t.first][t.second]->opened = 1
+      nb_unopened--
+      print nb_unopened
       if cells[t.first][t.second]->neighbors[0]-'0'
         continue
       for int f = -1; f <= 1; f++:
@@ -91,21 +115,25 @@ class Grid: public ui::Widget:
     if cells[row][col]->is_bomb:
       cells[row][col]->opened = 1
       end_game(0)
-    nb_moves++
-    if nb_moves == 1:
+    if !nb_unopened:
       for int i = 0; i < n; i++
         for int j = 0; j < n; j++:
-          if abs(j - col) <= 1 && abs(i - row) <= 1 
+          if abs(j - col) <= 1 && abs(i - row) <= 1:
+            nb_unopened++
             continue
           int temp = rand()%100
-          if temp <= 20:
+          if temp < 15:
             cells[i][j]->is_bomb = 1
             for int  f = -1; f <= 1; f++:
               for int g = -1; g <= 1; g++:
                 if min(i+f,j+g) < 0 || max(i+f,j+g) >= n:
                   continue
                 cells[i+f][j+g]->neighbors[0]++
+          else:
+            nb_unopened++
     flood(row, col)
+    if !nb_unopened:
+      end_game(1)
 
   void toggle_flag_cell(int row, col):
     cells[row][col]->flagged ^= 1
@@ -120,8 +148,8 @@ class Grid: public ui::Widget:
     for (int i = 0; i < n; i++)
       for (int j = 0; j < n; j++)
         cells[i][j] = new Cell<Grid>(
-          x + jump * j + remainder * (j + 1),
-          y + jump * i + remainder * (i + 1),
+          x + jump * j + remainder * (j + 1) + 1,
+          y + jump * i + remainder * (i + 1) + 1,
           jump,
           jump,
           self,
@@ -130,13 +158,13 @@ class Grid: public ui::Widget:
         s->add(cells[i][j])
 
   void end_game(bool win):
-    if win:
-      return
-    else:
+    won = win
+    self.gd = new GameOverDialog(0, 0, 800, 800)
+    if !win:
       for int i = 0; i < n; i++:
         for int j = 0; j < n; j++:
           open_cell(i, j)
-    // Open dialog
+    gd->show()
 
   void redraw():
     self.fb->draw_rect(self.x, self.y, self.w, self.h, BLACK, false /* fill */)
@@ -151,18 +179,32 @@ class BombButton: public ui::Button:
   
   void redraw():
     ui::Button::redraw()
-    self.fb->draw_rect(self.x, self.y, self.w, self.h, BLACK, false)
+    self.fb->draw_rect(self.x, self.y, self.w, self.h, GRAY, Mode)
 
   void on_mouse_click(input::SynMouseEvent &ev):
-    Mode ^= 1
+    Mode = 1
 
+class FlagButton: public ui::Button:
+  public:
+  FlagButton(int x, y, w, h, string t="Flag"): Button(x,y,w,h,t):
+    pass
+
+  void redraw():
+    ui::Button::redraw()
+    self.fb->draw_rect(self.x, self.y, self.w, self.h, GRAY, !Mode)
+
+  void on_mouse_click(input::SynMouseEvent &ev):
+    Mode = 0
+
+grid := new Grid(0, 300, 1100, 1100, 1)
+m := 6
+n := 0
 
 class App:
   public:
   shared_ptr<framebuffer::FB> fb
 
   ui::Scene field_scene
-  GameOverDialog *gd
 
   App():
     fb = framebuffer::get()
@@ -170,23 +212,19 @@ class App:
     fb->redraw_screen()
 
     w, h = fb->get_display_size()
-    self.gd = new GameOverDialog(0, 0, 800, 800)
 
     field_scene = ui::make_scene()
     ui::MainLoop::set_scene(field_scene)
 
-    n := 16
-
     // create the grid component and add it to the field
-    grid := new Grid(0, 300, 1100, 1100, n)
-    nb_moves = 0
-    //memset(opened, 0, sizeof opened)
+    grid = new Grid(0, 300, 1100, 1100, n)
+    nb_unopened = 0
 
     h_layout := ui::HorizontalLayout(0, 0, w, h, field_scene)
     h_layout.pack_center(new ui::Text(0, 0, w, 50, "MineSweeper"))
     h_layout.pack_center(grid)
     // pack cells after centering grid
-    grid->make_cells(field_scene);
+    grid->make_cells(field_scene)
     // create the mouse1/mouse2 buttons
     // next steps:
     // controls for the bottom half of screen (flag vs. open bomb)
@@ -194,19 +232,33 @@ class App:
     // opening a bomb
     
     a := new BombButton(200, 1450, 200, 50) 
+    b := new FlagButton(500, 1450, 200, 50)
     field_scene->add(a)
-    //b := new MyWidget(..)
+    field_scene->add(b)
  
     ui::MainLoop::refresh()
+
+  def reset():
+    Mode = 1
+    nb_unopened = 0
+    for int i = 0; i < n; i++
+      for int j = 0; j < n; j++:
+        grid->cells[i][j]->is_bomb = 0
+        grid->cells[i][j]->opened = 0
+        grid->cells[i][j]->flagged = 0
+        grid->cells[i][j]->neighbors = "0"
+    n = m
+    grid = new Grid(0, 300, 1100, 1100, m)
+    w, h = fb->get_display_size()
+    h_layout := ui::HorizontalLayout(0, 0, w, h, field_scene)
+    h_layout.pack_center(grid)
+    grid->make_cells(field_scene)
 
   def handle_key_event(input::SynKeyEvent &key_ev):
     print "KEY PRESSED", key_ev.key
 
   def handle_motion_event(input::SynMouseEvent &syn_ev):
     pass
-
-  void game_over(int status):
-    gd->show()
 
   def run():
     ui::MainLoop::key_event += PLS_DELEGATE(self.handle_key_event)
@@ -226,7 +278,8 @@ void signal_handler(int signum):
 def main():
   for auto s : { SIGINT, SIGTERM, SIGABRT}:
     signal(s, signal_handler)
-
+  app.reset()
+  app.fb->clear_screen()
   app.run()
 
 // vim:syntax=cpp
