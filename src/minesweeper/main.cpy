@@ -11,6 +11,7 @@ MODE := 1
 WON := false
 GRID_SIZE := 6
 NB_UNOPENED := 0
+GAME_STARTED := true
 
 void new_game() // forward declaring main for usage here
 class GameOverDialog: public ui::ConfirmationDialog:
@@ -25,6 +26,7 @@ class GameOverDialog: public ui::ConfirmationDialog:
   void on_button_selected(string text):
     if text == "NEW GAME":
       ui::MainLoop::hide_overlay()
+      GAME_STARTED = false
       new_game() // TEMPORARY
       
   
@@ -251,7 +253,11 @@ class App:
     pass
 
   def handle_motion_event(input::SynMouseEvent &syn_ev):
-    pass
+    if !GAME_STARTED:
+      if syn_ev.left == 0:
+        GAME_STARTED = true
+      else:
+        syn_ev.stop_propagation()
 
   def run():
     ui::MainLoop::key_event += PLS_DELEGATE(self.handle_key_event)
