@@ -13,6 +13,7 @@
 #include "mxcfb.h"
 #include "stb_text.h"
 #include "../../vendor/lodepng/lodepng.h"
+#include "../input/input.h"
 
 using namespace std
 
@@ -50,6 +51,8 @@ namespace framebuffer:
     int byte_size = 0, dirty = 0
     int update_marker = 1
     int waveform_mode = WAVEFORM_MODE_DU
+
+    input::SynMouseEvent last_mouse_ev
     remarkable_color* fbmem
     FBRect dirty_area
 
@@ -522,6 +525,7 @@ namespace framebuffer:
     int perform_redraw(bool):
       #ifndef PERF_BUILD
       msync(self.fbmem, self.byte_size, MS_SYNC)
+      self.draw_circle_filled(last_mouse_ev.x, last_mouse_ev.y, 4, 2, BLACK)
       self.save_png()
       #endif
       return 0

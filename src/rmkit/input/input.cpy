@@ -167,7 +167,6 @@ namespace input:
       for auto ev : self.button.events:
         self.all_key_events.push_back(self.button.marshal(ev))
 
-
   // TODO: should we just put this in the SynMouseEvent?
   static WacomEvent* is_wacom_event(SynMouseEvent &syn_ev):
     return dynamic_cast<WacomEvent*>(syn_ev.original.get())

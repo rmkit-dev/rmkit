@@ -93,6 +93,7 @@ namespace ui:
         if ev._stop_propagation:
           continue
         handle_motion_event(ev)
+        fb->last_mouse_ev = ev
 
 
       for auto ev : in.all_key_events:
@@ -100,6 +101,7 @@ namespace ui:
         if ev._stop_propagation:
           continue
         handle_key_event(ev)
+
 
     // function: main
     //
