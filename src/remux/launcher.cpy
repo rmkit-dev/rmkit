@@ -19,7 +19,7 @@ DIALOG_WIDTH  := 600
 DIALOG_HEIGHT := 800
 
 #ifdef REMARKABLE
-#define BIN_DIR  "/home/root/harmony/bin"
+#define BIN_DIR  "/home/root/harmony/"
 #else
 #define BIN_DIR  "./src/build/"
 #endif
@@ -73,6 +73,7 @@ class AppDialog: public ui::Pager<AppDialog<T>>:
       return filenames
 
     void populate():
+      vector<string> skip_list = { "demo.exe", "remux.exe" }
       vector<string> binaries
       unordered_set<string> seen
       self.apps = {}
@@ -86,7 +87,17 @@ class AppDialog: public ui::Pager<AppDialog<T>>:
         print "BINARY IS", bin_str
         app_str := a.c_str()
         base := basename(app_str)
-        app := (RMApp) { .bin=bin_str, .name=base }
+
+        dont_add := false
+        for auto s : skip_list:
+          print "SKIP", base, s, (s == base)
+          if s == base:
+            dont_add = true
+        if dont_add:
+          print "SKIPPING", base
+          continue
+
+        app := (RMApp) { .bin=bin_str, .name=base, .term="killall " + string(base) }
         self.apps.push_back(app)
 
       for auto a : self.apps:
