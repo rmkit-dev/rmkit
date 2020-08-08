@@ -2,7 +2,7 @@
 #include "../../vendor/lodepng/lodepng.h"
 
 namespace util:
-  resize_image(image_data &im, int new_w, new_h):
+  resize_image(image_data &im, int new_w, new_h, threshold=255):
     num_channels := 1
     resize_len := new_w*new_h*sizeof(unsigned char)*num_channels
     resize_buffer := (unsigned char*)malloc(resize_len)
@@ -11,7 +11,7 @@ namespace util:
                        resize_buffer, new_w, new_h, 0, num_channels)
 
     for (int i=0; i< resize_len; i++):
-      if resize_buffer[i] != 255:
+      if resize_buffer[i] < threshold:
         resize_buffer[i] = 0
 
     unsigned char* rgba_buf = (unsigned char*)malloc(4*resize_len)

@@ -74,7 +74,7 @@ namespace ui:
     CachedIcon icon = {NULL, 0}
     Pixmap(int x, y, w, h, icons::Icon ico): Widget(x,y,w,h):
       self.icon = CachedIcon({ico.data, (int) ico.len, ico.name})
-      util::resize_image(self.icon.image, self.w, self.h)
+      util::resize_image(self.icon.image, self.w, self.h, 50 /* black threshold */)
 
     tuple<int, int> get_render_size():
       if self.icon.image.buffer != NULL:
