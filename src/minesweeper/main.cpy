@@ -4,32 +4,60 @@
 
 #include "../build/rmkit.h"
 #include "assets.h"
+#include <chrono>
+#include <random>
 
 using namespace std
 
+// Randomisation
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+inline int rand() {int r = rng(); return abs(r);}
+
 MODE := 1
 WON := false
-GRID_SIZE := 6
+GRID_SIZE := 15
 NB_UNOPENED := 0
 GAME_STARTED := true
 
-void new_game() // forward declaring main for usage here
+void new_game()
+void main_menu()
+void resize_field(int)
+
+class SizeButton: public ui::Button:
+  public:
+  int n
+  SizeButton(int x, y, w, h, n, string t="Back"): n(n), Button(x,y,w,h,t):
+    pass
+
+  void on_mouse_click(input::SynMouseEvent &ev):
+    if GRID_SIZE != n:
+      resize_field(n)
+
+    new_game()
+
+
+
 class GameOverDialog: public ui::ConfirmationDialog:
   public:
+  ui::MultiText *textWidget
   GameOverDialog(int x, y, w, h): ui::ConfirmationDialog(x, y, w, h):
     self.set_title(string((WON?"You win!" : "You lose!")))
-    print WON
-    self.buttons = { "NEW GAME" }
+    self.buttons = { "NEW GAME", "MAIN MENU" }
     text := "Your score is: NaN"
-    self.contentWidget = new ui::MultiText(20, 20, self.w, self.h - 100, text)
+    self.textWidget = new ui::MultiText(20, 20, self.w, self.h - 100, text)
+    self.contentWidget = self.textWidget
 
   void on_button_selected(string text):
     if text == "NEW GAME":
       ui::MainLoop::hide_overlay()
       GAME_STARTED = false
       new_game() // TEMPORARY
-      
-  
+    if text == "MAIN MENU":
+      ui::MainLoop::hide_overlay()
+      GAME_STARTED = false
+      main_menu()
+
+
 template<class T>
 class Cell: public ui::Widget:
   public:
@@ -42,7 +70,7 @@ class Cell: public ui::Widget:
   Cell(int x, y, w, h, T *g, int i, j): grid(g), i(i), j(j), Widget(x, y, w, h):
     self.textWidget = new ui::Text(x, y, w, h, "")
     self.textWidget->justify = ui::Text::JUSTIFY::CENTER
-  
+
   void reset():
     self.flagged = 0
     self.is_bomb = 0
@@ -50,6 +78,7 @@ class Cell: public ui::Widget:
     self.neighbors = "0"
 
   void redraw():
+    self.undraw()
     color := BLACK
     fill := 0
     if self.is_bomb && self.opened:
@@ -60,7 +89,7 @@ class Cell: public ui::Widget:
       fill = 1
     else if self.flagged && !self.opened:
       color = WHITE
-      fill = 1
+      fill =  1
     self.fb->draw_rect(self.x, self.y, self.w, self.h, color, fill)
 
     self.textWidget->text = self.neighbors
@@ -76,6 +105,10 @@ class Cell: public ui::Widget:
     if self.opened && self.neighbors[0]-'0' > 0 && !self.is_bomb:
       self.textWidget->redraw()
 
+    if opened && self.is_bomb:
+      pixmap := ui::Pixmap(self.x+5, self.y+5, self.w-20, self.h-20, ICON(assets::bomb_solid_png))
+      pixmap.redraw()
+
     if self.flagged && !opened:
       pixmap := ui::Pixmap(self.x+5, self.y+5, self.w-20, self.h-20, ICON(assets::flag_solid_png))
       pixmap.redraw()
@@ -83,16 +116,16 @@ class Cell: public ui::Widget:
   void on_mouse_click(input::SynMouseEvent &ev):
     if (MODE)
       grid->open_cell(self.i, self.j)
-    else 
+    else
       grid->toggle_flag_cell(self.i, self.j)
 
 class Grid: public ui::Widget:
   public:
   vector<vector<Cell<Grid>*>> cells
-  GameOverDialog *gd
+  shared_ptr<GameOverDialog> gd
   int n
   Grid(int x, y, w, h, n): n(n), Widget(x, y, w, h):
-    self.gd = new GameOverDialog(0, 0, 800, 800)
+    pass
 
   void flood(int i, int j):
     queue<pair<int,int>> qe
@@ -140,8 +173,9 @@ class Grid: public ui::Widget:
 
   void toggle_flag_cell(int row, col):
     cells[row][col]->flagged ^= 1
-    print "FLAGGED CELL", row, col
-    
+    print "FLAGGED CELL", row, col, cells[row][col]->flagged
+    self.dirty = 1
+
   void make_cells(ui::Scene s):
     cells = vector<vector<Cell<Grid>*>> (n, vector<Cell<Grid>*>(n))
     jump := w/(n + 1)
@@ -150,8 +184,8 @@ class Grid: public ui::Widget:
     for (int i = 0; i < n; i++)
       for (int j = 0; j < n; j++)
         cells[i][j] = new Cell<Grid>(
-          x + jump * j + remainder * (j + 1) + 1,
-          y + jump * i + remainder * (i + 1) + 1,
+          x + jump * j + remainder * (j + 1) + 2 + 7 * (n == 20),
+          y + jump * i + remainder * (i + 1) + 2 + 7 * (n == 20),
           jump,
           jump,
           self,
@@ -161,7 +195,7 @@ class Grid: public ui::Widget:
 
   void end_game(bool win):
     WON = win
-    self.gd = new GameOverDialog(0, 0, 800, 800)
+    self.gd = make_shared<GameOverDialog>(0, 0, 800, 800)
     if !win:
       for int i = 0; i < n; i++:
         for int j = 0; j < n; j++:
@@ -174,11 +208,19 @@ class Grid: public ui::Widget:
   void on_mouse_click(input::SynMouseEvent &ev):
     print "CLICKED IN GRID"
 
+class MenuButton: public ui::Button:
+  public:
+  MenuButton(int x, y, w, h, string t="Back"): Button(x,y,w,h,t):
+    pass
+
+  void on_mouse_click(input::SynMouseEvent &ev):
+    main_menu()
+
 class BombButton: public ui::Button:
   public:
   BombButton(int x, y, w, h, string t="Observe"): Button(x,y,w,h,t):
     pass
-  
+
   void redraw():
     ui::Button::redraw()
     self.fb->draw_rect(self.x, self.y, self.w, self.h, GRAY, MODE)
@@ -202,7 +244,7 @@ class App:
   public:
   shared_ptr<framebuffer::FB> fb
 
-  ui::Scene field_scene
+  ui::Scene field_scene, title_menu
   Grid *grid
 
   App():
@@ -212,8 +254,42 @@ class App:
 
     w, h = fb->get_display_size()
 
+    title_menu = ui::make_scene()
+    // center align minesweeper text at top
+    // center align the size buttons
+    h_layout := ui::HorizontalLayout(0, 0, w, h, title_menu)
+    h_layout.pack_center(new ui::Text(0, 0, 200, 50, "MineSweeper"))
+
+    size_button_container := ui::VerticalLayout(0, 0, 800, 200*4, title_menu)
+   
+    vector<pair<int, string>> sizes{ {8, "8x8" }, {12, "12x12"}, {16, "16x16"}, {20, "20x20"}};
+    button_height := 200
+    for auto p : sizes:
+      btn := new SizeButton(w/2-400, 500, 800, button_height, p.first, p.second)
+      btn->set_justification(ui::Text::JUSTIFY::CENTER)
+      btn->y_padding = (button_height - ui::Text::FS) / 2
+      size_button_container.pack_start(btn)
+
+//    size_button_container.pack_start(new SizeButton(w/2-400, 500, 800, 200, 8, "8x8"))
+//    size_button_container.pack_start(new SizeButton(w/2-400, 50, 800, 200, 12, "12x12"))
+//    size_button_container.pack_start(new SizeButton(w/2-400, 50, 800, 200, 16, "16x16"))
+//    size_button_container.pack_start(new SizeButton(w/2-400, 50, 800, 200, 20, "20x20"))
+    
+
+    make_field()
+
+    ui::MainLoop::set_scene(title_menu)
+    ui::MainLoop::refresh()
+
+  void main_menu():
+    ui::MainLoop::set_scene(title_menu)
+
+  void make_field():
     field_scene = ui::make_scene()
-    ui::MainLoop::set_scene(field_scene)
+    w, h = fb->get_display_size()
+
+    c := new MenuButton(0, 0, 200, 50)
+    field_scene->add(c)
 
     // create the grid component and add it to the field
     grid = new Grid(0, 300, 1100, 1100, GRID_SIZE)
@@ -229,13 +305,11 @@ class App:
     // controls for the bottom half of screen (flag vs. open bomb)
     // generate a bomb field
     // opening a bomb
-    
-    a := new BombButton(200, 1450, 200, 50) 
+
+    a := new BombButton(200, 1450, 200, 50)
     b := new FlagButton(500, 1450, 200, 50)
     field_scene->add(a)
     field_scene->add(b)
- 
-    ui::MainLoop::refresh()
 
   def reset():
     MODE = 1
@@ -270,13 +344,21 @@ class App:
 
 
 App app
+void resize_field(int size):
+  GRID_SIZE = size
+  app.make_field()
+
+void main_menu():
+  app.reset()
+  app.main_menu()
+  app.fb->clear_screen()
 void new_game():
   app.reset()
   app.fb->clear_screen()
+  ui::MainLoop::set_scene(app.field_scene)
 
 def main():
   ui::Text::FS = 32
-  new_game()
   app.run()
 
 // vim:syntax=cpp
