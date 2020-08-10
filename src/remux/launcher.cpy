@@ -190,7 +190,7 @@ class App:
     app_bg->visible = false
 
   def run():
-    ui::Text::FS = 32
+    ui::Text::DEFAULT_FS = 32
 
     ui::MainLoop::key_event += PLS_DELEGATE(self.handle_key_event)
     while true:

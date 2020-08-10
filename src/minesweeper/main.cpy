@@ -317,7 +317,7 @@ class App:
     for auto p : sizes:
       btn := new SizeButton(w/2-400, 500, 800, button_height, p.first, p.second)
       btn->set_justification(ui::Text::JUSTIFY::CENTER)
-      btn->y_padding = (button_height - ui::Text::FS) / 2
+      btn->y_padding = (button_height - ui::Text::DEFAULT_FS) / 2
       size_button_container.pack_start(btn)
 
 //    size_button_container.pack_start(new SizeButton(w/2-400, 500, 800, 200, 8, "8x8"))
@@ -415,7 +415,8 @@ void new_game():
   ui::MainLoop::set_scene(app.field_scene)
 
 def main():
-  ui::Text::FS = 32
+  ui::Text::DEFAULT_FS = 32
+  new_game()
   app.run()
 
 // vim:syntax=cpp
