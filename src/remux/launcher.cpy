@@ -128,7 +128,18 @@ class App:
   public:
   App():
     fb := framebuffer::get()
+
+    // on resize, we exit and trust our service to restart us
+    fb->resize += [=](auto &e):
+      exit(1)
+    ;
+
     w, h = fb->get_display_size()
+
+    if app_dialog != NULL:
+      delete app_dialog
+    if app_bg != NULL:
+      delete app_bg
 
     app_dialog = new AppDialog<App>(0, 0, DIALOG_WIDTH, DIALOG_HEIGHT, self)
     app_bg = new AppBackground(0, 0, w, h)
@@ -195,6 +206,7 @@ class App:
     ui::MainLoop::key_event += PLS_DELEGATE(self.handle_key_event)
     while true:
       ui::MainLoop::main()
+      ui::MainLoop::check_resize()
       if app_bg->visible:
         ui::MainLoop::redraw()
       ui::MainLoop::read_input()

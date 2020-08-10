@@ -14,6 +14,7 @@
 #include "stb_text.h"
 #include "../../vendor/lodepng/lodepng.h"
 #include "../input/input.h"
+#include "../util/signals.h"
 
 using namespace std
 
@@ -33,6 +34,13 @@ namespace framebuffer:
     dirty_rect.x1 = 0
     dirty_rect.y1 = 0
 
+  struct ResizeEvent:
+    int w
+    int h
+    int bpp
+  ;
+
+  PLS_DEFINE_SIGNAL(RESIZE_EVENT, ResizeEvent)
 
   // class: framebuffer::FB
   // FB is the main framebuffer that implements I/O primitives for the
@@ -51,6 +59,9 @@ namespace framebuffer:
     int byte_size = 0, dirty = 0
     int update_marker = 1
     int waveform_mode = WAVEFORM_MODE_DU
+
+    RESIZE_EVENT resize
+
 
     input::SynMouseEvent last_mouse_ev
     remarkable_color* fbmem
@@ -138,6 +149,15 @@ namespace framebuffer:
       height /= 2
       #endif
       return width, height
+
+    void check_resize():
+      w,h := self.get_size()
+      if w != self.width || h != self.height:
+        ev := ResizeEvent{.w=w, .h=h,.bpp=-1}
+        self.resize(ev)
+      self.width = w
+      self.height = h
+
 
     // function: get_display_size
     // get the size of the framebuffer's display

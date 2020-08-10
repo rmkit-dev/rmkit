@@ -81,6 +81,11 @@ namespace ui:
     static void redraw():
       fb->redraw_screen()
 
+    // function: check_resize
+    // checks if the framebuffer has resized and invokes any callbacks
+    static void check_resize():
+      fb->check_resize()
+
     // dispatch input events to their widgets / if event.stop_propagation()
     // was called in the event handler, / then the event will not be handled
     // here.
