@@ -7,6 +7,10 @@ in each application's directory to learn more.
 
 A low latency drawing app with procedural brushes.
 
+### [mines](src/minesweeper)
+
+A minesweeper game for time between meetings and classes
+
 ### [remux](src/remux)
 
 An app switcher for switching between apps on the remarkable
@@ -19,9 +23,6 @@ A batteries included library for building remarkable apps
 
 A small example app to demonstrate how to build apps with rMkit
 
-### [mines](src/minesweeper)
-
-A minesweeper game for time between meetings and classes
 
 ## Installation
 

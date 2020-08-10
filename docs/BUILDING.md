@@ -1,3 +1,13 @@
+## Individual Projects
+
+You can compile an individual project by going to its directory and
+running `make` or `make run`. If it depends on rmkit.h, you should
+run `make rmkit.h` in the top level dir.
+
+You can change whether you are compiling for the remarkable or a PC by
+adjusting the `ARCH` environment variable. See `src/actions.make` for the list
+of architectures, which include (but is not limited to) `dev` and `arm`
+
 ## Compilation
 
 ### Cross Compile for Remarkable with Docker
@@ -14,12 +24,12 @@ This is the easiest way to compile for the tablet if you have docker installed.
 
 with framebuffer:
 
-* compile with real framebuffer: `make harmony_x86`
+* compile with real framebuffer: `ARCH=x86 make harmony`
 * switch to virtual terminal and run `./build/bin/harmony`
 
 with image framebuffer:
 
-* compile with fake framebuffer: `make harmony_dev`
+* compile with fake framebuffer: `ARCH=dev make harmony`
 * run harmony
 * run local viewer: `make view`
 
