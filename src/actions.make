@@ -1,6 +1,7 @@
 include ../common.make
 SRC_DIR=$(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 ROOT_DIR=$(shell realpath -s ${SRC_DIR}/../)
+DEST=harmony
 APP=$(EXE:.exe=)
 
 compile:
@@ -44,17 +45,20 @@ assets:
 
 copy:
 	ARCH=arm $(MAKE) compile
-	scp -C ../build/${EXE} root@${HOST}:harmony/${EXE}
+	scp -C ../build/${EXE} root@${HOST}:${DEST}/${EXE}
 
 stop:
 	ssh root@${HOST} killall ${EXE} || true
 
 run: compile copy
-	HOST=${HOST} bash build/${EXE}
+	HOST=${HOST} ${DEST}/${EXE}
 
 test: export ARCH=arm
 test: copy
 	HOST=${HOST} bash scripts/run_app_arm.sh ${EXE} || true
+
+lint:
+	make compile OKP_FLAGS="--lint ${OKP_FLAGS}"
 
 .PHONY: assets clean
 # vim: syntax=make

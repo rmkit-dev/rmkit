@@ -4,6 +4,7 @@ include src/common.make
 
 # Use `make <app>` to build any app individually
 APPS=harmony remux demo minesweeper
+LINT_APPS=$(foreach app, $(APPS), lint_$(app))
 CLEAN_APPS=$(foreach app, $(APPS), clean_$(app))
 INSTALL_APPS=$(foreach app, $(APPS), install_$(app))
 
@@ -16,6 +17,9 @@ $(INSTALL_APPS): %: rmkit.h
 $(CLEAN_APPS): %:
 	cd src/$(@:clean_%=%) && make clean
 
+$(LINT_APPS): %:
+	cd src/$(@:lint_%=%) && make lint
+
 build: $(APPS)
 	echo "BUILT ALL APPS"
 
@@ -26,6 +30,8 @@ clean:
 	$(foreach app, $(APPS), cd src/${app} && make clean; cd ${ROOT}; )
 
 default: build
+
+lint: $(LINT_APPS)
 
 dev: export ARCH=dev
 dev: default
