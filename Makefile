@@ -58,7 +58,7 @@ bundle: harmony remux
 	mkdir -p ${BUILD_DIR}/harmony 2>/dev/null || true
 	# TODO: use ${APPS} here
 	cp ${BUILD_DIR}/harmony.exe ${BUILD_DIR}/remux.exe ${BUILD_DIR}/harmony/
-	cp contrib/remux.service ${BUILD_DIR}/harmony/
+	cp src/remux/remux.service ${BUILD_DIR}/harmony/
 
 	cd ${BUILD_DIR}; zip release-${VERSION}.zip -r harmony/
 	cat scripts/run/install_harmony.sh.template | sed 's/VERSION/${VERSION}/g' > scripts/run/install_harmony.sh
