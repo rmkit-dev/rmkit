@@ -1,10 +1,15 @@
+NEXT:
+
+* draw_rect can take a stroke width
+* fix grid size button borders to always be there
+x fix game over dialog buttons to get their full size
+x the minesweeper title should be bigger
+
 TODO:
 
-* it should ask for the grid size first (scene 1)
-* then generate the grid (scene 2) Idk if standard randomisation would work
-* the cells have 3 states each? You should be able to go through the states by tapping a cell multiple times
-* when you click a cell:
-* when you label a cell:
+x it should ask for the grid size first (scene 1)
+x then generate the grid (scene 2) Idk if standard randomisation would work
+x the cells have 3 states each? You should be able to go through the states by tapping a cell multiple times
 * what other buttons do we need? (new game, config, etc)
 
 OPEN QUESTIONS: 

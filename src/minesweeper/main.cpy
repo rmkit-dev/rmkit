@@ -41,6 +41,10 @@ class SizeButton: public ui::Button:
 
     new_game()
 
+  void redraw():
+    ui::Button::redraw()
+    self.fb->draw_rect(self.x, self.y, self.w, self.h, BLACK, false /* fill */)
+
 
 
 class GameOverDialog: public ui::ConfirmationDialog:
@@ -55,7 +59,7 @@ class GameOverDialog: public ui::ConfirmationDialog:
     text := "Time: " + to_string(int(dt)/60) + "m " + to_string(int(dt)%60) + "s\nDefused bombs: " + (WON? to_string(NB_BOMBS) : to_string(FLAG_SCORE/50)) + "/" + to_string(NB_BOMBS) + "\nScore: "+to_string(score)
     self.textWidget = new ui::MultiText(20, 20, self.w, self.h - 100, text)
     self.contentWidget = self.textWidget
-    
+
   void on_button_selected(string text):
     if text == "TRY AGAIN":
       ui::MainLoop::hide_overlay()
@@ -204,7 +208,7 @@ class Grid: public ui::Widget:
       FLAG_SCORE -= 50
     print "FLAGGED CELL", row, col, cells[row][col]->flagged
     self.dirty = 1
-  
+
   void toggle_question_cell(int row, col):
     cells[row][col]->question ^= 1
     if cells[row][col]->question
@@ -308,10 +312,13 @@ class App:
     // center align minesweeper text at top
     // center align the size buttons
     h_layout := ui::HorizontalLayout(0, 0, w, h, title_menu)
-    h_layout.pack_center(new ui::Text(0, 0, 200, 50, "MineSweeper"))
+
+    text := new ui::Text(0, 0, 200, 50, "MineSweeper")
+    text->font_size = 64
+    h_layout.pack_center(text)
 
     size_button_container := ui::VerticalLayout(0, 0, 800, 200*4, title_menu)
-   
+
     vector<pair<int, string>> sizes{ {8, "8x8" }, {12, "12x12"}, {16, "16x16"}, {20, "20x20"}};
     button_height := 200
     for auto p : sizes:
@@ -324,7 +331,7 @@ class App:
 //    size_button_container.pack_start(new SizeButton(w/2-400, 50, 800, 200, 12, "12x12"))
 //    size_button_container.pack_start(new SizeButton(w/2-400, 50, 800, 200, 16, "16x16"))
 //    size_button_container.pack_start(new SizeButton(w/2-400, 50, 800, 200, 20, "20x20"))
-    
+
 
     make_field()
 
@@ -346,7 +353,9 @@ class App:
     NB_UNOPENED = 0
 
     h_layout := ui::HorizontalLayout(0, 0, w, h, field_scene)
-    h_layout.pack_center(new ui::Text(0, 0, w, 50, "MineSweeper"))
+    text := new ui::Text(0, 0, w, 50, "MineSweeper")
+    text->font_size = 64
+    h_layout.pack_center(text)
     h_layout.pack_center(grid)
     // pack cells after centering grid
     grid->make_cells(field_scene)
@@ -395,6 +404,7 @@ class App:
     ui::MainLoop::motion_event += PLS_DELEGATE(self.handle_motion_event)
     while true:
       ui::MainLoop::main()
+      // TODO: have widgets mark themselves dirty instead when interacted with
       ui::MainLoop::refresh()
       ui::MainLoop::redraw()
       ui::MainLoop::read_input()
