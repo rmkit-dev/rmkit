@@ -196,7 +196,6 @@ class App:
     while true:
       ui::MainLoop::main()
       if app_bg->visible:
-        ui::MainLoop::refresh()
         ui::MainLoop::redraw()
       ui::MainLoop::read_input()
 
