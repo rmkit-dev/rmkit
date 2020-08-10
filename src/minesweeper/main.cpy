@@ -6,6 +6,7 @@
 #include "assets.h"
 #include <chrono>
 #include <random>
+#include <ctime>
 
 using namespace std
 
@@ -18,6 +19,11 @@ WON := false
 GRID_SIZE := 15
 NB_UNOPENED := 0
 GAME_STARTED := true
+FLAG_SCORE := 0
+FIRST_CLICK := 0
+NB_BOMBS := 0
+START := time(NULL)
+END := time(NULL)
 
 void new_game()
 void main_menu()
@@ -42,13 +48,16 @@ class GameOverDialog: public ui::ConfirmationDialog:
   ui::MultiText *textWidget
   GameOverDialog(int x, y, w, h): ui::ConfirmationDialog(x, y, w, h):
     self.set_title(string((WON?"You win!" : "You lose!")))
-    self.buttons = { "NEW GAME", "MAIN MENU" }
-    text := "Your score is: NaN"
+    self.buttons = { "TRY AGAIN", "MAIN MENU" }
+    dt := difftime(END, START)
+    score := FLAG_SCORE * !WON + WON * 600000 / dt
+    score = round(score*100)/100
+    text := "Time: " + to_string(int(dt)/60) + "m " + to_string(int(dt)%60) + "s\nDefused bombs: " + (WON? to_string(NB_BOMBS) : to_string(FLAG_SCORE/50)) + "/" + to_string(NB_BOMBS) + "\nScore: "+to_string(score)
     self.textWidget = new ui::MultiText(20, 20, self.w, self.h - 100, text)
     self.contentWidget = self.textWidget
-
+    
   void on_button_selected(string text):
-    if text == "NEW GAME":
+    if text == "TRY AGAIN":
       ui::MainLoop::hide_overlay()
       GAME_STARTED = false
       new_game() // TEMPORARY
@@ -63,7 +72,7 @@ class Cell: public ui::Widget:
   public:
   T *grid
   int i, j
-  bool flagged = false, is_bomb = 0, opened = 0
+  bool flagged = false, is_bomb = 0, opened = 0, question = 0
   string neighbors = "0"
   ui::Text* textWidget
 
@@ -105,19 +114,28 @@ class Cell: public ui::Widget:
     if self.opened && self.neighbors[0]-'0' > 0 && !self.is_bomb:
       self.textWidget->redraw()
 
-    if opened && self.is_bomb:
-      pixmap := ui::Pixmap(self.x+5, self.y+5, self.w-20, self.h-20, ICON(assets::bomb_solid_png))
+    if opened && self.is_bomb && !self.flagged:
+      pixmap := ui::Pixmap(self.x+5, self.y+5, self.w-10, self.h-10, ICON(assets::bomb_solid_png))
       pixmap.redraw()
 
     if self.flagged && !opened:
       pixmap := ui::Pixmap(self.x+5, self.y+5, self.w-20, self.h-20, ICON(assets::flag_solid_png))
       pixmap.redraw()
 
+    if self.flagged && opened && self.is_bomb:
+      pixmap := ui::Pixmap(self.x+5, self.y+5, self.w-10, self.h-10, ICON(assets::flag_bomb_solid_png))
+      pixmap.redraw()
+    if self.question && !opened:
+      pixmap := ui::Pixmap(self.x+5, self.y+5, self.w-10, self.h-10, ICON(assets::question_solid_png))
+      pixmap.redraw()
+
+
   void on_mouse_click(input::SynMouseEvent &ev):
-    if (MODE)
+    if MODE == 1
       grid->open_cell(self.i, self.j)
-    else
+    else if MODE == 0
       grid->toggle_flag_cell(self.i, self.j)
+    else grid->toggle_question_cell(self.i, self.j)
 
 class Grid: public ui::Widget:
   public:
@@ -150,8 +168,11 @@ class Grid: public ui::Widget:
     print "OPENING CELL", row, col
     if cells[row][col]->is_bomb:
       cells[row][col]->opened = 1
+      END = time(NULL)
       end_game(0)
-    if !NB_UNOPENED:
+    if FIRST_CLICK:
+      START = time(NULL)
+      FIRST_CLICK = 0
       for int i = 0; i < n; i++
         for int j = 0; j < n; j++:
           if abs(j - col) <= 1 && abs(i - row) <= 1:
@@ -160,6 +181,7 @@ class Grid: public ui::Widget:
           int temp = rand()%100
           if temp < 15:
             cells[i][j]->is_bomb = 1
+            NB_BOMBS++
             for int  f = -1; f <= 1; f++:
               for int g = -1; g <= 1; g++:
                 if min(i+f,j+g) < 0 || max(i+f,j+g) >= n:
@@ -168,13 +190,27 @@ class Grid: public ui::Widget:
           else:
             NB_UNOPENED++
     flood(row, col)
-    if !NB_UNOPENED:
+    if !NB_UNOPENED && WON:
+      END = time(NULL)
       end_game(1)
 
   void toggle_flag_cell(int row, col):
     cells[row][col]->flagged ^= 1
+    if cells[row][col]->flagged
+      cells[row][col]->question = 0
+    if cells[row][col]->flagged && cells[row][col]->is_bomb:
+      FLAG_SCORE += 50
+    else if cells[row][col]->is_bomb:
+      FLAG_SCORE -= 50
     print "FLAGGED CELL", row, col, cells[row][col]->flagged
     self.dirty = 1
+  
+  void toggle_question_cell(int row, col):
+    cells[row][col]->question ^= 1
+    if cells[row][col]->question
+      cells[row][col]->flagged = 0
+    self.dirty = 1
+    print "DOUBT CELL", row, col
 
   void make_cells(ui::Scene s):
     cells = vector<vector<Cell<Grid>*>> (n, vector<Cell<Grid>*>(n))
@@ -195,6 +231,7 @@ class Grid: public ui::Widget:
 
   void end_game(bool win):
     WON = win
+    print WON
     self.gd = make_shared<GameOverDialog>(0, 0, 800, 800)
     if !win:
       for int i = 0; i < n; i++:
@@ -223,7 +260,7 @@ class BombButton: public ui::Button:
 
   void redraw():
     ui::Button::redraw()
-    self.fb->draw_rect(self.x, self.y, self.w, self.h, GRAY, MODE)
+    self.fb->draw_rect(self.x, self.y, self.w, self.h, GRAY, (MODE == 1))
 
   void on_mouse_click(input::SynMouseEvent &ev):
     MODE = 1
@@ -235,10 +272,23 @@ class FlagButton: public ui::Button:
 
   void redraw():
     ui::Button::redraw()
-    self.fb->draw_rect(self.x, self.y, self.w, self.h, GRAY, !MODE)
+    self.fb->draw_rect(self.x, self.y, self.w, self.h, GRAY, (MODE == 0))
 
   void on_mouse_click(input::SynMouseEvent &ev):
     MODE = 0
+
+class QuestionButton: public ui::Button:
+  public:
+  QuestionButton(int x, y, w, h, string t="Doubt"): Button(x,y,w,h,t):
+    pass
+
+  void redraw():
+    ui::Button::redraw()
+    self.fb->draw_rect(self.x, self.y, self.w, self.h, GRAY, (MODE == 2))
+
+  void on_mouse_click(input::SynMouseEvent &ev):
+    MODE = 2
+
 
 class App:
   public:
@@ -306,14 +356,20 @@ class App:
     // generate a bomb field
     // opening a bomb
 
-    a := new BombButton(200, 1450, 200, 50)
-    b := new FlagButton(500, 1450, 200, 50)
+    a := new BombButton((w - 200) / 2 - 300, 1450, 200, 50)
+    b := new FlagButton((w - 200) / 2, 1450, 200, 50)
+    d := new QuestionButton((w - 200) / 2 + 300, 1450, 200, 50)
     field_scene->add(a)
     field_scene->add(b)
+    field_scene->add(d)
 
   def reset():
     MODE = 1
     NB_UNOPENED = 0
+    FLAG_SCORE = 0
+    FIRST_CLICK = 1
+    NB_BOMBS = 0
+    WON = 1
     n := GRID_SIZE
     for int i = 0; i < n; i++
       for int j = 0; j < n; j++:
@@ -321,6 +377,7 @@ class App:
         grid->cells[i][j]->opened = 0
         grid->cells[i][j]->flagged = 0
         grid->cells[i][j]->neighbors = "0"
+        grid->cells[i][j]->question = 0
 
   def handle_key_event(input::SynKeyEvent &key_ev):
     // print "KEY PRESSED", key_ev.key
