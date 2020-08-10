@@ -427,7 +427,6 @@ void new_game():
 
 def main():
   ui::Text::DEFAULT_FS = 32
-  new_game()
   app.run()
 
 // vim:syntax=cpp
