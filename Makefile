@@ -8,7 +8,6 @@ CLEAN_APPS=$(foreach app, $(APPS), clean_$(app))
 INSTALL_APPS=$(foreach app, $(APPS), install_$(app))
 
 $(APPS): %: rmkit.h
-	echo $(INSTALL_APPS)
 	cd src/${@} && make
 
 $(INSTALL_APPS): %: rmkit.h
@@ -17,8 +16,8 @@ $(INSTALL_APPS): %: rmkit.h
 $(CLEAN_APPS): %:
 	cd src/$(@:clean_%=%) && make clean
 
-build: rmkit.h
-	$(foreach app, $(APPS), cd src/${app} && make; cd ${ROOT}; )
+build: $(APPS)
+	echo "BUILT ALL APPS"
 
 install: rmkit.h
 	$(foreach app, $(APPS), cd src/${app} && make copy; cd ${ROOT}; )
