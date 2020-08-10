@@ -30,9 +30,6 @@
 #include <unistd.h>
 
 namespace ui:
-  PLS_DEFINE_SIGNAL(KEY_EVENT, input::SynKeyEvent)
-  PLS_DEFINE_SIGNAL(MOUSE_EVENT, input::SynMouseEvent)
-
   // class: ui::MainLoop
   // The MainLoop is responsible for redrawing widgets, dispatching events, and
   // other core work that happens on each iteration of the app.
@@ -169,7 +166,7 @@ namespace ui:
         display_scene = overlay
 
       for auto widget: display_scene->widgets:
-        widget->on_key_pressed(ev)
+        widget->kbd.pressed(ev)
 
     // TODO: refactor this into cleaner code
     // dispatch mouse / touch events to their widgets
@@ -209,31 +206,31 @@ namespace ui:
             widget->mouse_x = ev.x
             widget->mouse_y = ev.y
             // mouse move issued on is_hit
-            widget->on_mouse_move(ev)
+            widget->mouse.move(ev)
           else:
             // we have mouse_move and mouse_hover
             // hover is for stylus
-            widget->on_mouse_hover(ev)
+            widget->mouse.hover(ev)
 
 
           // mouse down event
           if !prev_mouse_down && mouse_down:
-            widget->on_mouse_down(ev)
+            widget->mouse.down(ev)
 
           // mouse up / click events
           if prev_mouse_down && !mouse_down:
-            widget->on_mouse_up(ev)
-            widget->on_mouse_click(ev)
+            widget->mouse.up(ev)
+            widget->mouse.click(ev)
 
           // mouse enter event
           if !prev_mouse_inside:
-            widget->on_mouse_enter(ev)
+            widget->mouse.enter(ev)
 
           hit_widget = true
         else:
           // mouse leave event
           if prev_mouse_inside:
-            widget->on_mouse_leave(ev)
+            widget->mouse.leave(ev)
 
       if overlay_is_visible && mouse_down && !hit_widget:
         MainLoop::hide_overlay()

@@ -1,6 +1,24 @@
 #include "../fb/fb.h"
+#include "../util/signals.h"
 
 namespace ui:
+  PLS_DEFINE_SIGNAL(MOUSE_EVENT, input::SynMouseEvent)
+  class MOUSE_EVENTS:
+    public:
+    MOUSE_EVENT enter
+    MOUSE_EVENT leave
+    MOUSE_EVENT down
+    MOUSE_EVENT up
+    MOUSE_EVENT click
+    MOUSE_EVENT hover
+    MOUSE_EVENT move
+  ;
+
+  PLS_DEFINE_SIGNAL(KEY_EVENT, input::SynKeyEvent)
+  class KEY_EVENTS:
+    public:
+    KEY_EVENT pressed
+  ;
   // Class: ui::Widget
   //
   // The widget class is the base of all other widgets. A widget is typically
@@ -14,6 +32,9 @@ namespace ui:
     // should) draw directly to the framebuffer
     static framebuffer::FB *fb
     vector<shared_ptr<Widget>> children
+
+    MOUSE_EVENTS mouse
+    KEY_EVENTS kbd
 
     // variables: x, y, w, h
     //
@@ -35,7 +56,7 @@ namespace ui:
     // w - the width of the widget
     // h - the height of the widget
     Widget(int x,y,w,h): x(x), y(y), w(w), h(h), _x(x), _y(y), _w(w), _h(h):
-      pass
+      self.install_signal_handlers()
 
     // function: mark_redraw
     // marks this widget as needing to be redrawn during the next redraw cycle
@@ -124,6 +145,17 @@ namespace ui:
     /// called when a keyboard key or hardware key is pressed
     virtual void on_key_pressed(input::SynKeyEvent &ev):
       pass
+
+    virtual void install_signal_handlers():
+      self.mouse.up += PLS_DELEGATE(on_mouse_up)
+      self.mouse.down += PLS_DELEGATE(on_mouse_down)
+      self.mouse.move += PLS_DELEGATE(on_mouse_move)
+      self.mouse.enter += PLS_DELEGATE(on_mouse_enter)
+      self.mouse.leave += PLS_DELEGATE(on_mouse_leave)
+      self.mouse.click += PLS_DELEGATE(on_mouse_click)
+      self.mouse.hover += PLS_DELEGATE(on_mouse_hover)
+      self.kbd.pressed += PLS_DELEGATE(on_key_pressed)
+
     // }}}
 
     // checks if this widget is hit by a touch event
