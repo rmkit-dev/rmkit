@@ -313,7 +313,8 @@ class App:
     // center align the size buttons
     h_layout := ui::HorizontalLayout(0, 0, w, h, title_menu)
 
-    text := new ui::Text(0, 0, 200, 50, "MineSweeper")
+    image := stbtext::get_text_size("MineSweeper", 64)
+    text := new ui::Text(0, 0, image.w, 50, "MineSweeper")
     text->font_size = 64
     h_layout.pack_center(text)
 
