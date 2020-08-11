@@ -258,6 +258,7 @@ class MenuButton: public ui::Button:
 
   void on_mouse_click(input::SynMouseEvent &ev):
     main_menu()
+    ui::MainLoop::refresh()
 
 class BombButton: public ui::Button:
   public:
@@ -270,6 +271,7 @@ class BombButton: public ui::Button:
 
   void on_mouse_click(input::SynMouseEvent &ev):
     MODE = 1
+    ui::MainLoop::refresh()
 
 class FlagButton: public ui::Button:
   public:
@@ -294,6 +296,7 @@ class QuestionButton: public ui::Button:
 
   void on_mouse_click(input::SynMouseEvent &ev):
     MODE = 2
+    ui::MainLoop::refresh()
 
 
 class App:
