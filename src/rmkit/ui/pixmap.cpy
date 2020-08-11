@@ -3,6 +3,8 @@
 #include "text.h"
 #include "../util/image.h"
 
+#include <dirent.h>
+
 namespace ui:
   class ImageCache:
     public:
@@ -31,6 +33,7 @@ namespace ui:
 
   class CachedIcon: public icons::Icon, public ImageCache:
     public:
+    int width = -1, height = -1
 
     CachedIcon(unsigned char *d, int l):
       self.data = d
@@ -42,6 +45,20 @@ namespace ui:
       self.len = l
       self.name = n
       self.get(self.name)
+      return
+
+    CachedIcon(unsigned char *d, int l, const char* n, int w, int h):
+      self.data = d
+      self.len = l
+      self.name = n
+      self.width = w
+      self.height = h
+      char buf[PATH_MAX]
+      i := sprintf(buf, "%s:%i:%i", n, w, h)
+      buf[i] = 0
+
+      self.get(string(buf))
+
       return
 
     ~CachedIcon():
@@ -65,16 +82,16 @@ namespace ui:
       buf = (uint32_t*) malloc(iconw*iconh*sizeof(uint32_t))
       buf = (uint32_t*) memcpy(buf, out.data(), out.size())
       self.image = image_data{(uint32_t*) buf, (int) iconw, (int) iconh}
+
+      if self.width > 0 && self.height > 0:
+        util::resize_image(self.image, self.width, self.height, 20 /* black threshold */)
       return self.image
-
-
 
   class Pixmap: public Widget:
     public:
     CachedIcon icon = {NULL, 0}
     Pixmap(int x, y, w, h, icons::Icon ico): Widget(x,y,w,h):
-      self.icon = CachedIcon({ico.data, (int) ico.len, ico.name})
-      util::resize_image(self.icon.image, self.w, self.h, 50 /* black threshold */)
+      self.icon = CachedIcon({ico.data, (int) ico.len, ico.name, self.w, self.h})
 
     tuple<int, int> get_render_size():
       if self.icon.image.buffer != NULL:
