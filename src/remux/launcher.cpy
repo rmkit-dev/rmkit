@@ -148,8 +148,6 @@ class App:
     notebook->add(app_bg)
     ui::MainLoop::set_scene(notebook)
 
-
-
   def handle_key_event(input::SynKeyEvent ev):
     static int lastpress = RAND_MAX
     static int event_press_id = 0

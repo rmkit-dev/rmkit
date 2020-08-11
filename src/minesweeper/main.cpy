@@ -29,11 +29,12 @@ void new_game()
 void main_menu()
 void resize_field(int)
 
+SIZE_BUTTON_FS := 64
 class SizeButton: public ui::Button:
   public:
   int n
   SizeButton(int x, y, w, h, n, string t="Back"): n(n), Button(x,y,w,h,t):
-    pass
+    self.textWidget->font_size = SIZE_BUTTON_FS
 
   void on_mouse_click(input::SynMouseEvent &ev):
     if GRID_SIZE != n:
@@ -325,7 +326,7 @@ class App:
     for auto p : sizes:
       btn := new SizeButton(w/2-400, 500, 800, button_height, p.first, p.second)
       btn->set_justification(ui::Text::JUSTIFY::CENTER)
-      btn->y_padding = (button_height - ui::Text::DEFAULT_FS) / 2
+      btn->y_padding = (button_height - SIZE_BUTTON_FS) / 2
       size_button_container.pack_start(btn)
 
 //    size_button_container.pack_start(new SizeButton(w/2-400, 500, 800, 200, 8, "8x8"))
@@ -355,7 +356,7 @@ class App:
 
     h_layout := ui::HorizontalLayout(0, 0, w, h, field_scene)
     text := new ui::Text(0, 0, w, 50, "MineSweeper")
-    text->font_size = 64
+    text->font_size = SIZE_BUTTON_FS
     h_layout.pack_center(text)
     h_layout.pack_center(grid)
     // pack cells after centering grid
