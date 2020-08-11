@@ -1,3 +1,5 @@
+#include <dirent.h>
+
 namespace proc:
   def stop_programs(vector<string> programs):
     for auto s : programs:
@@ -25,6 +27,11 @@ namespace proc:
       print "STARTING XOCHITL"
     #endif
     return
+
+  bool exe_exists(string name):
+    char command[PATH_MAX]
+    sprintf(command, "test -x %s", name.c_str());
+    return 0 == system(command);
 
   bool check_process(string name):
     char command[128]

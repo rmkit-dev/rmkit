@@ -79,7 +79,8 @@ class AppDialog: public ui::Pager<AppDialog<T>>:
       self.apps = {}
 
       for auto a : APPS:
-        self.apps.push_back(a)
+        if a.always_show || proc::exe_exists(a.bin):
+          self.apps.push_back(a)
 
       bin_binaries := read_apps_from_dir(BIN_DIR)
       for auto a : bin_binaries:
@@ -111,6 +112,7 @@ class AppDialog: public ui::Pager<AppDialog<T>>:
 
     void on_row_selected(string name):
       app->selected(name)
+      ui::MainLoop::hide_overlay()
 
     void render_row(ui::HorizontalLayout *row, string option):
       d := new ui::DialogButton<ui::Dialog>(20, 0, self.w-200, self.opt_h, self, option)
@@ -169,11 +171,12 @@ class App:
                 now := time(NULL)
                 if now - lastpress > 1:
                   ui::TaskQueue::add_task([=] {
-                    app_bg->snapshot()
                     app_bg->visible = true
+                    app_bg->snapshot()
                     app_dialog->populate()
                     app_dialog->setup_for_render()
                     app_dialog->show()
+                    self.term_apps()
                   });
           });
         else:
@@ -183,6 +186,11 @@ class App:
 
     last_ev := &ev
 
+  void term_apps(string name=""):
+    for auto a : app_dialog->apps:
+      if a.name != name && a.term != "":
+        proc::launch_process(a.term, false)
+
   def selected(string name):
     print "LAUNCHING APP", name
     string bin
@@ -191,9 +199,7 @@ class App:
       if a.name == name:
         bin = a.bin
 
-    for auto a : app_dialog->apps:
-      if a.name != name && a.term != "":
-        proc::launch_process(a.term, false)
+    term_apps(name)
 
     proc::launch_process(bin, true /* check running */, true /* background */)
     app_bg->visible = false

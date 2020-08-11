@@ -15,6 +15,6 @@ KBD=`ls /dev/input/by-path/*kbd | head -n1`
 OKP_FLAGS=-ni -for -d ../cpp/ -o ../build/${EXE} ${FILES}
 
 # installation directory on remarkable
-DEST=harmony
+DEST=apps/
 
 # vim: syntax=make

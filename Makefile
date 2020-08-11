@@ -24,7 +24,7 @@ build: $(APPS)
 	echo "BUILT ALL APPS"
 
 dest_dir:
-	ssh root@${HOST} mkdir /home/root/${DEST}/
+	ssh root@${HOST} mkdir -p /home/root/${DEST}/ > /dev/null
 	
 install: rmkit.h dest_dir
 	$(foreach app, $(APPS), cd src/${app} && make copy; cd ${ROOT}; )
