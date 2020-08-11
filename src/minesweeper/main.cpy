@@ -159,7 +159,6 @@ class Grid: public ui::Widget:
       if min(t.first,t.second) < 0 || max(t.first,t.second) >= n || cells[t.first][t.second]->opened || cells[t.first][t.second]->is_bomb:
         continue
       cells[t.first][t.second]->opened = 1
-      cells[t.first][t.second]->dirty = 1
       NB_UNOPENED--
       print NB_UNOPENED
       if cells[t.first][t.second]->neighbors[0]-'0'
@@ -209,13 +208,12 @@ class Grid: public ui::Widget:
     else if cells[row][col]->is_bomb:
       FLAG_SCORE -= 50
     print "FLAGGED CELL", row, col, cells[row][col]->flagged
-    self.dirty = 1
 
   void toggle_question_cell(int row, col):
     cells[row][col]->question ^= 1
     if cells[row][col]->question
       cells[row][col]->flagged = 0
-    self.dirty = 1
+
     print "DOUBT CELL", row, col
 
   void make_cells(ui::Scene s):
@@ -258,7 +256,6 @@ class MenuButton: public ui::Button:
 
   void on_mouse_click(input::SynMouseEvent &ev):
     main_menu()
-    ui::MainLoop::refresh()
 
 class BombButton: public ui::Button:
   public:
@@ -271,7 +268,6 @@ class BombButton: public ui::Button:
 
   void on_mouse_click(input::SynMouseEvent &ev):
     MODE = 1
-    ui::MainLoop::refresh()
 
 class FlagButton: public ui::Button:
   public:
@@ -296,7 +292,6 @@ class QuestionButton: public ui::Button:
 
   void on_mouse_click(input::SynMouseEvent &ev):
     MODE = 2
-    ui::MainLoop::refresh()
 
 
 class App:
@@ -413,6 +408,7 @@ class App:
       ui::MainLoop::main()
       // TODO: have widgets mark themselves dirty instead when interacted with
       ui::MainLoop::redraw()
+      ui::MainLoop::refresh()
       ui::MainLoop::read_input()
 
 
