@@ -159,6 +159,7 @@ class Grid: public ui::Widget:
       if min(t.first,t.second) < 0 || max(t.first,t.second) >= n || cells[t.first][t.second]->opened || cells[t.first][t.second]->is_bomb:
         continue
       cells[t.first][t.second]->opened = 1
+      cells[t.first][t.second]->dirty = 1
       NB_UNOPENED--
       print NB_UNOPENED
       if cells[t.first][t.second]->neighbors[0]-'0'
@@ -342,6 +343,7 @@ class App:
 
   void main_menu():
     ui::MainLoop::set_scene(title_menu)
+    ui::MainLoop::refresh()
 
   void make_field():
     field_scene = ui::make_scene()
@@ -407,7 +409,6 @@ class App:
     while true:
       ui::MainLoop::main()
       // TODO: have widgets mark themselves dirty instead when interacted with
-      ui::MainLoop::refresh()
       ui::MainLoop::redraw()
       ui::MainLoop::read_input()
 
@@ -425,6 +426,7 @@ void new_game():
   app.reset()
   app.fb->clear_screen()
   ui::MainLoop::set_scene(app.field_scene)
+  ui::MainLoop::refresh()
 
 def main():
   ui::Text::DEFAULT_FS = 32
