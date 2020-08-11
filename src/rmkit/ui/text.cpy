@@ -35,7 +35,7 @@ namespace ui:
       return image.w, image.h
 
     // TODO: cache the image buffer
-    void redraw():
+    void render():
       image := stbtext::get_text_size(self.text.c_str(), self.font_size)
 
       image.buffer = (uint32_t*) malloc(sizeof(uint32_t) * image.w * image.h)
@@ -73,7 +73,7 @@ namespace ui:
     MultiText(int x, y, w, h, string t): Text(x, y, w, h, t):
       pass
 
-    void redraw():
+    void render():
       cur_x := 0
       cur_y := 0
       lines := split(self.text, '\n')

@@ -37,7 +37,7 @@ class AppBackground: public ui::Widget:
     fb := framebuffer::get()
     memcpy(buf, fb->fbmem, self.byte_size)
 
-  void redraw():
+  void render():
     memcpy(fb->fbmem, buf, self.byte_size)
 
 template<class T>

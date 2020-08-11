@@ -64,20 +64,20 @@ namespace ui:
     virtual void mark_redraw():
       self.dirty = 1
 
-    // function: before_redraw
-    // before_redraw is called on a widget before it is redrawn.
+    // function: before_render
+    // before_render is called on a widget before it is rendern.
     //
     // this function can be used by a widget query data that it needs to render
     // itself and other ways
-    virtual void before_redraw():
+    virtual void before_render():
       pass
 
-    // function: redraw
+    // function: render
     // redraws the widget.
     //
-    // this function is responsible for redrawing the widget to the framebuffer
+    // this function is responsible for rendering the widget to the framebuffer
     // using a combination of draw_line, draw_text and draw_rectangle calls
-    virtual void redraw():
+    virtual void render():
       pass
 
     virtual void undraw():

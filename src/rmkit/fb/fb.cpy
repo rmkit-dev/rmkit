@@ -131,7 +131,7 @@ namespace framebuffer:
       dirty_rect.x1 = min(dirty_rect.x1, int(DISPLAYWIDTH)-1)
       dirty_rect.y1 = min(dirty_rect.y1, int(DISPLAYHEIGHT)-1)
 
-    def redraw_if_dirty():
+    def render_if_dirty():
       if self.dirty:
         self.redraw_screen()
 

@@ -77,9 +77,9 @@ namespace app_ui:
           break
       } while(false);
 
-      self.before_redraw()
+      self.before_render()
 
-    void redraw():
+    void render():
       sw := 1
       for auto size : stroke::SIZES:
         if STATE.stroke_width == size->val:
@@ -119,15 +119,15 @@ namespace app_ui:
       self.dirty = 1
       self.canvas->curr_brush->reset()
 
-    void before_redraw():
+    void before_render():
       f := std::find(brush::P_BRUSHES.begin(), brush::P_BRUSHES.end(), \
                      self.canvas->curr_brush)
       self.visible = f != brush::P_BRUSHES.end()
-      ui::Button::before_redraw()
+      ui::Button::before_render()
 
-    void redraw():
+    void render():
       self->fb->draw_rect(self.x, self.y, self.w, self.h, WHITE, true)
-      ui::Button::redraw()
+      ui::Button::render()
       self->fb->draw_rect(self.x, self.y, self.w, self.h, BLACK, false)
       if self.mouse_down:
         self->fb->draw_rect(self.x, self.y, self.w, self.h, BLACK, true)
@@ -193,9 +193,9 @@ namespace app_ui:
       self.icon = ICON(icons::vendor_icons_fa_arrow_left_solid_png)
       self.text = ""
 
-    void redraw():
+    void render():
       if self.canvas->undo_stack.size() > 1:
-        ui::Button::redraw()
+        ui::Button::render()
 
     void on_mouse_click(input::SynMouseEvent &ev):
       self.dirty = 1
@@ -207,8 +207,8 @@ namespace app_ui:
       self.icon = ICON(icons::vendor_icons_fa_hand_paper_solid_png)
       self.text = ""
 
-    void redraw():
-      ui::Button::redraw()
+    void render():
+      ui::Button::render()
       if STATE.reject_touch:
         self.fb->draw_rect(self.x, self.y, self.w, 5, BLACK, true)
 
@@ -224,9 +224,9 @@ namespace app_ui:
       self.icon = ICON(icons::vendor_icons_fa_arrow_right_solid_png)
       self.text = ""
 
-    void redraw():
+    void render():
       if self.canvas->redo_stack.size():
-        ui::Button::redraw()
+        ui::Button::render()
 
     void on_mouse_click(input::SynMouseEvent &ev):
       self.dirty = 1
@@ -251,16 +251,16 @@ namespace app_ui:
 
       ui::MainLoop::full_refresh()
 
-    void redraw():
+    void render():
       self.text = self.toolbar->visible ? "v" : "^"
-      ui::Button::redraw()
+      ui::Button::render()
 
   class Clock: public ui::Text:
     public:
     Clock(int x, y, w, h): Text(x,y,w,h,"clock"):
       self.justify = ui::Text::JUSTIFY::CENTER
 
-    void before_redraw():
+    void before_render():
       time_t rawtime;
       struct tm * timeinfo;
       char buffer[80];

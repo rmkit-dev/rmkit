@@ -86,7 +86,7 @@ namespace ui:
     virtual void on_button_selected(string s):
       pass
 
-    void redraw():
+    void render():
       self.fb->draw_rect(self.x, self.y, self.w, self.h, WHITE, true)
       self.fb->draw_rect(self.x, self.y, self.w, self.h, BLACK, false)
 

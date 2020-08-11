@@ -1,7 +1,6 @@
 include ../common.make
 SRC_DIR=$(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 ROOT_DIR=$(shell realpath -s ${SRC_DIR}/../)
-DEST=harmony
 APP=$(EXE:.exe=)
 
 compile:

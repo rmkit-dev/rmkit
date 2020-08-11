@@ -20,7 +20,7 @@ namespace ui:
         free(image.buffer)
         image.buffer = NULL
 
-    void redraw():
+    void render():
       if image.buffer != NULL:
         self.fb->draw_bitmap(self.image, self.x, self.y)
         self.fb->draw_rect(self.x, self.y, self.w, self.h,3,BLACK)

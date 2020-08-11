@@ -42,8 +42,8 @@ class SizeButton: public ui::Button:
 
     new_game()
 
-  void redraw():
-    ui::Button::redraw()
+  void render():
+    ui::Button::render()
     self.fb->draw_rect(self.x, self.y, self.w, self.h, BLACK, false /* fill */)
 
 
@@ -91,7 +91,7 @@ class Cell: public ui::Widget:
     self.opened = 0
     self.neighbors = "0"
 
-  void redraw():
+  void render():
     self.undraw()
     color := BLACK
     fill := 0
@@ -117,22 +117,22 @@ class Cell: public ui::Widget:
     self.textWidget->y = self.y + padding_y
 
     if self.opened && self.neighbors[0]-'0' > 0 && !self.is_bomb:
-      self.textWidget->redraw()
+      self.textWidget->render()
 
     if opened && self.is_bomb && !self.flagged:
       pixmap := ui::Pixmap(self.x+5, self.y+5, self.w-10, self.h-10, ICON(assets::bomb_solid_png))
-      pixmap.redraw()
+      pixmap.render()
 
     if self.flagged && !opened:
       pixmap := ui::Pixmap(self.x+5, self.y+5, self.w-20, self.h-20, ICON(assets::flag_solid_png))
-      pixmap.redraw()
+      pixmap.render()
 
     if self.flagged && opened && self.is_bomb:
       pixmap := ui::Pixmap(self.x+5, self.y+5, self.w-10, self.h-10, ICON(assets::flag_bomb_solid_png))
-      pixmap.redraw()
+      pixmap.render()
     if self.question && !opened:
       pixmap := ui::Pixmap(self.x+5, self.y+5, self.w-10, self.h-10, ICON(assets::question_solid_png))
-      pixmap.redraw()
+      pixmap.render()
 
 
   void on_mouse_click(input::SynMouseEvent &ev):
@@ -245,7 +245,7 @@ class Grid: public ui::Widget:
           open_cell(i, j)
     gd->show()
 
-  void redraw():
+  void render():
     self.fb->draw_rect(self.x, self.y, self.w, self.h, BLACK, false /* fill */)
 
   void on_mouse_click(input::SynMouseEvent &ev):
@@ -264,8 +264,8 @@ class BombButton: public ui::Button:
   BombButton(int x, y, w, h, string t="Observe"): Button(x,y,w,h,t):
     pass
 
-  void redraw():
-    ui::Button::redraw()
+  void render():
+    ui::Button::render()
     self.fb->draw_rect(self.x, self.y, self.w, self.h, GRAY, (MODE == 1))
 
   void on_mouse_click(input::SynMouseEvent &ev):
@@ -276,8 +276,8 @@ class FlagButton: public ui::Button:
   FlagButton(int x, y, w, h, string t="Flag"): Button(x,y,w,h,t):
     pass
 
-  void redraw():
-    ui::Button::redraw()
+  void render():
+    ui::Button::render()
     self.fb->draw_rect(self.x, self.y, self.w, self.h, GRAY, (MODE == 0))
 
   void on_mouse_click(input::SynMouseEvent &ev):
@@ -288,8 +288,8 @@ class QuestionButton: public ui::Button:
   QuestionButton(int x, y, w, h, string t="Doubt"): Button(x,y,w,h,t):
     pass
 
-  void redraw():
-    ui::Button::redraw()
+  void render():
+    ui::Button::render()
     self.fb->draw_rect(self.x, self.y, self.w, self.h, GRAY, (MODE == 2))
 
   void on_mouse_click(input::SynMouseEvent &ev):

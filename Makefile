@@ -23,7 +23,10 @@ $(LINT_APPS): %:
 build: $(APPS)
 	echo "BUILT ALL APPS"
 
-install: rmkit.h
+dest_dir:
+	ssh root@${HOST} mkdir /home/root/${DEST}/
+	
+install: rmkit.h dest_dir
 	$(foreach app, $(APPS), cd src/${app} && make copy; cd ${ROOT}; )
 
 clean:

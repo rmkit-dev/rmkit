@@ -106,7 +106,7 @@ namespace app_ui:
       self.full_redraw = true
       vfb->dirty_area = {0, 0, self.fb->width, self.fb->height}
 
-    void redraw():
+    void render():
       if self.full_redraw:
         self.full_redraw = false
         memcpy(self.fb->fbmem, vfb->fbmem, self.byte_size)

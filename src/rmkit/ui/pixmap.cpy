@@ -99,7 +99,7 @@ namespace ui:
 
       return 0, 0
 
-    void redraw():
+    void render():
       if self.icon.data == NULL || self.icon.image.buffer == NULL:
         return
 

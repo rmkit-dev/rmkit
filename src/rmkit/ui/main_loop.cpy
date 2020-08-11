@@ -31,7 +31,7 @@
 
 namespace ui:
   // class: ui::MainLoop
-  // The MainLoop is responsible for redrawing widgets, dispatching events, and
+  // The MainLoop is responsible for rendering widgets, dispatching events, and
   // other core work that happens on each iteration of the app.
   class MainLoop:
     public:
@@ -75,7 +75,7 @@ namespace ui:
 
       return false
 
-    // function: redraw
+    // function: render
     //   sync the framebuffer to the screen, required in order to update
     //   what the screen is showing after any draw calls
     static void redraw():
@@ -124,7 +124,7 @@ namespace ui:
     static void read_input():
       in.listen_all()
 
-    /// queue a redraw for all the widgets on the visible scenes
+    /// queue a render for all the widgets on the visible scenes
     static void refresh():
       scene->refresh()
       if overlay_is_visible:

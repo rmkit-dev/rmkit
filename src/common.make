@@ -14,4 +14,7 @@ KBD=`ls /dev/input/by-path/*kbd | head -n1`
 # NOTE: $FILES and $EXE NEED TO BE DEFINED
 OKP_FLAGS=-ni -for -d ../cpp/ -o ../build/${EXE} ${FILES}
 
+# installation directory on remarkable
+DEST=harmony
+
 # vim: syntax=make

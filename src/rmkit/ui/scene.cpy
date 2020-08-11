@@ -30,12 +30,12 @@ namespace ui:
     static void redraw(vector<shared_ptr<Widget>> &widgets):
       for auto it = widgets.begin(); it != widgets.end(); it++:
         auto &widget = *it
-        widget->before_redraw()
+        widget->before_render()
         if !widget->visible:
           continue
 
         if widget->dirty:
-          widget->redraw()
+          widget->render()
           widget->dirty = 0
 
         if widget->children.size():

@@ -71,7 +71,7 @@ namespace ui:
     void set_justification(Text::JUSTIFY j):
       self.textWidget->justify = j
 
-    void before_redraw():
+    void before_render():
       has_icon := false
       has_text := false
       if self.icon.data != NULL:
@@ -102,14 +102,14 @@ namespace ui:
         self.textWidget->y = self.y + y_padding
 
 
-    void redraw():
+    void render():
 
       fb->draw_rect(self.x, self.y, self.w, self.h, WHITE, true)
 
       if self.iconWidget.get() != nullptr:
-        self.iconWidget->redraw()
+        self.iconWidget->render()
 
-      self.textWidget->redraw()
+      self.textWidget->render()
 
       color := WHITE
       if self.mouse_inside:
