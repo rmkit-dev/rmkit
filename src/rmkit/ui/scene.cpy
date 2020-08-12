@@ -17,6 +17,10 @@ namespace ui:
     public:
     vector<shared_ptr<Widget>> widgets
 
+    /// variable: pinned
+    /// whether scene is pinned (only for overlays)
+    bool pinned = false
+
     // function: add
     // adds a widget to the scene
     void add(Widget *w):

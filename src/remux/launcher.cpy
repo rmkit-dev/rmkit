@@ -32,6 +32,7 @@ class AppBackground: public ui::Widget:
   AppBackground(int x, y, w, h): ui::Widget(x, y, w, h):
     self.byte_size = w*h*sizeof(remarkable_color)
     buf = (char*) malloc(self.byte_size)
+    memset(buf, 0, self.byte_size)
 
   def snapshot():
     fb := framebuffer::get()
@@ -176,6 +177,7 @@ class App:
                     app_dialog->populate()
                     app_dialog->setup_for_render()
                     app_dialog->show()
+                    app_dialog->scene->pinned = true
                     self.term_apps()
                   });
           });

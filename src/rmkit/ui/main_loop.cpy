@@ -238,7 +238,8 @@ namespace ui:
             widget->mouse.leave(ev)
 
       if overlay_is_visible && mouse_down && !hit_widget:
-        MainLoop::hide_overlay()
+        if !overlay->pinned:
+          MainLoop::hide_overlay()
 
       return hit_widget
   ;

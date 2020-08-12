@@ -134,14 +134,14 @@ namespace ui:
     virtual void on_mouse_move(input::SynMouseEvent &ev):
       pass
 
-    // function:
+    // function: on_mouse_hover
     // called when the mouse hovers over a widget.
     // this only works with the stylus which can detect
     // hover vs. press events
     virtual void on_mouse_hover(input::SynMouseEvent &ev):
       pass
 
-    // function:
+    // function: on_key_pressed
     /// called when a keyboard key or hardware key is pressed
     virtual void on_key_pressed(input::SynKeyEvent &ev):
       pass
