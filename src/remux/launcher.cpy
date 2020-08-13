@@ -20,8 +20,10 @@ DIALOG_HEIGHT := 800
 
 #ifdef REMARKABLE
 #define BIN_DIR  "/home/root/apps/"
+#define DRAFT_DIR "/etc/draft/"
 #else
 #define BIN_DIR  "./src/build/"
+#define DRAFT_DIR "./src/remux/draft"
 #endif
 
 class AppBackground: public ui::Widget:
@@ -52,6 +54,48 @@ class AppDialog: public ui::Pager<AppDialog<T>>:
       self.set_title("Select an app...")
       self.app = a
       self.apps = {}
+
+    vector<RMApp> read_draft_from_dir(string bin_dir):
+      DIR *dir
+      struct dirent *ent
+
+      vector<RMApp> apps
+      char resolved_path[PATH_MAX];
+      if ((dir = opendir (bin_dir.c_str())) != NULL):
+        while ((ent = readdir (dir)) != NULL):
+          str_d_name := string(ent->d_name)
+          if str_d_name == "." or str_d_name == "..":
+            continue
+
+          path := string(bin_dir) + "/" + string(ent->d_name)
+          ifstream filein(path)
+          string line
+
+          RMApp rmapp
+          rmapp.bin = "";
+          while filein.good():
+            getline(filein, line)
+            tokens := split(line, '=')
+            if tokens.size() == 2:
+              arg := tokens[0]
+              val := tokens[1]
+              if arg == "call":
+                rmapp.bin = val
+              else if arg == "desc":
+                rmapp.desc = val
+              else if arg == "name":
+                rmapp.name = val
+              else if arg == "term":
+                rmapp.term = val
+
+          if rmapp.bin != "":
+            apps.push_back(rmapp)
+
+        closedir (dir)
+      else:
+        perror ("")
+
+      return apps
 
     def read_apps_from_dir(string bin_dir):
       DIR *dir
@@ -92,7 +136,6 @@ class AppDialog: public ui::Pager<AppDialog<T>>:
 
         dont_add := false
         for auto s : skip_list:
-          print "SKIP", base, s, (s == base)
           if s == base:
             dont_add = true
         if dont_add:
@@ -101,6 +144,18 @@ class AppDialog: public ui::Pager<AppDialog<T>>:
 
         app := (RMApp) { .bin=bin_str, .name=base, .term="killall " + string(base) }
         self.apps.push_back(app)
+
+      draft_binaries := read_draft_from_dir(DRAFT_DIR)
+      for auto a : draft_binaries:
+        dont_add := false
+        for auto s : skip_list:
+          if s == a.bin:
+            dont_add = true
+        if dont_add:
+          continue
+
+        self.apps.push_back(a)
+
 
       for auto a : self.apps:
         auto name = a.name
