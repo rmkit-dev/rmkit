@@ -40,9 +40,11 @@ namespace app_ui:
       self.undo_stack.push_back(fbcopy)
       reset_dirty(self.dirty_rect)
 
-      self.set_brush(brush::PENCIL)
       self.eraser = brush::ERASER
+      self.set_brush(brush::ERASER)
       self.eraser->set_stroke_width(stroke::Size::MEDIUM)
+
+      self.set_brush(brush::PENCIL)
 
     ~Canvas():
       if self.mem != NULL:
