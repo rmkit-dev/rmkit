@@ -257,40 +257,52 @@ class MenuButton: public ui::Button:
   void on_mouse_click(input::SynMouseEvent &ev):
     main_menu()
 
-class BombButton: public ui::Button:
+class RadioButton: public ui::Button:
   public:
-  BombButton(int x, y, w, h, string t="Observe"): Button(x,y,w,h,t):
-    pass
+  string option
+  string *selected = NULL
+  RadioButton(int x, y, w, h, string t): Button(x, y, w, h, t):
+    self.option = t
+
+  void set_group(string *s):
+    self.selected = s
 
   void render():
+    self.undraw()
     ui::Button::render()
-    self.fb->draw_rect(self.x, self.y, self.w, self.h, GRAY, (MODE == 1))
+    if self.selected != NULL:
+      self.fb->draw_rect(self.x, self.y, self.w, self.h, GRAY, (*self.selected == self.option))
+      self.textWidget->render()
 
   void on_mouse_click(input::SynMouseEvent &ev):
+    *self.selected = self.option
+    self.on_button_selected(self.option)
+
+  virtual void on_button_selected(string t):
+    pass
+
+class BombButton: public RadioButton:
+  public:
+  BombButton(int x, y, w, h, string t="Open"): RadioButton(x,y,w,h,t):
+    pass // 1
+
+  void on_button_selected(string t):
     MODE = 1
 
-class FlagButton: public ui::Button:
+class FlagButton: public RadioButton:
   public:
-  FlagButton(int x, y, w, h, string t="Flag"): Button(x,y,w,h,t):
-    pass
+  FlagButton(int x, y, w, h, string t="Flag"): RadioButton(x,y,w,h,t):
+    pass // 0
 
-  void render():
-    ui::Button::render()
-    self.fb->draw_rect(self.x, self.y, self.w, self.h, GRAY, (MODE == 0))
-
-  void on_mouse_click(input::SynMouseEvent &ev):
+  void on_button_selected(string t):
     MODE = 0
 
-class QuestionButton: public ui::Button:
+class QuestionButton: public RadioButton:
   public:
-  QuestionButton(int x, y, w, h, string t="Doubt"): Button(x,y,w,h,t):
-    pass
+  QuestionButton(int x, y, w, h, string t="???"): RadioButton(x,y,w,h,t):
+    pass // 2
 
-  void render():
-    ui::Button::render()
-    self.fb->draw_rect(self.x, self.y, self.w, self.h, GRAY, (MODE == 2))
-
-  void on_mouse_click(input::SynMouseEvent &ev):
+  void on_button_selected(string t):
     MODE = 2
 
 
@@ -347,8 +359,8 @@ class App:
     field_scene = ui::make_scene()
     w, h = fb->get_display_size()
 
-    c := new MenuButton(0, 0, 200, 50)
-    field_scene->add(c)
+    m := new MenuButton(0, 0, 200, 50)
+    field_scene->add(m)
 
     // create the grid component and add it to the field
     grid = new Grid(0, 300, 1100, 1100, GRID_SIZE)
@@ -369,10 +381,15 @@ class App:
 
     a := new BombButton((w - 200) / 2 - 300, 1450, 200, 50)
     b := new FlagButton((w - 200) / 2, 1450, 200, 50)
-    d := new QuestionButton((w - 200) / 2 + 300, 1450, 200, 50)
+    c := new QuestionButton((w - 200) / 2 + 300, 1450, 200, 50)
+
+    static string s
+    a->set_group(&s)
+    b->set_group(&s)
+    c->set_group(&s)
     field_scene->add(a)
     field_scene->add(b)
-    field_scene->add(d)
+    field_scene->add(c)
 
   def reset():
     MODE = 1

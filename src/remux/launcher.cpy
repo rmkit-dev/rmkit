@@ -19,7 +19,7 @@ DIALOG_WIDTH  := 600
 DIALOG_HEIGHT := 800
 
 #ifdef REMARKABLE
-#define BIN_DIR  "/home/root/harmony/"
+#define BIN_DIR  "/home/root/apps/"
 #else
 #define BIN_DIR  "./src/build/"
 #endif
