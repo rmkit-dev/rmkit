@@ -12,6 +12,6 @@ trap cleanup SIGINT
 
 killall harmony
 rm harmony-release.zip
-wget https://github.com/raisjn/rmHarmony/releases/download/v0.0.1/release.zip -O harmony-release.zip
+wget https://github.com/raisjn/rmHarmony/releases/download/v0.0.2/release.zip -O harmony-release.zip
 yes | unzip harmony-release.zip
 ./harmony/harmony

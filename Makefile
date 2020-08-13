@@ -58,12 +58,12 @@ docker_install: docker
 
 bundle: harmony remux
 	#BUILDING V: ${VERSION} ARCH: ${ARCH}
-	mkdir -p ${BUILD_DIR}/harmony 2>/dev/null || true
+	mkdir -p ${BUILD_DIR}/${DEST} 2>/dev/null || true
 	# TODO: use ${APPS} here
-	cp ${BUILD_DIR}/harmony.exe ${BUILD_DIR}/remux.exe ${BUILD_DIR}/harmony/
-	cp src/remux/remux.service ${BUILD_DIR}/harmony/
+	cp ${BUILD_DIR}/harmony.exe ${BUILD_DIR}/remux.exe ${BUILD_DIR}/${DEST}/
+	cp src/remux/remux.service ${BUILD_DIR}/${DEST}/
 
-	cd ${BUILD_DIR}; zip release-${VERSION}.zip -r harmony/
+	cd ${BUILD_DIR}; zip release-${VERSION}.zip -r ${DEST}/
 	cat scripts/run/install_harmony.sh.template | sed 's/VERSION/${VERSION}/g' > scripts/run/install_harmony.sh
 	cat scripts/run/try_harmony.sh.template | sed 's/VERSION/${VERSION}/g' > scripts/run/try_harmony.sh
 

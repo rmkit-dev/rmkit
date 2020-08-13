@@ -1,7 +1,7 @@
 # rMkit
 
-This repo contains applications for the remarkable tablet. See the README for
-in each application's directory to learn more.
+This repo contains applications for the remarkable tablet. See the README in
+each application's directory to learn more.
 
 ### [harmony](src/harmony)
 
@@ -13,7 +13,8 @@ A minesweeper game for time between meetings and classes
 
 ### [remux](src/remux)
 
-An app switcher for switching between apps on the remarkable
+An app switcher for switching between apps on the remarkable. Hold down the
+middle button to bring it up.
 
 ### [rMkit](src/rmkit)
 
@@ -28,13 +29,13 @@ A small example app to demonstrate how to build apps with rMkit
 
 #### Try it out
 
-run `wget -O- https://raw.githack.com/raisjn/rMkit/master/scripts/run/try_harmony.sh -q | sh -` on the remarkable via SSH
+run `wget -O- https://raw.githack.com/raisjn/rmkit/master/scripts/run/try_harmony.sh -q | sh -` on the remarkable via SSH
 
 To exit harmony, press the power button to bring up the exit dialog.
 
 #### Install
 
-run `wget -O- https://raw.githack.com/raisjn/rMkit/master/scripts//run/install_harmony.sh -q | sh -` to install the remux app launcher until the next time the device is updated
+run `wget -O- https://raw.githack.com/raisjn/rmkit/master/scripts//run/install_harmony.sh -q | sh -` to install the remux app launcher until the next time the device is updated
 
 to launch remux and switch between apps, hold the center button for 2+ seconds.
 

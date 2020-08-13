@@ -1,10 +1,10 @@
 # run with wget -O- https://raw.githubusercontent.com/raisjn/rmHarmony/master/scripts/run/install_harmony.sh -q | sh -
 
-killall launcher
-killall harmony
+killall remux.exe
+killall harmony.exe
 rm harmony-release.zip
 wget https://github.com/raisjn/rmHarmony/releases/download/vVERSION/release.zip -O harmony-release.zip
 yes | unzip harmony-release.zip
 
-ln -s /home/root/harmony/harmony.service /etc/systemd/system/harmony.service
-systemctl enable --now harmony
+ln -s /home/root/apps/harmony.service /etc/systemd/system/harmony.service
+systemctl enable --now remux
