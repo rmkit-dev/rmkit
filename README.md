@@ -18,7 +18,7 @@ middle button to bring it up.
 
 ### [rMkit](src/rmkit)
 
-A batteries included library for building remarkable apps
+A batteries included library for building remarkable apps. [Read the documentation](https://rmkit-dev.github.io/rmkit)
 
 ### [demo](src/demo)
 
