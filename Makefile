@@ -60,7 +60,7 @@ bundle: harmony remux
 	#BUILDING V: ${VERSION} ARCH: ${ARCH}
 	mkdir -p ${BUILD_DIR}/${DEST} 2>/dev/null || true
 	# TODO: use ${APPS} here
-	cp ${BUILD_DIR}/harmony.exe ${BUILD_DIR}/remux.exe ${BUILD_DIR}/${DEST}/
+	cp ${BUILD_DIR}/harmony.exe ${BUILD_DIR}/remux.exe ${BUILD_DIR}/mines.exe ${BUILD_DIR}/${DEST}/
 	cp src/remux/remux.service ${BUILD_DIR}/${DEST}/
 
 	cd ${BUILD_DIR}; zip release-${VERSION}.zip -r ${DEST}/

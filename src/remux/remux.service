@@ -3,7 +3,7 @@ Description=ReMux Launcher
 After=xochitl.service opt.mount
 
 [Service]
-ExecStart=/home/root/harmony/remux.exe
+ExecStart=/home/root/apps/remux.exe
 Restart=on-failure
 
 [Install]

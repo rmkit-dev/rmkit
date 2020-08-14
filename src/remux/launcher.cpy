@@ -15,8 +15,8 @@
 
 #include "config.launcher.h"
 
-DIALOG_WIDTH  := 600
-DIALOG_HEIGHT := 800
+DIALOG_WIDTH  := 800
+DIALOG_HEIGHT := 1000
 
 #ifdef REMARKABLE
 #define BIN_DIR  "/home/root/apps/"
@@ -54,6 +54,7 @@ class AppDialog: public ui::Pager<AppDialog<T>>:
       self.set_title("Select an app...")
       self.app = a
       self.apps = {}
+      self.opt_h = 75
 
     vector<RMApp> read_draft_from_dir(string bin_dir):
       DIR *dir
@@ -127,6 +128,17 @@ class AppDialog: public ui::Pager<AppDialog<T>>:
         if a.always_show || proc::exe_exists(a.bin):
           self.apps.push_back(a)
 
+      draft_binaries := read_draft_from_dir(DRAFT_DIR)
+      for auto a : draft_binaries:
+        dont_add := false
+        for auto s : skip_list:
+          if s == a.bin:
+            dont_add = true
+        if dont_add:
+          continue
+
+        self.apps.push_back(a)
+
       bin_binaries := read_apps_from_dir(BIN_DIR)
       for auto a : bin_binaries:
         bin_str := string(a)
@@ -145,20 +157,11 @@ class AppDialog: public ui::Pager<AppDialog<T>>:
         app := (RMApp) { .bin=bin_str, .name=base, .term="killall " + string(base) }
         self.apps.push_back(app)
 
-      draft_binaries := read_draft_from_dir(DRAFT_DIR)
-      for auto a : draft_binaries:
-        dont_add := false
-        for auto s : skip_list:
-          if s == a.bin:
-            dont_add = true
-        if dont_add:
-          continue
-
-        self.apps.push_back(a)
-
-
       for auto a : self.apps:
         auto name = a.name
+        if seen.find(a.bin) != seen.end():
+          continue
+
         seen.insert(a.bin)
         if name == "":
           name = a.bin
@@ -172,6 +175,7 @@ class AppDialog: public ui::Pager<AppDialog<T>>:
 
     void render_row(ui::HorizontalLayout *row, string option):
       d := new ui::DialogButton<ui::Dialog>(20, 0, self.w-200, self.opt_h, self, option)
+      d->textWidget->font_size = 48
       d->set_justification(ui::Text::JUSTIFY::LEFT)
       self.layout->pack_start(row)
       row->pack_start(d)
