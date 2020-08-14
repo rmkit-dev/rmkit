@@ -1,5 +1,6 @@
 #include <iostream>
 #include <csignal>
+
 #include "fb/fb.h"
 #include "ui/widget.h"
 #include "ui/main_loop.h"
@@ -21,5 +22,5 @@ static void _rmkit_init():
   w, h = fb->get_display_size()
   input::MouseEvent::set_screen_size(w, h)
 
-  for auto s : { SIGINT, SIGTERM, SIGABRT}:
+  for auto s : { SIGINT, SIGTERM, SIGABRT, SIGSEGV}:
     signal(s, _rmkit_exit)
