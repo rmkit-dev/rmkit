@@ -43,20 +43,9 @@ namespace proc:
       print name, "IS ALREADY RUNNING"
       return
 
-    print "LAUNCHING", name
     proc := name
     if background:
       proc += "&"
 
     if system(proc.c_str()) != 0:
-      print "COULDN'T LAUNCH", name
-
-
-  void launch_harmony():
-    if check_process("/home/root/harmony/harmony"):
-      print "HARMONY IS ALREADY RUNNING"
-      return
-
-    print "LAUNCHING HARMONY"
-    if system("/home/root/harmony/harmony") != 0:
-      print "COULDN'T LAUNCH HARMONY..."
+      pass

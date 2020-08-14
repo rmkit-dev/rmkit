@@ -141,7 +141,6 @@ class AppDialog: public ui::Pager<AppDialog<T>>:
       bin_binaries := read_apps_from_dir(BIN_DIR)
       for auto a : bin_binaries:
         bin_str := string(a)
-        print "BINARY IS", bin_str
         app_str := a.c_str()
         base := basename(app_str)
 
@@ -150,7 +149,6 @@ class AppDialog: public ui::Pager<AppDialog<T>>:
           if s == base:
             dont_add = true
         if dont_add:
-          print "SKIPPING", base
           continue
 
         app := (RMApp) { .bin=bin_str, .name=base, .term="killall " + string(base) }
@@ -234,8 +232,8 @@ class App:
                     app_dialog->populate()
                     app_dialog->setup_for_render()
                     app_dialog->show()
+                    ui::MainLoop::in.grab()
                     app_dialog->scene->pinned = true
-                    self.term_apps()
                   });
           });
         else:
@@ -260,7 +258,12 @@ class App:
 
     term_apps(name)
 
+    ui::MainLoop::in.ungrab()
     proc::launch_process(bin, true /* check running */, true /* background */)
+    ui::MainLoop::hide_overlay()
+    ui::MainLoop::redraw()
+
+    app_bg->render()
     app_bg->visible = false
 
   def run():
@@ -272,6 +275,7 @@ class App:
       ui::MainLoop::check_resize()
       if app_bg->visible:
         ui::MainLoop::redraw()
+
       ui::MainLoop::read_input()
 
 App app

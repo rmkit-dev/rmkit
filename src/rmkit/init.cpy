@@ -2,12 +2,14 @@
 #include <csignal>
 #include "fb/fb.h"
 #include "ui/widget.h"
+#include "ui/main_loop.h"
 #include "input/input.h"
 
 static void _rmkit_exit() __attribute__((destructor))
 static void _rmkit_exit(int signum):
   fb := framebuffer::get()
   fb->cleanup()
+  ui::MainLoop::in.ungrab()
   exit(signum)
 
 static void _rmkit_init() __attribute__((constructor))

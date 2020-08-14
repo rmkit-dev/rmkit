@@ -4,6 +4,7 @@
 #include <linux/input.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/ioctl.h>
 
 #include "../defines.h"
 #include "events.h"
@@ -133,6 +134,14 @@ namespace input:
       int bytes = read(input::ipc_fd[0], buf, 1024);
 
       return
+
+    void grab():
+      for auto fd : { self.mouse.fd, self.touch.fd, self.wacom.fd, self.button.fd }:
+        ioctl(fd, EVIOCGRAB, true)
+
+    void ungrab():
+      for auto fd : { self.mouse.fd, self.touch.fd, self.wacom.fd, self.button.fd }:
+        ioctl(fd, EVIOCGRAB, false)
 
 
     def listen_all():
