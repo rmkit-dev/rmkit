@@ -15,8 +15,8 @@
 
 #include "config.launcher.h"
 
-DIALOG_WIDTH  := 800
-DIALOG_HEIGHT := 1000
+DIALOG_WIDTH  := 600
+DIALOG_HEIGHT := 800
 
 #ifdef REMARKABLE
 #define BIN_DIR  "/home/root/apps/"
@@ -54,7 +54,6 @@ class AppDialog: public ui::Pager<AppDialog<T>>:
       self.set_title("Select an app...")
       self.app = a
       self.apps = {}
-      self.opt_h = 75
 
     vector<RMApp> read_draft_from_dir(string bin_dir):
       DIR *dir
@@ -175,7 +174,6 @@ class AppDialog: public ui::Pager<AppDialog<T>>:
 
     void render_row(ui::HorizontalLayout *row, string option):
       d := new ui::DialogButton<ui::Dialog>(20, 0, self.w-200, self.opt_h, self, option)
-      d->textWidget->font_size = 48
       d->set_justification(ui::Text::JUSTIFY::LEFT)
       self.layout->pack_start(row)
       row->pack_start(d)
