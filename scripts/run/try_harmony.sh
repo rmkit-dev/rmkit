@@ -1,4 +1,4 @@
-# run with wget -O- https://raw.githubusercontent.com/raisjn/rmHarmony/master/scripts/run/try_harmony.sh -q | sh -
+# run with wget -O- https://raw.githubusercontent.com/rmkit-dev/rmkit/master/scripts/run/try_harmony.sh -q | sh -
 
 function cleanup() {
   killall harmony
@@ -12,6 +12,6 @@ trap cleanup SIGINT
 
 killall harmony
 rm harmony-release.zip
-wget https://github.com/raisjn/rmHarmony/releases/download/v0.0.2/release.zip -O harmony-release.zip
+wget https://github.com/rmkit-dev/rmkit/releases/download/v0.0.2/release.zip -O harmony-release.zip
 yes | unzip harmony-release.zip
 ./harmony/harmony

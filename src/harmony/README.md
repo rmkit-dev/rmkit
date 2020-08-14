@@ -20,13 +20,13 @@ Approaching first release. Stay tuned!
 
 ### Try it out
 
-run `wget -O- https://raw.githubusercontent.com/raisjn/rmHarmony/master/scripts/try_harmony.sh -q | sh -` on the remarkable via SSH
+run `wget -O- https://raw.githubusercontent.com/rmkit-dev/rmkit/master/scripts/run/try_harmony.sh -q | sh -` on the remarkable via SSH
 
 To exit harmony, press the power button to bring up the exit dialog.
 
 ### Install
 
-run `wget -O- https://raw.githubusercontent.com/raisjn/rmHarmony/master/scripts/install_harmony.sh -q | sh -` to install the harmony launcher until the next time the device is updated
+run `wget -O- https://raw.githubusercontent.com/rmkit-dev/rmkit/master/scripts/run/install_harmony.sh -q | sh -` to install the harmony launcher until the next time the device is updated
 
 
 to launch harmony, hold the center button for 2+ seconds. To exit harmony,

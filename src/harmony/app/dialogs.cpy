@@ -4,7 +4,7 @@
 string ABOUT_TEXT = "\
 rmHarmony is a sketching app based on libremarkable and mr. doob's harmony. \
 brought to you by the letters N and O. icons are from fontawesome \n\n\
-source available at https://github.com/raisjn/rmHarmony \n \
+source available at https://github.com/rmkit-dev/rmKit \n \
 "
 namespace app_ui:
   class AboutDialog: public ui::InfoDialog:

@@ -29,13 +29,13 @@ A small example app to demonstrate how to build apps with rMkit
 
 #### Try it out
 
-run `wget -O- https://raw.githack.com/raisjn/rmkit/master/scripts/run/try_harmony.sh -q | sh -` on the remarkable via SSH
+run `wget -O- https://raw.githack.com/rmkit-dev/rmkit/master/scripts/run/try_harmony.sh -q | sh -` on the remarkable via SSH
 
 To exit harmony, press the power button to bring up the exit dialog.
 
 #### Install
 
-run `wget -O- https://raw.githack.com/raisjn/rmkit/master/scripts//run/install_harmony.sh -q | sh -` to install the remux app launcher until the next time the device is updated
+run `wget -O- https://raw.githack.com/rmkit-dev/rmkit/master/scripts//run/install_harmony.sh -q | sh -` to install the remux app launcher until the next time the device is updated
 
 to launch remux and switch between apps, hold the center button for 2+ seconds.
 
