@@ -1,20 +1,22 @@
 # rMkit
 
 This repo contains applications for the remarkable tablet. See the README in
-each application's directory to learn more.
+each application's directory to learn more about it. The general purpose of
+rMkit is to make it easy to write and deploy new apps to the remarkable tablet.
 
 ### [harmony](src/harmony)
 
-A low latency drawing app with procedural brushes.
+A low latency drawing app with procedural brushes
 
 ### [mines](src/minesweeper)
 
-A minesweeper game for time between meetings and classes
+A minesweeper game for spending time between meetings and classes
 
 ### [remux](src/remux)
 
-An app switcher for switching between apps on the remarkable. Hold down the
-middle button to bring it up.
+An app switcher for switching between apps on the remarkable that is compatible
+with [draft-remarkable](https://github.com/dixonary/draft-reMarkable/)
+configuration files. Hold down the middle button to bring it up.
 
 ### [rMkit](src/rmkit)
 
@@ -45,5 +47,6 @@ see [BUILDING.md](docs/BUILDING.md)
 
 ## Have ideas or want to code your own apps?
 
-If you have ideas for new apps or features for the remarkable, please open an issue
-or get in touch
+[There's a list of app ideas just waiting to be built!](docs/APP_IDEAS.md). If
+you have ideas for new apps or features, please open an issue or get in touch
+:-D
