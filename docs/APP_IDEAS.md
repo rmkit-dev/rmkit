@@ -23,3 +23,5 @@ This document has ideas for apps that might work well on the remarkable.
 * snake
 * sudoku
 * chess board (with variants)
+* connect 4
+* mad libs

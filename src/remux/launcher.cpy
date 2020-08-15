@@ -34,13 +34,13 @@ class AppBackground: public ui::Widget:
   AppBackground(int x, y, w, h): ui::Widget(x, y, w, h):
     self.byte_size = w*h*sizeof(remarkable_color)
     buf = (char*) malloc(self.byte_size)
-    memset(buf, 0, self.byte_size)
 
   def snapshot():
     fb := framebuffer::get()
     memcpy(buf, fb->fbmem, self.byte_size)
 
   void render():
+    self.fb->waveform_mode = WAVEFORM_MODE_GC16
     memcpy(fb->fbmem, buf, self.byte_size)
 
 template<class T>
