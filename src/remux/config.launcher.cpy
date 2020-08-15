@@ -1,21 +1,18 @@
 struct RMApp:
   string bin
+  string which = "XBXA"
   string name
   string term
   string desc
   bool always_show = false
 
 RMApp APP_XOCHITL      = %{
-  .bin = "xochitl",
+  .bin = "systemctl start xochitl",
+  .which = "xochitl",
   .name = "Remarkable",
   .term = "systemctl stop xochitl; killall xochitl;",
   .always_show = true
 }
-
-RMApp APP_HARMONY      = %{
-  .bin="/home/root/harmony/harmony.exe",
-  .name="Harmony" ,
-  .term="killall harmony"}
 
 RMApp APP_KOREADER     = %{
   .bin="/home/root/koreader/koreader.sh",
@@ -44,7 +41,6 @@ RMApp APP_EDIT     = %{
 
 vector<RMApp> APPS = %{
    APP_XOCHITL
-  // ,APP_HARMONY
   ,APP_KOREADER
   ,APP_FINGERTERM
   ,APP_KEYWRITER

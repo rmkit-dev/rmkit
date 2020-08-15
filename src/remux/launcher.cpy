@@ -251,15 +251,18 @@ class App:
   def selected(string name):
     print "LAUNCHING APP", name
     string bin
+    string which
 
     for auto a : app_dialog->apps:
       if a.name == name:
         bin = a.bin
+        which = a.which
 
     term_apps(name)
 
     ui::MainLoop::in.ungrab()
-    proc::launch_process(bin, true /* check running */, true /* background */)
+    if !proc::check_process(which):
+      proc::launch_process(bin, true /* check running */, true /* background */)
     ui::MainLoop::hide_overlay()
     ui::MainLoop::redraw()
 
