@@ -4,32 +4,35 @@
 namespace ui:
   const string PREV = "PREV"
   const string NEXT = "NEXT"
-  template<class T>
+  class IPager:
+    public:
+    virtual void on_row_selected(string t) = 0
+
   // class: ui::Pager
   // --- Prototype ---
   // class ui::Pager: public ui::Dialog:
   // -----------------
   // a Pager is a modal dialog that lets one browse through
   // multiple pages of results using a next and previous button.
-  class Pager: public ui::Dialog:
+  class Pager: public ui::Dialog, public IPager:
     public:
     shared_ptr<ui::VerticalLayout> layout
     int page_size, curr_page = 0, opt_h = 50
     vector<string> options
-    T *dialog
+    IPager *dialog
 
-    Pager(int x, y, w, h, T *d): ui::Dialog(x, y, w, h):
+    Pager(int x, y, w, h, IPager *d): ui::Dialog(x, y, w, h):
       self.dialog = d
       self.page_size = self.h / self.opt_h - 1
 
     void add_buttons(HorizontalLayout *button_bar):
       if curr_page > 0:
-        button_bar->pack_start(new DialogButton<Dialog>(0, 0, 100, 50, self, PREV), 10)
+        button_bar->pack_start(new DialogButton(0, 0, 100, 50, self, PREV), 10)
       if curr_page < self.options.size() / self.page_size:
-        button_bar->pack_end(new DialogButton<Dialog>(0, 0, 100, 50, self, NEXT), 10)
+        button_bar->pack_end(new DialogButton(0, 0, 100, 50, self, NEXT), 10)
 
     virtual void render_row(ui::HorizontalLayout *row, string option):
-      d := new ui::DialogButton<ui::Dialog>(20,0, self.w - 80, self.opt_h, self, option)
+      d := new ui::DialogButton(20,0, self.w - 80, self.opt_h, self, option)
       d->set_justification(ui::Text::JUSTIFY::LEFT)
       layout->pack_start(d)
 

@@ -1,5 +1,5 @@
-#include "../../vendor/stb/image_resize.h"
-#include "../../vendor/lodepng/lodepng.h"
+#include "../../vendor/stb/stb_image.h"
+#include "../../vendor/stb/stb_image_resize.h"
 #include "../util/image.h"
 #include "pixmap.h"
 
@@ -22,8 +22,9 @@ namespace ui:
 
     void render():
       if image.buffer != NULL:
-        self.fb->draw_bitmap(self.image, self.x, self.y)
-        self.fb->draw_rect(self.x, self.y, self.w, self.h,3,BLACK)
+          print "RENDERING IMAGE", self.w, self.h, self.image.w, self.image.h
+          self.fb->draw_bitmap(self.image, self.x, self.y)
+          self.fb->draw_rect(self.x, self.y, self.w, self.h,3,BLACK)
 
     image_data fetch(string t):
       if !MainLoop::is_visible(self):
@@ -33,16 +34,14 @@ namespace ui:
       unsigned char *load_buffer, *resize_buffer
       vector<unsigned char> raw
       size_t outsize
-      unsigned int fw, fh
+      int fw, fh
 
       sprintf(full_path, "%s/%s", SAVE_DIR, self.filename.c_str())
-      load_ret := lodepng_load_file(&load_buffer, &outsize, full_path)
-      decode_ret := lodepng::decode(raw, fw, fh, load_buffer, outsize,
-                      LodePNGColorType::LCT_GREY, 8);
 
-      buf := (uint32_t*) malloc(fw*fh*sizeof(uint32_t))
-      buf = (uint32_t*) memcpy(buf, raw.data(), raw.size())
-      self.image = image_data{(uint32_t*) buf, (int) fw, (int) fh}
-      util::resize_image(self.image, self.w, self.h)
+      int channels // an output parameter
+      decoded := stbi_load(full_path, &fw, &fh, &channels, 1);
+      img := image_data{(uint32_t*) decoded, (int) fw, (int) fh}
+      util::resize_image(img, self.w, self.h)
+      self.image = img
 
       return self.image

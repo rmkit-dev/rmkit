@@ -6,17 +6,13 @@
 #include <sstream>
 #include "ui/icons.h"
 
+#define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
 #define STB_TRUETYPE_IMPLEMENTATION
 
 
 // #define PERF_BUILD
-
-struct image_data {
-  uint32_t* buffer;
-  int w;
-  int h;
-};
 
 #define ICON(name) icons::Icon { name, name ## _len, #name}
 
@@ -90,7 +86,7 @@ struct image_data {
 #define ICON_WIDTH 70
 // }}}
 
-// {{{ Helper Functions
+// {{{ HELPER FUNCTIONS
 
 // {{{ FAST RANd
 
@@ -129,5 +125,13 @@ bool ends_with (std::string const &fullString, std::string const &ending) {
     }
 }
 
+// }}}
+
+// {{{ IMAGE DATA STRUCT
+struct image_data {
+  uint32_t* buffer;
+  int w;
+  int h;
+};
 // }}}
 #endif

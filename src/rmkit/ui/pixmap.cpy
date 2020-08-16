@@ -2,6 +2,7 @@
 #include "layouts.h"
 #include "text.h"
 #include "../util/image.h"
+#include "../../vendor/stb/stb_image.h"
 
 #include <dirent.h>
 
@@ -72,15 +73,11 @@ namespace ui:
       if self.image.buffer != NULL:
         return self.image
 
-      unsigned int iconw = 0
-      unsigned int iconh = 0
-      vector<unsigned char> out
-      uint32_t* buf
+      int iconw = 0
+      int iconh = 0
+      int channels
 
-      lodepng::decode(out, iconw, iconh, self.data, self.len,
-        LodePNGColorType::LCT_GREY, 8)
-      buf = (uint32_t*) malloc(iconw*iconh*sizeof(uint32_t))
-      buf = (uint32_t*) memcpy(buf, out.data(), out.size())
+      buf := stbi_load_from_memory(self.data, self.len, &iconw, &iconh, &channels, 1)
       self.image = image_data{(uint32_t*) buf, (int) iconw, (int) iconh}
 
       if self.width > 0 && self.height > 0:

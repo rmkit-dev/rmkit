@@ -31,11 +31,11 @@ namespace app_ui:
       SaveDialog(int x, y, w, h): ui::InfoDialog(x, y, w, h):
         pass
 
-  class LoadDialog: public ui::Pager<LoadDialog>:
+  class LoadDialog: public ui::Pager:
     public:
       Canvas *canvas
 
-      LoadDialog(int x, y, w, h, Canvas *c): ui::Pager<LoadDialog>(x, y, w, h, self):
+      LoadDialog(int x, y, w, h, Canvas *c): ui::Pager(x, y, w, h, self):
         self.set_title("Select a png file...")
 
         self.canvas = c
@@ -64,7 +64,7 @@ namespace app_ui:
 
       void render_row(ui::HorizontalLayout *row, string option):
         ui::Thumbnail *tn = new ui::Thumbnail(0, 0, 140, self.opt_h, option)
-        d := new ui::DialogButton<ui::Dialog>(20, 0, self.w-200, self.opt_h, self, option)
+        d := new ui::DialogButton(20, 0, self.w-200, self.opt_h, self, option)
         layout->pack_start(row)
         row->pack_start(tn)
         row->pack_start(d)

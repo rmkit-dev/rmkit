@@ -44,13 +44,13 @@ class AppBackground: public ui::Widget:
     memcpy(fb->fbmem, buf, self.byte_size)
 
 template<class T>
-class AppDialog: public ui::Pager<AppDialog<T>>:
+class AppDialog: public ui::Pager:
   public:
     vector<string> binaries
     vector<RMApp> apps
     T* app
 
-    AppDialog(int x, y, w, h, T* a): ui::Pager<AppDialog>(x, y, w, h, self):
+    AppDialog(int x, y, w, h, T* a): ui::Pager(x, y, w, h, self):
       self.set_title("Select an app...")
       self.app = a
       self.apps = {}
@@ -171,7 +171,7 @@ class AppDialog: public ui::Pager<AppDialog<T>>:
       ui::MainLoop::hide_overlay()
 
     void render_row(ui::HorizontalLayout *row, string option):
-      d := new ui::DialogButton<ui::Dialog>(20, 0, self.w-200, self.opt_h, self, option)
+      d := new ui::DialogButton(20, 0, self.w-200, self.opt_h, self, option)
       d->set_justification(ui::Text::JUSTIFY::LEFT)
       self.layout->pack_start(row)
       row->pack_start(d)

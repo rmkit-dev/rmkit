@@ -1,7 +1,7 @@
 include ../actions.make
 
 EXE=rmkit.h
-FILES=rmkit.cpy ../vendor/lodepng/lodepng.cpp
+FILES=rmkit.cpy
 
 # add single header (-sh) flag to OKP_FLAGS because we are compiling into rmkit.h
 # requires okp >= 0.0.36

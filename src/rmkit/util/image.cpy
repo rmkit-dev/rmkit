@@ -1,5 +1,4 @@
-#include "../../vendor/stb/image_resize.h"
-#include "../../vendor/lodepng/lodepng.h"
+#include "../../vendor/stb/stb_image_resize.h"
 
 namespace util:
   resize_image(image_data &im, int new_w, new_h, threshold=255):
@@ -14,13 +13,16 @@ namespace util:
       if resize_buffer[i] < threshold:
         resize_buffer[i] = 0
 
-    unsigned char* rgba_buf = (unsigned char*)malloc(4*resize_len)
+    char* rgba_buf = (char*) malloc(sizeof(uint32_t)*resize_len)
     j := 0
-    for (int i=0; i< resize_len; i++):
+
+    for (int i=0; i < resize_len; i++):
       rgba_buf[j++] = resize_buffer[i]
       rgba_buf[j++] = resize_buffer[i]
       rgba_buf[j++] = resize_buffer[i]
       rgba_buf[j++] = resize_buffer[i]
+
+    free(im.buffer)
 
     im.w = new_w
     im.h = new_h

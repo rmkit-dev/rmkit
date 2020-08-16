@@ -12,9 +12,11 @@
 #include "../defines.h"
 #include "mxcfb.h"
 #include "stb_text.h"
-#include "../../vendor/lodepng/lodepng.h"
 #include "../input/input.h"
 #include "../util/signals.h"
+#include "../util/image.h"
+#include "../../vendor/stb/stb_image.h"
+#include "../../vendor/stb/stb_image_write.h"
 
 using namespace std
 
@@ -337,13 +339,13 @@ namespace framebuffer:
       unsigned char* buffer
       vector<unsigned char> raw
       size_t outsize
-      unsigned int neww, newh
+      int neww, newh
 
       sprintf(full_path, "%s/%s", SAVE_DIR, filename.c_str())
-      load_ret := lodepng_load_file(&buffer, &outsize, full_path)
-      decode_ret := lodepng::decode(raw, neww, newh, buffer, outsize)
-
-      image := image_data{(uint32_t*) raw.data(), (int) neww, (int) newh}
+      int channels // an output parameter
+      decoded := stbi_load(full_path, &neww, &newh, &channels, 1);
+      image := image_data{(uint32_t*) decoded, (int) neww, (int) newh}
+      util::resize_image(image, self.width, self.height)
       self->draw_bitmap(image, 0,0)
 
       free(buffer)
@@ -370,8 +372,9 @@ namespace framebuffer:
           buf[i++] = d
       buf[i] = 0
 
-      lodepng::encode(filename, buf, self.width, self.height,
-                      LodePNGColorType::LCT_GREY, 8);
+      stbi_write_png(filename, self.width, self.height, 1, buf.data(), self.width)
+//      lodepng::encode(filename, buf, self.width, self.height,
+//                      LodePNGColorType::LCT_GREY, 8);
       return string(filename)
 
     // bresenham's outline

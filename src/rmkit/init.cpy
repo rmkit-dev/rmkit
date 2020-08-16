@@ -11,6 +11,14 @@ static void _rmkit_exit(int signum):
   fb := framebuffer::get()
   fb->cleanup()
   ui::MainLoop::in.ungrab()
+
+  switch signum:
+    case SIGSEGV:
+      cerr << "SIGABRT, exiting" << endl;
+      break
+    case SIGABRT:
+      cerr << "SIGABRT, exiting" << endl;
+      break
   exit(signum)
 
 static void _rmkit_init() __attribute__((constructor))

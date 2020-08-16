@@ -7,11 +7,15 @@
 
 
 namespace ui:
-  template<class T>
+  // interface for dialogs
+  class IDialog:
+    public:
+    virtual void on_button_selected(string) = 0
+
   class DialogButton: public Button:
     public:
-    T *dialog
-    DialogButton(int x, y, w, h, T *d, string t): Button(x,y,w,h,t):
+    IDialog *dialog
+    DialogButton(int x, y, w, h, IDialog *d, string t): Button(x,y,w,h,t):
       self.dialog = d
 
     void on_mouse_click(input::SynMouseEvent&):
@@ -35,7 +39,7 @@ namespace ui:
   //
   // When these buttons are clicked, the on_button_selected callback in the
   // Dialog will be called
-  class Dialog: public Widget:
+  class Dialog: public Widget, public IDialog:
     public:
     string title = "", content = ""
     MultiText *titleWidget
@@ -78,8 +82,7 @@ namespace ui:
       for auto b : self.buttons:
         image := stbtext::get_text_size(b.c_str(), ui::Text::DEFAULT_FS)
 
-        button_bar->pack_start(new DialogButton<Dialog>(20, 0,
-          image.w + ui::Text::DEFAULT_FS, 50, self, b))
+        button_bar->pack_start(new DialogButton(20, 0, image.w + ui::Text::DEFAULT_FS, 50, self, b))
 
     // function: on_button_selected
     // this is called when the dialog's buttons are pressed
