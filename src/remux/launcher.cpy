@@ -43,14 +43,17 @@ class AppBackground: public ui::Widget:
     self.fb->waveform_mode = WAVEFORM_MODE_GC16
     memcpy(fb->fbmem, buf, self.byte_size)
 
-template<class T>
+class IApp:
+  public:
+  virtual void selected(string) = 0;
+
 class AppDialog: public ui::Pager:
   public:
     vector<string> binaries
     vector<RMApp> apps
-    T* app
+    IApp* app
 
-    AppDialog(int x, y, w, h, T* a): ui::Pager(x, y, w, h, self):
+    AppDialog(int x, y, w, h, IApp* a): ui::Pager(x, y, w, h, self):
       self.set_title("Select an app...")
       self.app = a
       self.apps = {}
@@ -176,10 +179,10 @@ class AppDialog: public ui::Pager:
       self.layout->pack_start(row)
       row->pack_start(d)
 
-class App:
+class App: public IApp:
   int lastpress
   int is_pressed = false
-  AppDialog<App> *app_dialog
+  AppDialog *app_dialog
   AppBackground *app_bg
   shared_ptr<framebuffer::FB> fb
 
@@ -199,7 +202,7 @@ class App:
     if app_bg != NULL:
       delete app_bg
 
-    app_dialog = new AppDialog<App>(0, 0, DIALOG_WIDTH, DIALOG_HEIGHT, self)
+    app_dialog = new AppDialog(0, 0, DIALOG_WIDTH, DIALOG_HEIGHT, self)
     app_bg = new AppBackground(0, 0, w, h)
 
     notebook := ui::make_scene()
@@ -248,7 +251,7 @@ class App:
       if a.name != name && a.term != "":
         proc::launch_process(a.term, false)
 
-  def selected(string name):
+  void selected(string name):
     print "LAUNCHING APP", name
     string bin
     string which

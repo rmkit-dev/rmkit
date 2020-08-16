@@ -72,16 +72,21 @@ class GameOverDialog: public ui::ConfirmationDialog:
       main_menu()
 
 
-template<class T>
+class IGrid:
+  public:
+  virtual void open_cell(int, int) = 0;
+  virtual void toggle_flag_cell(int, int) = 0;
+  virtual void toggle_question_cell(int, int) = 0;
+
 class Cell: public ui::Widget:
   public:
-  T *grid
+  IGrid *grid
   int i, j
   bool flagged = false, is_bomb = 0, opened = 0, question = 0
   string neighbors = "0"
   ui::Text* textWidget
 
-  Cell(int x, y, w, h, T *g, int i, j): grid(g), i(i), j(j), Widget(x, y, w, h):
+  Cell(int x, y, w, h, IGrid *g, int i, j): grid(g), i(i), j(j), Widget(x, y, w, h):
     self.textWidget = new ui::Text(x, y, w, h, "")
     self.textWidget->justify = ui::Text::JUSTIFY::CENTER
 
@@ -142,9 +147,9 @@ class Cell: public ui::Widget:
       grid->toggle_flag_cell(self.i, self.j)
     else grid->toggle_question_cell(self.i, self.j)
 
-class Grid: public ui::Widget:
+class Grid: public ui::Widget, public IGrid:
   public:
-  vector<vector<Cell<Grid>*>> cells
+  vector<vector<Cell*>> cells
   shared_ptr<GameOverDialog> gd
   int n
   Grid(int x, y, w, h, n): n(n), Widget(x, y, w, h):
@@ -217,13 +222,13 @@ class Grid: public ui::Widget:
     print "DOUBT CELL", row, col
 
   void make_cells(ui::Scene s):
-    cells = vector<vector<Cell<Grid>*>> (n, vector<Cell<Grid>*>(n))
+    cells = vector<vector<Cell*>> (n, vector<Cell*>(n))
     jump := w/(n + 1)
     remainder := (w - jump * n) / (n + 1)
 
     for (int i = 0; i < n; i++)
       for (int j = 0; j < n; j++)
-        cells[i][j] = new Cell<Grid>(
+        cells[i][j] = new Cell(
           x + jump * j + remainder * (j + 1) + 2 + 7 * (n == 20),
           y + jump * i + remainder * (i + 1) + 2 + 7 * (n == 20),
           jump,

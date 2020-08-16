@@ -29,7 +29,7 @@ namespace app_ui:
       self.select(0)
 
     void on_select(int idx):
-      name := self.options[idx].name
+      name := self.options[idx]->name
       for auto b : brush::P_BRUSHES:
         if b->name == name:
           STATE.brush = b
@@ -54,7 +54,7 @@ namespace app_ui:
       ds->add_options({"black", "gray", "white"})
 
     void on_select(int i):
-      option := self.options[i].name
+      option := self.options[i]->name
       do {
         if option == stroke::FINE.name:
           STATE.stroke_width = stroke::FINE.val
@@ -160,7 +160,7 @@ namespace app_ui:
         self.ed = new ExitDialog(0, 0, DIALOG_WIDTH, DIALOG_HEIGHT)
       self.ed->show()
     void on_select(int i):
-      option := self.options[i].name
+      option := self.options[i]->name
       if option == ABOUT:
         if self.ad == NULL:
           self.ad = new AboutDialog(0, 0, DIALOG_WIDTH, DIALOG_HEIGHT)

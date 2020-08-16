@@ -14,14 +14,17 @@ namespace ui:
     bool ignore_event(input::SynMouseEvent &ev):
       return true
 
-  template<typename T>
+  class IOptionButton:
+    public:
+    virtual void select(int) = 0
+
   class OptionButton: public ui::Button:
     public:
-    T* tb
+    IOptionButton* tb
     string text
     int idx
 
-    OptionButton(int x, y, w, h, T* tb, string text, int idx): \
+    OptionButton(int x, y, w, h, IOptionButton* tb, string text, int idx): \
                  tb(tb), text(text), idx(idx), ui::Button(x,y,w,h,text):
       self.x_padding = 10
       self.set_justification(ui::Text::JUSTIFY::LEFT)
@@ -30,44 +33,56 @@ namespace ui:
       self.tb->select(self.idx)
       self.dirty = 1
 
-  class TextOption:
+  class IOption:
+    public:
+    string name
+    icons::Icon icon = {NULL, 0}
+
+    IOption():
+      pass
+
+    IOption(string name): name(name):
+      pass
+
+    IOption(string name, icons::Icon icon): name(name), icon(icon):
+      pass
+
+  class TextOption: public IOption:
     public:
     string name
     icons::Icon icon = {NULL, 0}
     TextOption(string n, icons::Icon i): name(n), icon(i) {}
     TextOption(string n): name(n) {}
 
-  template<class T>
-  class DropdownSection:
+  class DropdownSection: public IOption:
     public:
     string name
-    vector<shared_ptr<T>> options
+    vector<shared_ptr<IOption>> options
     DropdownSection(string n): name(n):
       pass
 
     void add_options(vector<string> opts):
       for auto opt: opts:
-        self.options.push_back(make_shared<T>(opt))
+        self.options.push_back(make_shared<IOption>(opt))
 
     void add_options(vector<pair<string, icons::Icon>> pairs):
       for auto pair: pairs:
         opt := pair.first
         icon := pair.second
-        textopt := make_shared<T>(opt, icon)
+        textopt := make_shared<IOption>(opt, icon)
         self.options.push_back(textopt)
 
-  template<class O>
-  class DropdownButton: public ui::Button:
+  class DropdownButton: public ui::Button, public IOptionButton:
     public:
     int selected
     int option_width, option_height, option_x, option_y
     enum DIRECTION { UP }
     DIRECTION dir = DIRECTION::UP
-    vector<O> options
-    vector<shared_ptr<DropdownSection<O>>> sections;
+    vector<shared_ptr<IOption>> options
+    vector<shared_ptr<DropdownSection>> sections;
     ui::Scene scene = NULL
 
-    DropdownButton(int x, y, w, h, vector<O> options, string name):\
+    DropdownButton(int x, y, w, h, vector<shared_ptr<IOption>> options, string name):\
                    options(options), ui::Button(x,y,w,h,name):
       self.select(0)
 
@@ -104,11 +119,11 @@ namespace ui:
           opts := section->options
 
           for auto option: opts:
-            option_btn := new OptionButton<DropdownButton>(0, 0, ow, oh, self, option->name, i)
+            option_btn := new OptionButton(0, 0, ow, oh, self, option->name, i)
             if option->icon.data != NULL:
               option_btn->icon = option->icon
             layout.pack_end(option_btn)
-            self.options.push_back(*option)
+            self.options.push_back(option)
             i++
 
           if section->name != "":
@@ -122,8 +137,8 @@ namespace ui:
       ui::MainLoop::hide_overlay()
       if idx < self.options.size():
         option := self.options[idx]
-        self.icon = option.icon
-        self.text = option.name
+        self.icon = option->icon
+        self.text = option->name
 
         self.on_select(idx)
 
@@ -134,28 +149,27 @@ namespace ui:
   // --- Prototype ---
   // class ui::TextDropdown: public ui::DropdownButton:
   // ----------------
-  // The TextDropdown is the most likely dropdown to use - 
+  // The TextDropdown is the most likely dropdown to use -
   // you supply a list of options and the on_select function
   // will be called when one is selected.
-  // 
+  //
   // ---
   //   dropdown := new TextDropdown(0, 0, 200, 50, "options");
   //   ds := dropdown->add_section("options");
   //   ds->add_options({ "foo", "bar", "baz });
   // ---
-  class TextDropdown: public ui::DropdownButton<ui::TextOption>:
+  class TextDropdown: public ui::DropdownButton:
     public:
     // function: TextDropdown
-    // x - 
+    // x -
     // y -
-    // w - 
-    // h - 
+    // w -
+    // h -
     // t - the name of the TextDropdown (used for debugging only)
-    TextDropdown(int x, y, w, h, string t): \
-      ui::DropdownButton<ui::TextOption>(x,y,w,h,{},t)
+    TextDropdown(int x, y, w, h, string t): ui::DropdownButton(x,y,w,h,{},t)
       self.text = t
 
-    shared_ptr<DropdownSection<TextOption>> add_section(string t):
-        ds := make_shared<DropdownSection<TextOption>>(t)
+    shared_ptr<DropdownSection> add_section(string t):
+        ds := make_shared<DropdownSection>(t)
         self.sections.push_back(ds)
         return ds
