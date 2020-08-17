@@ -7,12 +7,16 @@ APPS=rmkit harmony remux demo minesweeper
 LINT_APPS=$(foreach app, $(APPS), lint_$(app))
 CLEAN_APPS=$(foreach app, $(APPS), clean_$(app))
 INSTALL_APPS=$(foreach app, $(APPS), install_$(app))
+RUN_APPS=$(foreach app, $(APPS), run_$(app))
 
 $(APPS): %: rmkit.h
 	cd src/${@} && make
 
 $(INSTALL_APPS): %: rmkit.h
 	cd src/$(@:install_%=%) && make copy
+
+$(RUN_APPS): %: rmkit.h
+	cd src/$(@:run_%=%) && make run
 
 $(CLEAN_APPS): %:
 	cd src/$(@:clean_%=%) && make clean

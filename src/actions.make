@@ -50,7 +50,8 @@ stop:
 	ssh root@${HOST} killall ${EXE} || true
 
 run: compile copy
-	HOST=${HOST} ${DEST}/${EXE}
+	ssh root@${HOST} systemctl stop xochitl
+	ssh root@${HOST} ${DEST}/${EXE}
 
 test: export ARCH=arm
 test: copy
