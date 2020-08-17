@@ -76,7 +76,7 @@ namespace ui:
     public:
     int selected
     int option_width, option_height, option_x, option_y
-    enum DIRECTION { UP }
+    enum DIRECTION { UP, DOWN }
     DIRECTION dir = DIRECTION::UP
     vector<shared_ptr<IOption>> options
     vector<shared_ptr<DropdownSection>> sections;
@@ -108,13 +108,18 @@ namespace ui:
         self.options.clear()
 
         self.scene = ui::make_scene()
-        layout := VerticalLayout(x + self.option_x, self.option_y, ow, height, self.scene)
+        y_off := self.option_y
+        if dir == DIRECTION::DOWN:
+          y_off = y - self.option_y
+        layout := VerticalLayout(x + self.option_x, y_off, ow, height, self.scene)
 
         i := 0
         for auto section: self.sections:
           OptionSection *os
           if section->name != "":
             os = new OptionSection(0, 0, ow, oh, section->name)
+            if self.dir == DOWN:
+              layout.pack_start(os)
 
           opts := section->options
 
@@ -122,12 +127,18 @@ namespace ui:
             option_btn := new OptionButton(0, 0, ow, oh, self, option->name, i)
             if option->icon.data != NULL:
               option_btn->icon = option->icon
-            layout.pack_end(option_btn)
+
+            if self.dir == UP:
+              layout.pack_end(option_btn)
+            else:
+              layout.pack_start(option_btn)
             self.options.push_back(option)
             i++
 
           if section->name != "":
-            layout.pack_end(os)
+            if self.dir == UP:
+              layout.pack_end(os)
+
 
 
       ui::MainLoop::show_overlay(self.scene)

@@ -259,10 +259,15 @@ namespace framebuffer:
       update_dirty(dirty_area, o_x+image.w, o_y+image.h)
 
       for j 0 image.h:
+        if o_y + j < 0:
+          src += image.w
+          continue
         if o_y + j >= self.height:
           break
 
         for i 0 image.w:
+          if o_x + i < 0:
+            continue
           if o_x + i >= self.width:
             break
 
@@ -345,7 +350,7 @@ namespace framebuffer:
       int channels // an output parameter
       decoded := stbi_load(full_path, &neww, &newh, &channels, 1);
       image := image_data{(uint32_t*) decoded, (int) neww, (int) newh}
-      util::resize_image(image, self.width, self.height)
+      util::resize_image(image, self.width, self.height, 0)
       self->draw_bitmap(image, 0,0)
 
       free(buffer)
