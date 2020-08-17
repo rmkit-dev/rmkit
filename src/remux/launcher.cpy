@@ -30,6 +30,7 @@ class AppBackground: public ui::Widget:
   public:
   char *buf
   int byte_size
+  bool snapped = false
 
   AppBackground(int x, y, w, h): ui::Widget(x, y, w, h):
     self.byte_size = w*h*sizeof(remarkable_color)
@@ -37,9 +38,13 @@ class AppBackground: public ui::Widget:
 
   def snapshot():
     fb := framebuffer::get()
+    snapped = true
     memcpy(buf, fb->fbmem, self.byte_size)
 
   void render():
+    if not snapped:
+      return
+
     self.fb->waveform_mode = WAVEFORM_MODE_GC16
     memcpy(fb->fbmem, buf, self.byte_size)
 
