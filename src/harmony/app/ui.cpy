@@ -210,7 +210,7 @@ namespace app_ui:
     void render():
       ui::Button::render()
       if STATE.reject_touch:
-        self.fb->draw_rect(self.x, self.y, self.w, 5, BLACK, true)
+        self.fb->draw_line(self.x, self.y, self.w+self.x, self.h+self.y, 4, BLACK)
 
     void on_mouse_click(input::SynMouseEvent &ev):
       STATE.reject_touch = !STATE.reject_touch
