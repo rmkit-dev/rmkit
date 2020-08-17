@@ -1,0 +1,28 @@
+---
+name: "pre-release"
+
+on:
+  push:
+    branches:
+      - "master"
+      - "nightly"
+
+jobs:
+  pre-release:
+    name: "Pre Release"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      # ...
+      - name: "Build artifacts"
+        run: |
+          make docker
+
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: true
+          title: "Development Build"
+          files: |
+            artifacts/*

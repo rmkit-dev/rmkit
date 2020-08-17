@@ -19,9 +19,13 @@ This document has ideas for apps that might work well on the remarkable.
 
 ### Games
 
-* minesweeper
+x minesweeper
 * snake
 * sudoku
 * chess board (with variants)
 * connect 4
 * mad libs
+
+### Reading
+
+* comic book viewer

@@ -13,11 +13,17 @@ static void _rmkit_exit(int signum):
   ui::MainLoop::in.ungrab()
 
   switch signum:
+    case SIGINT:
+      cerr << "received SIGINT, exiting" << endl;
+      break
+    case SIGKILL:
+      cerr << "received SIGKILL, exiting" << endl;
+      break
     case SIGSEGV:
-      cerr << "SIGABRT, exiting" << endl;
+      cerr << "received SIGABRT, exiting" << endl;
       break
     case SIGABRT:
-      cerr << "SIGABRT, exiting" << endl;
+      cerr << "received SIGABRT, exiting" << endl;
       break
   exit(signum)
 
