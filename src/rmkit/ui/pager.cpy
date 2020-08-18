@@ -10,7 +10,7 @@ namespace ui:
 
   // class: ui::Pager
   // --- Prototype ---
-  // class ui::Pager: public ui::Dialog:
+  // class ui::Pager: public ui::Dialog, public ui::IPager:
   // -----------------
   // a Pager is a modal dialog that lets one browse through
   // multiple pages of results using a next and previous button.

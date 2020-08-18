@@ -169,6 +169,9 @@ namespace ui:
   //   ds := dropdown->add_section("options");
   //   ds->add_options({ "foo", "bar", "baz });
   // ---
+  //
+  // The dropdown can be set to pop upwards or downwards by setting `dir` on
+  // the TextDropdown instance to `DIRECTION::UP` or `DIRECTION::DOWN`
   class TextDropdown: public ui::DropdownButton:
     public:
     // function: TextDropdown
