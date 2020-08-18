@@ -1,10 +1,12 @@
 ---
-name: "pre-release"
+name: "release"
 
 on:
   push:
     branches:
-      - "develop"
+      - "master"
+    tags:
+      - "release"
 
 jobs:
   pre-release:
@@ -12,18 +14,14 @@ jobs:
     runs-on: "ubuntu-latest"
 
     steps:
-      - uses: actions/checkout@v1
-        with:
-          ref: develop
       # ...
       - name: "Build artifacts"
-        run: |
-          make docker
+        run: make docker
 
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest"
+          automatic_release_tag: "stable"
           prerelease: true
           title: "Development Build"
           files: |
