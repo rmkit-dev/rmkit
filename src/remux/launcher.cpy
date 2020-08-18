@@ -26,15 +26,36 @@ DIALOG_HEIGHT := 800
 #define DRAFT_DIR "./src/remux/draft"
 #endif
 
+class IApp:
+  public:
+  virtual void selected(string) = 0;
+  virtual void on_suspend() = 0;
+
+class SuspendButton: public ui::Button:
+  public:
+  IApp *app
+  SuspendButton(int x, int y, int w, int h, IApp *a): ui::Button(x, y, w, h, "Suspend"):
+    self.app = a
+
+  void on_mouse_click(input::SynMouseEvent &ev):
+    self.app->on_suspend()
+
 class AppBackground: public ui::Widget:
   public:
   char *buf
   int byte_size
   bool snapped = false
+  framebuffer::VirtualFB *vfb
 
   AppBackground(int x, y, w, h): ui::Widget(x, y, w, h):
     self.byte_size = w*h*sizeof(remarkable_color)
-    buf = (char*) malloc(self.byte_size)
+    fw, fh := fb->get_display_size()
+    self.vfb = new framebuffer::VirtualFB(fw, fh)
+
+    buf = (char*) self.vfb->fbmem
+
+  def load_from_file():
+    self.vfb->load_from_png("/usr/share/remarkable/suspended.png")
 
   def snapshot():
     fb := framebuffer::get()
@@ -47,10 +68,7 @@ class AppBackground: public ui::Widget:
 
     self.fb->waveform_mode = WAVEFORM_MODE_GC16
     memcpy(fb->fbmem, buf, self.byte_size)
-
-class IApp:
-  public:
-  virtual void selected(string) = 0;
+    fb->dirty = 1
 
 class AppDialog: public ui::Pager:
   public:
@@ -62,6 +80,15 @@ class AppDialog: public ui::Pager:
       self.set_title("Select an app...")
       self.app = a
       self.apps = {}
+
+    void add_shortcuts():
+      _w, _h := fb->get_display_size()
+      h_layout := ui::HorizontalLayout(0, 0, _w, _h, self.scene)
+      v_layout := ui::VerticalLayout(0, 0, _w, _h, self.scene)
+      b1 := new SuspendButton(0, 0, 200, 50, self.app)
+
+      h_layout.pack_end(b1)
+      v_layout.pack_end(b1)
 
     vector<RMApp> read_draft_from_dir(string bin_dir):
       DIR *dir
@@ -193,7 +220,7 @@ class App: public IApp:
 
   public:
   App():
-    fb := framebuffer::get()
+    fb = framebuffer::get()
 
     // on resize, we exit and trust our service to restart us
     fb->resize += [=](auto &e):
@@ -239,6 +266,7 @@ class App: public IApp:
                     app_bg->snapshot()
                     app_dialog->populate()
                     app_dialog->setup_for_render()
+                    app_dialog->add_shortcuts()
                     app_dialog->show()
                     ui::MainLoop::in.grab()
                     app_dialog->scene->pinned = true
@@ -255,6 +283,27 @@ class App: public IApp:
     for auto a : app_dialog->apps:
       if a.name != name && a.term != "":
         proc::launch_process(a.term, false)
+
+  // TODO: power button will cause suspend screen, why not?
+  void on_suspend():
+    ui::MainLoop::in.ungrab()
+    ui::MainLoop::hide_overlay()
+    app_bg->render()
+    ui::MainLoop::redraw()
+
+    print "SUSPENDING"
+    fb->draw_text(0, 0, "Suspended", 32)
+    fb->redraw_screen()
+
+    _ := system("systemctl suspend")
+    sleep(1)
+
+    print "RESUMING FROM SUSPEND"
+
+    fb->clear_screen()
+    app_bg->render()
+    fb->redraw_screen(true)
+
 
   void selected(string name):
     print "LAUNCHING APP", name

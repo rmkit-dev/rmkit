@@ -340,16 +340,21 @@ namespace framebuffer:
 
     // replace the contents of the framebuffer with the png
     void load_from_png(string filename):
-      char full_path[100]
+      char full_path[PATH_MAX]
       unsigned char* buffer
       vector<unsigned char> raw
       size_t outsize
       int neww, newh
 
-      sprintf(full_path, "%s/%s", SAVE_DIR, filename.c_str())
+      if filename[0] == '/':
+        sprintf(full_path, "%s", filename.c_str())
+      else:
+        sprintf(full_path, "%s/%s", SAVE_DIR, filename.c_str())
+
       int channels // an output parameter
       decoded := stbi_load(full_path, &neww, &newh, &channels, 1);
-      image := image_data{(uint32_t*) decoded, (int) neww, (int) newh}
+      print "LOADED IMAGE", neww, newh, channels
+      image := image_data{(uint32_t*) decoded, (int) newh, (int) neww}
       util::resize_image(image, self.width, self.height, 0)
       self->draw_bitmap(image, 0,0)
 
