@@ -60,7 +60,7 @@ docker:
 docker_install: docker
 	echo "Not implemented yet"
 
-bundle: harmony remux
+bundle: $(APPS)
 	#BUILDING V: ${VERSION} ARCH: ${ARCH}
 	mkdir -p ${BUILD_DIR}/${DEST} 2>/dev/null || true
 	# TODO: use ${APPS} here
