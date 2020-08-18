@@ -6,11 +6,11 @@ on:
     branches:
       - "master"
     tags:
-      - "release"
+      - "v*"
 
 jobs:
   pre-release:
-    name: "pre-release"
+    name: "release"
     runs-on: "ubuntu-latest"
 
     steps:
@@ -21,7 +21,7 @@ jobs:
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "stable"
+          automatic_release_tag: "release"
           prerelease: true
           title: "Development Build"
           files: |
