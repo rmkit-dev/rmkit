@@ -136,10 +136,16 @@ namespace input:
       return
 
     void grab():
+      #ifndef REMARKABLE
+      return
+      #endif
       for auto fd : { self.mouse.fd, self.touch.fd, self.wacom.fd, self.button.fd }:
         ioctl(fd, EVIOCGRAB, true)
 
     void ungrab():
+      #ifndef REMARKABLE
+      return
+      #endif
       for auto fd : { self.mouse.fd, self.touch.fd, self.wacom.fd, self.button.fd }:
         ioctl(fd, EVIOCGRAB, false)
 
