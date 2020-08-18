@@ -292,7 +292,15 @@ class App: public IApp:
     ui::MainLoop::redraw()
 
     print "SUSPENDING"
-    fb->draw_text(0, 0, "Suspended", 32)
+    _w, _h := fb->get_display_size()
+    text := ui::Text(0, _h-64, _w, 100, "Press any button to wake")
+    text.font_size = 64
+    text.justify = ui::Text::JUSTIFY::CENTER
+
+    text.undraw()
+    text.render()
+
+    fb->waveform_mode = WAVEFORM_MODE_AUTO
     fb->redraw_screen()
 
     _ := system("systemctl suspend")
