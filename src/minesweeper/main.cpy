@@ -9,6 +9,11 @@
 #include <ctime>
 
 using namespace std
+#ifdef REMARKABLE
+#define SCORE_FILE "/home/root/apps/mines.txt"
+#else
+#define SCORE_FILE "./apps/mines.txt"
+#endif
 
 // Randomisation
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
@@ -16,24 +21,27 @@ inline int rand() {int r = rng(); return abs(r);}
 
 MODE := 1
 WON := false
+OVER := 0
 GRID_SIZE := 15
 NB_UNOPENED := 0
 GAME_STARTED := true
 FLAG_SCORE := 0
 FIRST_CLICK := 0
 NB_BOMBS := 0
+USED := 0
 START := time(NULL)
 END := time(NULL)
 
 void new_game()
 void main_menu()
 void resize_field(int)
+void show_scores()
 
 SIZE_BUTTON_FS := 64
 class SizeButton: public ui::Button:
   public:
   int n
-  SizeButton(int x, y, w, h, n, string t="Back"): n(n), Button(x,y,w,h,t):
+  SizeButton(int x, y, w, h, n, string t=""): n(n), Button(x,y,w,h,t):
     self.textWidget->font_size = SIZE_BUTTON_FS
 
   void on_mouse_click(input::SynMouseEvent &ev):
@@ -46,6 +54,13 @@ class SizeButton: public ui::Button:
     ui::Button::render()
     self.fb->draw_rect(self.x, self.y, self.w, self.h, BLACK, false /* fill */)
 
+class ScoresButton: public ui::Button:
+  public:
+  ScoresButton(int x, y, w, h, string t="HIGH SCORES") : Button(x,y,w,h,t):
+    self.textWidget->font_size = SIZE_BUTTON_FS
+
+  void on_mouse_click(input::SynMouseEvent &ev):
+    show_scores()
 
 
 class GameOverDialog: public ui::ConfirmationDialog:
@@ -55,7 +70,7 @@ class GameOverDialog: public ui::ConfirmationDialog:
     self.set_title(string((WON?"You win!" : "You lose!")))
     self.buttons = { "TRY AGAIN", "MAIN MENU" }
     dt := difftime(END, START)
-    score := FLAG_SCORE * !WON + WON * 600000 / dt
+    int score = FLAG_SCORE * !WON + WON * 600000 / dt - !WON * (USED - FLAG_SCORE/50) * 30 + WON * 2000 * NB_BOMBS
     score = round(score*100)/100
     text := "Time: " + to_string(int(dt)/60) + "m " + to_string(int(dt)%60) + "s\nDefused bombs: " + (WON? to_string(NB_BOMBS) : to_string(FLAG_SCORE/50)) + "/" + to_string(NB_BOMBS) + "\nScore: "+to_string(score)
     self.textWidget = new ui::MultiText(20, 20, self.w, self.h - 100, text)
@@ -141,6 +156,8 @@ class Cell: public ui::Widget:
 
 
   void on_mouse_click(input::SynMouseEvent &ev):
+    if OVER:
+      return
     if MODE == 1
       grid->open_cell(self.i, self.j)
     else if MODE == 0
@@ -161,7 +178,7 @@ class Grid: public ui::Widget, public IGrid:
     while (qe.size()):
       t := qe.front()
       qe.pop()
-      if min(t.first,t.second) < 0 || max(t.first,t.second) >= n || cells[t.first][t.second]->opened || cells[t.first][t.second]->is_bomb:
+      if min(t.first,t.second) < 0 || max(t.first,t.second) >= n || cells[t.first][t.second]->opened || cells[t.first][t.second]->is_bomb || cells[t.first][t.second]->flagged:
         continue
       cells[t.first][t.second]->opened = 1
       NB_UNOPENED--
@@ -173,7 +190,7 @@ class Grid: public ui::Widget, public IGrid:
           qe.push({t.first+f,t.second+g})
 
   void open_cell(int row, col):
-    if cells[row][col]->opened:
+    if cells[row][col]->opened || (cells[row][col]->flagged && WON):
       return
     print "OPENING CELL", row, col
     if cells[row][col]->is_bomb:
@@ -205,9 +222,14 @@ class Grid: public ui::Widget, public IGrid:
       end_game(1)
 
   void toggle_flag_cell(int row, col):
+    if USED == NB_BOMBS && !cells[row][col]->flagged:
+      toggle_question_cell(row, col)
+      return
     cells[row][col]->flagged ^= 1
     if cells[row][col]->flagged
       cells[row][col]->question = 0
+      USED++
+    else USED--
     if cells[row][col]->flagged && cells[row][col]->is_bomb:
       FLAG_SCORE += 50
     else if cells[row][col]->is_bomb:
@@ -216,8 +238,8 @@ class Grid: public ui::Widget, public IGrid:
 
   void toggle_question_cell(int row, col):
     cells[row][col]->question ^= 1
-    if cells[row][col]->question
-      cells[row][col]->flagged = 0
+    if cells[row][col]->flagged
+      toggle_flag_cell(row, col)
 
     print "DOUBT CELL", row, col
 
@@ -241,6 +263,7 @@ class Grid: public ui::Widget, public IGrid:
   void end_game(bool win):
     WON = win
     print WON
+    OVER = 1
     self.gd = make_shared<GameOverDialog>(0, 0, 800, 800)
     if !win:
       for int i = 0; i < n; i++:
@@ -310,12 +333,29 @@ class QuestionButton: public RadioButton:
   void on_button_selected(string t):
     MODE = 2
 
+class NumFlagsButton: public ui::Button:
+  public:
+  NumFlagsButton(int x, y, w, h): ui::Button(x,y,w,h,""):
+    pass
+
+  void before_render():
+    self.textWidget->text = to_string(NB_BOMBS - USED)
+
+class HighScoreWidget: public ui::Widget:
+  public:
+  HighScoreWidget(int x, y, w, h): ui::Widget(x, y, w, h):
+    pass
+
+  void render():
+    text := ui::Text(self.x, self.y, 800, 500, "under construction")
+    text.justify = ui::Text::JUSTIFY::CENTER
+    text.render()
 
 class App:
   public:
   shared_ptr<framebuffer::FB> fb
 
-  ui::Scene field_scene, title_menu
+  ui::Scene field_scene, title_menu, scores_field
   Grid *grid
 
   App():
@@ -335,7 +375,7 @@ class App:
     text->font_size = 64
     h_layout.pack_center(text)
 
-    size_button_container := ui::VerticalLayout(0, 0, 800, 200*4, title_menu)
+    size_button_container := ui::VerticalLayout(0, 0, 800, 200*5, title_menu)
 
     vector<pair<int, string>> sizes{ {8, "8x8" }, {12, "12x12"}, {16, "16x16"}, {20, "20x20"}};
     button_height := 200
@@ -344,12 +384,19 @@ class App:
       btn->set_justification(ui::Text::JUSTIFY::CENTER)
       btn->y_padding = (button_height - SIZE_BUTTON_FS) / 2
       size_button_container.pack_start(btn)
+      print "BTN", btn->x, btn->y
 
 //    size_button_container.pack_start(new SizeButton(w/2-400, 500, 800, 200, 8, "8x8"))
 //    size_button_container.pack_start(new SizeButton(w/2-400, 50, 800, 200, 12, "12x12"))
 //    size_button_container.pack_start(new SizeButton(w/2-400, 50, 800, 200, 16, "16x16"))
 //    size_button_container.pack_start(new SizeButton(w/2-400, 50, 800, 200, 20, "20x20"))
 
+    scores := new ScoresButton(w/2-400, 500, 800, button_height)
+    scores->set_justification(ui::Text::JUSTIFY::CENTER)
+    scores->y_padding = (button_height - SIZE_BUTTON_FS) / 2
+    print scores->x, scores->y
+    size_button_container.pack_start(scores)
+    print scores->x, scores->y
 
     make_field()
 
@@ -359,6 +406,19 @@ class App:
   void main_menu():
     ui::MainLoop::set_scene(title_menu)
     ui::MainLoop::refresh()
+
+// C API:
+// fd := open(filename, mode)
+// write(fd, buf, count)
+// close(fd)
+
+// C++ API:
+// ofstream out(filename)
+// out << "foo" << endl;
+// ifstream in(filename)
+// string line
+// getline(in, line)
+
 
   void make_field():
     field_scene = ui::make_scene()
@@ -384,6 +444,13 @@ class App:
     // generate a bomb field
     // opening a bomb
 
+    num_flags := new NumFlagsButton(w/2+200, 150, 200, 50)
+    smiley_face := new ui::Pixmap(0, 0, 50, 50, ICON(assets::bomb_solid_png)) // TODO replace with face
+    face_area := new ui::HorizontalLayout(0, 150, 250, 50, field_scene)
+    h_layout.pack_center(face_area)
+    face_area->pack_start(smiley_face)
+    face_area->pack_start(num_flags)
+
     a := new BombButton((w - 200) / 2 - 300, 1450, 200, 50)
     b := new FlagButton((w - 200) / 2, 1450, 200, 50)
     c := new QuestionButton((w - 200) / 2 + 300, 1450, 200, 50)
@@ -396,13 +463,24 @@ class App:
     field_scene->add(b)
     field_scene->add(c)
 
+  void make_scores():
+    scores_field = ui::make_scene()
+    w, h = fb->get_display_size()
+    back := new MenuButton(0, 0, 200, 50)
+    scores_field->add(back)
+    score_widget := new HighScoreWidget(0, 0, w, h)
+    scores_field->add(score_widget)
+    
+
   def reset():
     MODE = 1
     NB_UNOPENED = 0
     FLAG_SCORE = 0
     FIRST_CLICK = 1
     NB_BOMBS = 0
+    USED = 0
     WON = 1
+    OVER = 0
     n := GRID_SIZE
     for int i = 0; i < n; i++
       for int j = 0; j < n; j++:
@@ -447,6 +525,13 @@ void new_game():
   app.reset()
   app.fb->clear_screen()
   ui::MainLoop::set_scene(app.field_scene)
+  ui::MainLoop::refresh()
+
+void show_scores():
+  app.reset()
+  app.fb->clear_screen()
+  app.make_scores()
+  ui::MainLoop::set_scene(app.scores_field)
   ui::MainLoop::refresh()
 
 def main():
