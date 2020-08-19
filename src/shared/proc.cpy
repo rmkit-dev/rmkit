@@ -34,8 +34,8 @@ namespace proc:
     return 0 == system(command);
 
   bool check_process(string name):
-    char command[128]
-    sprintf(command, "ps | grep -v grep | grep %s 2>&1 > /dev/null", name.c_str());
+    char command[PATH_MAX]
+    sprintf(command, "pidof %s 2>&1 > /dev/null", name.c_str());
     return 0 == system(command);
 
   void launch_process(string name, bool check_running=false, background=false):
