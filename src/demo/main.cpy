@@ -17,13 +17,11 @@ class App:
     fb->redraw_screen()
     w, h = fb->get_display_size()
 
-    v_layout := ui::VerticalLayout(0, 0, w, h, demo_scene)
-    h_layout := ui::HorizontalLayout(0, 0, w, h, demo_scene)
-    h_layout.pack_center(new ui::Text(0, 0, w, 50, "Hello World"))
+    keyboard := new ui::Keyboard()
+    demo_scene->add(keyboard)
+    keyboard->show()
 
-    pixmap := new ui::Pixmap(0, 0, 50, 50, ICON(assets::flag_solid_png))
-    h_layout.pack_center(pixmap)
-    v_layout.pack_center(pixmap)
+    ui::MainLoop::refresh()
 
   def handle_key_event(input::SynKeyEvent &key_ev):
     print "KEY PRESSED", key_ev.key
