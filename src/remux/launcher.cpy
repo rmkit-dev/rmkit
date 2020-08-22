@@ -3,6 +3,7 @@
 #include <thread>
 #include <chrono>
 
+#include <time.h>
 #include <sys/types.h>
 #include <dirent.h>
 #include <algorithm>
@@ -11,7 +12,10 @@
 #include "../shared/proc.h"
 #include "../build/rmkit.h"
 
-#define TIMEOUT 2
+TIMEOUT := 2
+SUSPEND_TIMER := 10
+SUSPEND_THRESHOLD := 30
+TOO_MUCH_THRESHOLD := 60 * 5
 
 #include "config.launcher.h"
 
@@ -25,6 +29,8 @@ DIALOG_HEIGHT := 800
 #define BIN_DIR  "./src/build/"
 #define DRAFT_DIR "./src/remux/draft"
 #endif
+
+LAST_ACTION := 0
 
 class IApp:
   public:
@@ -217,6 +223,7 @@ class App: public IApp:
   AppDialog *app_dialog
   AppBackground *app_bg
   shared_ptr<framebuffer::FB> fb
+  mutex suspend_m
 
   public:
   App():
@@ -241,10 +248,43 @@ class App: public IApp:
     notebook->add(app_bg)
     ui::MainLoop::set_scene(notebook)
 
+  def do_suspend():
+    print "SUSPENDING"
+    #ifdef REMARKABLE
+    self.on_suspend()
+    #endif
+
+  def suspend_on_idle():
+    thread *th = new thread([=]() {
+      while true:
+        suspend_m.lock()
+        last_action := LAST_ACTION
+        suspend_m.unlock()
+        now := time(NULL)
+        if last_action > 0:
+          print "SINCE LAST ACTION", now - last_action
+          if now - last_action > SUSPEND_THRESHOLD and now - LAST_ACTION < TOO_MUCH_THRESHOLD:
+            suspend_m.lock()
+            LAST_ACTION = 0
+            suspend_m.unlock()
+            app_bg->snapshot()
+            do_suspend()
+        this_thread::sleep_for(chrono::seconds(10));
+    });
+
+  def handle_motion_event(input::SynMouseEvent ev):
+    suspend_m.lock()
+    LAST_ACTION = time(NULL)
+    suspend_m.unlock()
+
   def handle_key_event(input::SynKeyEvent ev):
     static int lastpress = RAND_MAX
     static int event_press_id = 0
     ui::MainLoop::handle_key_event(ev)
+
+    suspend_m.lock()
+    LAST_ACTION = time(NULL)
+    suspend_m.unlock()
 
     if is_pressed && ev.is_pressed:
       return
@@ -303,7 +343,9 @@ class App: public IApp:
     fb->waveform_mode = WAVEFORM_MODE_AUTO
     fb->redraw_screen()
 
+    #ifdef REMARKABLE
     _ := system("systemctl suspend")
+    #endif
     sleep(1)
 
     print "RESUMING FROM SUSPEND"
@@ -336,8 +378,10 @@ class App: public IApp:
 
   def run():
     ui::Text::DEFAULT_FS = 32
+    self.suspend_on_idle()
 
     ui::MainLoop::key_event += PLS_DELEGATE(self.handle_key_event)
+    ui::MainLoop::motion_event += PLS_DELEGATE(self.handle_motion_event)
     while true:
       ui::MainLoop::main()
       ui::MainLoop::check_resize()
