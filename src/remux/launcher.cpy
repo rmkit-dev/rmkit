@@ -261,6 +261,7 @@ class App: public IApp:
     #ifdef REMARKABLE
     self.on_suspend()
     #endif
+    return
 
   def suspend_on_idle():
     thread *th = new thread([=]() {
