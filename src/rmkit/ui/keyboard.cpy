@@ -11,7 +11,7 @@ namespace ui:
 
   class Row: public Widget:
     public:
-    HorizontalLayout *layout
+    HorizontalLayout *layout = NULL
     Scene scene
 
     Row(int x, y, w, h, Scene s): Widget(x,y,w,h):
@@ -20,7 +20,7 @@ namespace ui:
     void add_key(Button *key):
       if self.layout == NULL:
         print "RENDERING ROW", self.x, self.y, self.w, self.h
-        self.layout = new HorizontalLayout(self.x, self.y, self.w, self.h/4, self.scene)
+        self.layout = new HorizontalLayout(self.x, self.y, self.w, self.h, self.scene)
       self.layout->pack_start(key)
 
     void render():
@@ -34,9 +34,11 @@ namespace ui:
     bool caps = false
     Scene scene
     Text *input_box
+    int btn_width
+    int btn_height
+    int btn_font_size = 48
 
     Keyboard(int x=0,y=0,w=0,h=0): Widget(x,y,w,h):
-      self.input_box = new Text(500,500,200,50,"");
       w, full_h = self.fb->get_display_size()
       h = full_h / 4
       self.w = w
@@ -48,16 +50,24 @@ namespace ui:
       string row1chars = "qwertyuoip"
       string row2chars = "asdfghjkl"
       string row3chars = "zxcvbnm"
-      row1 := new Row(0,0,w,50, self.scene)
-      row2 := new Row(h/8,0,w,50, self.scene)
-      row3 := new Row(0,0,w,50, self.scene)
-      row4 := new Row(0,0,w,50, self.scene)
+      self.btn_width = w / row1chars.size()
+      self.btn_height = 100
+      row1 := new Row(0,0,w,100, self.scene)
+      row2 := new Row(h/8,0,w,100, self.scene)
+      row3 := new Row(h/8,0,w,100, self.scene)
+      row4 := new Row(0,0,w,100, self.scene)
 
-      v_layout := ui::VerticalLayout(0, 0, w, h, self.scene)
-      v_layout.pack_start(row1)
-      v_layout.pack_start(row2)
-      v_layout.pack_start(row3)
-      v_layout.pack_start(row4)
+      v_layout := ui::VerticalLayout(0, 0, w, full_h, self.scene)
+
+      self.input_box = new Text(0,0,w,50,"");
+      self.input_box->justify = Text::JUSTIFY::LEFT;
+      self.input_box->font_size = 64
+      v_layout.pack_start(input_box)
+
+      v_layout.pack_end(row4)
+      v_layout.pack_end(row3)
+      v_layout.pack_end(row2)
+      v_layout.pack_end(row1)
 
       for (auto c: row1chars):
         row1->add_key(self.make_char_button(c))
@@ -66,6 +76,7 @@ namespace ui:
         row2->add_key(self.make_char_button(c))
 
       shift_key := self.make_icon_button(ICON(assets::shift_icon_png), 100)
+      shift_key->textWidget->font_size = btn_font_size
       shift_key->mouse.click += PLS_LAMBDA(auto &ev):
         self.caps = !self.caps
         // TODO regenerate the layout keys with capitalized keys
@@ -73,9 +84,14 @@ namespace ui:
       row3->add_key(shift_key)
       for (auto c: row3chars):
         row3->add_key(self.make_char_button(c))
-      backspace_key := new Button(0,0,100,self.h/4,"back")
+      backspace_key := new Button(0,0,self.btn_width,btn_height,"back")
+      backspace_key->textWidget->font_size = btn_font_size
+
       backspace_key->mouse.click += PLS_LAMBDA(auto &ev):
-        self.input_box->text.pop_back()
+        if self.input_box->text.size() > 0:
+          self.input_box->text.pop_back()
+          self.input_box->dirty = 1
+          self.dirty = 1
       ;
       row3->add_key(backspace_key)
 
@@ -83,15 +99,18 @@ namespace ui:
 
     Button* make_char_button(char c):
       string s(1, c)
-      key := new Button(0,0,self.h/4,self.h/4,s)
+      key := new Button(0,0,self.btn_width,btn_height,s)
+      key->textWidget->font_size = btn_font_size
       key->mouse.click += PLS_LAMBDA(auto &ev):
+        self.dirty = 1
         self.input_box->text.push_back(c)
+        self.input_box->dirty = 1
         print "key pressed:", c
       ;
       return key
 
     Button* make_icon_button(icons::Icon icon, int w):
-      key := new Button(0,0,w,self.h/4,"")
+      key := new Button(0,0,self.btn_width,btn_height,"")
       key->icon = icon
       return key
 
@@ -99,6 +118,7 @@ namespace ui:
       fb->draw_rect(self.x, self.y, self.w, self.h, WHITE, true)
 
     void show():
+      self.scene->pinned = true
       ui::MainLoop::show_overlay(self.scene)
 
     // switch between: lowercase alphabet, uppercase, nums, symbols

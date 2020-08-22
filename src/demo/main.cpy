@@ -34,8 +34,6 @@ class App:
     ui::MainLoop::motion_event += PLS_DELEGATE(self.handle_motion_event)
     while true:
       ui::MainLoop::main()
-      // refresh marks all widgets as dirty
-      ui::MainLoop::refresh()
       ui::MainLoop::redraw()
       ui::MainLoop::read_input()
 

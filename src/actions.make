@@ -22,7 +22,7 @@ endif
 clean:
 	rm ${SRC_DIR}/build/${EXE}
 
-compile_arm: export CPP_FLAGS += -O2
+compile_arm: export CPP_FLAGS += -g
 compile_arm:
 	CXX=arm-linux-gnueabihf-g++ okp ${OKP_FLAGS} -- -D"REMARKABLE=1" ${CPP_FLAGS}
 
