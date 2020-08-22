@@ -148,6 +148,7 @@ namespace ui:
       overlay_is_visible = true
       Widget::fb->clear_screen()
       MainLoop::refresh()
+      overlay->on_show()
 
     // function: hide_overlay
     // hide the overlay
@@ -156,6 +157,7 @@ namespace ui:
         overlay_is_visible = false
         Widget::fb->clear_screen()
         MainLoop::refresh()
+        overlay->on_hide()
 
     // clear and refresh the widgets on screen
     // useful if changing scenes or otherwise

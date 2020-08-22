@@ -1,4 +1,5 @@
 #include "widget.h"
+#include "../util/signals.h"
 
 namespace ui:
   // class: ui::Scene
@@ -56,6 +57,12 @@ namespace ui:
 
     void refresh():
       refresh(widgets)
+
+    struct DialogVisible {}
+    PLS_DEFINE_SIGNAL(DIALOG_VIS_EVENT, DialogVisible)
+    DIALOG_VIS_EVENT on_show;
+    DIALOG_VIS_EVENT on_hide;
+
 
   typedef shared_ptr<InnerScene> Scene
   static Scene make_scene():

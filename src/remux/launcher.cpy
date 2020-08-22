@@ -72,7 +72,7 @@ class AppBackground: public ui::Widget:
     if not snapped:
       return
 
-    self.fb->waveform_mode = WAVEFORM_MODE_GC16
+    fb->waveform_mode = WAVEFORM_MODE_AUTO
     memcpy(fb->fbmem, buf, self.byte_size)
     fb->dirty = 1
 
@@ -92,9 +92,13 @@ class AppDialog: public ui::Pager:
       h_layout := ui::HorizontalLayout(0, 0, _w, _h, self.scene)
       v_layout := ui::VerticalLayout(0, 0, _w, _h, self.scene)
       b1 := new SuspendButton(0, 0, 200, 50, self.app)
-
       h_layout.pack_end(b1)
       v_layout.pack_end(b1)
+
+      self.scene->on_hide += PLS_LAMBDA(auto &d):
+        ui::MainLoop::in.ungrab()
+      ;
+
 
     void position_dialog():
       print "NOT POSITIONING APP DIALOG"
@@ -310,10 +314,9 @@ class App: public IApp:
                     app_bg->snapshot()
                     app_dialog->populate()
                     app_dialog->setup_for_render()
-                    app_dialog->add_shortcuts()
                     app_dialog->show()
+                    app_dialog->add_shortcuts()
                     ui::MainLoop::in.grab()
-                    app_dialog->scene->pinned = true
                   });
           });
         else:
@@ -350,7 +353,6 @@ class App: public IApp:
     #endif
 
 
-    fb->waveform_mode = WAVEFORM_MODE_AUTO
     fb->redraw_screen()
 
     #ifdef REMARKABLE
@@ -381,9 +383,10 @@ class App: public IApp:
     if !proc::check_process(which):
       proc::launch_process(bin, true /* check running */, true /* background */)
     ui::MainLoop::hide_overlay()
-    ui::MainLoop::redraw()
 
     app_bg->render()
+    ui::MainLoop::redraw()
+
     app_bg->visible = false
 
   def run():
