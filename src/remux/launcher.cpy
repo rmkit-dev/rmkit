@@ -14,8 +14,8 @@
 
 TIMEOUT := 2
 SUSPEND_TIMER := 10
-SUSPEND_THRESHOLD := 30
-TOO_MUCH_THRESHOLD := 60 * 5
+SUSPEND_THRESHOLD := 60 * 2 // two minutes
+TOO_MUCH_THRESHOLD := 60 * 5 // 5 minutes
 
 #include "config.launcher.h"
 
