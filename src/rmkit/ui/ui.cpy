@@ -10,3 +10,4 @@
 #include "scene.h"
 #include "text.h"
 #include "thumbnail.h"
+#include "keyboard.h"
