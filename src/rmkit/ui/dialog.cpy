@@ -58,22 +58,29 @@ namespace ui:
       self.scene = ui::make_scene()
       self.scene->add(self)
 
+      self.position_dialog()
+
       width, height = self.fb->get_display_size()
-      v_layout := ui::VerticalLayout(0, 0, width, height, self.scene)
-      v_layout.pack_center(self)
-
-      h_layout := ui::HorizontalLayout(0, 0, self.fb->width, self.fb->height, self.scene)
-      h_layout.pack_center(self)
-
       a_layout := ui::VerticalLayout(self.x, self.y, self.w, self.h, self.scene)
       a_layout.pack_start(self.titleWidget)
-
       a_layout.pack_start(self.contentWidget)
 
       button_bar := new HorizontalLayout(0, 0, self.w, 50, self.scene)
       a_layout.pack_end(button_bar, 10)
 
       self.add_buttons(button_bar)
+
+    // function: position_dialog
+    // override position_dialog if you want to control where the dialog is
+    // placed on the page. by default, the dialog will be centered
+    virtual void position_dialog():
+      self.restore_coords()
+      width, height = self.fb->get_display_size()
+      v_layout := ui::VerticalLayout(0, 0, width, height, self.scene)
+      v_layout.pack_center(self)
+
+      h_layout := ui::HorizontalLayout(0, 0, width, height, self.scene)
+      h_layout.pack_center(self)
 
     bool ignore_event(input::SynMouseEvent&):
       return true

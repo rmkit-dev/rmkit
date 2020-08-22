@@ -96,6 +96,10 @@ class AppDialog: public ui::Pager:
       h_layout.pack_end(b1)
       v_layout.pack_end(b1)
 
+    void position_dialog():
+      print "NOT POSITIONING APP DIALOG"
+      return
+
     vector<RMApp> read_draft_from_dir(string bin_dir):
       DIR *dir
       struct dirent *ent
@@ -241,7 +245,7 @@ class App: public IApp:
     if app_bg != NULL:
       delete app_bg
 
-    app_dialog = new AppDialog(0, 0, DIALOG_WIDTH, DIALOG_HEIGHT, self)
+    app_dialog = new AppDialog(0, 0, DIALOG_WIDTH, h, self)
     app_bg = new AppBackground(0, 0, w, h)
 
     notebook := ui::make_scene()
