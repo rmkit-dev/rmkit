@@ -132,6 +132,7 @@ struct image_data {
   uint32_t* buffer;
   int w;
   int h;
+  int channels = 0;
 };
 // }}}
 #endif

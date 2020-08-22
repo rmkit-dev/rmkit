@@ -2,7 +2,7 @@
 
 namespace util:
   resize_image(image_data &im, int new_w, new_h, threshold=255):
-    num_channels := 1
+    num_channels := im.channels
     resize_len := new_w*new_h*sizeof(unsigned char)*num_channels
     resize_buffer := (unsigned char*)malloc(resize_len)
     memset(resize_buffer, 0, resize_len);
@@ -23,6 +23,7 @@ namespace util:
       rgba_buf[j++] = resize_buffer[i]
 
     free(im.buffer)
+    im.channels = 4
 
     im.w = new_w
     im.h = new_h

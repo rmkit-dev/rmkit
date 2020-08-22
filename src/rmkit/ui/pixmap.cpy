@@ -78,7 +78,7 @@ namespace ui:
       int channels
 
       buf := stbi_load_from_memory(self.data, self.len, &iconw, &iconh, &channels, 1)
-      self.image = image_data{(uint32_t*) buf, (int) iconw, (int) iconh}
+      self.image = image_data{(uint32_t*) buf, (int) iconw, (int) iconh, channels}
 
       if self.width > 0 && self.height > 0:
         util::resize_image(self.image, self.width, self.height, 20 /* black threshold */)

@@ -40,7 +40,7 @@ namespace ui:
 
       int channels // an output parameter
       decoded := stbi_load(full_path, &fw, &fh, &channels, 1);
-      img := image_data{(uint32_t*) decoded, (int) fw, (int) fh}
+      img := image_data{(uint32_t*) decoded, (int) fw, (int) fh, channels}
       util::resize_image(img, self.w, self.h)
       self.image = img
 
