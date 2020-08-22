@@ -1,26 +1,18 @@
+#include <cstddef>
 #include "../build/rmkit.h"
 #include "assets.h"
-
 using namespace std
 
 class App:
   public:
-  shared_ptr<framebuffer::FB> fb
-
   ui::Scene demo_scene
 
 
   App():
-    ui::MainLoop::redraw()
-
-    ui::TaskQueue::add_task([=]() {
-      print "STARTED APP"
-    });
-
     demo_scene = ui::make_scene()
     ui::MainLoop::set_scene(demo_scene)
 
-    fb = framebuffer::get()
+    fb := framebuffer::get()
     fb->clear_screen()
     fb->redraw_screen()
     w, h = fb->get_display_size()
@@ -33,10 +25,6 @@ class App:
     h_layout.pack_center(pixmap)
     v_layout.pack_center(pixmap)
 
-    demo_scene->add(pixmap)
-
-    ui::MainLoop::refresh()
-
   def handle_key_event(input::SynKeyEvent &key_ev):
     print "KEY PRESSED", key_ev.key
 
@@ -48,12 +36,12 @@ class App:
     ui::MainLoop::motion_event += PLS_DELEGATE(self.handle_motion_event)
     while true:
       ui::MainLoop::main()
+      // refresh marks all widgets as dirty
       ui::MainLoop::refresh()
       ui::MainLoop::redraw()
       ui::MainLoop::read_input()
 
-App app
 
 def main():
-
+  App app
   app.run()
