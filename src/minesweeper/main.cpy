@@ -68,14 +68,14 @@ class GameOverDialog: public ui::ConfirmationDialog:
   ui::MultiText *textWidget
   GameOverDialog(int x, y, w, h): ui::ConfirmationDialog(x, y, w, h):
     self.set_title(string((WON?"You win!" : "You lose!")))
-    self.buttons = { "TRY AGAIN", "MAIN MENU" }
+    self.buttons = { "TRY AGAIN", "MAIN MENU", "HIDE DIALOG"}
     dt := difftime(END, START)
     int score = FLAG_SCORE * !WON + WON * 600000 / dt - !WON * (USED - FLAG_SCORE/50) * 30 + WON * 2000 * NB_BOMBS
     score = round(score*100)/100
     text := "Time: " + to_string(int(dt)/60) + "m " + to_string(int(dt)%60) + "s\nDefused bombs: " + (WON? to_string(NB_BOMBS) : to_string(FLAG_SCORE/50)) + "/" + to_string(NB_BOMBS) + "\nScore: "+to_string(score)
     self.textWidget = new ui::MultiText(20, 20, self.w, self.h - 100, text)
     self.contentWidget = self.textWidget
-
+    
   void on_button_selected(string text):
     if text == "TRY AGAIN":
       ui::MainLoop::hide_overlay()
@@ -85,6 +85,8 @@ class GameOverDialog: public ui::ConfirmationDialog:
       ui::MainLoop::hide_overlay()
       GAME_STARTED = false
       main_menu()
+    if text == "HIDE DIALOG":
+      ui::MainLoop::hide_overlay()
 
 
 class IGrid:
@@ -265,6 +267,7 @@ class Grid: public ui::Widget, public IGrid:
     print WON
     OVER = 1
     self.gd = make_shared<GameOverDialog>(0, 0, 800, 800)
+    // show := new ShowButton(0, 1500, 10, 200)
     if !win:
       for int i = 0; i < n; i++:
         for int j = 0; j < n; j++:
@@ -340,6 +343,7 @@ class NumFlagsButton: public ui::Button:
 
   void before_render():
     self.textWidget->text = to_string(NB_BOMBS - USED)
+    self.textWidget->undraw()
 
 class HighScoreWidget: public ui::Widget:
   public:
@@ -444,7 +448,7 @@ class App:
     // generate a bomb field
     // opening a bomb
 
-    num_flags := new NumFlagsButton(w/2+200, 150, 200, 50)
+    num_flags := new NumFlagsButton(w/2, 160, 200, 50)
     smiley_face := new ui::Pixmap(0, 0, 50, 50, ICON(assets::bomb_solid_png)) // TODO replace with face
     face_area := new ui::HorizontalLayout(0, 150, 250, 50, field_scene)
     h_layout.pack_center(face_area)
