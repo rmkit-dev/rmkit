@@ -50,7 +50,7 @@ namespace ui:
     Dialog(int x, y, w, h): Widget(x,y,w,h):
       self.buttons = { "OK", "CANCEL" }
       self.titleWidget = new MultiText(20, 20, self.w, 50, self.title)
-      self.contentWidget = new MultiText(20, 20, self.w, self.h - 100, self.content)
+      self.contentWidget = new MultiText(0, 0, self.w, self.h - 100, self.content)
 
     // this function actually builds the dialog scene and necessary widgets /
     // and packings for the modal overlay

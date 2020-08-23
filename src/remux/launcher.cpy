@@ -19,7 +19,7 @@ TOO_MUCH_THRESHOLD := 60 * 7 // 7 mins
 
 #include "config.launcher.h"
 
-DIALOG_WIDTH  := 600
+DIALOG_WIDTH  := 400
 DIALOG_HEIGHT := 800
 
 #ifdef REMARKABLE
@@ -83,9 +83,10 @@ class AppDialog: public ui::Pager:
     IApp* app
 
     AppDialog(int x, y, w, h, IApp* a): ui::Pager(x, y, w, h, self):
-      self.set_title("Select an app...")
+      self.set_title("")
       self.app = a
       self.apps = {}
+      self.opt_h = 60
 
     void add_shortcuts():
       _w, _h := fb->get_display_size()
@@ -99,6 +100,9 @@ class AppDialog: public ui::Pager:
         ui::MainLoop::in.ungrab()
       ;
 
+    void render():
+      ui::Pager::render()
+      self.fb->draw_line(self.x+self.w, self.y, self.x+self.w, self.y+self.h, 2, BLACK)
 
     void position_dialog():
       print "NOT POSITIONING APP DIALOG"
@@ -220,7 +224,9 @@ class AppDialog: public ui::Pager:
       ui::MainLoop::hide_overlay()
 
     void render_row(ui::HorizontalLayout *row, string option):
-      d := new ui::DialogButton(20, 0, self.w-200, self.opt_h, self, option)
+      d := new ui::DialogButton(0, 0, self.w, self.opt_h, self, option)
+      d->x_padding = 50
+      d->y_padding = 5
       d->set_justification(ui::Text::JUSTIFY::LEFT)
       self.layout->pack_start(row)
       row->pack_start(d)
@@ -249,7 +255,7 @@ class App: public IApp:
     if app_bg != NULL:
       delete app_bg
 
-    app_dialog = new AppDialog(0, 0, DIALOG_WIDTH, h, self)
+    app_dialog = new AppDialog(0, 0, 400, h, self)
     app_bg = new AppBackground(0, 0, w, h)
 
     notebook := ui::make_scene()
@@ -271,12 +277,12 @@ class App: public IApp:
         suspend_m.unlock()
         now := time(NULL)
         if last_action > 0:
-          print "SINCE LAST ACTION", now - last_action
           if now - last_action > SUSPEND_THRESHOLD and now - LAST_ACTION < TOO_MUCH_THRESHOLD:
             suspend_m.lock()
             LAST_ACTION = 0
             suspend_m.unlock()
-            app_bg->snapshot()
+            if not app_bg->visible:
+              app_bg->snapshot()
             do_suspend()
         this_thread::sleep_for(chrono::seconds(10));
     });
@@ -315,8 +321,8 @@ class App: public IApp:
                     app_bg->snapshot()
                     app_dialog->populate()
                     app_dialog->setup_for_render()
-                    app_dialog->show()
                     app_dialog->add_shortcuts()
+                    app_dialog->show()
                     ui::MainLoop::in.grab()
                   });
           });
@@ -334,7 +340,6 @@ class App: public IApp:
 
   // TODO: power button will cause suspend screen, why not?
   void on_suspend():
-    ui::MainLoop::in.ungrab()
     ui::MainLoop::hide_overlay()
     app_bg->render()
     ui::MainLoop::redraw()
@@ -362,6 +367,7 @@ class App: public IApp:
     sleep(1)
 
     print "RESUMING FROM SUSPEND"
+    ui::MainLoop::in.ungrab()
 
     fb->clear_screen()
     app_bg->render()
@@ -392,6 +398,7 @@ class App: public IApp:
 
   def run():
     ui::Text::DEFAULT_FS = 32
+
     self.suspend_on_idle()
 
     ui::MainLoop::key_event += PLS_DELEGATE(self.handle_key_event)
