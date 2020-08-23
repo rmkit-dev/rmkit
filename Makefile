@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-default: docker
+default: build
 include src/common.make
 
 # Use `make <app>` to build any app individually

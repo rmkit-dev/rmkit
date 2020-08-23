@@ -17,18 +17,10 @@ SUSPEND_TIMER := 10
 SUSPEND_THRESHOLD := 60 * 4 // 4 mins
 TOO_MUCH_THRESHOLD := 60 * 7 // 7 mins
 
-#include "config.launcher.h"
+#include "apps.h"
 
 DIALOG_WIDTH  := 400
 DIALOG_HEIGHT := 800
-
-#ifdef REMARKABLE
-#define BIN_DIR  "/home/root/apps/"
-#define DRAFT_DIR "/etc/draft/"
-#else
-#define BIN_DIR  "./src/build/"
-#define DRAFT_DIR "./src/remux/draft"
-#endif
 
 LAST_ACTION := 0
 
@@ -79,13 +71,12 @@ class AppBackground: public ui::Widget:
 class AppDialog: public ui::Pager:
   public:
     vector<string> binaries
-    vector<RMApp> apps
+    AppReader reader
     IApp* app
 
     AppDialog(int x, y, w, h, IApp* a): ui::Pager(x, y, w, h, self):
       self.set_title("")
       self.app = a
-      self.apps = {}
       self.opt_h = 60
 
     void add_shortcuts():
@@ -108,116 +99,12 @@ class AppDialog: public ui::Pager:
       print "NOT POSITIONING APP DIALOG"
       return
 
-    vector<RMApp> read_draft_from_dir(string bin_dir):
-      DIR *dir
-      struct dirent *ent
-
-      vector<RMApp> apps
-      char resolved_path[PATH_MAX];
-      if ((dir = opendir (bin_dir.c_str())) != NULL):
-        while ((ent = readdir (dir)) != NULL):
-          str_d_name := string(ent->d_name)
-          if str_d_name == "." or str_d_name == "..":
-            continue
-
-          path := string(bin_dir) + "/" + string(ent->d_name)
-          ifstream filein(path)
-          string line
-
-          RMApp rmapp
-          rmapp.bin = "";
-          while filein.good():
-            getline(filein, line)
-            tokens := split(line, '=')
-            if tokens.size() == 2:
-              arg := tokens[0]
-              val := tokens[1]
-              if arg == "call":
-                rmapp.bin = val
-              else if arg == "desc":
-                rmapp.desc = val
-              else if arg == "name":
-                rmapp.name = val
-              else if arg == "term":
-                rmapp.term = val
-
-          if rmapp.bin != "":
-            apps.push_back(rmapp)
-
-        closedir (dir)
-      else:
-        perror ("")
-
-      return apps
-
-    def read_apps_from_dir(string bin_dir):
-      DIR *dir
-      struct dirent *ent
-
-      vector<string> filenames
-      char resolved_path[PATH_MAX];
-      if ((dir = opendir (bin_dir.c_str())) != NULL):
-        while ((ent = readdir (dir)) != NULL):
-          str_d_name := string(ent->d_name)
-          if str_d_name != "." and str_d_name != ".." and ends_with(str_d_name, ".exe"):
-            path := string(bin_dir) + string(ent->d_name)
-            _ := realpath(path.c_str(), resolved_path);
-            str_d_name = string(resolved_path)
-            filenames.push_back(str_d_name)
-        closedir (dir)
-      else:
-        perror ("")
-      sort(filenames.begin(),filenames.end())
-      return filenames
-
     void populate():
-      vector<string> skip_list = { "demo.exe", "remux.exe" }
-      vector<string> binaries
-      unordered_set<string> seen
-      self.apps = {}
+      self.reader.populate()
+      self.options = self.reader.get_binaries()
 
-      for auto a : APPS:
-        if a.always_show || proc::exe_exists(a.bin):
-          self.apps.push_back(a)
-
-      draft_binaries := read_draft_from_dir(DRAFT_DIR)
-      for auto a : draft_binaries:
-        dont_add := false
-        for auto s : skip_list:
-          if s == a.bin:
-            dont_add = true
-        if dont_add:
-          continue
-
-        self.apps.push_back(a)
-
-      bin_binaries := read_apps_from_dir(BIN_DIR)
-      for auto a : bin_binaries:
-        bin_str := string(a)
-        app_str := a.c_str()
-        base := basename(app_str)
-
-        dont_add := false
-        for auto s : skip_list:
-          if s == base:
-            dont_add = true
-        if dont_add:
-          continue
-
-        app := (RMApp) { .bin=bin_str, .name=base, .term="killall " + string(base) }
-        self.apps.push_back(app)
-
-      for auto a : self.apps:
-        auto name = a.name
-        if seen.find(a.bin) != seen.end():
-          continue
-
-        seen.insert(a.bin)
-        if name == "":
-          name = a.bin
-        binaries.push_back(name)
-
-      self.options = binaries
+    vector<RMApp> get_apps():
+      return self.reader.apps
 
     void on_row_selected(string name):
       app->selected(name)
@@ -334,9 +221,15 @@ class App: public IApp:
     last_ev := &ev
 
   void term_apps(string name=""):
-    for auto a : app_dialog->apps:
-      if a.name != name && a.term != "":
-        proc::launch_process(a.term, false)
+    for auto a : app_dialog->get_apps():
+      if a.name != name:
+        if a.term != "":
+          proc::launch_process(a.term, false)
+        else:
+          cstr := a.bin.c_str()
+          base := basename((char *) cstr)
+          stop_cmd := "killall -SIGSTOP " + string(base) + " 2>/dev/null"
+          proc::launch_process(stop_cmd)
 
   // TODO: power button will cause suspend screen, why not?
   void on_suspend():
@@ -377,18 +270,15 @@ class App: public IApp:
   void selected(string name):
     print "LAUNCHING APP", name
     string bin
-    string which
 
-    for auto a : app_dialog->apps:
+    for auto a : app_dialog->get_apps():
       if a.name == name:
         bin = a.bin
-        which = a.which
 
     term_apps(name)
 
     ui::MainLoop::in.ungrab()
-    if !proc::check_process(which):
-      proc::launch_process(bin, true /* check running */, true /* background */)
+    proc::launch_process(bin, true /* check running */, true /* background */)
     ui::MainLoop::hide_overlay()
 
     app_bg->render()

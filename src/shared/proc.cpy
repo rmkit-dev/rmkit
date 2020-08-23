@@ -1,15 +1,16 @@
 #include <dirent.h>
+#include <libgen.h>
 
 namespace proc:
-  def stop_programs(vector<string> programs):
+  def stop_programs(vector<string> programs, string signal=""):
     for auto s : programs:
       #ifdef REMARKABLE
-      cmd := "systemctl stop " + s + " 2> /dev/null"
+      cmd := "killall" + signal + " " + s + " 2> /dev/null"
       if system(cmd.c_str()) == 0:
-        print "STOPPED", s
-      cmd = "killall " + s + " 2> /dev/null"
-      if system(cmd.c_str()) == 0:
-        print "KILLED", s
+        if signal != "":
+          print "SENT", signal, "TO", s
+        else:
+          print "KILLED", s
       #endif
       pass
     return
@@ -34,14 +35,20 @@ namespace proc:
     return 0 == system(command);
 
   bool check_process(string name):
+    print "CHECKING PROCESS", name
     char command[PATH_MAX]
     sprintf(command, "pidof %s 2>&1 > /dev/null", name.c_str());
     return 0 == system(command);
 
   void launch_process(string name, bool check_running=false, background=false):
-    if check_running && check_process(name):
-      print name, "IS ALREADY RUNNING"
+    cstr := name.c_str()
+    base := basename((char *) cstr)
+    if check_running && check_process(base):
+      cmd := "killall -SIGCONT " + string(base) + " 2> /dev/null"
+      system(cmd.c_str())
+      print base, "IS ALREADY RUNNING, RESUMING"
       return
+    print "LAUNCHING PROCESS", name
 
     proc := name
     if background:
