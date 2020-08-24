@@ -5,9 +5,11 @@
 
 #include <time.h>
 #include <sys/types.h>
+#include <sys/time.h>
 #include <dirent.h>
 #include <algorithm>
 #include <unordered_set>
+#include <linux/input.h>
 
 #include "../shared/proc.h"
 #include "../build/rmkit.h"
@@ -24,9 +26,13 @@ DIALOG_HEIGHT := 800
 
 LAST_ACTION := 0
 
+#define CONTAINS(container, needle) container.find(needle) == container.end()
+
+string CURRENT_APP = "_"
+
 class IApp:
   public:
-  virtual void selected(string) = 0;
+  virtual void launch(string) = 0;
   virtual void on_suspend() = 0;
 
 class SuspendButton: public ui::Button:
@@ -40,32 +46,38 @@ class SuspendButton: public ui::Button:
 
 class AppBackground: public ui::Widget:
   public:
-  char *buf
   int byte_size
   bool snapped = false
-  framebuffer::VirtualFB *vfb
+  map<string, framebuffer::FileFB*> app_buffers;
 
   AppBackground(int x, y, w, h): ui::Widget(x, y, w, h):
     self.byte_size = w*h*sizeof(remarkable_color)
-    fw, fh := fb->get_display_size()
-    self.vfb = new framebuffer::VirtualFB(fw, fh)
-
-    buf = (char*) self.vfb->fbmem
-
-  def load_from_file():
-    self.vfb->load_from_png("/usr/share/remarkable/suspended.png")
 
   def snapshot():
     fb := framebuffer::get()
     snapped = true
-    memcpy(buf, fb->fbmem, self.byte_size)
+
+    vfb := self.get_vfb()
+    print "SNAPSHOTTING", CURRENT_APP
+    memcpy(vfb->fbmem, fb->fbmem, self.byte_size)
+
+  framebuffer::FileFB* get_vfb():
+    if app_buffers.find(CURRENT_APP) == app_buffers.end():
+      fw, fh := fb->get_display_size()
+      fname := string(BIN_DIR) + "." + CURRENT_APP + ".fb"
+      app_buffers[CURRENT_APP] = new framebuffer::FileFB(fname, fw, fh)
+      app_buffers[CURRENT_APP]->clear_screen()
+
+    return app_buffers[CURRENT_APP]
 
   void render():
     if not snapped:
       return
 
+    vfb := self.get_vfb()
+    print "RENDERING", CURRENT_APP
     fb->waveform_mode = WAVEFORM_MODE_AUTO
-    memcpy(fb->fbmem, buf, self.byte_size)
+    memcpy(fb->fbmem, vfb->fbmem, self.byte_size)
     fb->dirty = 1
 
 class AppDialog: public ui::Pager:
@@ -107,7 +119,7 @@ class AppDialog: public ui::Pager:
       return self.reader.apps
 
     void on_row_selected(string name):
-      app->selected(name)
+      app->launch(name)
       ui::MainLoop::hide_overlay()
 
     void render_row(ui::HorizontalLayout *row, string option):
@@ -159,10 +171,16 @@ class App: public IApp:
   def suspend_on_idle():
     thread *th = new thread([=]() {
       while true:
+        now := time(NULL)
+        usb_in := false
+        // usb_in = system("ifconfig usb0 > /dev/null 2>/dev/null") == 0
+
         suspend_m.lock()
+        if LAST_ACTION == 0 or usb_in:
+          LAST_ACTION = now
         last_action := LAST_ACTION
         suspend_m.unlock()
-        now := time(NULL)
+
         if last_action > 0:
           if now - last_action > SUSPEND_THRESHOLD and now - LAST_ACTION < TOO_MUCH_THRESHOLD:
             suspend_m.lock()
@@ -172,6 +190,7 @@ class App: public IApp:
               app_bg->snapshot()
             do_suspend()
         this_thread::sleep_for(chrono::seconds(10));
+
     });
 
   def handle_motion_event(input::SynMouseEvent ev):
@@ -266,14 +285,14 @@ class App: public IApp:
     app_bg->render()
     fb->redraw_screen(true)
 
-
-  void selected(string name):
+  void launch(string name):
     print "LAUNCHING APP", name
     string bin
 
     for auto a : app_dialog->get_apps():
       if a.name == name:
         bin = a.bin
+        CURRENT_APP = string(a.name)
 
     term_apps(name)
 
@@ -289,6 +308,7 @@ class App: public IApp:
   def run():
     ui::Text::DEFAULT_FS = 32
 
+    // launches a thread that suspends on idle
     self.suspend_on_idle()
 
     ui::MainLoop::key_event += PLS_DELEGATE(self.handle_key_event)

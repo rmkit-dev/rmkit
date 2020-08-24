@@ -537,17 +537,19 @@ namespace framebuffer:
 
   class FileFB: public FB:
     public:
-    FileFB(): FB():
-      self.width = DISPLAYWIDTH
-      self.height = DISPLAYHEIGHT
+    string filename
+    FileFB(string fname="fb.raw", int w=DISPLAYWIDTH, h=DISPLAYHEIGHT): FB():
+      self.filename = fname
+      self.width = w
+      self.height = h
       self.byte_size = self.width * self.height * sizeof(remarkable_color)
       // make an empty file of the right size
-      std::ofstream ofs("fb.raw", std::ios::binary | std::ios::out);
+      std::ofstream ofs(filename, std::ios::binary | std::ios::out);
       ofs.seekp(self.byte_size);
       ofs.write("", 1);
       ofs.close()
 
-      self.fd = open("./fb.raw", O_RDWR)
+      self.fd = open(filename.c_str(), O_RDWR)
       self.fbmem = (remarkable_color*) mmap(NULL, self.byte_size, PROT_WRITE, MAP_SHARED, self.fd, 0)
 
     int perform_redraw(bool):

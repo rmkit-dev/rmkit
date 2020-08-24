@@ -77,7 +77,7 @@ class AppReader:
     return filenames
 
   void populate():
-    vector<string> skip_list = { "demo.exe", "remux.exe" }
+    vector<string> skip_list = { "remux.exe" }
     self.apps = {}
 
     for auto a : APPS:
