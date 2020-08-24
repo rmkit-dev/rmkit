@@ -42,6 +42,7 @@ namespace input:
 
       T event
       for int i = 0; i < bytes / sizeof(struct input_event); i++:
+//        print fd, "READ EVENT", ev_data[i].type, ev_data[i].code, ev_data[i].value
         if ev_data[i].type == EV_SYN:
           event.finalize()
           events.push_back(event)
@@ -91,12 +92,13 @@ namespace input:
       FD_ZERO(&rdfs)
 
       // dev only
-      self.monitor(self.mouse.fd = open("/dev/input/mice", O_RDONLY))
+      self.monitor(self.mouse.fd = open("/dev/input/mice", O_RDWR))
       // used by remarkable
       #ifdef REMARKABLE
-      self.monitor(self.wacom.fd = open("/dev/input/event0", O_RDONLY))
-      self.monitor(self.touch.fd = open("/dev/input/event1", O_RDONLY))
-      self.monitor(self.button.fd = open("/dev/input/event2", O_RDONLY))
+      self.monitor(self.wacom.fd = open("/dev/input/event0", O_RDWR))
+      // opened read write because we need to sometime inject events into here
+      self.monitor(self.touch.fd = open("/dev/input/event1", O_RDWR))
+      self.monitor(self.button.fd = open("/dev/input/event2", O_RDWR))
       #endif
 
       #ifdef DEV_KBD
