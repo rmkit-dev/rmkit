@@ -52,6 +52,7 @@ class AppBackground: public ui::Widget:
 
   AppBackground(int x, y, w, h): ui::Widget(x, y, w, h):
     self.byte_size = w*h*sizeof(remarkable_color)
+    self.visible = false
 
   def snapshot():
     fb := framebuffer::get()
@@ -202,10 +203,28 @@ class App: public IApp:
     LAST_ACTION = time(NULL)
     suspend_m.unlock()
 
+  def show_launcher():
+    if ui::MainLoop::overlay_is_visible:
+      return
+
+    app_bg->visible = true
+    app_bg->snapshot()
+    app_dialog->populate()
+    app_dialog->setup_for_render()
+    app_dialog->add_shortcuts()
+    this_thread::sleep_for(chrono::milliseconds(200));
+    app_dialog->show()
+    ui::MainLoop::in.grab()
+
+
   def handle_key_event(input::SynKeyEvent ev):
-    static int lastpress = RAND_MAX
-    static int event_press_id = 0
-    ui::MainLoop::handle_key_event(ev)
+    // we have a double tap if...
+    // we get two up events within X milliseconds of each other
+    static struct timeval ltv = {0};
+    struct timeval tv;
+    gettimeofday(&tv, NULL)
+
+
 
     suspend_m.lock()
     LAST_ACTION = time(NULL)
@@ -216,32 +235,20 @@ class App: public IApp:
 
     switch ev.key:
       case KEY_HOME:
-
         if ev.is_pressed:
-          lastpress = time(NULL)
-          event_press_id = ev.id
+          // we want delta in milliseconds, so...
+          // delta_sec * 1000 + delta_usec / 1000, i think
+          float delta_sec = (tv.tv_sec - ltv.tv_sec)
+          float delta_usec = (tv.tv_usec - ltv.tv_usec)
+          float delta_ms = (delta_sec * 1000) + (delta_usec / 1000)
+          if delta_ms < 400: // 400 ms
+            self.show_launcher()
 
-          thread *th = new thread([=]() {
-              this_thread::sleep_for(chrono::seconds(TIMEOUT));
-              if is_pressed && event_press_id == ev.id
-                now := time(NULL)
-                if now - lastpress > 1:
-                  ui::TaskQueue::add_task([=] {
-                    app_bg->visible = true
-                    app_bg->snapshot()
-                    app_dialog->populate()
-                    app_dialog->setup_for_render()
-                    app_dialog->add_shortcuts()
-                    app_dialog->show()
-                    ui::MainLoop::in.grab()
-                  });
-          });
+          ltv = tv
         else:
-          event_press_id = 0
+          pass
 
         is_pressed = ev.is_pressed
-
-    last_ev := &ev
 
   void term_apps(string name=""):
     for auto a : app_dialog->get_apps():
