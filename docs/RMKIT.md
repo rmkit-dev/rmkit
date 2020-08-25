@@ -1,7 +1,7 @@
-# rMkit
+# rmkit
 
-rMkit is a framework for building remarkable apps in C++ or
-[okp](https://github.com/raisjn/okp). rMkit provides widgets, layout helpers,
+rmkit is a framework for building remarkable apps in C++ or
+[okp](https://github.com/raisjn/okp). rmkit provides widgets, layout helpers,
 input handling and other features to get you started with writing your own
 apps.
 
@@ -11,14 +11,14 @@ Many apps for the remarkable that I've seen have been written using QTCreator
 and the QT5 framework. This requires installing and setting up QTCreator to
 build for the remarkable - an extra step in the toolchain.
 
-rMkit is a single header file with its dependencies included and compiles with
+rmkit is a single header file with its dependencies included and compiles with
 standard g++.
 
 ## The Basics
 
 ### MainLoop
 
-Every app usually has a main loop. rMkit's main loop is managed with the
+Every app usually has a main loop. rmkit's main loop is managed with the
 ui::MainLoop class. In general, an app should look like the following:
 
 ```cpp
@@ -103,7 +103,7 @@ child_layout->pack_start(..) // correct ordering
 ### Framebuffer
 
 The screen of the remarkable is an eink screen that is capable of displaying
-shades of gray. In rMkit the framebuffer is a class that takes care of drawing
+shades of gray. In rmkit the framebuffer is a class that takes care of drawing
 to and refreshing the display. It provides API calls for rendering pixels,
 lines, squares, circles and text. In general, Widgets talk to the framebuffer
 for drawing themselves to the screen.
@@ -135,8 +135,8 @@ implementation](src/rmkit/ui/button.cpy) to see how buttons are implemented
 ### Handling User Input
 
 The remarkable has two motion devices: the touch screen and the stylus input as
-well as a single button device. rMkit opens these devices through /dev/input/,
-which uses the lib_event framework in the linux kernel. rMkit normalizes
+well as a single button device. rmkit opens these devices through /dev/input/,
+which uses the lib_event framework in the linux kernel. rmkit normalizes
 the values from the events into more coherent objects and forwards them to
 any widgets that are effected by them.
 

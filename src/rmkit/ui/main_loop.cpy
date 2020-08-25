@@ -1,6 +1,6 @@
 // file: main_loop.cpy
 //
-// Every app usually has a main loop. rMkit's main loop is managed with the
+// Every app usually has a main loop. rmkit's main loop is managed with the
 // ui::MainLoop class. In general, an app should look like the following:
 //
 // --- Code

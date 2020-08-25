@@ -1,8 +1,8 @@
-# rMkit
+# rmkit
 
 This repo contains applications for the remarkable tablet. See the README in
 each application's directory to learn more about it. The general purpose of
-rMkit is to make it easy to write and deploy new apps to the remarkable tablet.
+rmkit is to make it easy to write and deploy new apps to the remarkable tablet.
 
 ### [harmony](src/harmony)
 
@@ -18,13 +18,13 @@ An app switcher for switching between apps on the remarkable that is compatible
 with [draft-remarkable](https://github.com/dixonary/draft-reMarkable/)
 configuration files. Hold down the middle button to bring it up.
 
-### [rMkit](src/rmkit)
+### [rmkit](src/rmkit)
 
 A batteries included library for building remarkable apps. [Read the documentation](https://rmkit-dev.github.io/rmkit)
 
 ### [demo](src/demo)
 
-A small example app to demonstrate how to build apps with rMkit
+A small example app to demonstrate how to build apps with rmkit
 
 
 ## Installation
