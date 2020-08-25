@@ -8,7 +8,8 @@ This document has ideas for apps that might work well on the remarkable.
 * simple browser - readify any page and then display it as terminal text (https://github.com/mozilla/readability)
 * calendar / agenda
 * dynamic suspend screens
-* widgets: battery, notes, todo list, etc
+* dictionary with fast word word lookup
+* widgets: battery, notes, todo list, dictionary, etc
 
 ### Drawing
 
@@ -19,7 +20,7 @@ This document has ideas for apps that might work well on the remarkable.
 
 ### Games
 
-x minesweeper
+* minesweeper
 * snake
 * sudoku
 * chess board (with variants)
@@ -29,3 +30,4 @@ x minesweeper
 ### Reading
 
 * comic book viewer
+* fast ebook reader

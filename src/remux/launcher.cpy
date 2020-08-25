@@ -52,7 +52,6 @@ class AppBackground: public ui::Widget:
 
   AppBackground(int x, y, w, h): ui::Widget(x, y, w, h):
     self.byte_size = w*h*sizeof(remarkable_color)
-    self.visible = false
 
   def snapshot():
     fb := framebuffer::get()
@@ -60,7 +59,7 @@ class AppBackground: public ui::Widget:
 
     vfb := self.get_vfb()
     print "SNAPSHOTTING", CURRENT_APP
-    memcpy(vfb->fbmem, fb->fbmem, self.byte_size)
+    vfb->fbmem = (remarkable_color*) memcpy(vfb->fbmem, fb->fbmem, self.byte_size)
 
   framebuffer::FileFB* get_vfb():
     if app_buffers.find(CURRENT_APP) == app_buffers.end():
@@ -100,9 +99,6 @@ class AppDialog: public ui::Pager:
       h_layout.pack_end(b1)
       v_layout.pack_end(b1)
 
-      self.scene->on_hide += PLS_LAMBDA(auto &d):
-        ui::MainLoop::in.ungrab()
-      ;
 
     void render():
       ui::Pager::render()
@@ -191,7 +187,7 @@ class App: public IApp:
             suspend_m.lock()
             LAST_ACTION = 0
             suspend_m.unlock()
-            if not app_bg->visible:
+            if not ui::MainLoop::overlay_is_visible:
               app_bg->snapshot()
             do_suspend()
         this_thread::sleep_for(chrono::seconds(10));
@@ -207,15 +203,23 @@ class App: public IApp:
     if ui::MainLoop::overlay_is_visible:
       return
 
-    app_bg->visible = true
     app_bg->snapshot()
+    this_thread::sleep_for(chrono::milliseconds(200));
     app_dialog->populate()
     app_dialog->setup_for_render()
     app_dialog->add_shortcuts()
-    this_thread::sleep_for(chrono::milliseconds(200));
     app_dialog->show()
+    app_dialog->scene->on_hide += PLS_LAMBDA(auto &d):
+      self.render_bg()
+      ui::MainLoop::in.ungrab()
+    ;
+
     ui::MainLoop::in.grab()
 
+
+  void render_bg():
+    app_bg->render()
+    ui::MainLoop::redraw()
 
   def handle_key_event(input::SynKeyEvent ev):
     // we have a double tap if...
@@ -223,8 +227,6 @@ class App: public IApp:
     static struct timeval ltv = {0};
     struct timeval tv;
     gettimeofday(&tv, NULL)
-
-
 
     suspend_m.lock()
     LAST_ACTION = time(NULL)
@@ -264,8 +266,6 @@ class App: public IApp:
   // TODO: power button will cause suspend screen, why not?
   void on_suspend():
     ui::MainLoop::hide_overlay()
-    app_bg->render()
-    ui::MainLoop::redraw()
 
     print "SUSPENDING"
     _w, _h := fb->get_display_size()
@@ -357,11 +357,6 @@ class App: public IApp:
     proc::launch_process(bin, true /* check running */, true /* background */)
     ui::MainLoop::hide_overlay()
 
-    app_bg->render()
-    ui::MainLoop::redraw()
-
-    app_bg->visible = false
-
   def run():
     ui::Text::DEFAULT_FS = 32
 
@@ -373,7 +368,7 @@ class App: public IApp:
     while true:
       ui::MainLoop::main()
       ui::MainLoop::check_resize()
-      if app_bg->visible:
+      if ui::MainLoop::overlay_is_visible:
         ui::MainLoop::redraw()
 
       ui::MainLoop::read_input()
