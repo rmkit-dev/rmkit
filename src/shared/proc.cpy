@@ -52,7 +52,7 @@ namespace proc:
 
     proc := name
     if background:
-      proc += "&"
+      proc = "setsid " + proc + " &"
 
     if system(proc.c_str()) != 0:
       pass
