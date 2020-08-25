@@ -44,7 +44,7 @@ assets:
 
 copy:
 	ARCH=arm $(MAKE) compile
-	ssh root@10.11.99.1 killall ${EXE} || true # finally
+	ssh root@${HOST} killall ${EXE} || true # finally
 	scp -C ../build/${EXE} root@${HOST}:${DEST}/${EXE}
 
 stop:
