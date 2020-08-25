@@ -1,4 +1,4 @@
-#include "icons.h"
+#include "../assets.h"
 
 namespace app_ui:
   typedef int BrushSize
@@ -22,9 +22,9 @@ namespace app_ui:
       Size(int val, string name, icons::Icon icon): val(val), name(name), icon(icon):
         pass
 
-    static Size FINE   = Size(Size::FINE, "fine", ICON(icons::vendor_icons_fa_spider_solid_png))
-    static Size MEDIUM = Size(Size::MEDIUM,"medium", ICON(icons::vendor_icons_fa_spider_solid_png))
-    static Size WIDE = Size(Size::WIDE,"wide", ICON(icons::vendor_icons_fa_spider_solid_png))
+    static Size FINE   = Size(Size::FINE, "fine", ICON(assets::icons_fa_spider_solid_png))
+    static Size MEDIUM = Size(Size::MEDIUM,"medium", ICON(assets::icons_fa_spider_solid_png))
+    static Size WIDE = Size(Size::WIDE,"wide", ICON(assets::icons_fa_spider_solid_png))
 
     static vector<Size*> SIZES = { &FINE, &MEDIUM, &WIDE }
 
@@ -110,7 +110,7 @@ namespace app_ui:
 
     Charcoal(): Brush():
       self.name = "charcoal"
-      self.icon = ICON(icons::vendor_icons_fa_mortar_pestle_solid_png)
+      self.icon = ICON(assets::icons_fa_mortar_pestle_solid_png)
 
     ~Charcoal():
       pass
@@ -130,7 +130,7 @@ namespace app_ui:
 
     Pencil(): Brush():
       self.name = "pencil"
-      self.icon = ICON(icons::vendor_icons_fa_pencil_alt_solid_png)
+      self.icon = ICON(assets::icons_fa_pencil_alt_solid_png)
 
     ~Pencil():
       pass
@@ -150,7 +150,7 @@ namespace app_ui:
 
     Marker(): Brush():
       self.name = "marker"
-      self.icon = ICON(icons::vendor_icons_fa_highlighter_solid_png)
+      self.icon = ICON(assets::icons_fa_highlighter_solid_png)
 
     ~Marker():
       pass
@@ -168,7 +168,7 @@ namespace app_ui:
 
     BallpointPen(): Brush():
       self.name = "ballpoint"
-      self.icon = ICON(icons::vendor_icons_fa_pen_solid_png)
+      self.icon = ICON(assets::icons_fa_pen_solid_png)
 
     ~BallpointPen():
       pass
@@ -185,7 +185,7 @@ namespace app_ui:
 
     FineLiner(): Brush():
       self.name = "fineliner"
-      self.icon = ICON(icons::vendor_icons_fa_marker_solid_png)
+      self.icon = ICON(assets::icons_fa_marker_solid_png)
 
     ~FineLiner():
       pass
@@ -203,7 +203,7 @@ namespace app_ui:
     PaintBrush(): Brush():
       self.name = "paint brush"
       sw_thin = 15, sw_medium = 25, sw_thick = 50
-      self.icon = ICON(icons::vendor_icons_fa_paint_brush_solid_png)
+      self.icon = ICON(assets::icons_fa_paint_brush_solid_png)
 
     ~PaintBrush():
       pass
@@ -228,7 +228,7 @@ namespace app_ui:
     public:
     Eraser(): Brush():
       self.name = "eraser"
-      self.icon = ICON(icons::vendor_icons_fa_eraser_solid_png)
+      self.icon = ICON(assets::icons_fa_eraser_solid_png)
       sw_thin = 5; sw_medium = 10; sw_thick = 15
 
     ~Eraser():
@@ -252,7 +252,7 @@ namespace app_ui:
     public:
     RubberEraser(): Brush():
       self.name = "rubber"
-      self.icon = ICON(icons::vendor_icons_fa_magic_solid_png)
+      self.icon = ICON(assets::icons_fa_magic_solid_png)
       sw_thin = 15; sw_medium = 25; sw_thick = 50
 
     ~RubberEraser():
@@ -292,7 +292,7 @@ namespace app_ui:
     public:
     Shaded(): Brush():
       self.name = "shaded"
-      self.icon = ICON(icons::vendor_icons_fa_mask_solid_png)
+      self.icon = ICON(assets::icons_fa_mask_solid_png)
 
     ~Shaded():
       pass
@@ -313,7 +313,7 @@ namespace app_ui:
     public:
     Sketchy(): Brush():
       self.name = "sketchy"
-      self.icon = ICON(icons::vendor_icons_fa_glasses_solid_png)
+      self.icon = ICON(assets::icons_fa_glasses_solid_png)
 
     ~Sketchy():
       pass
@@ -341,7 +341,7 @@ namespace app_ui:
     public:
     Web(): Brush():
       self.name = "web"
-      self.icon = ICON(icons::vendor_icons_fa_spider_solid_png)
+      self.icon = ICON(assets::icons_fa_spider_solid_png)
 
     ~Web():
       pass
@@ -365,7 +365,7 @@ namespace app_ui:
     public:
     Chrome(): Brush():
       self.name = "chrome"
-      self.icon = ICON(icons::vendor_icons_fa_vr_cardboard_solid_png)
+      self.icon = ICON(assets::icons_fa_vr_cardboard_solid_png)
 
     ~Chrome():
       pass
@@ -394,7 +394,7 @@ namespace app_ui:
     public:
     Fur(): Brush():
       self.name = "uniform fur"
-      self.icon = ICON(icons::vendor_icons_fa_cat_solid_png)
+      self.icon = ICON(assets::icons_fa_cat_solid_png)
 
     ~Fur():
       pass
@@ -419,7 +419,7 @@ namespace app_ui:
     public:
     LongFur(): Brush():
       self.name = "random fur"
-      self.icon = ICON(icons::vendor_icons_fa_dog_solid_png)
+      self.icon = ICON(assets::icons_fa_dog_solid_png)
 
     ~LongFur():
       pass

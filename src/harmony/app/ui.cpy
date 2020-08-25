@@ -190,7 +190,7 @@ namespace app_ui:
     Canvas *canvas
     UndoButton(int x, y, w, h, Canvas *c): ui::Button(x,y,w,h,"undo"):
       self.canvas = c
-      self.icon = ICON(icons::vendor_icons_fa_arrow_left_solid_png)
+      self.icon = ICON(assets::icons_fa_arrow_left_solid_png)
       self.text = ""
 
     void render():
@@ -204,7 +204,7 @@ namespace app_ui:
   class PalmButton: public ui::Button:
     public:
     PalmButton(int x, y, w, h): ui::Button(x,y,w,h,"reject palm"):
-      self.icon = ICON(icons::vendor_icons_fa_hand_paper_solid_png)
+      self.icon = ICON(assets::icons_fa_hand_paper_solid_png)
       self.text = ""
 
     void render():
@@ -221,7 +221,7 @@ namespace app_ui:
     Canvas *canvas
     RedoButton(int x, y, w, h, Canvas *c): ui::Button(x,y,w,h,"redo"):
       self.canvas = c
-      self.icon = ICON(icons::vendor_icons_fa_arrow_right_solid_png)
+      self.icon = ICON(assets::icons_fa_arrow_right_solid_png)
       self.text = ""
 
     void render():
