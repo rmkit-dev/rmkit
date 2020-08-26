@@ -46,8 +46,8 @@ namespace framebuffer:
 
   // class: framebuffer::FB
   // FB is the main framebuffer that implements I/O primitives for the
-  // framebuffer. There are several subclasses of FB: VirtualFB, FileFB
-  // and HardwareFB.
+  // framebuffer. There are several subclasses of FB: VirtualFB, FileFB,
+  // HardwareFB and RemarkableFB
   //
   // - The VirtualFB uses memory as the framebuffer
   // - The FileFB is an mmap backed file, which can be used for debugging or emulating the
@@ -55,6 +55,7 @@ namespace framebuffer:
   // - The HardwareFB interfaces with /dev/fb0, which is the linux framebuffer
   //   device. In addition to mmaping /dev/fb0, HardwareFB also sends ioctl to
   //   the FB
+  // - The RemarkableFB is like the HardwareFB but specific to remarkable hardware
   class FB:
     public:
     int width=0, height=0, fd=-1
@@ -538,10 +539,11 @@ namespace framebuffer:
   class FileFB: public FB:
     public:
     string filename
-    FileFB(string fname="fb.raw", int w=DISPLAYWIDTH, h=DISPLAYHEIGHT): FB():
+    FileFB(string fname="fb.raw", int w=0, h=0): FB():
       self.filename = fname
-      self.width = w
-      self.height = h
+      if w != 0 and h != 0:
+        self.width = w
+        self.height = h
       self.byte_size = self.width * self.height * sizeof(remarkable_color)
       // make an empty file of the right size
       std::ofstream ofs(filename, std::ios::binary | std::ios::out);

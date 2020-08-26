@@ -134,6 +134,7 @@ class App: public IApp:
   AppBackground *app_bg
   shared_ptr<framebuffer::FB> fb
   mutex suspend_m
+  thread* idle_thread
 
   input_event *touch_flood
 
@@ -170,7 +171,7 @@ class App: public IApp:
     return
 
   def suspend_on_idle():
-    thread *th = new thread([=]() {
+    self.idle_thread = new thread([=]() {
       while true:
         now := time(NULL)
         usb_in := false
