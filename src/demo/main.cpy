@@ -21,7 +21,6 @@ class App:
     demo_scene->add(keyboard)
     keyboard->show()
 
-    ui::MainLoop::refresh()
 
   def handle_key_event(input::SynKeyEvent &key_ev):
     print "KEY PRESSED", key_ev.key
@@ -32,6 +31,10 @@ class App:
   def run():
     ui::MainLoop::key_event += PLS_DELEGATE(self.handle_key_event)
     ui::MainLoop::motion_event += PLS_DELEGATE(self.handle_motion_event)
+
+    // just to kick off the app, we do a full redraw
+    ui::MainLoop::refresh()
+    ui::MainLoop::redraw()
     while true:
       ui::MainLoop::main()
       ui::MainLoop::redraw()
