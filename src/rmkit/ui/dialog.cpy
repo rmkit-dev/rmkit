@@ -25,9 +25,9 @@ namespace ui:
   // --- Prototype ---
   // class ui::Dialog: public ui::Widget, public ui::IDialog:
   // -----------------
-  // A dialog is used to display a centered frame on the screen.  The normal
-  // way to use a dialog is to instantiate it, then set its title and content
-  // widget values
+  // A dialog is used to display a frame on the screen.  The normal way to use
+  // a dialog is to instantiate it, then set its title and content widget
+  // values
   //
   // there are two defaut dialog types that supply buttons:
   //

@@ -17,6 +17,7 @@
 TIMEOUT := 2
 SUSPEND_TIMER := 10
 SUSPEND_THRESHOLD := 60 * 4 // 4 mins
+//SUSPEND_THRESHOLD := 20
 TOO_MUCH_THRESHOLD := 60 * 7 // 7 mins
 
 #include "apps.h"
@@ -25,8 +26,6 @@ DIALOG_WIDTH  := 400
 DIALOG_HEIGHT := 800
 
 LAST_ACTION := 0
-
-#define CONTAINS(container, needle) container.find(needle) == container.end()
 
 string CURRENT_APP = "_"
 
@@ -366,6 +365,8 @@ class App: public IApp:
 
     ui::MainLoop::key_event += PLS_DELEGATE(self.handle_key_event)
     ui::MainLoop::motion_event += PLS_DELEGATE(self.handle_motion_event)
+    // ui::MainLoop::gesture_event += PLS_DELEGATE(self.handle_gesture_event)
+
     while true:
       ui::MainLoop::main()
       ui::MainLoop::check_resize()

@@ -83,21 +83,39 @@ namespace input:
       key_ev.is_pressed = self.is_pressed
       return key_ev
 
+
   class TouchEvent: public Event:
     public:
     int x, y, left
-    TouchEvent() {}
+    int slot = 0
+    struct Point:
+      int x=-1, y=-1, left=-1
+    ;
+    vector<Point> slots;
+    TouchEvent():
+      slots.resize(10)
+
+    TouchEvent(const TouchEvent &t):
+      self.slot = t.slot
+      self.slots = t.slots
+      self.x = t.x
+      self.y = t.y
+      self.left = t.left
+
 
     handle_abs(input_event data):
       switch data.code:
+        case ABS_MT_SLOT:
+          slot = data.value;
+
         case ABS_MT_POSITION_X:
-          self.x = (MTWIDTH - data.value)*MT_X_SCALAR
+          slots[slot].x = self.x = (MTWIDTH - data.value)*MT_X_SCALAR
           break
         case ABS_MT_POSITION_Y:
-          self.y = (MTHEIGHT - data.value)*MT_Y_SCALAR
+          slots[slot].y = self.y = (MTHEIGHT - data.value)*MT_Y_SCALAR
           break
         case ABS_MT_TRACKING_ID:
-          self.left = data.value > -1
+          slots[slot].left = self.left = data.value > -1
           break
 
 

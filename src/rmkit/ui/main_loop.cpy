@@ -22,6 +22,7 @@
 
 #include "../util/signals.h"
 #include "../input/input.h"
+#include "../input/gestures.h"
 #include "../fb/fb.h"
 #include "scene.h"
 #include "widget.h"
@@ -63,6 +64,20 @@ namespace ui:
     // ---
     static KEY_EVENT key_event
 
+
+    class GestureEvent:
+      GestureEvent():
+        pass
+
+    PLS_DEFINE_SIGNAL(GESTURE_EVENT, GestureEvent)
+    // variable: gesture_event
+    // gesture_event is used for subscribing to gesture_event
+    //
+    // ---Code
+    // // d is of type input::GestureEvent
+    // MainLoop::gesture_event += [=](auto &d) { };
+    static GESTURE_EVENT gesture_event
+
     // returns whether the supplied widget is visible
     static bool is_visible(Widget *w):
       if overlay_is_visible:
@@ -97,18 +112,27 @@ namespace ui:
         handle_motion_event(ev)
         fb->last_mouse_ev = ev
 
-
       for auto ev : in.all_key_events:
         MainLoop::key_event(ev)
         if ev._stop_propagation:
           continue
         handle_key_event(ev)
 
+      // swipe: travels at least K distance in one coordinate and does not
+      // deviate in the opposite coordinate by more than N pixels
+      // swipe is all i need for now
+      TRACK_GESTURES := true
+      if TRACK_GESTURES:
+        for auto ev: in.touch.events:
+          for i := 0; i <= ev.slot; i++:
+            pass
+            // print i, ev.slots[i].x, ev.slots[i].y, ev.slots[i].left
+
 
     // function: main
     //
     // this function does several thinsg:
-    // 
+    //
     // - dispatches input events to widgets
     // - runs tasks in the task queue
     // - redraws the current scene and overlay's dirty widgets
@@ -246,6 +270,7 @@ namespace ui:
       return hit_widget
   ;
 
+  typedef MainLoop::GestureEvent GestureEvent
   Scene MainLoop::scene = make_scene()
   Scene MainLoop::overlay = make_scene()
   bool MainLoop::overlay_is_visible = false
@@ -253,6 +278,7 @@ namespace ui:
 
   MOUSE_EVENT MainLoop::motion_event
   KEY_EVENT MainLoop::key_event
+  MainLoop::GESTURE_EVENT MainLoop::gesture_event
 
   shared_ptr<framebuffer::FB> MainLoop::fb = framebuffer::get()
 
