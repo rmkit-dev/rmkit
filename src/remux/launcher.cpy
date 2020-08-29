@@ -132,6 +132,7 @@ class App: public IApp:
   thread* idle_thread
 
   input_event *touch_flood
+  vector<input::TouchEvent> touch_events
 
   public:
   App():
@@ -359,6 +360,50 @@ class App: public IApp:
     proc::launch_process(bin, true /* check running */, true /* background */)
     ui::MainLoop::hide_overlay()
 
+  // we save the touch input until the finger lifts up
+  // so we can analyze whether its a gesture or not
+  def save_input():
+    for auto ev: ui::MainLoop::in.touch.events:
+      if ev.slots[0].left == 0:
+        self.check_gesture()
+        self.touch_events.clear()
+      else:
+        // we only track 200 events or so for now
+        // simple swipes are about 40 - 50 events
+        if self.touch_events.size() < 200:
+          self.touch_events.push_back(ev)
+
+
+  void check_gesture():
+    fb := framebuffer::get()
+    fw, fh := fb->get_display_size()
+    left := -1
+    y_delta := self.touch_events[0].slots[0].y - self.touch_events.back().slots[0].y
+    print self.touch_events.size()
+    for auto ev: self.touch_events:
+      if ev.slots[0].x == -1:
+        continue
+
+      if left == -1:
+        if ev.slots[0].x < 100:
+          left = true
+        else if ev.slots[0].x > fw - 100:
+          left = false
+        else:
+          print "WHAT", ev.slots[0].x
+          return
+
+      if left && ev.slots[0].x > 100:
+        return
+      if !left && ev.slots[0].x < fw - 100:
+        return
+
+    if y_delta >= 300:
+      self.show_launcher()
+      return
+    print "no", y_delta
+
+
   def run():
     ui::Text::DEFAULT_FS = 32
 
@@ -376,6 +421,7 @@ class App: public IApp:
         ui::MainLoop::redraw()
 
       ui::MainLoop::read_input()
+      self.save_input()
 
 App app
 def main():

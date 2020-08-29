@@ -117,17 +117,6 @@ namespace ui:
           continue
         handle_key_event(ev)
 
-      // swipe: travels at least K distance in one coordinate and does not
-      // deviate in the opposite coordinate by more than N pixels
-      // swipe is all i need for now
-      TRACK_GESTURES := true
-      if TRACK_GESTURES:
-        for auto ev: in.touch.events:
-          for i := 0; i <= ev.slot; i++:
-            pass
-            // print i, ev.slots[i].x, ev.slots[i].y, ev.slots[i].left
-
-
     // function: main
     //
     // this function does several thinsg:
