@@ -68,7 +68,7 @@ class GameOverDialog: public ui::ConfirmationDialog:
   ui::MultiText *textWidget
   GameOverDialog(int x, y, w, h): ui::ConfirmationDialog(x, y, w, h):
     self.set_title(string((WON?"You win!" : "You lose!")))
-    self.buttons = { "TRY AGAIN", "MAIN MENU", "HIDE DIALOG"}
+    self.buttons = { "TRY AGAIN", "MAIN MENU" }
     dt := difftime(END, START)
     int score = FLAG_SCORE * !WON + WON * 600000 / dt - !WON * (USED - FLAG_SCORE/50) * 30 + WON * 2000 * NB_BOMBS
     score = round(score*100)/100
@@ -87,6 +87,7 @@ class GameOverDialog: public ui::ConfirmationDialog:
       main_menu()
     if text == "HIDE DIALOG":
       ui::MainLoop::hide_overlay()
+      ui::MainLoop::refresh()
 
 
 class IGrid:
@@ -347,6 +348,7 @@ class NumFlagsButton: public ui::Button:
   void before_render():
     self.textWidget->text = to_string(NB_BOMBS - USED)
     self.textWidget->undraw()
+    self.dirty = 1
 
 class HighScoreWidget: public ui::Widget:
   public:
