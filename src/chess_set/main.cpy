@@ -24,11 +24,15 @@ class Cell: public ui::Widget:
   public:
   IBoard *board
   Piece *piece = nullptr
-  Cell(int x, y, w, h, IBoard *b): ui::Widget(x,y,w,h):
+  int color
+  Cell(int x, y, w, h, IBoard *b, int c): ui::Widget(x,y,w,h):
     self.board = b
+    self.color = c
 
   void set_piece(Piece *p):
     self.piece = p
+    self.piece->x = self.x
+    self.piece->y = self.y
 
   void empty():
     pass // TODO: piece should be null
@@ -38,7 +42,8 @@ class Cell: public ui::Widget:
 
   void render():
     self.undraw()
-    self.fb->draw_rect(self.x, self.y, self.w, self.h, BLACK, 0)
+    if self.color == BLACK:
+      self.fb->draw_rect(self.x, self.y, self.w, self.h, GRAY, true /* fill */)
     if self.piece != nullptr:
       self.piece->render()
 
@@ -53,7 +58,8 @@ class Board: public IBoard, public ui::Widget:
     for i := 0; i < n; i++:
       grid.push_back(vector<Cell*>())
       for j := 0; j < n; j++:
-        cell := new Cell(i * c, j * c, c, c, self)
+        print (self.x + i * c), (self.y + j * c)
+        cell := new Cell(self.x + i * c, self.y + j * c, c, c, self, (i + j) % 2 == 0 ? BLACK : WHITE)
         grid[i].push_back(cell)
         scene->add(cell)
     
@@ -86,8 +92,14 @@ class App:
     fb->redraw_screen()
     w, h = fb->get_display_size()
 
-    board := new Board(0, 0, 500, 500)
-    board->make_grid(demo_scene)
+    h_layout := ui::HorizontalLayout(0, 0, w, h, demo_scene)
+    v_layout := ui::VerticalLayout(0, 0, w, h, demo_scene)
+
+    n := 8
+    board := new Board(0, 0, PIECE_SIZE*n, PIECE_SIZE*n)
+    h_layout.pack_center(board)
+    v_layout.pack_center(board)
+    board->make_grid(demo_scene, n)
 
     // board->move_piece(
     board->add_piece(0, 0, new Bishop(0, 0, PIECE_SIZE, PIECE_SIZE))
