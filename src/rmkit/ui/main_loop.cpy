@@ -22,7 +22,6 @@
 
 #include "../util/signals.h"
 #include "../input/input.h"
-#include "../input/gestures.h"
 #include "../fb/fb.h"
 #include "scene.h"
 #include "widget.h"
