@@ -111,11 +111,11 @@ class AppDialog: public ui::Pager:
       return self.reader.apps
 
     void on_row_selected(string name):
-      app->launch(name)
+      CURRENT_APP = name
       ui::MainLoop::hide_overlay()
 
     void render_row(ui::HorizontalLayout *row, string option):
-      d := new ui::DialogButton(0, 0, self.w, self.opt_h, self, option)
+      d := new ui::DialogButton(0, 0, self.w-80, self.opt_h, self, option)
       d->x_padding = 50
       d->y_padding = 5
       d->set_justification(ui::Text::JUSTIFY::LEFT)
@@ -203,6 +203,10 @@ class App: public IApp:
     if ui::MainLoop::overlay_is_visible:
       return
 
+
+    // this is really backgrounding apps, not terminating
+    term_apps()
+
     app_bg->snapshot()
     this_thread::sleep_for(chrono::milliseconds(200));
     app_dialog->populate()
@@ -211,6 +215,7 @@ class App: public IApp:
     app_dialog->show()
     app_dialog->scene->on_hide += PLS_LAMBDA(auto &d):
       self.render_bg()
+      launch(CURRENT_APP)
       ui::MainLoop::in.ungrab()
     ;
 

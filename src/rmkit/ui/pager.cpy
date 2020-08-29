@@ -32,7 +32,7 @@ namespace ui:
         button_bar->pack_end(new DialogButton(0, 0, 100, 50, self, NEXT), 10)
 
     virtual void render_row(ui::HorizontalLayout *row, string option):
-      d := new ui::DialogButton(0,0, self.w, self.opt_h, self, option)
+      d := new ui::DialogButton(20,0, self.w-80, self.opt_h, self, option)
       d->set_justification(ui::Text::JUSTIFY::LEFT)
       layout->pack_start(d)
 
