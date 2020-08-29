@@ -166,6 +166,8 @@ class Cell: public ui::Widget:
       grid->toggle_flag_cell(self.i, self.j)
     else grid->toggle_question_cell(self.i, self.j)
 
+    ui::MainLoop::refresh()
+
 class Grid: public ui::Widget, public IGrid:
   public:
   vector<vector<Cell*>> cells
@@ -307,6 +309,7 @@ class RadioButton: public ui::Button:
 
   void on_mouse_click(input::SynMouseEvent &ev):
     *self.selected = self.option
+    ui::MainLoop::refresh()
     self.on_button_selected(self.option)
 
   virtual void on_button_selected(string t):
@@ -512,7 +515,6 @@ class App:
       ui::MainLoop::main()
       // TODO: have widgets mark themselves dirty instead when interacted with
       ui::MainLoop::redraw()
-      ui::MainLoop::refresh()
       ui::MainLoop::read_input()
 
 
@@ -525,6 +527,7 @@ void main_menu():
   app.reset()
   app.main_menu()
   app.fb->clear_screen()
+
 void new_game():
   app.reset()
   app.fb->clear_screen()
