@@ -45,8 +45,8 @@ class CircleAnimation : public ui::Widget:
     static int dir = 1
 
     size += 1 * dir;
-    if size >= 200:
-      size = 0
+    if size >= 200 || size <= 0:
+      dir *= -1
       if color == BLACK:
         color = WHITE
       else:
