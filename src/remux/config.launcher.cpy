@@ -12,7 +12,7 @@ struct RMApp:
   char *snapshot 
 
 RMApp APP_XOCHITL = %{
-  bin : "systemctl start xochitl",
+  bin : "xochitl",
   which : "xochitl",
   name : "Remarkable",
   always_show : true }
