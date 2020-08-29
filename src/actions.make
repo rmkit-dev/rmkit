@@ -1,7 +1,7 @@
 include ../common.make
 SRC_DIR=$(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 ROOT_DIR=$(shell realpath -s ${SRC_DIR}/../)
-APP=$(EXE:.exe=)
+APP?=$(EXE:.exe=)
 
 compile:
 	# $$ARCH is ${ARCH}

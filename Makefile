@@ -3,7 +3,7 @@ default: build
 include src/common.make
 
 # Use `make <app>` to build any app individually
-APPS=rmkit harmony remux demo minesweeper animation_demo
+APPS=rmkit harmony remux demo minesweeper animation_demo chess_set
 LINT_APPS=$(foreach app, $(APPS), lint_$(app))
 CLEAN_APPS=$(foreach app, $(APPS), clean_$(app))
 INSTALL_APPS=$(foreach app, $(APPS), install_$(app))

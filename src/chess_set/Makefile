@@ -1,0 +1,6 @@
+EXE=chess.exe
+FILES=main.cpy
+ASSET_DIR=assets/
+APP=chess_set
+
+include ../actions.make
