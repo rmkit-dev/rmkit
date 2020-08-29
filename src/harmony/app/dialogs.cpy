@@ -21,7 +21,6 @@ namespace app_ui:
 
       void on_button_selected(string t):
         if t == "OK":
-          proc::start_xochitl()
           exit(0)
         if t == "CANCEL":
           ui::MainLoop::hide_overlay()

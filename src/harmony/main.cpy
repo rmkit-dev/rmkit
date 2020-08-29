@@ -126,5 +126,4 @@ class App:
 
 App app
 def main():
-  proc::stop_xochitl()
   app.run()
