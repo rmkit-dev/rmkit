@@ -14,7 +14,7 @@
 #include "../shared/proc.h"
 #include "../build/rmkit.h"
 
-TIMEOUT := 2
+TIMEOUT := 1
 SUSPEND_TIMER := 10
 SUSPEND_THRESHOLD := 60 * 4 // 4 mins
 //SUSPEND_THRESHOLD := 20
@@ -103,10 +103,6 @@ class AppDialog: public ui::Pager:
       ui::Pager::render()
       self.fb->draw_line(self.x+self.w, self.y, self.x+self.w, self.y+self.h, 2, BLACK)
 
-    void position_dialog():
-      print "NOT POSITIONING APP DIALOG"
-      return
-
     void populate():
       self.reader.populate()
       self.options = self.reader.get_binaries()
@@ -153,7 +149,7 @@ class App: public IApp:
     if app_bg != NULL:
       delete app_bg
 
-    app_dialog = new AppDialog(0, 0, 400, h, self)
+    app_dialog = new AppDialog(0, 0, 600, 800, self)
     app_bg = new AppBackground(0, 0, w, h)
 
     touch_flood = build_touch_flood()
@@ -199,6 +195,10 @@ class App: public IApp:
     LAST_ACTION = time(NULL)
     suspend_m.unlock()
 
+  void render_bg():
+    app_bg->render()
+    ui::MainLoop::redraw()
+
   def show_launcher():
     if ui::MainLoop::overlay_is_visible:
       return
@@ -216,17 +216,9 @@ class App: public IApp:
 
     ui::MainLoop::in.grab()
 
-
-  void render_bg():
-    app_bg->render()
-    ui::MainLoop::redraw()
-
   def handle_key_event(input::SynKeyEvent ev):
-    // we have a double tap if...
-    // we get two up events within X milliseconds of each other
-    static struct timeval ltv = {0};
-    struct timeval tv;
-    gettimeofday(&tv, NULL)
+    static int lastpress = RAND_MAX
+    static int event_press_id = 0
 
     suspend_m.lock()
     LAST_ACTION = time(NULL)
@@ -237,20 +229,25 @@ class App: public IApp:
 
     switch ev.key:
       case KEY_HOME:
-        if ev.is_pressed:
-          // we want delta in milliseconds, so...
-          // delta_sec * 1000 + delta_usec / 1000, i think
-          float delta_sec = (tv.tv_sec - ltv.tv_sec)
-          float delta_usec = (tv.tv_usec - ltv.tv_usec)
-          float delta_ms = (delta_sec * 1000) + (delta_usec / 1000)
-          if delta_ms < 400: // 400 ms
-            self.show_launcher()
 
-          ltv = tv
+        if ev.is_pressed:
+          lastpress = time(NULL)
+          event_press_id = ev.id
+
+          thread *th = new thread([=]() {
+              this_thread::sleep_for(chrono::seconds(TIMEOUT));
+              now := time(NULL)
+              if now - lastpress >= TIMEOUT:
+                if is_pressed && event_press_id == ev.id
+                  self.show_launcher()
+                  ui::TaskQueue::wakeup()
+          });
         else:
-          pass
+          event_press_id = 0
 
         is_pressed = ev.is_pressed
+
+    last_ev := &ev
 
   void term_apps(string name=""):
     for auto a : app_dialog->get_apps():
