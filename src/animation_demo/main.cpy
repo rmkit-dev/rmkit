@@ -8,14 +8,14 @@ class Animation : public ui::Widget:
   public:
   shared_ptr<ui::Pixmap> img
   int mx, my
+  int size = 100;
+  int dir = 1
+  int offset = 0
   Animation(int x, y, w, h) : ui::Widget(x, y, w, h):
     self.mx = self.x + self.w / 2
     self.my = self.x + self.h / 2
 
   void animate():
-    static int size = 100;
-    static int dir = 1
-    static int offset = 0
     self.img = make_shared<ui::Pixmap>(self.mx - offset, self.my - offset, size, size, ICON(assets::flag_solid_png))
 
     offset += (dir * 5)
@@ -23,9 +23,9 @@ class Animation : public ui::Widget:
     if size >= 200 || size <= 100:
       dir *= -1;
 
+    usleep(1000 * 200)
     ui::TaskQueue::add_task([=]() {
       self.animate()
-      usleep(1000 * 200)
     })
 
   void render():
@@ -36,17 +36,24 @@ class Animation : public ui::Widget:
 class CircleAnimation : public ui::Widget:
   public:
   int size = 1
+  int loops = -1
   int color = BLACK
+  int dir = 1
   shared_ptr<ui::Pixmap> img
   CircleAnimation(int x, y, w, h) : ui::Widget(x, y, w, h):
     pass
 
   void animate():
-    static int dir = 1
 
     size += 1 * dir;
     if size >= 200 || size <= 0:
       dir *= -1
+      if size <= 0:
+        if loops > 0:
+          loops--
+          if loops == 0:
+            return
+
       if color == BLACK:
         color = WHITE
       else:
@@ -54,12 +61,26 @@ class CircleAnimation : public ui::Widget:
 
     ui::TaskQueue::add_task([=]() {
       self.animate()
-      ui::MainLoop::refresh()
-      usleep(1000 * 50)
+      usleep(1000 * 16)
     })
 
   void render():
+    if self.loops == 0:
+      self.undraw()
+
     self.fb->draw_circle(self.x+self.w/2, self.y+self.h/2, self.size, 1, self.color, 0 /* fill */)
+
+class Launcher: public ui::Widget:
+  public:
+  ui::Scene scene
+  Launcher(int x, y, w, h, ui::Scene s): ui::Widget(x, y, w, h):
+    self.scene = s
+
+  void on_mouse_click(input::SynMouseEvent &ev):
+    a := new CircleAnimation(ev.x, ev.y, 1, 1)
+    self.scene->add(a)
+    a->animate()
+    a->loops = 1
 
 class App:
   public:
@@ -77,6 +98,9 @@ class App:
     a := new CircleAnimation(fw/2, fh/2, 1, 1)
     demo_scene->add(a)
     a->animate()
+
+    touch_area := new Launcher(0, 0, fw, fh, demo_scene)
+    demo_scene->add(touch_area)
 
 //    b := new Animation(200, 200, 200, 200)
 //    demo_scene->add(b)
