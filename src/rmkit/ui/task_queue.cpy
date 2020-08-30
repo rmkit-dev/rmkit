@@ -6,6 +6,10 @@
 
 
 namespace ui:
+  // class: TaskQueue
+  // The task queue is a way of scheduling tasks from the main thread to be run
+  // in a side thread. After the side thread is finished, the task queue will
+  // wake up the main thread
   class TaskQueue:
     public:
     static deque<std::function<void()>> tasks
@@ -14,6 +18,11 @@ namespace ui:
     static void wakeup():
       _ := write(input::ipc_fd[1], "WAKEUP", sizeof("WAKEUP"));
 
+    // function: add_task
+    //
+    // Parameters:
+    //
+    // t - an anonymous function to run as a task
     static void add_task(std::function<void()> t):
       TaskQueue::tasks.push_back(t)
       TaskQueue::wakeup()
