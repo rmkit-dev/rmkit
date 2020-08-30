@@ -21,25 +21,24 @@ namespace ui:
         image.buffer = NULL
 
     void render():
+      self.undraw()
       if image.buffer != NULL:
           print "RENDERING IMAGE", self.w, self.h, self.image.w, self.image.h
           self.fb->draw_bitmap(self.image, self.x, self.y)
-          self.fb->draw_rect(self.x, self.y, self.w, self.h,3,BLACK)
 
     image_data fetch(string t):
       if !MainLoop::is_visible(self):
         return image_data({ NULL, 0 })
 
-      char full_path[100]
       unsigned char *load_buffer, *resize_buffer
       vector<unsigned char> raw
       size_t outsize
       int fw, fh
 
-      sprintf(full_path, "%s/%s", SAVE_DIR, self.filename.c_str())
+
 
       int channels // an output parameter
-      decoded := stbi_load(full_path, &fw, &fh, &channels, 1);
+      decoded := stbi_load(self.filename.c_str(), &fw, &fh, &channels, 1);
       img := image_data{(uint32_t*) decoded, (int) fw, (int) fh, channels}
       util::resize_image(img, self.w, self.h)
       self.image = img

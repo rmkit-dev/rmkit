@@ -62,7 +62,10 @@ namespace app_ui:
         ui::MainLoop::hide_overlay()
 
       void render_row(ui::HorizontalLayout *row, string option):
-        ui::Thumbnail *tn = new ui::Thumbnail(0, 0, 140, self.opt_h, option)
+        char full_path[PATH_MAX]
+        sprintf(full_path, "%s/%s", SAVE_DIR, option.c_str())
+
+        ui::Thumbnail *tn = new ui::Thumbnail(0, 0, 140, self.opt_h, full_path)
         d := new ui::DialogButton(20, 0, self.w-200, self.opt_h, self, option)
         layout->pack_start(row)
         row->pack_start(tn)

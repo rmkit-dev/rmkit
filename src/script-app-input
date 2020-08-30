@@ -1,5 +1,0 @@
-button 50 50 200 50 I'm a button
-button 50 150 400 50 I'm a different button
-label 50 100 300 50 I'm some text
-image 50 200 200 200 /home/root/bomb-solid.png
-paragraph 50 400 800 200 I'm multi-line text, I'm multi-line text, I'm multi-line text, I'm multi-line text, I'm multi-line text, I'm multi-line text, I'm multi-line text, I'm multi-line text, I'm multi-line text, I'm multi-line text, I'm multi-line text, I'm multi-line text, I'm multi-line text, I'm multi-line text, I'm multi-line text, I'm multi-line text,
