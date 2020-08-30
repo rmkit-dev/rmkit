@@ -42,6 +42,9 @@ assets:
 	# ${SRC_DIR} ${APP}
 	bash ${ROOT_DIR}/scripts/build/build_assets.sh ${SRC_DIR}/${APP}/assets.h ${ASSET_DIR}
 
+_install:
+	make copy
+
 copy:
 	ARCH=arm $(MAKE) compile
 	ssh root@${HOST} killall ${EXE} || true # finally

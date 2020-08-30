@@ -13,7 +13,7 @@ $(APPS): %: rmkit.h
 	cd src/${@} && make
 
 $(INSTALL_APPS): %: rmkit.h
-	cd src/$(@:install_%=%) && make copy
+	cd src/$(@:install_%=%) && make _install
 
 $(RUN_APPS): %: rmkit.h
 	cd src/$(@:run_%=%) && make run
