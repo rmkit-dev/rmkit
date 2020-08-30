@@ -1,6 +1,6 @@
 OUTDIR=artifacts
 mkdir ${OUTDIR}
-docker run -i --rm -v ${PWD}/${OUTDIR}:/mnt/artifacts rmharmony /bin/bash << COMMANDS
+docker run -i --rm -v "${PWD}/${OUTDIR}:/mnt/artifacts" rmharmony /bin/bash << COMMANDS
 mkdir -p src/build
 make rmkit.h
 make bundle
