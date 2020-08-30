@@ -47,11 +47,11 @@ _install:
 
 copy:
 	ARCH=arm $(MAKE) compile
-	ssh root@${HOST} killall ${EXE} || true # finally
+	ssh root@${HOST} killall -9 ${EXE} || true # finally
 	scp -C ../build/${EXE} root@${HOST}:${DEST}/${EXE}
 
 stop:
-	ssh root@${HOST} killall ${EXE} || true
+	ssh root@${HOST} killall -9 ${EXE} || true
 
 run: compile copy
 	ssh root@${HOST} systemctl stop xochitl
