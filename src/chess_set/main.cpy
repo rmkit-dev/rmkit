@@ -3,7 +3,7 @@
 #include "assets.h"
 using namespace std
 
-PIECE_SIZE := 100
+PIECE_SIZE := 150
 
 class IBoard:
   public:
@@ -58,7 +58,6 @@ class Board: public IBoard, public ui::Widget:
     for i := 0; i < n; i++:
       grid.push_back(vector<Cell*>())
       for j := 0; j < n; j++:
-        print (self.x + i * c), (self.y + j * c)
         cell := new Cell(self.x + i * c, self.y + j * c, c, c, self, (i + j) % 2 == 0 ? BLACK : WHITE)
         grid[i].push_back(cell)
         scene->add(cell)
@@ -72,11 +71,26 @@ class Board: public IBoard, public ui::Widget:
   void on_cell_clicked():
     pass
 
+  void render():
+    print "RENDERING BOARD"
+    self.fb->draw_rect(self.x-1, self.y-1, self.w+2, self.h+2, BLACK, 0 /* fill */)
 
-class Bishop: public Piece:
+
+class BlackBishop: public Piece:
   public:
-  Bishop(int x, y, w, h): Piece(x,y,w,h):
+  BlackBishop(int x, y, w, h): Piece(x,y,w,h):
     self.icon = ICON(assets::black_bishop_png)
+
+class WhiteKing: public Piece:
+  public:
+  WhiteKing(int x, y, w, h): Piece(x,y,w,h):
+    self.icon = ICON(assets::King_png)
+
+class BlackKing: public Piece:
+  public:
+  BlackKing(int x, y, w, h): Piece(x,y,w,h):
+    self.icon = ICON(assets::Kingb_png)
+
 
 class App:
   public:
@@ -102,7 +116,14 @@ class App:
     board->make_grid(demo_scene, n)
 
     // board->move_piece(
-    board->add_piece(0, 0, new Bishop(0, 0, PIECE_SIZE, PIECE_SIZE))
+    board->add_piece(0, 0, new WhiteKing(0, 0, PIECE_SIZE, PIECE_SIZE))
+    board->add_piece(0, 1, new BlackKing(0, 0, PIECE_SIZE, PIECE_SIZE))
+    board->add_piece(0, 2, new BlackKing(0, 0, PIECE_SIZE, PIECE_SIZE))
+    board->add_piece(0, 3, new WhiteKing(0, 0, PIECE_SIZE, PIECE_SIZE))
+    board->add_piece(0, 0, new WhiteKing(0, 0, PIECE_SIZE, PIECE_SIZE))
+    board->add_piece(1, 0, new BlackKing(0, 0, PIECE_SIZE, PIECE_SIZE))
+    board->add_piece(2, 0, new BlackKing(0, 0, PIECE_SIZE, PIECE_SIZE))
+    board->add_piece(3, 0, new WhiteKing(0, 0, PIECE_SIZE, PIECE_SIZE))
     // board->remove_piece(
 
     demo_scene->add(board)

@@ -251,7 +251,7 @@ namespace framebuffer:
     // o_x - the x offset
     // o_y - the y offset
     // alpha - the color to treat as an alpha blend (not painted into destination)
-    def draw_bitmap(image_data &image, int o_x, int o_y, int alpha=97):
+    def draw_bitmap(image_data &image, int o_x, int o_y, int alpha=4160223223):
       remarkable_color* ptr = self.fbmem
       ptr += (o_x + o_y * self.width)
       src := image.buffer
