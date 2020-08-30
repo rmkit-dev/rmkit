@@ -8,3 +8,4 @@ tags
 tmp
 *.o
 src/build/
+docs/html/

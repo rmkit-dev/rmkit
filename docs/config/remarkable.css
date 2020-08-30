@@ -1,0 +1,27 @@
+#NDHeader {
+  background-color: #0f0f0f;
+}
+
+#HTitle {
+  color: #000;
+}
+
+#HSubtitle {
+  color: #000;
+}
+
+html {
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+
+body.NDHomePage  {
+  background-image: none;
+  background-color: #fff;
+}
+
+body .HContent {
+  border-style: none;
+  box-shadow: none;
+  text-shadow: none;
+}
