@@ -3,8 +3,10 @@ name: "release"
 
 on:
   push:
-    tags:
-      - "v*"
+    branches:
+      - build
+      - stable
+      - master
 
 jobs:
   pre-release:
@@ -12,15 +14,41 @@ jobs:
     runs-on: "ubuntu-latest"
 
     steps:
-      # ...
+      - name: "Checkout source"
+        uses: actions/checkout@v2
+
+
       - name: "Build artifacts"
         run: make docker
 
-      - uses: "marvinpinto/action-automatic-releases@latest"
+      - name: "Declare vars"
+        id: vars
+        shell: bash
+        run: |
+          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+          echo "::set-output name=sha::$(git rev-parse --short HEAD)"
+          echo "::set-output name=date::$(date -- +%Y%m%d_%H%M)"
+
+      - name: "Copy artifacts"
+        run: cp artifacts/ ${{ steps.vars.outputs.date }}_${{ steps.vars.outputs.sha }} -R
+
+      - name: copy artifacts to GITHUB_SHA
+        uses: appleboy/scp-action@master
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "release"
-          prerelease: true
-          title: "Development Build"
-          files: |
-            artifacts/*
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          source: ${{ steps.vars.outputs.date }}_${{ steps.vars.outputs.sha }}
+          target: build/${{ steps.vars.outputs.branch }}
+
+      - name: copy artifacts to latest/
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          source: artifacts/*
+          strip_components: 1
+          target: build/${{ steps.vars.outputs.branch }}/latest
