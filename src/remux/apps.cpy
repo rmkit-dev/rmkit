@@ -98,17 +98,20 @@ class AppReader:
     bin_binaries := read_apps_from_dir(BIN_DIR)
     for auto a : bin_binaries:
       bin_str := string(a)
-      app_str := a.c_str()
-      base := basename((char *) app_str)
+      app_s := a.c_str()
+      base_s := basename((char *) app_s)
 
       dont_add := false
       for auto s : skip_list:
-        if s == base:
+        if s == base_s:
           dont_add = true
       if dont_add:
         continue
 
-      app := (RMApp) { .bin=bin_str, .name=base }
+      base_str := string(base_s)
+      name_str := base_str.substr(0, base_str.length() - sizeof(EXE_EXT))
+
+      app := (RMApp) { .bin=bin_str, .which=base_str, .name=name_str }
       self.apps.push_back(app)
 
   def get_binaries():

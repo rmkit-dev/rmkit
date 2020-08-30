@@ -1,7 +1,51 @@
 #include <dirent.h>
 #include <libgen.h>
+#include "string.h"
+
+// {{{ from https://stackoverflow.com/questions/478898/how-do-i-execute-a-command-and-get-the-output-of-the-command-within-c-using-po
+```
+#include <cstdio>
+#include <iostream>
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include <array>
+#include <fstream>
+
+std::string exec(const char* cmd) {
+    std::array<char, 128> buffer;
+    std::string result;
+    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
+    if (!pipe) {
+        throw std::runtime_error("popen() failed!");
+    }
+    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+        result += buffer.data();
+    }
+    return result;
+}
+```
+// }}}
+
 
 namespace proc:
+  bool is_running(string bin):
+    char command[PATH_MAX]
+    sprintf(command, "pidof %s 2> /dev/null", bin.c_str());
+    pid := exec(command)
+    if pid == "":
+      return false
+
+    str_utils::trim(pid)
+    fname := "/proc/" + pid + "/wchan"
+    ifstream f(fname)
+    print "FNAME", fname
+    string status
+    getline(f, status)
+
+    print pid, bin, status
+    return status != "do_signal_stop"
+
   def stop_programs(vector<string> programs, string signal=""):
     for auto s : programs:
       #ifdef REMARKABLE

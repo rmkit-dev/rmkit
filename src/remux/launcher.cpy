@@ -151,6 +151,16 @@ class App: public IApp:
       delete app_bg
 
     app_dialog = new AppDialog(0, 0, 600, 800, self)
+    RMApp active
+    app_dialog->populate()
+    for auto a : app_dialog->get_apps():
+      print "CHECKING", a.which
+      if proc::is_running(a.which):
+        active = a
+
+    print "CURRENT APP IS", active.name
+    CURRENT_APP = active.name
+
     app_bg = new AppBackground(0, 0, w, h)
 
     touch_flood = build_touch_flood()
@@ -390,7 +400,6 @@ class App: public IApp:
         else if ev.slots[0].x > fw - 100:
           left = false
         else:
-          print "WHAT", ev.slots[0].x
           return
 
       if left && ev.slots[0].x > 100:
