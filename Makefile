@@ -9,6 +9,8 @@ CLEAN_APPS=$(foreach app, $(APPS), clean_$(app))
 INSTALL_APPS=$(foreach app, $(APPS), install_$(app))
 RUN_APPS=$(foreach app, $(APPS), run_$(app))
 
+SHA=$(shell git rev-parse --short HEAD)
+
 $(APPS): %: rmkit.h
 	cd src/${@} && make
 
@@ -63,11 +65,11 @@ docker_install: docker
 bundle: $(APPS)
 	#BUILDING V: ${VERSION} ARCH: ${ARCH}
 	mkdir -p ${BUILD_DIR}/${DEST} 2>/dev/null || true
-	# TODO: use ${APPS} here
-	cp ${BUILD_DIR}/harmony.exe ${BUILD_DIR}/remux.exe ${BUILD_DIR}/mines.exe ${BUILD_DIR}/${DEST}/
+	cp ${BUILD_DIR}/*.exe ${BUILD_DIR}/${DEST}/
+	cp ${BUILD_DIR}/*.txt ${BUILD_DIR}/${DEST}/
 	cp src/remux/remux.service ${BUILD_DIR}/${DEST}/
 
-	cd ${BUILD_DIR}; zip release-${VERSION}.zip -r ${DEST}/
+	cd ${BUILD_DIR}; zip release.zip -r ${DEST}/
 	cat scripts/run/install_harmony.sh.template | sed 's/VERSION/${VERSION}/g' > scripts/run/install_harmony.sh
 	cat scripts/run/try_harmony.sh.template | sed 's/VERSION/${VERSION}/g' > scripts/run/try_harmony.sh
 
