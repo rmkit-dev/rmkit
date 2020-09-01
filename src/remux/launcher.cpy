@@ -133,6 +133,7 @@ class App: public IApp:
   thread* idle_thread
 
   input_event *touch_flood
+  input_event *button_flood
   vector<input::TouchEvent> touch_events
 
   public:
@@ -165,6 +166,7 @@ class App: public IApp:
     app_bg = new AppBackground(0, 0, w, h)
 
     touch_flood = build_touch_flood()
+    button_flood = build_button_flood()
 
     notebook := ui::make_scene()
     notebook->add(app_bg)
@@ -337,20 +339,30 @@ class App: public IApp:
 
     return ev
 
+  input_event* build_button_flood():
+    n := 512 * 8
+    num_inst := 2
+    input_event *ev = (input_event*) malloc(sizeof(struct input_event) * n * num_inst)
+    memset(ev, 0, sizeof(input_event) * n * num_inst)
+
+    i := 0
+    while i < n:
+      ev[i++] = { .type=EV_SYN, .code=1, .value=0 }
+      ev[i++] = { .type=EV_SYN, .code=0, .value=1 }
+
+    return ev
+
+
 
   void flood_touch_queue():
     fd := ui::MainLoop::in.touch.fd
     bytes := write(fd, touch_flood, 512 * 8 * 4 * sizeof(input_event))
 
   // TODO: figure out the right events here to properly flood this device
-  void flood_button_event():
+  void flood_button_queue():
     fd := ui::MainLoop::in.button.fd
-    for i := 0; i < 64 * 8; i++:
-      write_input_event(fd, EV_ABS, ABS_DISTANCE, 1)
-      write_input_event(fd, EV_SYN, 0, 0)
+    bytes := write(fd, button_flood, 512 * 8 * 2 * sizeof(input_event))
 
-      write_input_event(fd, EV_ABS, ABS_DISTANCE, 0)
-      write_input_event(fd, EV_SYN, 0, 0)
 
 
   void launch(string name):
@@ -366,6 +378,7 @@ class App: public IApp:
 
     ui::MainLoop::in.ungrab()
     flood_touch_queue()
+    flood_button_queue()
     // flood_button_queue()
     proc::launch_process(bin, true /* check running */, true /* background */)
     ui::MainLoop::hide_overlay()
