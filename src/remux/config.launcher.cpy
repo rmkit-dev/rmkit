@@ -11,31 +11,31 @@ struct RMApp:
   // this will contain a framebuffer snapshot if we have one
   char *snapshot 
 
-RMApp APP_XOCHITL = %{
+RMApp APP_XOCHITL = RMApp %{
   bin : "xochitl",
   which : "xochitl",
   name : "Remarkable",
   always_show : true }
 
-RMApp APP_KOREADER = %{
+RMApp APP_KOREADER = RMApp %{
   bin:"/home/root/koreader/koreader.sh",
   which:"koreader",
   name:"KOReader",
 }
 
-RMApp APP_FINGERTERM = %{
+RMApp APP_FINGERTERM = RMApp %{
   bin:"/home/root/apps/fingerterm",
   which:"fingerterm",
   name:"FingerTerm",
 }
 
-RMApp APP_KEYWRITER = %{
+RMApp APP_KEYWRITER = RMApp %{
   bin:"/home/root/apps/keywriter",
   which:"keywriter",
   name:"KeyWriter",
 }
 
-RMApp APP_EDIT = %{
+RMApp APP_EDIT = RMApp %{
   bin:"/home/root/apps/edit",
   which:"edit",
   name:"Edit",
