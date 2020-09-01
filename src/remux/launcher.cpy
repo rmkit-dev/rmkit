@@ -427,6 +427,9 @@ class App: public IApp:
 
 
   def run():
+    system("systemctl xochitl stop")
+    proc::launch_process("xochitl", true /* check running */, true /* background */)
+
     ui::Text::DEFAULT_FS = 32
 
     // launches a thread that suspends on idle
