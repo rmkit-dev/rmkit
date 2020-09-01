@@ -5,6 +5,7 @@ FILES=launcher.cpy
 _install:
 	make copy
 	make install_service
+	make start_service
 
 install_service:
 	scp ./remux.service root@${HOST}:/etc/systemd/system/
