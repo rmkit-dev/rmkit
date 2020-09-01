@@ -89,6 +89,7 @@ class AppDialog: public ui::Pager:
       self.set_title("")
       self.app = a
       self.opt_h = 60
+      self.page_size = self.page_size - 4
 
     void add_shortcuts():
       _w, _h := fb->get_display_size()
@@ -170,7 +171,6 @@ class App: public IApp:
     ui::MainLoop::set_scene(notebook)
 
   def do_suspend():
-    print "SUSPENDING"
     #ifdef REMARKABLE
     self.on_suspend()
     #endif
@@ -278,9 +278,9 @@ class App: public IApp:
 
   // TODO: power button will cause suspend screen, why not?
   void on_suspend():
+    print "SUSPENDING"
     ui::MainLoop::hide_overlay()
 
-    print "SUSPENDING"
     _w, _h := fb->get_display_size()
 
     #ifdef REMARKABLE

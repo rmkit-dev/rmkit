@@ -10,6 +10,21 @@
 
 EXE_EXT := ".exe"
 
+```
+#include <sys/stat.h>
+
+bool can_exec(const char *file)
+{
+    struct stat  st;
+
+    if (stat(file, &st) < 0)
+        return false;
+    if ((st.st_mode & S_IEXEC) != 0)
+        return true;
+    return false;
+}
+```
+
 class AppReader:
   public:
   vector<RMApp> apps
@@ -65,8 +80,8 @@ class AppReader:
     if ((dir = opendir (bin_dir.c_str())) != NULL):
       while ((ent = readdir (dir)) != NULL):
         str_d_name := string(ent->d_name)
-        if str_d_name != "." and str_d_name != ".." and ends_with(str_d_name, EXE_EXT):
-          path := string(bin_dir) + string(ent->d_name)
+        path := string(bin_dir) + string(ent->d_name)
+        if str_d_name != "." and str_d_name != ".." and can_exec(path.c_str()):
           _ := realpath(path.c_str(), resolved_path);
           str_d_name = string(resolved_path)
           filenames.push_back(str_d_name)
@@ -109,7 +124,9 @@ class AppReader:
         continue
 
       base_str := string(base_s)
-      name_str := base_str.substr(0, base_str.length() - sizeof(EXE_EXT))
+      name_str := base_str
+      if ends_with(base_str, EXE_EXT):
+        name_str = base_str.substr(0, base_str.length() - sizeof(EXE_EXT))
 
       app := (RMApp) { .bin=bin_str, .which=base_str, .name=name_str }
       self.apps.push_back(app)

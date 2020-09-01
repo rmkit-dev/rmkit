@@ -67,6 +67,7 @@ bundle: $(APPS)
 	mkdir -p ${BUILD_DIR}/${DEST} 2>/dev/null || true
 	cp ${BUILD_DIR}/*.exe ${BUILD_DIR}/${DEST}/
 	cp ${BUILD_DIR}/*.txt ${BUILD_DIR}/${DEST}/
+	cp src/remux/remux.service ${BUILD_DIR}
 	cp src/remux/remux.service ${BUILD_DIR}/${DEST}/
 
 	cd ${BUILD_DIR}; zip release.zip -r ${DEST}/

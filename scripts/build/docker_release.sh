@@ -5,9 +5,8 @@ mkdir -p src/build
 make
 sha256sum src/build/*.exe > src/build/sha256sum.txt
 ls -la src/build/ > src/build/ls.txt
-cp -r src/build/* /mnt/artifacts
 make bundle
-cp src/build/release*.zip /mnt/artifacts/
+cp -r src/build/* /mnt/artifacts
 chown -R $(id -u):$(id -u) /mnt/artifacts
 COMMANDS
 
