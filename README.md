@@ -16,7 +16,8 @@ A minesweeper game for spending time between meetings and classes
 
 An app switcher for switching between apps on the remarkable that is compatible
 with [draft-remarkable](https://github.com/dixonary/draft-reMarkable/)
-configuration files. Hold down the middle button to bring it up.
+configuration files. Swipe up on either side of the screen or hold down the
+middle button to bring it up.
 
 ### [rmkit](src/rmkit)
 

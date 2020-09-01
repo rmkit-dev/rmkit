@@ -13,7 +13,9 @@ there are a couple ways to configure the list of apps that appear in reMux:
 ## Building
 
 run `make remux` from the root dir of rmkit to build it. then run `make
-install_remux` to copy remux to the remarkable. Finally, if you want to make
-the installation permanent, change into this directory and run `make
-install_service` followed by `make start_service`
+install_remux` to copy remux to the remarkable. Run `make run_remux` to run remux.
+
+Finally, if you want to make the installation permanent, change into the
+`src/remux` directory and run `make install_service` followed by `make
+start_service`
 
