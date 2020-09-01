@@ -153,15 +153,8 @@ class App: public IApp:
       delete app_bg
 
     app_dialog = new AppDialog(0, 0, 600, 800, self)
-    RMApp active
     app_dialog->populate()
-    for auto a : app_dialog->get_apps():
-      print "CHECKING", a.which
-      if proc::is_running(a.which):
-        active = a
-
-    print "CURRENT APP IS", active.name
-    CURRENT_APP = active.name
+    get_current_app()
 
     app_bg = new AppBackground(0, 0, w, h)
 
@@ -177,6 +170,15 @@ class App: public IApp:
     self.on_suspend()
     #endif
     return
+
+  void get_current_app():
+    RMApp active
+    for auto a : app_dialog->get_apps():
+      if proc::is_running(a.which):
+        active = a
+
+    print "CURRENT APP IS", active.name
+    CURRENT_APP = active.name
 
   def suspend_on_idle():
     self.idle_thread = new thread([=]() {
@@ -217,6 +219,7 @@ class App: public IApp:
       return
 
 
+    get_current_app()
     // this is really backgrounding apps, not terminating
     term_apps()
 
@@ -366,6 +369,9 @@ class App: public IApp:
 
 
   void launch(string name):
+    if name == "":
+      return
+
     print "LAUNCHING APP", name
     string bin
 
@@ -373,8 +379,6 @@ class App: public IApp:
       if a.name == name:
         bin = a.bin
         CURRENT_APP = string(a.name)
-
-    term_apps(name)
 
     ui::MainLoop::in.ungrab()
     flood_touch_queue()
@@ -402,7 +406,6 @@ class App: public IApp:
     fw, fh := fb->get_display_size()
     left := -1
     y_delta := self.touch_events[0].slots[0].y - self.touch_events.back().slots[0].y
-    print self.touch_events.size()
     for auto ev: self.touch_events:
       if ev.slots[0].x == -1:
         continue
@@ -423,11 +426,10 @@ class App: public IApp:
     if y_delta >= 300:
       self.show_launcher()
       return
-    print "no", y_delta
 
 
   def run():
-    system("systemctl xochitl stop")
+    system("systemctl stop xochitl")
     proc::launch_process("xochitl", true /* check running */, true /* background */)
 
     ui::Text::DEFAULT_FS = 32

@@ -39,11 +39,9 @@ namespace proc:
     str_utils::trim(pid)
     fname := "/proc/" + pid + "/wchan"
     ifstream f(fname)
-    print "FNAME", fname
     string status
     getline(f, status)
 
-    print pid, bin, status
     return status != "do_signal_stop"
 
   def stop_programs(vector<string> programs, string signal=""):
@@ -92,7 +90,6 @@ namespace proc:
       system(cmd.c_str())
       print base, "IS ALREADY RUNNING, RESUMING"
       return
-    print "LAUNCHING PROCESS", name
 
     proc := name
     if background:
