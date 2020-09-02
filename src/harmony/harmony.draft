@@ -1,0 +1,3 @@
+name=harmony
+desc=Procedural sketching app for remarkable
+call=/usr/bin/harmony
