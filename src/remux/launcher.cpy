@@ -448,7 +448,7 @@ class App: public IApp:
         ui::MainLoop::redraw()
 
       ui::MainLoop::read_input()
-      self.save_input()
+      // self.save_input()
 
 App app
 def main():
