@@ -56,7 +56,7 @@ rmkit.h:
 	cd src/rmkit && make
 
 docker:
-	docker build --tag rmharmony:latest .
+	docker build --tag rmkit:latest .
 	bash scripts/build/docker_release.sh
 
 docker_install: docker
