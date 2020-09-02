@@ -1,7 +1,7 @@
 HOST?=10.11.99.1
 ARCH?=arm
-CXX=arm-linux-gnueabihf-g++
-CC = arm-linux-gnueabihf-gcc
+CXX_BIN?=arm-linux-gnueabihf-g++
+CC_BIN?=arm-linux-gnueabihf-gcc
 CPP_FLAGS=-pthread -lpthread
 
 # BUILD STUFF

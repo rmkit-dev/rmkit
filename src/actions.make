@@ -24,11 +24,11 @@ clean:
 
 compile_arm: export CPP_FLAGS += -O2
 compile_arm:
-	CXX=arm-linux-gnueabihf-g++ okp ${OKP_FLAGS} -- -D"REMARKABLE=1" ${CPP_FLAGS}
+	CXX=${CXX_BIN} okp ${OKP_FLAGS} -- -D"REMARKABLE=1" ${CPP_FLAGS}
 
 compile_arm_fast: export CPP_FLAGS += -O0 -g
 compile_arm_fast:
-	CXX=arm-linux-gnueabihf-g++ okp ${OKP_FLAGS} -- -D"REMARKABLE=1" ${CPP_FLAGS}
+	CXX=${CXX_BIN} okp ${OKP_FLAGS} -- -D"REMARKABLE=1" ${CPP_FLAGS}
 
 compile_dev: export CPP_FLAGS += -O0 -g
 compile_dev:
