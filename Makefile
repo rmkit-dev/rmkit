@@ -70,7 +70,7 @@ bundle: $(APPS)
 	cp src/remux/remux.service ${BUILD_DIR}
 	cp src/remux/remux.service ${BUILD_DIR}/${DEST}/
 
-	cd ${BUILD_DIR}; zip release.zip -r ${DEST}/; cd..
+	cd ${BUILD_DIR}; zip release.zip -r ${DEST}/; cd ..
 	rm -fr ${BUILD_DIR}/${DEST}/
 	cat scripts/run/install_harmony.sh.template | sed 's/VERSION/${VERSION}/g' > scripts/run/install_harmony.sh
 	cat scripts/run/try_harmony.sh.template | sed 's/VERSION/${VERSION}/g' > scripts/run/try_harmony.sh
