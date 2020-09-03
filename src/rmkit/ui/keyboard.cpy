@@ -75,7 +75,7 @@ namespace ui:
       for (auto c: row2chars):
         row2->add_key(self.make_char_button(c))
 
-      shift_key := self.make_icon_button(ICON(assets::shift_icon_png), 100)
+      shift_key := new Button(0, 0, self.btn_width, btn_height, "shift")
       shift_key->textWidget->font_size = btn_font_size
       shift_key->mouse.click += PLS_LAMBDA(auto &ev):
         self.caps = !self.caps
@@ -87,6 +87,7 @@ namespace ui:
       backspace_key := new Button(0,0,self.btn_width,btn_height,"back")
       backspace_key->textWidget->font_size = btn_font_size
 
+
       backspace_key->mouse.click += PLS_LAMBDA(auto &ev):
         if self.input_box->text.size() > 0:
           self.input_box->text.pop_back()
@@ -94,6 +95,20 @@ namespace ui:
           self.dirty = 1
       ;
       row3->add_key(backspace_key)
+
+      kbd := new Button(0,0,self.btn_width,btn_height,"kbd")
+      space_key := new Button(0,0,self.btn_width*8,btn_height,"space")
+      upper := new Button(0,0,self.btn_width,btn_height,"")
+      space_key->textWidget->font_size = btn_font_size
+      space_key->mouse.click += PLS_LAMBDA(auto &ev):
+        self.input_box->text += " "
+        self.input_box->dirty = 1
+        self.dirty = 1
+      ;
+
+      row4->add_key(kbd)
+      row4->add_key(space_key)
+      row4->add_key(upper)
 
       // TODO row 4
 
