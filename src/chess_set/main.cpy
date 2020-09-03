@@ -1,6 +1,8 @@
 #include <cstddef>
 #include "../build/rmkit.h"
 #include "assets.h"
+#include "pieces.h"
+
 using namespace std
 
 PIECE_SIZE := 150
@@ -9,16 +11,6 @@ class IBoard:
   public:
   virtual void on_cell_clicked():
     pass
-
-class Piece: public ui::Widget:
-  public:
-  icons::Icon icon
-  Piece(int x, y, w, h): ui::Widget(x, y, w, h):
-    pass
-
-  void render():
-    pixmap := ui::Pixmap(self.x, self.y, self.w, self.h, self.icon)
-    pixmap.render()
 
 class Cell: public ui::Widget:
   public:
@@ -76,22 +68,6 @@ class Board: public IBoard, public ui::Widget:
     self.fb->draw_rect(self.x-1, self.y-1, self.w+2, self.h+2, BLACK, 0 /* fill */)
 
 
-class BlackBishop: public Piece:
-  public:
-  BlackBishop(int x, y, w, h): Piece(x,y,w,h):
-    self.icon = ICON(assets::black_bishop_png)
-
-class WhiteKing: public Piece:
-  public:
-  WhiteKing(int x, y, w, h): Piece(x,y,w,h):
-    self.icon = ICON(assets::King_png)
-
-class BlackKing: public Piece:
-  public:
-  BlackKing(int x, y, w, h): Piece(x,y,w,h):
-    self.icon = ICON(assets::Kingb_png)
-
-
 class App:
   public:
   ui::Scene demo_scene
@@ -116,14 +92,26 @@ class App:
     board->make_grid(demo_scene, n)
 
     // board->move_piece(
-    board->add_piece(0, 0, new WhiteKing(0, 0, PIECE_SIZE, PIECE_SIZE))
-    board->add_piece(0, 1, new BlackKing(0, 0, PIECE_SIZE, PIECE_SIZE))
-    board->add_piece(0, 2, new BlackKing(0, 0, PIECE_SIZE, PIECE_SIZE))
-    board->add_piece(0, 3, new WhiteKing(0, 0, PIECE_SIZE, PIECE_SIZE))
-    board->add_piece(0, 0, new WhiteKing(0, 0, PIECE_SIZE, PIECE_SIZE))
-    board->add_piece(1, 0, new BlackKing(0, 0, PIECE_SIZE, PIECE_SIZE))
-    board->add_piece(2, 0, new BlackKing(0, 0, PIECE_SIZE, PIECE_SIZE))
-    board->add_piece(3, 0, new WhiteKing(0, 0, PIECE_SIZE, PIECE_SIZE))
+    board->add_piece(0, 0, new WhiteRook(0, 0, PIECE_SIZE, PIECE_SIZE))
+    board->add_piece(1, 0, new WhiteKnight(0, 0, PIECE_SIZE, PIECE_SIZE))
+    board->add_piece(2, 0, new WhiteBishop(0, 0, PIECE_SIZE, PIECE_SIZE))
+    board->add_piece(3, 0, new WhiteQueen(0, 0, PIECE_SIZE, PIECE_SIZE))
+    board->add_piece(4, 0, new WhiteKing(0, 0, PIECE_SIZE, PIECE_SIZE))
+    board->add_piece(5, 0, new WhiteBishop(0, 0, PIECE_SIZE, PIECE_SIZE))
+    board->add_piece(6, 0, new WhiteKnight(0, 0, PIECE_SIZE, PIECE_SIZE))
+    board->add_piece(7, 0, new WhiteRook(0, 0, PIECE_SIZE, PIECE_SIZE))
+
+    board->add_piece(0, 7, new BlackRook(0, 0, PIECE_SIZE, PIECE_SIZE))
+    board->add_piece(1, 7, new BlackKnight(0, 0, PIECE_SIZE, PIECE_SIZE))
+    board->add_piece(2, 7, new BlackBishop(0, 0, PIECE_SIZE, PIECE_SIZE))
+    board->add_piece(3, 7, new BlackQueen(0, 0, PIECE_SIZE, PIECE_SIZE))
+    board->add_piece(4, 7, new BlackKing(0, 0, PIECE_SIZE, PIECE_SIZE))
+    board->add_piece(5, 7, new BlackBishop(0, 0, PIECE_SIZE, PIECE_SIZE))
+    board->add_piece(6, 7, new BlackKnight(0, 0, PIECE_SIZE, PIECE_SIZE))
+    board->add_piece(7, 7, new BlackRook(0, 0, PIECE_SIZE, PIECE_SIZE))
+    for i := 0; i < 8; i++:
+      board->add_piece(i, 1, new WhitePawn(0, 0, PIECE_SIZE, PIECE_SIZE))
+      board->add_piece(i, 6, new BlackPawn(0, 0, PIECE_SIZE, PIECE_SIZE))
     // board->remove_piece(
 
     demo_scene->add(board)
