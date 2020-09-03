@@ -2,10 +2,9 @@
 
 killall remux.exe
 killall harmony.exe
-rm harmony-release.zip
-wget https://build.rmkit.dev/master/latest/release.zip -O harmony-release.zip
-yes | unzip harmony-release.zip
+rm rmkit-release.zip
+wget https://build.rmkit.dev/stable/latest/release.zip -O rmkit-release.zip
+yes | unzip rmkit-release.zip
 
 cp /home/root/apps/remux.service /etc/systemd/system/remux.service
 systemctl enable --now remux
-systemctl disable --now xochitl

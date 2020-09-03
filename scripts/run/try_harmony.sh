@@ -11,7 +11,7 @@ trap cleanup EXIT
 trap cleanup SIGINT
 
 killall harmony
-rm harmony-release.zip
-wget https://github.com/rmkit-dev/rmkit/releases/download/v0.0.2/release.zip -O harmony-release.zip
-yes | unzip harmony-release.zip
-./apps/harmony.exe
+rm rmkit-release.zip
+wget https://build.rmkit.dev/stable/latest/release.zip -O rmkit-release.zip
+yes | unzip rmkit-release.zip
+./apps/remux.exe

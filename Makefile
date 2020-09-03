@@ -66,6 +66,8 @@ bundle: $(APPS)
 	#BUILDING V: ${VERSION} ARCH: ${ARCH}
 	mkdir -p ${BUILD_DIR}/${DEST} 2>/dev/null || true
 	cp ${BUILD_DIR}/*.exe ${BUILD_DIR}/${DEST}/
+	sha256sum ${BUILD_DIR}/*.exe > ${BUILD_DIR}/sha256sum.txt
+	ls -la ${BUILD_DIR} > ${BUILD_DIR}/ls.txt
 	cp ${BUILD_DIR}/*.txt ${BUILD_DIR}/${DEST}/
 	cp src/remux/remux.service ${BUILD_DIR}
 	cp src/remux/remux.service ${BUILD_DIR}/${DEST}/

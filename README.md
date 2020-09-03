@@ -16,8 +16,7 @@ A minesweeper game for spending time between meetings and classes
 
 An app switcher for switching between apps on the remarkable that is compatible
 with [draft-remarkable](https://github.com/dixonary/draft-reMarkable/)
-configuration files. Swipe up on either side of the screen or hold down the
-middle button to bring it up.
+configuration files. Hold the middle button to bring it up.
 
 ### [rmkit](src/rmkit)
 
@@ -32,15 +31,20 @@ A small example app to demonstrate how to build apps with rmkit
 
 #### Try it out
 
-run `wget -O- https://raw.githack.com/rmkit-dev/rmkit/master/scripts/run/try_harmony.sh -q | sh -` on the remarkable via SSH
+run `wget -O- https://rmkit.dev/try.sh -q | sh -` on the remarkable via SSH
 
 To exit harmony, press the power button to bring up the exit dialog.
 
 #### Install
 
-run `wget -O- https://raw.githack.com/rmkit-dev/rmkit/master/scripts//run/install_harmony.sh -q | sh -` to install the remux app launcher until the next time the device is updated
+run `wget -O- https://rmkit.dev/install.sh -q | sh -` to install the remux app launcher until the next time the device is updated
 
 to launch remux and switch between apps, hold the center button for 2+ seconds.
+
+#### Uninstalling
+
+to remove remux, run `systemctl disable remux --now`. All the applications are
+installed into /home/root/apps, so you can delete that directory safely.
 
 ## Building from source
 
