@@ -65,6 +65,7 @@ class AppBackground: public ui::Widget:
   map<string, framebuffer::FileFB*> app_buffers;
 
   AppBackground(int x, y, w, h): ui::Widget(x, y, w, h):
+    mkdir(CACHE_DIR, 0x755)
     self.byte_size = w*h*sizeof(remarkable_color)
 
   def snapshot():
@@ -79,7 +80,7 @@ class AppBackground: public ui::Widget:
   framebuffer::FileFB* get_vfb():
     if app_buffers.find(CURRENT_APP) == app_buffers.end():
       fw, fh := fb->get_display_size()
-      fname := string(BIN_DIR) + "." + CURRENT_APP + ".fb"
+      fname := string(CACHE_DIR) + "." + CURRENT_APP + ".fb"
       app_buffers[CURRENT_APP] = new framebuffer::FileFB(fname, fw, fh)
       app_buffers[CURRENT_APP]->clear_screen()
 

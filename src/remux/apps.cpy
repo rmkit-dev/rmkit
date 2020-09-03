@@ -1,11 +1,15 @@
 #include "config.launcher.h"
 
 #ifdef REMARKABLE
-#define BIN_DIR  "/home/root/apps/"
+#define BIN_DIR  "/home/root/.apps/"
 #define DRAFT_DIR "/etc/draft/"
+#define OPT_DRAFT_DIR "/opt/etc/draft/"
+#define CACHE_DIR "/home/root/.cache/remux"
 #else
+#define CACHE_DIR "./src/tmp"
 #define BIN_DIR  "./src/build/"
 #define DRAFT_DIR "./src/remux/draft"
+#define OPT_DRAFT_DIR "/nowhere/nothing"
 #endif
 
 EXE_EXT := ".exe"
@@ -68,8 +72,17 @@ class AppReader:
     else:
       perror ("")
 
-    return apps
+    vector<string> skip_list = { "remux.exe", "xochitl", "/usr/bin/xochitl" }
+    for auto a : apps:
+      dont_add := false
+      for auto s : skip_list:
+        if s == a.bin:
+          dont_add = true
+      if dont_add:
+        continue
 
+      self.apps.push_back(a)
+    return apps
 
   def read_apps_from_dir(string bin_dir):
     DIR *dir
@@ -99,16 +112,8 @@ class AppReader:
       if a.always_show || proc::exe_exists(a.bin):
         self.apps.push_back(a)
 
-    draft_binaries := read_draft_from_dir(DRAFT_DIR)
-    for auto a : draft_binaries:
-      dont_add := false
-      for auto s : skip_list:
-        if s == a.bin:
-          dont_add = true
-      if dont_add:
-        continue
-
-      self.apps.push_back(a)
+    read_draft_from_dir(DRAFT_DIR)
+    read_draft_from_dir(OPT_DRAFT_DIR)
 
     bin_binaries := read_apps_from_dir(BIN_DIR)
     for auto a : bin_binaries:
