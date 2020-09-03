@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <unordered_set>
 #include <linux/input.h>
+#include <chrono>
 
 #include "../shared/proc.h"
 #include "../build/rmkit.h"
@@ -29,10 +30,24 @@ LAST_ACTION := 0
 
 string CURRENT_APP = "_"
 
+
 class IApp:
   public:
   virtual void launch(string) = 0;
   virtual void on_suspend() = 0;
+
+
+class ClockWatch:
+  public:
+  chrono::high_resolution_clock::time_point t1
+
+  ClockWatch():
+    t1 = chrono::high_resolution_clock::now();
+
+  def elapsed():
+    t2 := chrono::high_resolution_clock::now();
+    chrono::duration<double> time_span = chrono::duration_cast<chrono::duration<double>>(t2 - t1)
+    return time_span.count()
 
 class SuspendButton: public ui::Button:
   public:
@@ -58,6 +73,7 @@ class AppBackground: public ui::Widget:
 
     vfb := self.get_vfb()
     print "SNAPSHOTTING", CURRENT_APP
+
     vfb->fbmem = (remarkable_color*) memcpy(vfb->fbmem, fb->fbmem, self.byte_size)
 
   framebuffer::FileFB* get_vfb():
@@ -173,12 +189,15 @@ class App: public IApp:
 
   void get_current_app():
     RMApp active
+
+    vector<string> binaries;
     for auto a : app_dialog->get_apps():
       if proc::is_running(a.which):
         active = a
+        print "CURRENT APP IS", active.name
+        CURRENT_APP = active.name
+        return
 
-    print "CURRENT APP IS", active.name
-    CURRENT_APP = active.name
 
   def suspend_on_idle():
     self.idle_thread = new thread([=]() {
@@ -218,13 +237,19 @@ class App: public IApp:
     if ui::MainLoop::overlay_is_visible:
       return
 
+    ClockWatch cz
 
+    ClockWatch c0
     get_current_app()
+    print "current app", c0.elapsed()
+
     // this is really backgrounding apps, not terminating
+    ClockWatch c1
     term_apps()
+    print "term apps", c1.elapsed()
 
     app_bg->snapshot()
-    this_thread::sleep_for(chrono::milliseconds(200));
+
     app_dialog->populate()
     app_dialog->setup_for_render()
     app_dialog->add_shortcuts()
@@ -271,6 +296,7 @@ class App: public IApp:
     last_ev := &ev
 
   void term_apps(string name=""):
+    vector<string> term
     for auto a : app_dialog->get_apps():
       if a.name != name:
         if a.term != "":
@@ -278,8 +304,12 @@ class App: public IApp:
         else:
           cstr := a.bin.c_str()
           base := basename((char *) cstr)
-          stop_cmd := "killall -SIGSTOP " + string(base) + " 2>/dev/null"
-          proc::launch_process(stop_cmd)
+          term.push_back(string(base))
+
+    if term.size() > 0:
+      termed := str_utils::join(term, ' ')
+      stop_cmd := "killall -SIGSTOP " + termed + " 2>/dev/null"
+      proc::launch_process(stop_cmd)
 
   // TODO: power button will cause suspend screen, why not?
   void on_suspend():

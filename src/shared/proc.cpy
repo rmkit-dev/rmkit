@@ -44,6 +44,24 @@ namespace proc:
 
     return status != "do_signal_stop"
 
+  string get_running_app(vector<string> binaries):
+    cmd := "pidof " + str_utils::join(binaries, ' ') + " 2>/dev/null"
+    pids := str_utils::split(exec(cmd.c_str()), ' ')
+
+    for auto pid : pids:
+      str_utils::trim(pid)
+      ifstream f1("/proc/" + pid + "/wchan")
+      string status
+      getline(f1, status)
+
+      if status != "do_signal_stop":
+        ifstream f2("/proc/" + pid + "/cmdline")
+        string name
+        getline(f2, name)
+        str_utils::trim(name)
+        return name
+    return ""
+
   def stop_programs(vector<string> programs, string signal=""):
     for auto s : programs:
       #ifdef REMARKABLE
