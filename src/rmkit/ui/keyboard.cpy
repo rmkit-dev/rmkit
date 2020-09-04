@@ -29,9 +29,9 @@ namespace ui:
 
   class Keyboard: public Widget:
     public:
+    bool shifted = false
+    bool numbers = false
     vector<Row*> rows
-    bool num_mode = false
-    bool caps = false
     Scene scene
     Text *input_box
     int btn_width
@@ -43,21 +43,57 @@ namespace ui:
       h = full_h / 4
       self.w = w
       self.h = h
+      self.lower_layout()
 
+    void lower_layout():
+      self.numbers = false
+      self.shifted = false
+      self.set_layout(
+        "qwertyuoip",
+        "asdfghjkl",
+        "zxcvbnm"
+      )
+
+    void upper_layout():
+      self.numbers = false
+      self.shifted = true
+      self.set_layout(
+        "QWERTYUOIP",
+        "ASDFGHJKL",
+        "ZXCVBnm"
+      )
+
+    void number_layout():
+      self.numbers = true
+      self.shifted = false
+      self.set_layout(
+        "1234567890",
+        "-/:;() &@\"",
+        ",.?!'"
+      )
+
+    void symbol_layout():
+      self.numbers = true
+      self.shifted = true
+      self.set_layout(
+        "[]{}#%^*+=",
+        "_\|~<> $  ",
+        ",.?!'"
+      )
+
+    void set_layout(string row1chars, row2chars, row3chars):
       self.scene = ui::make_scene()
       self.scene->add(self)
 
-      string row1chars = "qwertyuoip"
-      string row2chars = "asdfghjkl"
-      string row3chars = "zxcvbnm"
       self.btn_width = w / row1chars.size()
       self.btn_height = 100
       row1 := new Row(0,0,w,100, self.scene)
-      row2 := new Row(h/8,0,w,100, self.scene)
-      row3 := new Row(h/8,0,w,100, self.scene)
+      row2 := new Row(0,0,w,100, self.scene)
+      row3 := new Row(0,0,w,100, self.scene)
       row4 := new Row(0,0,w,100, self.scene)
 
-      v_layout := ui::VerticalLayout(0, 0, w, full_h, self.scene)
+      fw, fh = self.fb->get_display_size()
+      v_layout := ui::VerticalLayout(0, 0, fw, fh, self.scene)
 
       self.input_box = new Text(0,0,w,50,"");
       self.input_box->justify = Text::JUSTIFY::LEFT;
@@ -78,8 +114,14 @@ namespace ui:
       shift_key := new Button(0, 0, self.btn_width, btn_height, "shift")
       shift_key->textWidget->font_size = btn_font_size
       shift_key->mouse.click += PLS_LAMBDA(auto &ev):
-        self.caps = !self.caps
-        // TODO regenerate the layout keys with capitalized keys
+        if !numbers and !shifted:
+          self.upper_layout()
+        else if !numbers and shifted:
+          self.lower_layout()
+        else if numbers and !shifted:
+          self.symbol_layout()
+        else:
+          self.number_layout()
       ;
       row3->add_key(shift_key)
       for (auto c: row3chars):
@@ -97,6 +139,12 @@ namespace ui:
       row3->add_key(backspace_key)
 
       kbd := new Button(0,0,self.btn_width,btn_height,"kbd")
+      kbd->mouse.click += PLS_LAMBDA(auto &ev):
+        if numbers:
+          self.lower_layout()
+        else:
+          self.number_layout()
+      ;
       space_key := new Button(0,0,self.btn_width*8,btn_height,"space")
       upper := new Button(0,0,self.btn_width,btn_height,"")
       space_key->textWidget->font_size = btn_font_size
@@ -109,6 +157,9 @@ namespace ui:
       row4->add_key(kbd)
       row4->add_key(space_key)
       row4->add_key(upper)
+
+      self.show()
+      ui::MainLoop::refresh()
 
       // TODO row 4
 
