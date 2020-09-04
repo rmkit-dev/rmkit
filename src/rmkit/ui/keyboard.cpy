@@ -9,6 +9,16 @@
 
 namespace ui:
 
+  class KeyButton: public ui::Button:
+    public:
+    KeyButton(int x, y, w, h, string t): ui::Button(x, y, w, h, t):
+      pass
+
+    void before_render():
+      ui::Button::before_render()
+      self.mouse_inside = self.mouse_down && self.mouse_inside
+
+
   class Row: public Widget:
     public:
     HorizontalLayout *layout = NULL
@@ -17,7 +27,7 @@ namespace ui:
     Row(int x, y, w, h, Scene s): Widget(x,y,w,h):
       self.scene = s
 
-    void add_key(Button *key):
+    void add_key(KeyButton *key):
       if self.layout == NULL:
         print "RENDERING ROW", self.x, self.y, self.w, self.h
         self.layout = new HorizontalLayout(self.x, self.y, self.w, self.h, self.scene)
@@ -69,7 +79,7 @@ namespace ui:
       self.set_layout(
         "1234567890",
         "-/:;() &@\"",
-        ",.?!'"
+        "  ,.?!'  "
       )
 
     void symbol_layout():
@@ -77,8 +87,8 @@ namespace ui:
       self.shifted = true
       self.set_layout(
         "[]{}#%^*+=",
-        "_\|~<> $  ",
-        ",.?!'"
+        "_\|~<>  $  ",
+        "  ,.?!'  "
       )
 
     void set_layout(string row1chars, row2chars, row3chars):
@@ -87,9 +97,10 @@ namespace ui:
 
       self.btn_width = w / row1chars.size()
       self.btn_height = 100
+      indent := row1chars.size() > row2chars.size() ? h/8 : 0
       row1 := new Row(0,0,w,100, self.scene)
-      row2 := new Row(0,0,w,100, self.scene)
-      row3 := new Row(0,0,w,100, self.scene)
+      row2 := new Row(indent,0,w,100, self.scene)
+      row3 := new Row(indent,0,w,100, self.scene)
       row4 := new Row(0,0,w,100, self.scene)
 
       fw, fh = self.fb->get_display_size()
@@ -111,7 +122,7 @@ namespace ui:
       for (auto c: row2chars):
         row2->add_key(self.make_char_button(c))
 
-      shift_key := new Button(0, 0, self.btn_width, btn_height, "shift")
+      shift_key := new KeyButton(0, 0, self.btn_width, btn_height, "shift")
       shift_key->textWidget->font_size = btn_font_size
       shift_key->mouse.click += PLS_LAMBDA(auto &ev):
         if !numbers and !shifted:
@@ -126,7 +137,7 @@ namespace ui:
       row3->add_key(shift_key)
       for (auto c: row3chars):
         row3->add_key(self.make_char_button(c))
-      backspace_key := new Button(0,0,self.btn_width,btn_height,"back")
+      backspace_key := new KeyButton(0,0,self.btn_width,btn_height,"back")
       backspace_key->textWidget->font_size = btn_font_size
 
 
@@ -138,15 +149,15 @@ namespace ui:
       ;
       row3->add_key(backspace_key)
 
-      kbd := new Button(0,0,self.btn_width,btn_height,"kbd")
+      kbd := new KeyButton(0,0,self.btn_width,btn_height,"kbd")
       kbd->mouse.click += PLS_LAMBDA(auto &ev):
         if numbers:
           self.lower_layout()
         else:
           self.number_layout()
       ;
-      space_key := new Button(0,0,self.btn_width*8,btn_height,"space")
-      upper := new Button(0,0,self.btn_width,btn_height,"")
+      space_key := new KeyButton(0,0,self.btn_width*8,btn_height,"space")
+      upper := new KeyButton(0,0,self.btn_width,btn_height,"")
       space_key->textWidget->font_size = btn_font_size
       space_key->mouse.click += PLS_LAMBDA(auto &ev):
         self.input_box->text += " "
@@ -163,20 +174,22 @@ namespace ui:
 
       // TODO row 4
 
-    Button* make_char_button(char c):
+    KeyButton* make_char_button(char c):
       string s(1, c)
-      key := new Button(0,0,self.btn_width,btn_height,s)
+      key := new KeyButton(0,0,self.btn_width,btn_height,s)
       key->textWidget->font_size = btn_font_size
       key->mouse.click += PLS_LAMBDA(auto &ev):
         self.dirty = 1
+        if c == ' ':
+          return
         self.input_box->text.push_back(c)
         self.input_box->dirty = 1
         print "key pressed:", c
       ;
       return key
 
-    Button* make_icon_button(icons::Icon icon, int w):
-      key := new Button(0,0,self.btn_width,btn_height,"")
+    KeyButton* make_icon_button(icons::Icon icon, int w):
+      key := new KeyButton(0,0,self.btn_width,btn_height,"")
       key->icon = icon
       return key
 
