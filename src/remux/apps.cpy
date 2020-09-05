@@ -1,13 +1,15 @@
 #include "config.launcher.h"
 
 #ifdef REMARKABLE
-#define BIN_DIR  "/home/root/.apps/"
+#define BIN_DIR  "/home/root/apps/"
+#define DOT_BIN_DIR  "/home/root/.apps/"
 #define DRAFT_DIR "/etc/draft/"
 #define OPT_DRAFT_DIR "/opt/etc/draft/"
 #define CACHE_DIR "/home/root/.cache/remux"
 #else
 #define CACHE_DIR "./src/tmp"
 #define BIN_DIR  "./src/build/"
+#define DOT_BIN_DIR  "./src/build/.build"
 #define DRAFT_DIR "./src/remux/draft"
 #define OPT_DRAFT_DIR "/nowhere/nothing"
 #endif
@@ -104,18 +106,9 @@ class AppReader:
     sort(filenames.begin(),filenames.end())
     return filenames
 
-  void populate():
+  def read_binaries_from_dir(string dir):
     vector<string> skip_list = { "remux.exe" }
-    self.apps = {}
-
-    for auto a : APPS:
-      if a.always_show || proc::exe_exists(a.bin):
-        self.apps.push_back(a)
-
-    read_draft_from_dir(DRAFT_DIR)
-    read_draft_from_dir(OPT_DRAFT_DIR)
-
-    bin_binaries := read_apps_from_dir(BIN_DIR)
+    bin_binaries := read_apps_from_dir(dir)
     for auto a : bin_binaries:
       bin_str := string(a)
       app_s := a.c_str()
@@ -135,6 +128,20 @@ class AppReader:
 
       app := (RMApp) { .bin=bin_str, .which=base_str, .name=name_str }
       self.apps.push_back(app)
+
+  void populate():
+    vector<string> skip_list = { "remux.exe" }
+    self.apps = {}
+
+    for auto a : APPS:
+      if a.always_show || proc::exe_exists(a.bin):
+        self.apps.push_back(a)
+
+    read_draft_from_dir(DRAFT_DIR)
+    read_draft_from_dir(OPT_DRAFT_DIR)
+
+    read_binaries_from_dir(BIN_DIR)
+    read_binaries_from_dir(DOT_BIN_DIR)
 
   def get_binaries():
     vector<string> binaries
