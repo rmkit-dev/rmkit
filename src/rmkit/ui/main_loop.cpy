@@ -41,6 +41,9 @@ namespace ui:
     static Scene overlay
     static bool overlay_is_visible
 
+    static Scene kbd
+    static bool kbd_is_visible
+
     static input::Input in
 
     // variable: motion_event
@@ -79,6 +82,12 @@ namespace ui:
 
     // returns whether the supplied widget is visible
     static bool is_visible(Widget *w):
+      if kbd_is_visible:
+        for auto widget : overlay->widgets:
+          if widget.get() == w:
+            return true
+        return false
+        
       if overlay_is_visible:
         for auto widget : overlay->widgets:
           if widget.get() == w:
@@ -128,9 +137,15 @@ namespace ui:
       handle_events()
 
       TaskQueue::run_task()
+
+      if kbd_is_visible:
+        kbd->redraw()
+        return
+
       scene->redraw()
       if overlay_is_visible:
         overlay->redraw()
+
 
     /// blocking read for input
     static void read_input():
@@ -171,6 +186,22 @@ namespace ui:
         MainLoop::refresh()
         overlay->on_hide()
 
+    static void show_kbd(Scene s):
+      kbd = s
+      kbd_is_visible = true
+      print "SET KEYBOARD SCENE"
+      Widget::fb->clear_screen()
+      MainLoop::refresh()
+      s->on_show()
+
+    static void hide_kbd():
+      if kbd_is_visible:
+        kbd_is_visible = false
+        Widget::fb->clear_screen()
+        MainLoop::refresh()
+        kbd->on_hide()
+
+
     // clear and refresh the widgets on screen
     // useful if changing scenes or otherwise
     // expecting the whole screen to change
@@ -184,6 +215,9 @@ namespace ui:
       if overlay_is_visible:
         display_scene = overlay
 
+      if kbd_is_visible:
+        display_scene = kbd
+
       for auto widget: display_scene->widgets:
         widget->kbd.pressed(ev)
 
@@ -193,6 +227,8 @@ namespace ui:
       display_scene := scene
       if overlay_is_visible:
         display_scene = overlay
+      if kbd_is_visible:
+        display_scene = kbd
 
       bool is_hit = false
       bool hit_widget = false
@@ -251,7 +287,7 @@ namespace ui:
           if prev_mouse_inside:
             widget->mouse.leave(ev)
 
-      if overlay_is_visible && mouse_down && !hit_widget:
+      if !kbd_is_visible && overlay_is_visible && mouse_down && !hit_widget:
         if !overlay->pinned:
           MainLoop::hide_overlay()
 
@@ -261,7 +297,10 @@ namespace ui:
   typedef MainLoop::GestureEvent GestureEvent
   Scene MainLoop::scene = make_scene()
   Scene MainLoop::overlay = make_scene()
+  Scene MainLoop::kbd = make_scene()
   bool MainLoop::overlay_is_visible = false
+  bool MainLoop::kbd_is_visible = false
+
   input::Input MainLoop::in = {}
 
   MOUSE_EVENT MainLoop::motion_event

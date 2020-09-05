@@ -8,6 +8,14 @@
 
 
 namespace ui:
+  class KeyboardEvent:
+    public:
+    string text
+    KeyboardEvent(string t): text(t):
+      pass
+  ;
+
+  PLS_DEFINE_SIGNAL(KEYBOARD_EVENT, KeyboardEvent)
 
   class KeyButton: public ui::Button:
     public:
@@ -36,17 +44,24 @@ namespace ui:
     void render():
       pass // if a component is in scene, it gets rendered
 
-
   class Keyboard: public Widget:
+    class KEYBOARD_EVENTS:
+      public:
+      KEYBOARD_EVENT changed
+
     public:
     bool shifted = false
     bool numbers = false
     vector<Row*> rows
     Scene scene
-    Text *input_box
+    Scene prev_overlay
+    MultiText *input_box = NULL
+    string text = ""
     int btn_width
     int btn_height
     int btn_font_size = 48
+
+    KEYBOARD_EVENTS events
 
     Keyboard(int x=0,y=0,w=0,h=0): Widget(x,y,w,h):
       w, full_h = self.fb->get_display_size()
@@ -54,6 +69,12 @@ namespace ui:
       self.w = w
       self.h = h
       self.lower_layout()
+
+    void set_text(string t):
+      self.text = t
+      if self.input_box != NULL:
+        self.input_box->text = t
+
 
     void lower_layout():
       self.numbers = false
@@ -87,7 +108,7 @@ namespace ui:
       self.shifted = true
       self.set_layout(
         "[]{}#%^*+=",
-        "_\|~<>  $  ",
+        "_\\|~<> $  ",
         "  ,.?!'  "
       )
 
@@ -106,8 +127,7 @@ namespace ui:
       fw, fh = self.fb->get_display_size()
       v_layout := ui::VerticalLayout(0, 0, fw, fh, self.scene)
 
-      self.input_box = new Text(0,0,w,50,"");
-      self.input_box->justify = Text::JUSTIFY::LEFT;
+      self.input_box = new MultiText(0,0,w,50,self.text)
       self.input_box->font_size = 64
       v_layout.pack_start(input_box)
 
@@ -142,8 +162,9 @@ namespace ui:
 
 
       backspace_key->mouse.click += PLS_LAMBDA(auto &ev):
-        if self.input_box->text.size() > 0:
-          self.input_box->text.pop_back()
+        if self.text.size() > 0:
+          self.text.pop_back()
+          self.input_box->text = self.text
           self.input_box->dirty = 1
           self.dirty = 1
       ;
@@ -157,17 +178,28 @@ namespace ui:
           self.number_layout()
       ;
       space_key := new KeyButton(0,0,self.btn_width*8,btn_height,"space")
-      upper := new KeyButton(0,0,self.btn_width,btn_height,"")
       space_key->textWidget->font_size = btn_font_size
       space_key->mouse.click += PLS_LAMBDA(auto &ev):
-        self.input_box->text += " "
+        self.text += " "
+        self.input_box->text = text
         self.input_box->dirty = 1
         self.dirty = 1
       ;
 
+      enter_key := new KeyButton(0,0,self.btn_width,btn_height,"done")
+      enter_key->textWidget->font_size = btn_font_size
+      enter_key->mouse.click += PLS_LAMBDA(auto &ev):
+        self.hide()
+        ui::MainLoop::refresh()
+        kev := KeyboardEvent {text:self.text}
+        self.events.changed(kev)
+
+        ui::MainLoop::hide_kbd()
+      ;
+
       row4->add_key(kbd)
       row4->add_key(space_key)
-      row4->add_key(upper)
+      row4->add_key(enter_key)
 
       self.show()
       ui::MainLoop::refresh()
@@ -182,7 +214,9 @@ namespace ui:
         self.dirty = 1
         if c == ' ':
           return
-        self.input_box->text.push_back(c)
+
+        self.text.push_back(c)
+        self.input_box->text = self.text
         self.input_box->dirty = 1
         print "key pressed:", c
       ;
@@ -198,7 +232,7 @@ namespace ui:
 
     void show():
       self.scene->pinned = true
-      ui::MainLoop::show_overlay(self.scene)
+      ui::MainLoop::show_kbd(self.scene)
 
     // switch between: lowercase alphabet, uppercase, nums, symbols
     void switch_mode(int mode):

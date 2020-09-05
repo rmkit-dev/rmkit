@@ -11,3 +11,4 @@
 #include "text.h"
 #include "thumbnail.h"
 #include "keyboard.h"
+#include "text_input.h"

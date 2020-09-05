@@ -6,7 +6,7 @@
 
 
 namespace ui:
-  // class: TaskQueue
+  // class: ui::TaskQueue
   // The task queue is a way of scheduling tasks from the main thread to be run
   // in a side thread. After the side thread is finished, the task queue will
   // wake up the main thread

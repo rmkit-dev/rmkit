@@ -37,7 +37,6 @@ int parse_to_int(string s, int line_no):
     cerr << "line " <<  line_no << " : " << s << " cannot be parsed to int"
   return i
 
-
 def main():
   ui::Scene scene = ui::make_scene()
   ui::MainLoop::set_scene(scene)
@@ -90,6 +89,9 @@ def main():
         print "selected:", t
         exit(0)
       ;
+    else if first == "textinput":
+      textinput := new ui::TextInput(x,y,w,h,t)
+      scene->add(textinput)
     else if first == "image":
       image := new ui::Thumbnail(x,y,w,h,tokens[5])
       scene->add(image)

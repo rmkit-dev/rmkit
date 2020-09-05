@@ -17,9 +17,10 @@ class App:
     fb->redraw_screen()
     w, h = fb->get_display_size()
 
-    keyboard := new ui::Keyboard()
-    demo_scene->add(keyboard)
-    keyboard->show()
+    input_box := new ui::TextInput(0, 50, 500, 50)
+
+    h_layout := ui::HorizontalLayout(0, 0, w, h, demo_scene)
+    h_layout.pack_center(input_box)
 
 
   def handle_key_event(input::SynKeyEvent &key_ev):
