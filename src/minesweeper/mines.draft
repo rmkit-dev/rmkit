@@ -1,3 +1,3 @@
 name=mines
 desc=Mine detection game
-call=/usr/bin/mines
+call=/opt/usr/bin/mines
