@@ -105,7 +105,7 @@ namespace proc:
     base := basename((char *) cstr)
     if check_running && check_process(base):
       cmd := "killall -SIGCONT " + string(base) + " 2> /dev/null"
-      system(cmd.c_str())
+      _ := system(cmd.c_str())
       print base, "IS ALREADY RUNNING, RESUMING"
       return
 

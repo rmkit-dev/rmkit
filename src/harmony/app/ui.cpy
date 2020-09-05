@@ -172,7 +172,7 @@ namespace app_ui:
       if option == SAVE:
         filename := self.canvas->save()
         if self.sd == NULL:
-          self.sd = new SaveDialog(0, 0, DIALOG_WIDTH, DIALOG_HEIGHT)
+          self.sd = new SaveDialog(0, 0, DIALOG_WIDTH*2, DIALOG_HEIGHT)
         title := "Saved as " + filename
         self.sd->set_title(title)
         self.sd->show()
