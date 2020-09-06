@@ -68,9 +68,9 @@ namespace proc:
       cmd := "killall" + signal + " " + s + " 2> /dev/null"
       if system(cmd.c_str()) == 0:
         if signal != "":
-          print "SENT", signal, "TO", s
+          debug "SENT", signal, "TO", s
         else:
-          print "KILLED", s
+          debug "KILLED", s
       #endif
       pass
     return
@@ -78,14 +78,14 @@ namespace proc:
   def stop_xochitl():
     #ifdef REMARKABLE
     if system("systemctl stop xochitl 2> /dev/null") == 0:
-      print "STOPPED XOCHITL"
+      debug "STOPPED XOCHITL"
     #endif
     return
 
   def start_xochitl():
     #ifdef REMARKABLE
     if system("systemctl restart xochitl 2> /dev/null") == 0:
-      print "STARTING XOCHITL"
+      debug "STARTING XOCHITL"
     #endif
     return
 
@@ -95,7 +95,7 @@ namespace proc:
     return 0 == system(command);
 
   bool check_process(string name):
-    print "CHECKING PROCESS", name
+    debug "CHECKING PROCESS", name
     char command[PATH_MAX]
     sprintf(command, "pidof %s 2>&1 > /dev/null", name.c_str());
     return 0 == system(command);
@@ -106,7 +106,7 @@ namespace proc:
     if check_running && check_process(base):
       cmd := "killall -SIGCONT " + string(base) + " 2> /dev/null"
       _ := system(cmd.c_str())
-      print base, "IS ALREADY RUNNING, RESUMING"
+      debug base, "IS ALREADY RUNNING, RESUMING"
       return
 
     proc := name

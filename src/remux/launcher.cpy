@@ -73,7 +73,7 @@ class AppBackground: public ui::Widget:
     snapped = true
 
     vfb := self.get_vfb()
-    print "SNAPSHOTTING", CURRENT_APP
+    debug "SNAPSHOTTING", CURRENT_APP
 
     vfb->fbmem = (remarkable_color*) memcpy(vfb->fbmem, fb->fbmem, self.byte_size)
 
@@ -91,7 +91,7 @@ class AppBackground: public ui::Widget:
       return
 
     vfb := self.get_vfb()
-    print "RENDERING", CURRENT_APP
+    debug "RENDERING", CURRENT_APP
     fb->waveform_mode = WAVEFORM_MODE_AUTO
     memcpy(fb->fbmem, vfb->fbmem, self.byte_size)
     fb->dirty = 1
@@ -195,7 +195,7 @@ class App: public IApp:
     for auto a : app_dialog->get_apps():
       if proc::is_running(a.which):
         active = a
-        print "CURRENT APP IS", active.name
+        debug "CURRENT APP IS", active.name
         CURRENT_APP = active.name
         return
 
@@ -242,12 +242,12 @@ class App: public IApp:
 
     ClockWatch c0
     get_current_app()
-    print "current app", c0.elapsed()
+    debug "current app", c0.elapsed()
 
     // this is really backgrounding apps, not terminating
     ClockWatch c1
     term_apps()
-    print "term apps", c1.elapsed()
+    debug "term apps", c1.elapsed()
 
     app_bg->snapshot()
 
@@ -314,7 +314,7 @@ class App: public IApp:
 
   // TODO: power button will cause suspend screen, why not?
   void on_suspend():
-    print "SUSPENDING"
+    debug "SUSPENDING"
     ui::MainLoop::hide_overlay()
 
     _w, _h := fb->get_display_size()
@@ -339,7 +339,7 @@ class App: public IApp:
     #endif
     sleep(1)
 
-    print "RESUMING FROM SUSPEND"
+    debug "RESUMING FROM SUSPEND"
     ui::MainLoop::in.ungrab()
 
     fb->clear_screen()
@@ -355,7 +355,7 @@ class App: public IApp:
     ev.value = value
 
     if write(fd, &ev, sizeof(ev)) != sizeof(ev):
-      print "COULDNT WRITE EV", errno
+      debug "COULDNT WRITE EV", errno
 
 
   input_event* build_touch_flood():
@@ -403,7 +403,7 @@ class App: public IApp:
     if name == "":
       return
 
-    print "LAUNCHING APP", name
+    debug "LAUNCHING APP", name
     string bin
 
     for auto a : app_dialog->get_apps():

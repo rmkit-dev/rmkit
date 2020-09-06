@@ -142,7 +142,7 @@ namespace app_ui:
 
     void push_undo():
       dirty_rect = self.vfb->dirty_area
-      print "ADDING TO UNDO STACK, DIRTY AREA IS", \
+      debug "ADDING TO UNDO STACK, DIRTY AREA IS", \
         dirty_rect.x0, dirty_rect.y0, dirty_rect.x1, dirty_rect.y1
       fbcopy := shared_ptr<remarkable_color>((remarkable_color*) malloc(self.byte_size))
       memcpy(fbcopy.get(), vfb->fbmem, self.byte_size)

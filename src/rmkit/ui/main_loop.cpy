@@ -189,7 +189,7 @@ namespace ui:
     static void show_kbd(Scene s):
       kbd = s
       kbd_is_visible = true
-      print "SET KEYBOARD SCENE"
+      debug "SET KEYBOARD SCENE"
       Widget::fb->clear_screen()
       MainLoop::refresh()
       s->on_show()

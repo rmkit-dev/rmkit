@@ -8,6 +8,7 @@ run:
 	ssh root@10.11.99.1 ./apps/mines.exe
 	ssh root@10.11.99.1 killall mines.exe || true
 
-reboot:
-	ssh root@10.11.99.1 systemctl start xochitl
+_install:
+	make copy
+	make _install_draft
 ASSET_DIR=assets/

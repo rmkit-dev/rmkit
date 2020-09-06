@@ -20,7 +20,7 @@ namespace stbtext:
 
   void setup_font():
     if !did_setup:
-      print "SETTING UP FONT"
+      debug "SETTING UP FONT"
       #ifdef REMARKABLE
       const char *filename = "/usr/share/fonts/ttf/noto/NotoMono-Regular.ttf";
       #else
@@ -62,7 +62,7 @@ namespace stbtext:
       float x_shift = xpos - (float) floor(xpos);
       stbtt_GetCodepointHMetrics(&font, text[ch], &advance, &lsb);
       stbtt_GetCodepointBitmapBox(&font, text[ch], scale,scale,&x0,&y0,&x1,&y1);
-      max_y = max(max_y, y1)
+      max_y = std::max(max_y, y1)
       xpos += advance * scale;
       if text[ch+1]:
          xpos += scale*stbtt_GetCodepointKernAdvance(&font, text[ch],text[ch+1]);

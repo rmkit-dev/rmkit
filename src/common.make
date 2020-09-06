@@ -15,6 +15,6 @@ KBD=`ls /dev/input/by-path/*kbd | head -n1`
 OKP_FLAGS=-ni -for -d ../.${APP}_cpp/ -o ../build/${EXE} ${FILES}
 
 # installation directory on remarkable
-DEST=apps/
+DEST=/opt/bin/
 
 # vim: syntax=make

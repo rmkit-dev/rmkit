@@ -102,11 +102,11 @@ class App:
   def handle_motion_event(input::SynMouseEvent &syn_ev):
     #ifdef DEBUG_INPUT
     if (auto m_ev = input::is_mouse_event(syn_ev)):
-      print "MOUSE EVENT"
+      debug "MOUSE EVENT"
     else if (auto t_ev = input::is_touch_event(syn_ev)):
-      print "TOUVCH EVENT"
+      debug "TOUVCH EVENT"
     else if (auto w_ev = input::is_wacom_event(syn_ev)):
-      print "WACOM EVENT"
+      debug "WACOM EVENT"
     #endif
 
     if STATE.reject_touch && input::is_touch_event(syn_ev):

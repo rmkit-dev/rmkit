@@ -42,12 +42,12 @@ namespace input:
 
       T event
       for int i = 0; i < bytes / sizeof(struct input_event); i++:
-//        print fd, "READ EVENT", ev_data[i].type, ev_data[i].code, ev_data[i].value
+//        debug fd, "READ EVENT", ev_data[i].type, ev_data[i].code, ev_data[i].value
         if ev_data[i].type == EV_SYN:
           event.finalize()
           events.push_back(event)
           #ifdef DEBUG_INPUT_EVENT
-          printf("\n")
+          fprintf(stderr, "\n")
           #endif
           event = {} // clear the event?
         else:

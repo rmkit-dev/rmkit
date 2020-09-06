@@ -15,7 +15,7 @@ class App:
     ui::MainLoop::refresh()
 
   def handle_key_event(input::SynKeyEvent &key_ev):
-    print "KEY PRESSED", key_ev.key
+    debug "KEY PRESSED", key_ev.key
 
   def handle_motion_event(input::SynMouseEvent &syn_ev):
     pass
@@ -36,6 +36,10 @@ int parse_to_int(string s, int line_no):
   catch (const std::invalid_argument& ia):
     cerr << "line " <<  line_no << " : " << s << " cannot be parsed to int"
   return i
+
+def dump_widgets(ui::Scene s):
+  for auto widget : s->widgets:
+    pass
 
 def main():
   ui::Scene scene = ui::make_scene()
@@ -86,6 +90,7 @@ def main():
       button := new ui::Button(x,y,w,h,t)
       scene->add(button)
       button->mouse.click += [=](auto &ev):
+        dump_widgets(scene)
         print "selected:", t
         exit(0)
       ;

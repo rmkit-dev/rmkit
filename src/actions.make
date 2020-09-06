@@ -45,10 +45,16 @@ assets:
 _install:
 	make copy
 
+_install_draft:
+	ssh -C root@${HOST} mkdir -p /opt/etc/draft 2>/dev/null
+	scp -C ${APP}.draft root@${HOST}:/opt/etc/draft/
+
+
 copy:
 	ARCH=arm $(MAKE) compile
-	ssh root@${HOST} killall -9 ${EXE} || true # finally
-	scp -C ../build/${EXE} root@${HOST}:${DEST}/${EXE}
+	ssh root@${HOST} killall -9 ${EXE} || true
+	ssh root@${HOST} mkdir -p ${DEST} 2>/dev/null
+	scp -C ../build/${EXE} root@${HOST}:${DEST}/${APP}
 
 stop:
 	ssh root@${HOST} killall -9 ${EXE} || true
@@ -64,5 +70,8 @@ test: copy
 lint:
 	make compile OKP_FLAGS="--lint ${OKP_FLAGS}"
 
-.PHONY: assets clean
+reboot:
+	ssh root@10.11.99.1 systemctl start xochitl
+
+.PHONY: assets clean reboot
 # vim: syntax=make

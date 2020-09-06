@@ -187,7 +187,7 @@ class Grid: public ui::Widget, public IGrid:
         continue
       cells[t.first][t.second]->opened = 1
       NB_UNOPENED--
-      print NB_UNOPENED
+      debug NB_UNOPENED
       if cells[t.first][t.second]->neighbors[0]-'0'
         continue
       for int f = -1; f <= 1; f++:
@@ -197,7 +197,7 @@ class Grid: public ui::Widget, public IGrid:
   void open_cell(int row, col):
     if cells[row][col]->opened || (cells[row][col]->flagged && WON):
       return
-    print "OPENING CELL", row, col
+    debug "OPENING CELL", row, col
     if cells[row][col]->is_bomb:
       cells[row][col]->opened = 1
       END = time(NULL)
@@ -239,14 +239,14 @@ class Grid: public ui::Widget, public IGrid:
       FLAG_SCORE += 50
     else if cells[row][col]->is_bomb:
       FLAG_SCORE -= 50
-    print "FLAGGED CELL", row, col, cells[row][col]->flagged
+    debug "FLAGGED CELL", row, col, cells[row][col]->flagged
 
   void toggle_question_cell(int row, col):
     cells[row][col]->question ^= 1
     if cells[row][col]->flagged
       toggle_flag_cell(row, col)
 
-    print "DOUBT CELL", row, col
+    debug "DOUBT CELL", row, col
 
   void make_cells(ui::Scene s):
     cells = vector<vector<Cell*>> (n, vector<Cell*>(n))
@@ -267,7 +267,7 @@ class Grid: public ui::Widget, public IGrid:
 
   void end_game(bool win):
     WON = win
-    print WON
+    debug WON
     OVER = 1
     self.gd = make_shared<GameOverDialog>(0, 0, 800, 800)
     // show := new ShowButton(0, 1500, 10, 200)
@@ -281,7 +281,7 @@ class Grid: public ui::Widget, public IGrid:
     self.fb->draw_rect(self.x, self.y, self.w, self.h, BLACK, false /* fill */)
 
   void on_mouse_click(input::SynMouseEvent &ev):
-    print "CLICKED IN GRID"
+    debug "CLICKED IN GRID"
 
 class MenuButton: public ui::Button:
   public:
@@ -393,7 +393,7 @@ class App:
       btn->set_justification(ui::Text::JUSTIFY::CENTER)
       btn->y_padding = (button_height - SIZE_BUTTON_FS) / 2
       size_button_container.pack_start(btn)
-      print "BTN", btn->x, btn->y
+      debug "BTN", btn->x, btn->y
 
 //    size_button_container.pack_start(new SizeButton(w/2-400, 500, 800, 200, 8, "8x8"))
 //    size_button_container.pack_start(new SizeButton(w/2-400, 50, 800, 200, 12, "12x12"))
@@ -403,9 +403,9 @@ class App:
     scores := new ScoresButton(w/2-400, 500, 800, button_height)
     scores->set_justification(ui::Text::JUSTIFY::CENTER)
     scores->y_padding = (button_height - SIZE_BUTTON_FS) / 2
-    print scores->x, scores->y
+    debug scores->x, scores->y
     size_button_container.pack_start(scores)
-    print scores->x, scores->y
+    debug scores->x, scores->y
 
     make_field()
 
@@ -500,7 +500,7 @@ class App:
         grid->cells[i][j]->question = 0
 
   def handle_key_event(input::SynKeyEvent &key_ev):
-    // print "KEY PRESSED", key_ev.key
+    // debug "KEY PRESSED", key_ev.key
     pass
 
   def handle_motion_event(input::SynMouseEvent &syn_ev):

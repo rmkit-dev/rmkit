@@ -64,7 +64,7 @@ class Board: public IBoard, public ui::Widget:
     pass
 
   void render():
-    print "RENDERING BOARD"
+    debug "RENDERING BOARD"
     self.fb->draw_rect(self.x-1, self.y-1, self.w+2, self.h+2, BLACK, 0 /* fill */)
 
 

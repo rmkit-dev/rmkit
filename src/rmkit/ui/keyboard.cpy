@@ -37,7 +37,7 @@ namespace ui:
 
     void add_key(KeyButton *key):
       if self.layout == NULL:
-        print "RENDERING ROW", self.x, self.y, self.w, self.h
+        debug "RENDERING ROW", self.x, self.y, self.w, self.h
         self.layout = new HorizontalLayout(self.x, self.y, self.w, self.h, self.scene)
       self.layout->pack_start(key)
 
@@ -218,7 +218,7 @@ namespace ui:
         self.text.push_back(c)
         self.input_box->text = self.text
         self.input_box->dirty = 1
-        print "key pressed:", c
+        debug "key pressed:", c
       ;
       return key
 

@@ -16,7 +16,7 @@ namespace input:
 
     def print_event(input_event &data):
       #ifdef DEBUG_INPUT_EVENT
-      printf("Event: time %ld, type: %x, code :%x, value %d\n", \
+      fprintf(stderr, "Event: time %ld, type: %x, code :%x, value %d\n", \
         data.time.tv_sec, data.type, data.code, data.value)
       #endif
       return

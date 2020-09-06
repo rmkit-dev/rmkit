@@ -75,7 +75,7 @@ namespace framebuffer:
       self.width = width
       self.height = height
 
-      printf("W: %i H: %i\n", width, height)
+      fprintf(stderr, "W: %i H: %i\n", width, height)
       size := width*height*sizeof(remarkable_color)
       self.byte_size = size
       reset_dirty(dirty_area)
@@ -83,7 +83,7 @@ namespace framebuffer:
       return
 
     FB(const FB &copy):
-      printf("COPY CONSTRUCTOR CALLED\n")
+      fprintf(stderr, "COPY CONSTRUCTOR CALLED\n")
       throw
 
     ~FB():
@@ -91,7 +91,7 @@ namespace framebuffer:
         close(self.fd)
 
     virtual void cleanup():
-      print "CLEANING UP FB"
+      debug "CLEANING UP FB"
 
     virtual void wait_for_redraw(uint32_t update_marker):
       return
@@ -219,7 +219,7 @@ namespace framebuffer:
       self.dirty = 1
       remarkable_color* ptr = self.fbmem
       #ifdef DEBUG_FB
-      printf("DRAWING RECT X: %i Y: %i W: %i H: %i, COLOR: %i\n", o_x, o_y, w, h, color)
+      fprintf(stderr, "DRAWING RECT X: %i Y: %i W: %i H: %i, COLOR: %i\n", o_x, o_y, w, h, color)
       #endif
 
       if o_y >= self.height || o_x >= self.width || o_y < 0 || o_x < 0:
@@ -306,7 +306,7 @@ namespace framebuffer:
       i := sprintf(c, "P6%d %d\n255\n", self.width, self.height)
       wrote := write(fd, c, i-1)
       if wrote == -1:
-        printf("ERROR %i", errno)
+        fprintf(stderr, "ERROR %i", errno)
       buf := (char *) calloc(sizeof(char), self.width * self.height * 4)
       memset(buf, 0, sizeof(buf))
 
@@ -320,7 +320,7 @@ namespace framebuffer:
 
       wrote = write(fd, buf, i-1)
       if wrote == -1:
-        printf("ERROR %i", errno)
+        fprintf(stderr, "ERROR %i\n", errno)
       close(fd)
       free(buf)
 
@@ -435,7 +435,7 @@ namespace framebuffer:
 
     def draw_line_circle(int x0,y0,x1,y1,width,color,float dither=1.0):
       #ifdef DEBUG_FB
-      printf("DRAWING LINE w. CIRCLES %i %i %i %i\n", x0, y0, x1, y1)
+      fprintf(stderr ,"DRAWING LINE w. CIRCLES %i %i %i %i\n", x0, y0, x1, y1)
       #endif
       self.dirty = 1
       dx :=  abs(x1-x0)
@@ -459,7 +459,7 @@ namespace framebuffer:
     // draws a lne from x,0,y0 to x1,y1
     def draw_line(int x0,y0,x1,y1,width,color,float dither=1.0):
       #ifdef DEBUG_FB
-      printf("DRAWING LINE %i %i %i %i\n", x0, y0, x1, y1)
+      fprintf(stderr, "DRAWING LINE %i %i %i %i\n", x0, y0, x1, y1)
       #endif
       self.dirty = 1
       dx := abs(x1-x0)
@@ -487,10 +487,10 @@ namespace framebuffer:
 
       fb_var_screeninfo vinfo;
       if (ioctl(self.fd, FBIOGET_VSCREENINFO, &vinfo)):
-        printf("Could not get screen vinfo for %s\n", "/dev/fb0")
+        fprintf(stderr, "Could not get screen vinfo for %s\n", "/dev/fb0")
         return
 
-      print "XRES", vinfo.xres, "YRES", vinfo.yres, "BPP", vinfo.bits_per_pixel, "GRAYSCALE", vinfo.grayscale
+      debug "XRES", vinfo.xres, "YRES", vinfo.yres, "BPP", vinfo.bits_per_pixel, "GRAYSCALE", vinfo.grayscale
 
     void wait_for_redraw(uint32_t update_marker):
       mxcfb_update_marker_data mdata = { update_marker, 0 }
@@ -577,7 +577,7 @@ namespace framebuffer:
       // if we are using remarkable, then we set it to grayscale
       fb_var_screeninfo vinfo;
       if (ioctl(self.fd, FBIOGET_VSCREENINFO, &vinfo)):
-        printf("Could not get screen vinfo for %s\n", "/dev/fb0")
+        fprintf(stderr, "Could not get screen vinfo for %s\n", "/dev/fb0")
         exit(0)
 
       #ifdef USE_GRAYSCALE_8BIT
@@ -593,10 +593,10 @@ namespace framebuffer:
       ioctl(self.fd, MXCFB_SET_AUTO_UPDATE_MODE, (pointer_size) &auto_update_mode);
 
     void cleanup():
-      print "CLEANING UP FB"
+      debug "CLEANING UP FB"
       fb_var_screeninfo vinfo;
       if (ioctl(self.fd, FBIOGET_VSCREENINFO, &vinfo)):
-        printf("Could not get screen vinfo for %s\n", "/dev/fb0")
+        fprintf(stderr, "Could not get screen vinfo for %s\n", "/dev/fb0")
         exit(0)
 
       vinfo.bits_per_pixel = 16;
