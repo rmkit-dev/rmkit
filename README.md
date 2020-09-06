@@ -6,17 +6,22 @@ rmkit is to make it easy to write and deploy new apps to the remarkable tablet.
 
 ### [harmony](src/harmony)
 
-A low latency drawing app with procedural brushes
+A [low latency drawing app](https://rmkit.dev/apps/harmony) with procedural brushes
 
 ### [mines](src/minesweeper)
 
-A minesweeper game for spending time between meetings and classes
+A [minesweeper game](https://rmkit.dev/apps/minesweeper) for spending time between meetings and classes
 
 ### [remux](src/remux)
 
-An app switcher for switching between apps on the remarkable that is compatible
+An [app switcher](https://rmkit.dev/apps/remux) for switching between apps on the remarkable that is compatible
 with [draft-remarkable](https://github.com/dixonary/draft-reMarkable/)
 configuration files. Hold the middle button to bring it up.
+
+### [simple app script](src/simple)
+
+A [simple markup language](https://rmkit.dev/apps/sas) for building apps that
+follow the philosophy of unix pipes.
 
 ### [rmkit](src/rmkit)
 
