@@ -17,9 +17,11 @@
 
 TIMEOUT := 1
 SUSPEND_TIMER := 10
-SUSPEND_THRESHOLD := 60 * 4 // 4 mins
-//SUSPEND_THRESHOLD := 20
-TOO_MUCH_THRESHOLD := 60 * 7 // 7 mins
+
+// all time is in seconds
+SUSPEND_THRESHOLD := 60 * 4 
+CHARGING_THRESHOLD := 60 * 30
+TOO_MUCH_THRESHOLD := 60 * 7
 
 #include "apps.h"
 
@@ -205,7 +207,12 @@ class App: public IApp:
       while true:
         now := time(NULL)
         usb_in := false
-        // usb_in = system("ifconfig usb0 > /dev/null 2>/dev/null") == 0
+        usb_str := string(exec("cat /sys/class/power_supply/imx_usb_charger/present"))
+        str_utils::trim(usb_str)
+        usb_in = usb_str == string("1")
+        threshold := SUSPEND_THRESHOLD
+        if usb_in:
+          threshold = CHARGING_THRESHOLD
 
         suspend_m.lock()
         if LAST_ACTION == 0 or usb_in:

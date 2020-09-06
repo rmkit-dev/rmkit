@@ -3,7 +3,7 @@ Description=ReMux Launcher
 After=xochitl.service opt.mount
 
 [Service]
-ExecStart=/home/root/apps/remux.exe
+ExecStart=/opt/bin/remux
 Restart=on-failure
 
 [Install]
