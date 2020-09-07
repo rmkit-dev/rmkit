@@ -10,12 +10,13 @@ namespace ui:
   // the ui::Text class is a Widget that can render a single line of text.
   class Text: public Widget:
     public:
+
     // function: Text Dropdown
     enum JUSTIFY { LEFT, CENTER, RIGHT }
+    static JUSTIFY DEFAULT_JUSTIFY
     static int DEFAULT_FS
     int font_size
     string text
-    JUSTIFY justify = JUSTIFY::CENTER
 
     // function: Constructor
     // parameters:
@@ -28,6 +29,7 @@ namespace ui:
     Text(int x, y, w, h, string t): Widget(x, y, w, h):
       self.text = t
       self.font_size = DEFAULT_FS
+      self.justify = DEFAULT_JUSTIFY
 
 
     tuple<int, int> get_render_size():
@@ -96,3 +98,4 @@ namespace ui:
         cur_y += max_h
 
   int Text::DEFAULT_FS = 24
+  Text::JUSTIFY Text::DEFAULT_JUSTIFY = ui::Text::JUSTIFY::CENTER

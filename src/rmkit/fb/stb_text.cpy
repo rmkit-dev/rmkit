@@ -1,4 +1,3 @@
-#include <cstdio>
 #include <cmath>
 
 #include "../defines.h"
@@ -20,7 +19,6 @@ namespace stbtext:
 
   void setup_font():
     if !did_setup:
-      debug "SETTING UP FONT"
       #ifdef REMARKABLE
       const char *filename = "/usr/share/fonts/ttf/noto/NotoMono-Regular.ttf";
       #else
