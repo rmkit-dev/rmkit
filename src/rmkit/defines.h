@@ -110,8 +110,10 @@ std::vector<std::string> split (const std::string &s, char delim) {
   std::stringstream ss (s);
   std::string item;
 
+  std::cin >> std::ws;
   while (getline (ss, item, delim)) {
     result.push_back (item);
+    std::cin >> std::ws;
   }
 
   return result;

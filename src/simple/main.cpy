@@ -1,5 +1,6 @@
 #include <cstddef>
 #include "../build/rmkit.h"
+#include "../shared/string.h"
 using namespace std
 
 class App:
@@ -50,18 +51,25 @@ def main():
   while getline(cin, line):
     line_no += 1
 
+    str_utils::trim(line)
+
     if line[0] == '[':
       vector<string> lines
-      lines.push_back(line.substr(1))
+      line = line.substr(1)
       // join lines that start / end with []
-      while getline(cin, line):
-        lines.push_back(line)
+      do:
         if line[line.length()-1] == ']':
-          l := lines.back()
-          l.resize(lines.back().length()-1)
-          lines.pop_back();
+          l := line
+          if lines.size():
+            l := lines.back()
+            lines.pop_back();
+
+          l.resize(l.length()-1)
           lines.push_back(l)
           break
+
+        lines.push_back(line)
+      while (getline(cin, line));
 
       line = ""
       for it := lines.begin(); it != lines.end(); it++:
