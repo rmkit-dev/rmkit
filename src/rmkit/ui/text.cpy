@@ -121,6 +121,5 @@ namespace ui:
 
       return ret_w, ret_h
 
-
   int Text::DEFAULT_FS = 24
   Text::JUSTIFY Text::DEFAULT_JUSTIFY = ui::Text::JUSTIFY::CENTER

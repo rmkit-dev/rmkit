@@ -40,8 +40,10 @@ string next_id():
   cur_id++
   return string("w") + to_string(cur_id)
 
+ui::Widget *LAST_WIDGET = NULL
 ui::Widget* give_id(string id, ui::Widget *w):
   w->ref = id
+  LAST_WIDGET = w
   return w
 
 int parse_to_int(string s, int line_no):
@@ -82,8 +84,26 @@ def handle_directive(int line_no, ui::Scene s, vector<string> &tokens):
 WIDTH := 0
 HEIGHT := 0
 bool handle_widget(int line_no, ui::Scene scene, vector<string> &tokens):
-    x := parse_to_int(tokens[1], line_no)
-    y := parse_to_int(tokens[2], line_no)
+    x := 0
+    y := 0
+
+    if tokens[1] == "next":
+      if LAST_WIDGET == NULL:
+        x = 0
+      else:
+        rx, ry = LAST_WIDGET->get_render_size()
+        x = LAST_WIDGET->x + rx
+    else:
+      x = parse_to_int(tokens[1], line_no)
+
+    if tokens[2] == "next":
+      if LAST_WIDGET == NULL:
+        y = 0
+      else:
+        rx, ry = LAST_WIDGET->get_render_size()
+        y = LAST_WIDGET->y + ry
+    else:
+      y = parse_to_int(tokens[2], line_no)
 
     w := WIDTH
     h := HEIGHT
