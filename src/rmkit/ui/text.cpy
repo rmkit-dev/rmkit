@@ -17,6 +17,7 @@ namespace ui:
     static int DEFAULT_FS
     int font_size
     string text
+    JUSTIFY justify
 
     // function: Constructor
     // parameters:
@@ -47,8 +48,6 @@ namespace ui:
       padding_x := 0
 
       switch self.justify:
-        case JUSTIFY::LEFT:
-          break
         case JUSTIFY::CENTER:
           if leftover_x > 0:
             padding_x = leftover_x / 2
@@ -96,6 +95,32 @@ namespace ui:
           free(image.buffer)
           cur_x += image.w
         cur_y += max_h
+
+    tuple<int, int> get_render_size():
+      cur_x := 0
+      cur_y := 0
+      ret_w := 0
+      ret_h := 0
+      lines := split(self.text, '\n')
+      for auto line: lines:
+        cur_x = 0
+        tokens := split(line, ' ')
+        int max_h = 0
+        for auto w: tokens:
+          w += " "
+          image := stbtext::get_text_size(w.c_str(), self.font_size)
+          max_h = max(image.h, max_h)
+          if cur_x + image.w + 10 >= self.w:
+            cur_x = 0
+            cur_y += max_h
+          cur_x += image.w
+        cur_y += max_h
+
+        ret_h = max(ret_h, cur_y)
+        ret_w = max(ret_w, cur_y)
+
+      return ret_w, ret_h
+
 
   int Text::DEFAULT_FS = 24
   Text::JUSTIFY Text::DEFAULT_JUSTIFY = ui::Text::JUSTIFY::CENTER

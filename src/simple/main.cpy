@@ -4,6 +4,7 @@
 using namespace std
 
 int FONT_SIZE = ui::Text::DEFAULT_FS
+EXPECTING_INPUT := false
 class App:
   public:
 
@@ -30,6 +31,9 @@ class App:
       ui::MainLoop::redraw()
       ui::MainLoop::read_input()
 
+      if !EXPECTING_INPUT:
+        break
+
 
 string next_id():
   static int cur_id = 1
@@ -55,8 +59,10 @@ def dump_widgets(ui::Scene s):
 // directives
 int OLD_DEFAULT_FS = ui::Text::DEFAULT_FS
 int OLD_DEFAULT_JUSTIFY = ui::Text::DEFAULT_JUSTIFY
+int PADDING_X = 0
+int PADDING_Y = 0
 def handle_directive(int line_no, ui::Scene s, vector<string> &tokens):
-  debug "HANDLING DIRECTIVE", tokens[1]
+  debug "HANDLING DIRECTIVE", tokens[0], tokens[1]
   if tokens[0] == "@fontsize":
     ui::Text::DEFAULT_FS = stoi(tokens[1])
 
@@ -67,6 +73,11 @@ def handle_directive(int line_no, ui::Scene s, vector<string> &tokens):
       ui::Text::DEFAULT_JUSTIFY = ui::Text::JUSTIFY::CENTER
     if tokens[1] == "right":
       ui::Text::DEFAULT_JUSTIFY = ui::Text::JUSTIFY::RIGHT
+
+  if tokens[0] == "@padding_x":
+    PADDING_X = stoi(tokens[1])
+  if tokens[0] == "@padding_y":
+    PADDING_Y = stoi(tokens[1])
 
 WIDTH := 0
 HEIGHT := 0
@@ -106,19 +117,41 @@ bool handle_widget(int line_no, ui::Scene scene, vector<string> &tokens):
       widget := give_id(id, button)
       button->set_justification(ui::Text::DEFAULT_JUSTIFY)
       scene->add(widget)
+      EXPECTING_INPUT = true
       string v = t
       button->mouse.click += [=](auto &ev):
         dump_widgets(scene)
 
         if ref:
-          print "ref:", button->ref
+          print "selected:", button->ref
         else:
           print "selected:", v
         exit(0)
       ;
     else if first == "textinput":
-      textinput := give_id(id, new ui::TextInput(x,y,w,h,t))
-      scene->add(textinput)
+      textinput := new ui::TextInput(x,y,w,h,t)
+      textinput->events.done += PLS_LAMBDA(string &s):
+        debug "PRINTING REF", t, textinput->ref,  s
+        if ref:
+          print "input:", textinput->ref, ":", s
+        else:
+          print "input:", t, ":", s
+        exit(0)
+      ;
+      widget := give_id(id, textinput)
+      scene->add(widget)
+    else if first == "textarea":
+      textinput := new ui::TextArea(x,y,w,h,t)
+      textinput->events.done += PLS_LAMBDA(string &s):
+        debug "PRINTING REF", t, textinput->ref,  s
+        if ref:
+          print "input:", textinput->ref, ":", s
+        else:
+          print "input:", t, ":", s
+        exit(0)
+      ;
+      widget := give_id(id, textinput)
+      scene->add(widget)
     else if first == "image":
       image := give_id(id, new ui::Thumbnail(x,y,w,h,tokens[5]))
       scene->add(image)

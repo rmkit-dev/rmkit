@@ -9,6 +9,16 @@ namespace ui:
   // while a TextArea spans multiple
   class TextInput: public ui::Text:
     public:
+    struct TextInputEvent:
+      string s
+    ;
+    PLS_DEFINE_SIGNAL(TEXTINPUT_EVENT, string)
+    class TEXTINPUT_EVENTS:
+      public:
+      TEXTINPUT_EVENT done
+    ;
+    TEXTINPUT_EVENTS events
+
     // function: TextInput
     // Parameters
     //
@@ -29,8 +39,18 @@ namespace ui:
         self.text = ev.text
         self.on_text_changed(ev.text)
       ;
+      keyboard->events.done += PLS_LAMBDA(auto &ev):
+        self.text = ev.text
+        self.on_done(ev.text)
+      ;
+
 
       ui::MainLoop::refresh()
+
+    virtual void on_done(string &s):
+      self.dirty = 1
+      self.events.done(s)
+    ;
 
     void on_text_changed(string):
       self.dirty=1
@@ -47,6 +67,17 @@ namespace ui:
   // and will bring up a keyboard when clicked.
   class TextArea: public ui::MultiText:
     public:
+    struct TextAreaEvent:
+      string s
+    ;
+    PLS_DEFINE_SIGNAL(TEXTAREA_EVENT, string)
+    class TEXTAREA_EVENTS:
+      public:
+      TEXTAREA_EVENT done
+    ;
+
+    TEXTAREA_EVENTS events
+
     // function: TextArea
     //
     // Parameters
@@ -69,10 +100,21 @@ namespace ui:
         self.on_text_changed(ev.text)
       ;
 
+      keyboard->events.done += PLS_LAMBDA(auto &ev):
+        self.text = text
+        self.on_done(ev.text)
+      ;
+
       ui::MainLoop::refresh()
 
-    void on_text_changed(string):
+    virtual void on_text_changed(string):
       self.dirty=1
+
+    virtual void on_done(string &s):
+      self.dirty = 1
+      self.events.done(s)
+    ;
+
     void render():
       self.fb->draw_rect(self.x, self.y, self.w, self.h, BLACK, 0 /* fill */)
       ui::MultiText::render()

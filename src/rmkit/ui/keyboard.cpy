@@ -48,6 +48,7 @@ namespace ui:
     class KEYBOARD_EVENTS:
       public:
       KEYBOARD_EVENT changed
+      KEYBOARD_EVENT done
 
     public:
     bool shifted = false
@@ -193,6 +194,8 @@ namespace ui:
         ui::MainLoop::refresh()
         kev := KeyboardEvent {text:self.text}
         self.events.changed(kev)
+
+        self.events.done(kev)
 
         ui::MainLoop::hide_kbd()
       ;
