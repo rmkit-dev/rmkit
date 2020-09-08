@@ -4,6 +4,8 @@
 using namespace std
 
 int FONT_SIZE = ui::Text::DEFAULT_FS
+WIDTH := 0
+HEIGHT := 0
 EXPECTING_INPUT := false
 class App:
   public:
@@ -46,8 +48,15 @@ ui::Widget* give_id(string id, ui::Widget *w):
   LAST_WIDGET = w
   return w
 
-int parse_to_int(string s, int line_no):
+int parse_to_int(string s, int line_no, max_val):
   int i
+
+  if s.find(string("%"), 0) != string::npos:
+    s.resize(s.size() - 1)
+    i = stoi(s)
+    percent := i / 100.0
+    return int(percent * max_val)
+
   try:
     i = stoi(s)
   catch (const std::invalid_argument& ia):
@@ -81,44 +90,64 @@ def handle_directive(int line_no, ui::Scene s, vector<string> &tokens):
   if tokens[0] == "@padding_y":
     PADDING_Y = stoi(tokens[1])
 
-WIDTH := 0
-HEIGHT := 0
-bool handle_widget(int line_no, ui::Scene scene, vector<string> &tokens):
-    x := 0
-    y := 0
 
-    if tokens[1] == "next":
-      if LAST_WIDGET == NULL:
-        x = 0
-      else:
+auto parse_widget(int line_no, vector<string> tokens):
+  x := 0
+  y := 0
+
+  // for x and y, there are two keywords: "next" and "same"
+  // which increment the field by LAST_WIDGET's x or y
+
+  // for w, h, we have "w" and "h" as keywords, but i think
+  // "full" will make more sense (instead of using w vs h)
+
+  // TODO: add "%" format
+  // TODO: % format might also need to be implemented for padding?
+  if tokens[1] == "next" or tokens[1] == "same":
+    if LAST_WIDGET == NULL:
+      x = 0
+    else:
+      if tokens[1] == "next":
         rx, ry = LAST_WIDGET->get_render_size()
         x = LAST_WIDGET->x + rx
-    else:
-      x = parse_to_int(tokens[1], line_no)
+      if tokens[1] == "same":
+        x = LAST_WIDGET->x
 
-    if tokens[2] == "next":
-      if LAST_WIDGET == NULL:
-        y = 0
-      else:
+  else:
+    x = parse_to_int(tokens[1], line_no, WIDTH)
+
+  if tokens[2] == "next" or tokens[2] == "same":
+    if LAST_WIDGET == NULL:
+      y = 0
+    else:
+      if tokens[2] == "next":
         rx, ry = LAST_WIDGET->get_render_size()
         y = LAST_WIDGET->y + ry
-    else:
-      y = parse_to_int(tokens[2], line_no)
+      if tokens[2] == "same":
+        y = LAST_WIDGET->y
+  else:
+    y = parse_to_int(tokens[2], line_no, HEIGHT)
 
-    w := WIDTH
-    h := HEIGHT
-    if tokens[3] != "w":
-      w = parse_to_int(tokens[3], line_no)
-    if tokens[4] != "h":
-      h = parse_to_int(tokens[4], line_no)
+  w := WIDTH
+  h := HEIGHT
+  if tokens[3] != "w":
+    w = parse_to_int(tokens[3], line_no, WIDTH)
+  if tokens[4] != "h":
+    h = parse_to_int(tokens[4], line_no, HEIGHT)
 
-    string t
-    for it := tokens.begin() + 5; it != tokens.end(); it++:
-      t += *it + " "
+  string t
+  for it := tokens.begin() + 5; it != tokens.end(); it++:
+    t += *it + " "
 
+  return x, y, w, h, t
+
+
+bool handle_widget(int line_no, ui::Scene scene, vector<string> &tokens):
     first := tokens[0]
     first_tokens := split(first, ':')
     id := string("")
+
+    x,y,w,h,t := parse_widget(line_no, tokens)
 
     ref := false
     if tokens.size() == 2:
