@@ -15,7 +15,6 @@ namespace ui:
     enum JUSTIFY { LEFT, CENTER, RIGHT }
     static JUSTIFY DEFAULT_JUSTIFY
     static int DEFAULT_FS
-    JUSTIFY justify
     int font_size
     string text
     JUSTIFY justify
