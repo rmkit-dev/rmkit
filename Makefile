@@ -62,18 +62,19 @@ docker:
 docker_install: docker
 	echo "Not implemented yet"
 
+ZIP_DEST="apps"
 bundle: $(APPS)
 	#BUILDING V: ${VERSION} ARCH: ${ARCH}
-	mkdir -p ${BUILD_DIR}/${DEST} 2>/dev/null || true
-	cp ${BUILD_DIR}/*.exe ${BUILD_DIR}/${DEST}/
+	mkdir -p ${BUILD_DIR}/${ZIP_DEST} 2>/dev/null || true
+	cp ${BUILD_DIR}/*.exe ${BUILD_DIR}/${ZIP_DEST}/
 	sha256sum ${BUILD_DIR}/*.exe > ${BUILD_DIR}/sha256sum.txt
 	ls -la ${BUILD_DIR} > ${BUILD_DIR}/ls.txt
-	cp ${BUILD_DIR}/*.txt ${BUILD_DIR}/${DEST}/
+	cp ${BUILD_DIR}/*.txt ${BUILD_DIR}/${ZIP_DEST}/
 	cp src/remux/remux.service ${BUILD_DIR}
-	cp src/remux/remux.service ${BUILD_DIR}/${DEST}/
+	cp src/remux/remux.service ${BUILD_DIR}/${ZIP_DEST}/
 
-	cd ${BUILD_DIR}; zip release.zip -r ${DEST}/; cd ..
-	rm -fr ${BUILD_DIR}/${DEST}/
+	cd ${BUILD_DIR}; zip release.zip -r ${ZIP_DEST}/; cd ..
+	rm -fr ${BUILD_DIR}/${ZIP_DEST}/
 	cat scripts/run/install_harmony.sh.template | sed 's/VERSION/${VERSION}/g' > scripts/run/install_harmony.sh
 	cat scripts/run/try_harmony.sh.template | sed 's/VERSION/${VERSION}/g' > scripts/run/try_harmony.sh
 
