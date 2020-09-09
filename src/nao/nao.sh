@@ -3,6 +3,9 @@
 # display height and width
 D_H=1920
 D_W=1408
+SIMPLE=/opt/bin/simple
+OPKG=/opt/bin/opkg
+PROC_NAME=nao
 
 # {{{ FIELD SEPARATOR STUFF
 function use_newline_separator() {
@@ -30,19 +33,23 @@ function handle_back() {
 
 function run_cmd() {
     cmd="${*}"
+    outfile="/home/root/.cache/nao/output"
     mkdir -p /home/root/.cache/nao/ 2>/dev/null
-    ${cmd} > /home/root/.cache/nao/output &
+    ${cmd} > "${outfile}" &
     pid="$!"
+    output=`cat "${outfile}" | tail -n50`
     while   ps | grep -v grep | grep " $pid "
     do
-        output=`cat /home/root/.cache/nao/output | tail -n50`
+        output=`cat "${outfile}" | tail -n50`
         MAKE_SCENE
         SET timeout 1
         UI "[paragraph 50 50 $(($D_W - 100)) $((D_H - 500)) $output]"
         DISPLAY
     done
 
-    output=`cat /home/root/.cache/nao/output | tail -n50`
+    wait "${pid}"
+
+    output=`cat "${outfile}" | tail -n50`
     MAKE_SCENE
     SET timeout 10
     SET justify left
@@ -54,19 +61,19 @@ function run_cmd() {
 
 function do_install() {
     package="${*}"
-    run_cmd "opkg install ${package}"
+    run_cmd "${OPKG} install ${package}"
     display_pkg_info "${package}"
 }
 
 function do_uninstall() {
     package="${*}"
-    run_cmd "opkg remove ${package}"
+    run_cmd "${OPKG} remove ${package}"
     display_pkg_info "${package}"
 }
 
 function do_list_files() {
     package="${*}"
-    run_cmd "opkg files ${package}"
+    run_cmd "${OPKG} files ${package}"
     display_pkg_info "${package}"
 }
 
@@ -98,14 +105,13 @@ function SET() {
 function DISPLAY() {
     use_newline_separator
     OUTPUT=`for line in ${SCENE[@]}; do echo $line; done`
-    RETURN=`echo "$OUTPUT" | simple`
+    RETURN=`echo "$OUTPUT" | ${SIMPLE}`
     use_space_separator
     SAVED_RETURN=${RETURN}
-    
 }
 
 function BACK_BUTTON() {
-    UI "button 50 20 200 50 back" 
+    UI "button 50 20 200 50 back"
 }
 
 HISTORY=("")
@@ -117,7 +123,7 @@ function SHOW_SCENE() {
 
 function BACK() {
     echo "GOING BACK", ${#HISTORY[@]}
-    
+
     if [[ ${#HISTORY[@]} -le 2 ]]; then
         echo "NO HISTORY, GOING TO MAIN MENU"
         main_menu
@@ -133,7 +139,7 @@ function BACK() {
 # {{{ OPKG HELPERS
 function list_installed_packages() {
     use_newline_separator
-    packages=`opkg list-installed`
+    packages=`${OPKG} list-installed`
     RETURN=`for package in $packages; do echo "$package"; done`
     use_space_separator
 }
@@ -172,7 +178,7 @@ function list_packages_in_repo() {
 function list_packages() {
     use_newline_separator
     # TODO: replace packages with only packages from toltec repo
-    packages=`opkg list-installed`
+    packages=`${OPKG} list-installed`
     RETURN=`for package in $packages; do; echo "$package"; done`
     use_space_separator
 }
@@ -206,29 +212,30 @@ function main_menu() {
 function display_pkg_info {
     package="${*}"
     echo "PACKAGE ${package}"
-    echo "COMMAND IS opkg info ${package}"
+    echo "COMMAND IS ${OPKG} info ${package}"
 
     if test -z "${package}"; then
         SHOW_SCENE list_menu ${REPO} ${page}
         return
     fi
 
-    info=`opkg info ${package}`
+    info=`${OPKG} info ${package}`
     use_newline_separator
 
     MAKE_SCENE
     h=200
-    UI "label 50 200 0 0 "
+    UI "label 50 100 0 0 "
+
     for line in ${info}; do
         UI "[paragraph 50 next 1000 50 ${line}]"
         h=$((h + 50))
     done
     UI ""
-
     UI "label same next 200 50"
     UI "button 50 next 200 50 Install"
     UI "button next same 200 50 Uninstall"
     UI "button next same 200 50 List Files"
+
 
     if test -n "${UNIMPLEMENTED}"; then
         UI "label 50 next $((D_W - 100)) 50 ${UNIMPLEMENTED} is not implemented yet"
@@ -289,6 +296,9 @@ function list_menu() {
     cur=0
 
     MAKE_SCENE
+    SET "justify center"
+    UI "label 50 100 $((D_W - 100)) 50 browsing packages in ${REPO}"
+
     SET "justify left"
     BACK_BUTTON
     has_more=""
@@ -384,7 +394,18 @@ function pick_repo() {
 # }}}
 
 REPO="entware"
-# list_menu ${REPO}
+
+function killall_nao() {
+    pids=`ps | grep ${PROC_NAME} | grep -v $$ | grep bash | awk '{print $1}'`
+    if test -z "$pids"; then
+        return
+    fi
+
+    echo "BYE BYE NAO, KILLING ${pids}"
+    kill ${pids}
+}
+
+killall_nao
 SHOW_SCENE pick_repo
 
 # vim set foldmethod=marker
