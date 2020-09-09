@@ -220,12 +220,13 @@ string until_closing_bracket(string line):
   vector<string> lines
   line = line.substr(1)
   // join lines that start / end with []
+  str_utils::trim(line)
+  if line[line.length()-1] == ']':
+    return line.substr(0, line.length()-1)
+
   do:
     if line[line.length()-1] == ']':
       l := line
-      if lines.size():
-        l := lines.back()
-        lines.pop_back();
 
       l.resize(l.length()-1)
       lines.push_back(l)
@@ -253,7 +254,6 @@ def main():
     line_no += 1
 
     str_utils::trim(line)
-
 
     if line[0] == '[':
       line = until_closing_bracket(line)

@@ -34,28 +34,33 @@ function handle_back() {
 function run_cmd() {
     cmd="${*}"
     outfile="/home/root/.cache/nao/output"
+    errfile="/home/root/.cache/nao/errors"
     mkdir -p /home/root/.cache/nao/ 2>/dev/null
-    ${cmd} > "${outfile}" &
+    ${cmd} > "${outfile}" 2> "${errfile}" &
     pid="$!"
     output=`cat "${outfile}" | tail -n50`
     while   ps | grep -v grep | grep " $pid "
     do
         output=`cat "${outfile}" | tail -n50`
+        errors=`cat "${errfile}" | tail -n50`
         MAKE_SCENE
         SET timeout 1
         UI "[paragraph 50 50 $(($D_W - 100)) $((D_H - 500)) $output]"
+        UI "[paragraph 50 50 $(($D_W - 100)) $((D_H - 500)) $errors]"
         DISPLAY
     done
 
     wait "${pid}"
 
-    output=`cat "${outfile}" | tail -n50`
+    output=`cat "${outfile}"| tail -n50`
+    errors=`cat "${errfile}" | tail -n50`
     MAKE_SCENE
     SET timeout 10
     SET justify left
     BACK_BUTTON
     UI "label 50 100 w 50 Finished - returning in 10 seconds"
-    UI "[paragraph 50 next $(($D_W - 100)) $((D_H - 500)) $output]"
+    UI "[paragraph 50 next $(($D_W - 100)) $((D_H - 500)) ${output}]"
+    UI "[paragraph 50 next $(($D_W - 100)) $((D_H - 500)) ${errors}]"
     DISPLAY
 }
 
@@ -162,9 +167,9 @@ function list_packages_in_repo() {
         packages=`gunzip -c /opt/var/opkg-lists/${repo} | awk '/^Package:/{print $2}'`
 
     fi
-    RETURN=`for package in $packages; do 
+    RETURN=`for package in $packages; do
         if [[ "$package" =~ "${pattern}" ]]; then
-            echo "$package"; 
+            echo "$package";
         fi
     done`
 
@@ -182,7 +187,7 @@ function list_packages() {
     RETURN=`for package in $packages; do; echo "$package"; done`
     use_space_separator
 }
-# }}} 
+# }}}
 
 # {{{ UI SCENES
 function main_menu() {
@@ -266,7 +271,7 @@ function display_pkg_info {
         fi
 
         UNIMPLEMENTED="${RETURN}"
-        SHOW_SCENE display_pkg_info "${*}" 
+        SHOW_SCENE display_pkg_info "${*}"
     fi
 
 }
@@ -341,7 +346,7 @@ function list_menu() {
     use_space_separator
 
     if [[ ${RETURN} =~ "input:" ]]; then
-        echo "RETURN IS ${RETURN}" 
+        echo "RETURN IS ${RETURN}"
         ref=`echo "${RETURN}" | get_input_field 2`
         search=`echo "${RETURN}" | get_input_field 3`
         SEARCH_PATTERN="${search}"
