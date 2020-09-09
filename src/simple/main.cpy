@@ -7,6 +7,7 @@ int FONT_SIZE = ui::Text::DEFAULT_FS
 WIDTH := 0
 HEIGHT := 0
 EXPECTING_INPUT := false
+TIMEOUT := 0
 class App:
   public:
 
@@ -33,7 +34,7 @@ class App:
       ui::MainLoop::redraw()
       ui::MainLoop::read_input()
 
-      if !EXPECTING_INPUT:
+      if !EXPECTING_INPUT && !TIMEOUT:
         break
 
 
@@ -89,6 +90,9 @@ def handle_directive(int line_no, ui::Scene s, vector<string> &tokens):
     PADDING_X = stoi(tokens[1])
   if tokens[0] == "@padding_y":
     PADDING_Y = stoi(tokens[1])
+
+  if tokens[0] == "@timeout":
+    TIMEOUT = max(TIMEOUT, stoi(tokens[1]))
 
 
 auto parse_widget(int line_no, vector<string> tokens):
@@ -264,6 +268,13 @@ def main():
     if !handle_widget(line_no, scene, tokens):
       debug "line ", line_no, ": unknown widget name"
       continue
+
+  if TIMEOUT > 0:
+    ui::TaskQueue::add_task([=]() {
+      sleep(TIMEOUT)
+      print "timeout:", TIMEOUT
+      exit(0)
+    });
 
   app := App(scene)
   app.run()
