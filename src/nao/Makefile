@@ -10,9 +10,10 @@ copy:
 	cp ${EXE} ../build/
 	chmod +x ../build/${EXE}
 
-	ssh root@${HOST} mkdir -p ${DEST} 2>/dev/null
-	scp -C ../build/${EXE} root@${HOST}:${DEST}/${APP}
-
 _install:
 	make copy
+
+	ssh root@${HOST} mkdir -p ${DEST} 2>/dev/null
+	scp -C ../build/${EXE} root@${HOST}:${DEST}/${APP}
+	make _install_draft
 
