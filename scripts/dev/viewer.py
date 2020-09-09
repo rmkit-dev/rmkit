@@ -1,9 +1,16 @@
-import glib
-import gi
+import sys
+
+try:
+    import gi
+except ModuleNotFoundError:
+    print("Please install PyGObject")
+    sys.exit()
+
 gi.require_version("Gtk", "3.0")
 gi.require_version("Gdk", "3.0")
 from gi.repository import Gtk as gtk
 from gi.repository import Gdk as gdk
+from gi.repository import GObject
 from gi.repository.GdkPixbuf import Pixbuf, InterpType
 
 
@@ -14,7 +21,7 @@ import sys
 import time
 
 if __name__ == "__main__":
-    glib.threads_init()
+    GObject.threads_init()
 
     WIN = gtk.Window()
     IMG = gtk.Image()
@@ -37,8 +44,8 @@ if __name__ == "__main__":
         if mod != _last_mod:
             try:
                 img = Pixbuf.new_from_file("./fb.png")
-            except Exception, e:
-                print e
+            except Exception as e:
+                print(e)
                 return True
 
         _last_mod = mod
@@ -56,7 +63,7 @@ if __name__ == "__main__":
 
     update_image()
 
-    glib.timeout_add(10, update_image)
+    GObject.timeout_add(10, update_image)
 
     try:
         gtk.main()
