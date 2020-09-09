@@ -96,6 +96,10 @@ def handle_directive(int line_no, ui::Scene s, vector<string> &tokens):
 
 
 auto parse_widget(int line_no, vector<string> tokens):
+  x_token := tokens[1]
+  y_token := tokens[2]
+  w_token := tokens[3]
+  h_token := tokens[4]
   x := 0
   y := 0
 
@@ -103,41 +107,40 @@ auto parse_widget(int line_no, vector<string> tokens):
   // which increment the field by LAST_WIDGET's x or y
 
   // for w, h, we have "w" and "h" as keywords, but i think
-  // "full" will make more sense (instead of using w vs h)
+  // "full" might make more sense (instead of using w vs h)
+  w := WIDTH
+  h := HEIGHT
+  if w_token != "w":
+    w = parse_to_int(w_token, line_no, WIDTH)
+  if h_token != "h":
+    h = parse_to_int(h_token, line_no, HEIGHT)
 
   // TODO: add "%" format
   // TODO: % format might also need to be implemented for padding?
-  if tokens[1] == "next" or tokens[1] == "same":
+  if x_token == "next" or x_token == "same" or x_token == "step":
     if LAST_WIDGET == NULL:
       x = 0
     else:
-      if tokens[1] == "next":
+      if x_token == "next" or x_token == "step":
         rx, ry = LAST_WIDGET->get_render_size()
         x = LAST_WIDGET->x + rx
-      if tokens[1] == "same":
+      if x_token == "same":
         x = LAST_WIDGET->x
 
   else:
-    x = parse_to_int(tokens[1], line_no, WIDTH)
+    x = parse_to_int(x_token, line_no, WIDTH)
 
-  if tokens[2] == "next" or tokens[2] == "same":
+  if y_token == "next" or y_token == "same" or y_token == "step":
     if LAST_WIDGET == NULL:
       y = 0
     else:
-      if tokens[2] == "next":
+      if y_token == "next" || y_token == "step":
         rx, ry = LAST_WIDGET->get_render_size()
         y = LAST_WIDGET->y + ry
-      if tokens[2] == "same":
+      if y_token == "same":
         y = LAST_WIDGET->y
   else:
-    y = parse_to_int(tokens[2], line_no, HEIGHT)
-
-  w := WIDTH
-  h := HEIGHT
-  if tokens[3] != "w":
-    w = parse_to_int(tokens[3], line_no, WIDTH)
-  if tokens[4] != "h":
-    h = parse_to_int(tokens[4], line_no, HEIGHT)
+    y = parse_to_int(y_token, line_no, HEIGHT)
 
   string t
   for it := tokens.begin() + 5; it != tokens.end(); it++:

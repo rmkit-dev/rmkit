@@ -3,7 +3,7 @@ default: build
 include src/common.make
 
 # Use `make <app>` to build any app individually
-APPS=$(shell ls src/ | grep -v build)
+APPS=$(shell ls src/ | grep -v build | grep -v .make | grep -v shared | grep -v vendor)
 LINT_APPS=$(foreach app, $(APPS), lint_$(app))
 CLEAN_APPS=$(foreach app, $(APPS), clean_$(app))
 INSTALL_APPS=$(foreach app, $(APPS), install_$(app))
