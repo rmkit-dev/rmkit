@@ -25,13 +25,16 @@ This is the easiest way to compile for the tablet if you have docker installed.
 with framebuffer:
 
 * compile with real framebuffer: `ARCH=x86 make harmony`
-* switch to virtual terminal and run `./build/bin/harmony`
+* switch to virtual terminal and run `sudo ./src/build/harmony.exe`
 
 with image framebuffer:
 
 * compile with fake framebuffer: `ARCH=dev make harmony`
-* run harmony
+* run harmony with `sudo ./src/build/harmony.exe`
 * run local viewer: `make view`
+
+NOTE: sudo is necessary because the framebuffer capabilities are queried via
+ioctl to figure out the proper width and height to use, among other things
 
 ### Remarkable
 
