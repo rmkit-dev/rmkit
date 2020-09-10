@@ -75,8 +75,6 @@ bundle: $(APPS)
 
 	cd ${BUILD_DIR}; zip release.zip -r ${ZIP_DEST}/; cd ..
 	rm -fr ${BUILD_DIR}/${ZIP_DEST}/
-	cat scripts/run/install_harmony.sh.template | sed 's/VERSION/${VERSION}/g' > scripts/run/install_harmony.sh
-	cat scripts/run/try_harmony.sh.template | sed 's/VERSION/${VERSION}/g' > scripts/run/try_harmony.sh
 
 view:
 	python scripts/dev/viewer.py
