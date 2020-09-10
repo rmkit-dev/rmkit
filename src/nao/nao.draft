@@ -1,0 +1,3 @@
+name=nao package manager
+desc=Nao is a package manager UI for managing packages in opkg
+call=/opt/bin/nao
