@@ -26,6 +26,9 @@ namespace ui:
       ui::Button::before_render()
       self.mouse_inside = self.mouse_down && self.mouse_inside
 
+    void set_justification(Text::JUSTIFY j):
+      self.set_justification(j)
+
 
   class Row: public Widget:
     public:
@@ -35,11 +38,14 @@ namespace ui:
     Row(int x, y, w, h, Scene s): Widget(x,y,w,h):
       self.scene = s
 
-    void add_key(KeyButton *key):
+    void add_key(KeyButton *key, bool right=true):
       if self.layout == NULL:
         debug "RENDERING ROW", self.x, self.y, self.w, self.h
         self.layout = new HorizontalLayout(self.x, self.y, self.w, self.h, self.scene)
-      self.layout->pack_start(key)
+      if right:
+        self.layout->pack_end(key)
+      else:
+        self.layout->pack_start(key)
 
     void render():
       pass // if a component is in scene, it gets rendered
@@ -58,6 +64,7 @@ namespace ui:
     Scene prev_overlay
     MultiText *input_box = NULL
     string text = ""
+    string original_text
     int btn_width
     int btn_height
     int btn_font_size = 48
@@ -72,6 +79,7 @@ namespace ui:
       self.lower_layout()
 
     void set_text(string t):
+      self.original_text = t
       self.text = t
       if self.input_box != NULL:
         self.input_box->text = t
@@ -120,6 +128,7 @@ namespace ui:
       self.btn_width = w / row1chars.size()
       self.btn_height = 100
       indent := row1chars.size() > row2chars.size() ? h/8 : 0
+      row0 := new Row(0,0,w,100, self.scene)
       row1 := new Row(0,0,w,100, self.scene)
       row2 := new Row(indent,0,w,100, self.scene)
       row3 := new Row(indent,0,w,100, self.scene)
@@ -136,6 +145,27 @@ namespace ui:
       v_layout.pack_end(row3)
       v_layout.pack_end(row2)
       v_layout.pack_end(row1)
+      v_layout.pack_end(row0)
+
+      cancel := new KeyButton(0,0,fw/2,self.btn_height,"cancel")
+      cancel->set_justification(ui::Text::JUSTIFY::LEFT)
+      cancel->mouse.click += PLS_LAMBDA(auto &ev):
+        ui::MainLoop::refresh()
+        kev := KeyboardEvent {text:self.original_text}
+        self.events.changed(kev)
+
+        self.events.done(kev)
+
+        ui::MainLoop::hide_kbd()
+      ;
+      row0->add_key(cancel)
+      clear := new KeyButton(0,0,fw/2,self.btn_height,"clear")
+      clear->set_justification(ui::Text::JUSTIFY::RIGHT)
+      clear->mouse.click += PLS_LAMBDA(auto &ev):
+        self.text = ""
+        self.dirty = 1
+      ;
+      row0->add_key(clear, true)
 
       for (auto c: row1chars):
         row1->add_key(self.make_char_button(c))
@@ -190,7 +220,6 @@ namespace ui:
       enter_key := new KeyButton(0,0,self.btn_width,btn_height,"done")
       enter_key->textWidget->font_size = btn_font_size
       enter_key->mouse.click += PLS_LAMBDA(auto &ev):
-        self.hide()
         ui::MainLoop::refresh()
         kev := KeyboardEvent {text:self.text}
         self.events.changed(kev)
