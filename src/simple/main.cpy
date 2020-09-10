@@ -117,27 +117,27 @@ auto parse_widget(int line_no, vector<string> tokens):
 
   // TODO: add "%" format
   // TODO: % format might also need to be implemented for padding?
-  if x_token == "next" or x_token == "same" or x_token == "step":
+  if x_token == "next" or x_token == "same" or x_token == "step" or x_token == "stay":
     if LAST_WIDGET == NULL:
       x = 0
     else:
       if x_token == "next" or x_token == "step":
         rx, ry = LAST_WIDGET->get_render_size()
         x = LAST_WIDGET->x + rx
-      if x_token == "same":
+      if x_token == "same" or x_token == "stay":
         x = LAST_WIDGET->x
 
   else:
     x = parse_to_int(x_token, line_no, WIDTH)
 
-  if y_token == "next" or y_token == "same" or y_token == "step":
+  if y_token == "next" or y_token == "same" or y_token == "step" or y_token == "stay":
     if LAST_WIDGET == NULL:
       y = 0
     else:
-      if y_token == "next" || y_token == "step":
+      if y_token == "next" or y_token == "step":
         rx, ry = LAST_WIDGET->get_render_size()
         y = LAST_WIDGET->y + ry
-      if y_token == "same":
+      if y_token == "same" or y_token == "stay":
         y = LAST_WIDGET->y
   else:
     y = parse_to_int(y_token, line_no, HEIGHT)
