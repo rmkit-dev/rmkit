@@ -8,6 +8,7 @@ LINT_APPS=$(foreach app, $(APPS), lint_$(app))
 CLEAN_APPS=$(foreach app, $(APPS), clean_$(app))
 INSTALL_APPS=$(foreach app, $(APPS), install_$(app))
 RUN_APPS=$(foreach app, $(APPS), run_$(app))
+DOCKER_APPS=$(foreach app, $(APPS), $(app)_docker)
 
 SHA=$(shell git rev-parse --short HEAD)
 
@@ -20,6 +21,10 @@ $(INSTALL_APPS): %: rmkit.h
 $(RUN_APPS): %: rmkit.h
 	cd src/$(@:run_%=%) && make run
 
+$(DOCKER_APPS): %:
+	docker build --tag rmkit:latest .
+	bash scripts/build/docker_build.sh $(@:%_docker=%)
+
 $(CLEAN_APPS): %:
 	cd src/$(@:clean_%=%) && make clean
 
@@ -31,7 +36,7 @@ build: $(APPS)
 
 dest_dir:
 	ssh root@${HOST} mkdir -p /home/root/${DEST}/ > /dev/null
-	
+
 install: rmkit.h dest_dir
 	$(foreach app, $(APPS), cd src/${app} && make copy; cd ${ROOT}; )
 
