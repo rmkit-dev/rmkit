@@ -71,6 +71,15 @@ namespace ui:
   // currently, MultiText does not support justification
   class MultiText: public Text:
     public:
+    // function: Constructor
+    //
+    // parameters:
+    //
+    // x - x coord
+    // y - y coord
+    // w - width
+    // h - height
+    // t - the text to render in the widget
     MultiText(int x, y, w, h, string t): Text(x, y, w, h, t):
       pass
 

@@ -56,15 +56,17 @@ namespace ui:
   // vertically (top to bottom). it implements only 3 functions: pack_start,
   // pack_end and pack_center
   // 
-  // parameters:
-  //
-  // y - y coord of the layout's top left corner
-  // x - x coord of the layout's top right corner
-  // w - width of the layout
-  // h - height of the layout
-  // s - the scene that the layout is adding widgets to
   class VerticalLayout: public AutoLayout:
     public:
+    // function: Constructor
+    //
+    // Parameters:
+    //
+    // x - x coord of the layout's top right corner
+    // y - y coord of the layout's top left corner
+    // w - width of the layout
+    // h - height of the layout
+    // s - the scene that the layout is adding widgets to
     VerticalLayout(int x, y, w, h, Scene s): AutoLayout(x,y,w,h,s):
       self.start = 0
       self.end = h
@@ -97,6 +99,30 @@ namespace ui:
 
       self.add(w)
 
+    // function: pack_start
+    // put this widget at the start of the layout
+    void pack_start(Layout &w, int padding=0):
+      w.y += self.start + self.y + padding
+      w.x += self.x
+      self.start += w.h + padding
+
+    // function: pack_end
+    // put this widget at the end of the layout
+    void pack_end(Layout &w, int padding=0):
+      w.y = self.y + self.end - w.h - padding
+      w.x += self.x
+      self.end -= w.h + padding
+
+    // function: pack_center
+    // put this widget at the center of the layout
+    void pack_center(Layout &w):
+      leftover := self.h - w.h
+      padding_y := 0
+      if leftover > 0:
+        padding_y = leftover / 2
+      w.y = self.y + padding_y
+      w.x += self.x
+
   // class: ui::HorizontalLayout
   // --- Prototype ---
   // class ui::HorizontalLayout: public ui::AutoLayout:
@@ -106,6 +132,15 @@ namespace ui:
   // pack_end and pack_center
   class HorizontalLayout: public AutoLayout:
     public:
+    // function: Constructor
+    //
+    // Parameters:
+    //
+    // x - x coord of the layout's top right corner
+    // y - y coord of the layout's top left corner
+    // w - width of the layout
+    // h - height of the layout
+    // s - the scene that the layout is adding widgets to
     HorizontalLayout(int x, y, w, h, Scene s): AutoLayout(x,y,w,h,s):
       self.start = 0
       self.end = w
@@ -136,3 +171,27 @@ namespace ui:
       w->x = self.x + padding_x
       w->y += self.y
       self.add(w)
+
+    // function: pack_start
+    // put this widget at the start of the layout
+    void pack_start(Layout &w, int padding=0):
+      w.x += self.start + self.x + padding
+      w.y += self.y
+      self.start += w.w + padding
+
+    // function: pack_end
+    // put this widget at the end of the layout
+    void pack_end(Layout &w, int padding=0):
+      w.x = self.x + self.end - w.w - padding
+      w.y += self.y
+      self.end -= w.w + padding
+
+    // function: pack_center
+    // put this widget in the center of the layout
+    void pack_center(Layout &w):
+      leftover := self.w - w.w
+      padding_x := 0
+      if leftover > 0:
+        padding_x = leftover / 2
+      w.x = self.x + padding_x
+      w.y += self.y

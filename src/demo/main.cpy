@@ -17,10 +17,27 @@ class App:
     fb->redraw_screen()
     w, h = fb->get_display_size()
 
-    input_box := new ui::TextInput(0, 50, 500, 50)
+    // let's lay out a bunch of stuff
+
+    v_layout := ui::VerticalLayout(0, 0, w, h, demo_scene)
+    h_layout1 := ui::HorizontalLayout(0, 0, w, 50, demo_scene)
+    h_layout2 := ui::HorizontalLayout(0, 0, w, 50, demo_scene)
+    h_layout3 := ui::HorizontalLayout(0, 0, w, 50, demo_scene)
+
+    v_layout.pack_start(h_layout1)
+    v_layout.pack_start(h_layout2)
+    v_layout.pack_start(h_layout3)
+
+    h_layout1.pack_start(new ui::Text(0, 0, 200, 50, "Hello world"))
+    h_layout2.pack_center(new ui::Text(0, 0, 200, 50, "Hello world"))
+    h_layout3.pack_end(new ui::Text(0, 0, 200, 50, "Hello world"))
 
     h_layout := ui::HorizontalLayout(0, 0, w, h, demo_scene)
-    h_layout.pack_center(input_box)
+
+    v_layout.pack_start(h_layout)
+    // showing how an input box works
+    h_layout.pack_center(new ui::TextInput(0, 50, 1000, 50))
+
 
 
   def handle_key_event(input::SynKeyEvent &key_ev):

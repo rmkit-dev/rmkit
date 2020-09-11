@@ -65,8 +65,8 @@ namespace ui:
       a_layout.pack_start(self.titleWidget)
       a_layout.pack_start(self.contentWidget)
 
-      button_bar := new HorizontalLayout(0, 0, self.w, 50, self.scene)
-      a_layout.pack_end(button_bar, 10)
+      button_bar := new HorizontalLayout(10, 0, self.w, 50, self.scene)
+      a_layout.pack_end(button_bar)
 
       self.add_buttons(button_bar)
 
