@@ -74,7 +74,7 @@ class AppReader:
     else:
       perror ("")
 
-    vector<string> skip_list = { "remux.exe", "xochitl", "/usr/bin/xochitl" }
+    vector<string> skip_list = { "remux", "remux.exe", "xochitl", "/usr/bin/xochitl" }
     for auto a : apps:
       dont_add := false
       for auto s : skip_list:
@@ -107,7 +107,7 @@ class AppReader:
     return filenames
 
   def read_binaries_from_dir(string dir):
-    vector<string> skip_list = { "remux.exe" }
+    vector<string> skip_list = { "remux", "remux.exe" }
     bin_binaries := read_apps_from_dir(dir)
     for auto a : bin_binaries:
       bin_str := string(a)
@@ -130,7 +130,7 @@ class AppReader:
       self.apps.push_back(app)
 
   void populate():
-    vector<string> skip_list = { "remux.exe" }
+    vector<string> skip_list = { "remux", "remux.exe" }
     self.apps = {}
 
     for auto a : APPS:

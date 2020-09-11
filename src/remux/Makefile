@@ -1,6 +1,6 @@
 include ../actions.make
 
-EXE=remux.exe
+EXE=remux
 FILES=launcher.cpy
 _install:
 	make copy

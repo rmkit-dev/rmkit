@@ -1,4 +1,4 @@
-EXE=demo.exe
+EXE=demo
 FILES=main.cpy
 ASSET_DIR=assets/
 

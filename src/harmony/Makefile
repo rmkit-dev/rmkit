@@ -1,5 +1,5 @@
 # {{{ HARMONY MAIN CODE
-EXE=harmony.exe
+EXE=harmony
 FILES=main.cpy
 
 include ../actions.make

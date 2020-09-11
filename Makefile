@@ -3,7 +3,7 @@ default: build
 include src/common.make
 
 # Use `make <app>` to build any app individually
-APPS=$(shell ls src/ | grep -v build | grep -v .make | grep -v shared | grep -v vendor)
+APPS=$(shell ls src/ | grep -v build | grep -Ev ".make|shared|vendor|cpp")
 LINT_APPS=$(foreach app, $(APPS), lint_$(app))
 CLEAN_APPS=$(foreach app, $(APPS), clean_$(app))
 INSTALL_APPS=$(foreach app, $(APPS), install_$(app))
@@ -65,14 +65,15 @@ docker_install: docker
 ZIP_DEST="apps"
 bundle: $(APPS)
 	#BUILDING V: ${VERSION} ARCH: ${ARCH}
-	mkdir -p ${BUILD_DIR}/${ZIP_DEST} 2>/dev/null || true
-	cp ${BUILD_DIR}/*.exe ${BUILD_DIR}/${ZIP_DEST}/
-	sha256sum ${BUILD_DIR}/*.exe > ${BUILD_DIR}/sha256sum.txt
+	mkdir -p ${BUILD_DIR}/.${ZIP_DEST} 2>/dev/null || true
+	cp ${BUILD_DIR}/* ${BUILD_DIR}/.${ZIP_DEST}/
+	sha256sum ${BUILD_DIR}/* > ${BUILD_DIR}/sha256sum.txt
 	ls -la ${BUILD_DIR} > ${BUILD_DIR}/ls.txt
-	cp ${BUILD_DIR}/*.txt ${BUILD_DIR}/${ZIP_DEST}/
+	cp ${BUILD_DIR}/*.txt ${BUILD_DIR}/.${ZIP_DEST}/
 	cp src/remux/remux.service ${BUILD_DIR}
-	cp src/remux/remux.service ${BUILD_DIR}/${ZIP_DEST}/
+	cp src/remux/remux.service ${BUILD_DIR}/.${ZIP_DEST}/
 
+	mv ${BUILD_DIR}/.${ZIP_DEST} ${BUILD_DIR}/${ZIP_DEST}
 	cd ${BUILD_DIR}; zip release.zip -r ${ZIP_DEST}/; cd ..
 	rm -fr ${BUILD_DIR}/${ZIP_DEST}/
 
