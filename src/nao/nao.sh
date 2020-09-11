@@ -332,8 +332,9 @@ function list_menu() {
 
     h=$((h + 50))
     echo "HAS MORE $has_more"
-    SET "justify center" # justify the next/prev page buttons
-    UI "textinput 300 20 400 50 ${pattern}"
+    UI "label 220 25 100 50 search:"
+    SET "justify center"
+    UI "textinput 350 20 400 50 ${pattern}"
     if [ $page -gt 0 ]; then
         UI "button 800 20 200 50 prev page"
     fi
