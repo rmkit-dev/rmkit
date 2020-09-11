@@ -28,7 +28,7 @@ class App:
     v_layout.pack_start(h_layout2)
     v_layout.pack_start(h_layout3)
 
-    h_layout1.pack_start(new ui::Text(0, 0, 200, 50, "Hello world"))
+    h_layout1.pack_start(new ui::Text(0, 0, 200, 50, "Héllo world"))
     h_layout2.pack_center(new ui::Text(0, 0, 200, 50, "Hello world"))
     h_layout3.pack_end(new ui::Text(0, 0, 200, 50, "Hello world"))
 

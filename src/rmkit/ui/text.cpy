@@ -34,12 +34,12 @@ namespace ui:
 
 
     tuple<int, int> get_render_size():
-      image := stbtext::get_text_size(self.text.c_str(), self.font_size)
+      image := stbtext::get_text_size(self.text, self.font_size)
       return image.w, image.h
 
     // TODO: cache the image buffer
     void render():
-      image := stbtext::get_text_size(self.text.c_str(), self.font_size)
+      image := stbtext::get_text_size(self.text, self.font_size)
 
       image.buffer = (uint32_t*) malloc(sizeof(uint32_t) * image.w * image.h)
       memset(image.buffer, WHITE, sizeof(uint32_t) * image.w * image.h)
@@ -93,7 +93,7 @@ namespace ui:
         int max_h = 0
         for auto w: tokens:
           w += " "
-          image := stbtext::get_text_size(w.c_str(), self.font_size)
+          image := stbtext::get_text_size(w, self.font_size)
           image.buffer = (uint32_t*) malloc(sizeof(uint32_t) * image.w * image.h)
           max_h = max(image.h, max_h)
           memset(image.buffer, WHITE, sizeof(uint32_t) * image.w * image.h)
@@ -117,7 +117,7 @@ namespace ui:
         int max_h = 0
         for auto w: tokens:
           w += " "
-          image := stbtext::get_text_size(w.c_str(), self.font_size)
+          image := stbtext::get_text_size(w, self.font_size)
           max_h = max(image.h, max_h)
           if cur_x + image.w + 10 >= self.w:
             cur_x = 0

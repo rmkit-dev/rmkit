@@ -87,7 +87,7 @@ namespace ui:
 
     virtual void add_buttons(HorizontalLayout *button_bar):
       for auto b : self.buttons:
-        image := stbtext::get_text_size(b.c_str(), ui::Text::DEFAULT_FS)
+        image := stbtext::get_text_size(b, ui::Text::DEFAULT_FS)
 
         button_bar->pack_start(new DialogButton(20, 0, image.w + ui::Text::DEFAULT_FS, 50, self, b))
 

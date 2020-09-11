@@ -278,7 +278,7 @@ namespace framebuffer:
         src += image.w
 
     void draw_text(string text, int x, int y, image_data &image, int font_size=24):
-      stbtext::render_text((char*)text.c_str(), image, font_size)
+      stbtext::render_text(text, image, font_size)
       draw_bitmap(image, x, y,WHITE)
 
     // function: draw_text
@@ -290,7 +290,7 @@ namespace framebuffer:
     // text - the text to draw
     // fs - the font size to draw at
     void draw_text(int x, y, string text, int fs=24):
-      image := stbtext::get_text_size(text.c_str(), fs)
+      image := stbtext::get_text_size(text, fs)
 
       image.buffer = (uint32_t*) malloc(sizeof(uint32_t) * image.w * image.h)
       memset(image.buffer, WHITE, sizeof(uint32_t) * image.w * image.h)
