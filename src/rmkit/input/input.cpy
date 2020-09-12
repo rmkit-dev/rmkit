@@ -8,6 +8,7 @@
 
 #include "../defines.h"
 #include "events.h"
+#include "device_id.h"
 
 using namespace std
 
@@ -95,10 +96,9 @@ namespace input:
       self.monitor(self.mouse.fd = open("/dev/input/mice", O_RDWR))
       // used by remarkable
       #ifdef REMARKABLE
-      self.monitor(self.wacom.fd = open("/dev/input/event0", O_RDWR))
-      // opened read write because we need to sometime inject events into here
-      self.monitor(self.touch.fd = open("/dev/input/event1", O_RDWR))
-      self.monitor(self.button.fd = open("/dev/input/event2", O_RDWR))
+      self.open_device("/dev/input/event0")
+      self.open_device("/dev/input/event1")
+      self.open_device("/dev/input/event2")
       #endif
 
       #ifdef DEV_KBD
@@ -117,6 +117,28 @@ namespace input:
       close(self.touch.fd)
       close(self.wacom.fd)
       close(self.button.fd)
+
+    void open_device(string fname):
+      fd := open(fname.c_str(), O_RDWR)
+
+      switch input::id_by_capabilities(fd):
+        case STYLUS:
+          self.wacom.fd = fd
+          break
+        case BUTTONS:
+          self.button.fd = fd
+          break
+        case TOUCH:
+          self.touch.fd = fd
+          break
+        case INVALID:
+        case UNKNOWN:
+        default:
+          debug fname, "IS UNKNOWN EVENT DEVICE"
+          close(fd)
+          return
+
+      self.monitor(fd)
 
     void reset_events():
       self.wacom.clear()

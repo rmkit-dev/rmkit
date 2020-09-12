@@ -47,6 +47,7 @@ class App:
     pass
 
   def run():
+
     ui::MainLoop::key_event += PLS_DELEGATE(self.handle_key_event)
     ui::MainLoop::motion_event += PLS_DELEGATE(self.handle_motion_event)
 
