@@ -65,10 +65,3 @@ namespace input:
       return BUTTONS
 
     return UNKNOWN
-
-def main(int argc, char* argv[]):
-  for auto s : { "/dev/input/event0", "/dev/input/event1", "/dev/input/event2", "/dev/input/mice" }:
-    fd := open(s, O_RDWR)
-    print s, input::id_by_capabilities(fd), input::id_by_name(fd)
-    close(fd)
-
