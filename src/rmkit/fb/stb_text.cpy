@@ -5,7 +5,7 @@
 
 #include "../defines.h"
 #include "../../vendor/stb/stb_truetype.h"
-
+#include "../assets.h"
 
 
 namespace stbtext:
@@ -14,22 +14,18 @@ namespace stbtext:
   stbtt_fontinfo font;
   bool did_setup = false
 
-//  void draw_to_terminal(image_data &image, char **text_buffer):
-//     for (j=0; j < image.h; ++j):
-//        for (i=0; i < image.w; ++i):
-//           putchar(" .:ioVM@"[text_buffer[j][i]>>5]);
-//        putchar('\n');
-
   void setup_font():
     if !did_setup:
       #ifdef REMARKABLE
       const char *filename = "/usr/share/fonts/ttf/noto/NotoMono-Regular.ttf";
-      #else
-      const char *filename = "src/vendor/NotoSansMono-Regular.ttf";
-      #endif
-
      // TODO: fix the max size read to prevent overflows (or just abort on really large files)
       _ := fread(font_buffer, 1, 24<<20, fopen(filename, "rb"));
+      #else
+      const char *filename = "src/vendor/NotoSansMono-Regular.ttf";
+      memcpy(font_buffer, assets::NotoSansMono_Regular_ttf, assets::NotoSansMono_Regular_ttf_len)
+      font_buffer[assets::NotoSansMono_Regular_ttf_len] = 0
+      #endif
+
       stbtt_InitFont(&font, font_buffer, 0);
       did_setup = true
 
