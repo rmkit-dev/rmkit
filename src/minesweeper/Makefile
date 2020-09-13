@@ -1,4 +1,5 @@
 EXE=mines
+APP=minesweeper
 FILES=main.cpy
 
 include ../actions.make

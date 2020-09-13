@@ -1,5 +1,4 @@
-#ifndef ASSETS_H
-#define ASSETS_H
+#pragma once
 namespace assets {
 unsigned char white_king_solid_png[] = {
   0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
@@ -2939,4 +2938,3 @@ unsigned char black_knight_solid_png[] = {
 };
 unsigned int black_knight_solid_png_len = 2930;
 };
-#endif

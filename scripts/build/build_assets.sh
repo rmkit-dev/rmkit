@@ -9,8 +9,7 @@ FILES=`find ${ASSET_DIR} -type f`
 
 echo ${DEST}
 
-echo "#ifndef ASSETS_H" > ${ASSETSH}
-echo "#define ASSETS_H" >> ${ASSETSH}
+echo "#pragma once" > ${ASSETSH}
 echo "namespace assets {" >> ${ASSETSH}
 
 for ASSET in ${FILES}; do
@@ -19,4 +18,3 @@ for ASSET in ${FILES}; do
 done
 
 echo "};" >> ${ASSETSH}
-echo "#endif" >> ${ASSETSH}
