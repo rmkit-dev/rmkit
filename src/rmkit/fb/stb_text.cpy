@@ -25,7 +25,7 @@ namespace stbtext:
       #ifdef REMARKABLE
       const char *filename = "/usr/share/fonts/ttf/noto/NotoMono-Regular.ttf";
       #else
-      const char *filename = "/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf";
+      const char *filename = "src/vendor/NotoSansMono-Regular.ttf";
       #endif
 
      // TODO: fix the max size read to prevent overflows (or just abort on really large files)
