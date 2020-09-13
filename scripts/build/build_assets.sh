@@ -14,7 +14,7 @@ echo "namespace assets {" >> ${ASSETSH}
 
 for ASSET in ${FILES}; do
   echo "xxd -i ${ASSET} | sed 's/${SUB_ASSET_DIR}//'>> ${ASSETSH}"
-  xxd -i ${ASSET} | sed 's/'${SUB_ASSET_DIR}'//g'>> ${ASSETSH}
+  xxd -i ${ASSET} | sed 's/'${SUB_ASSET_DIR}'//g; s/unsigned/static unsigned/'>> ${ASSETSH}
 done
 
 echo "};" >> ${ASSETSH}
