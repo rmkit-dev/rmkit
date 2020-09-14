@@ -9,13 +9,21 @@ This document has ideas for apps that might work well on the remarkable.
 * calendar / agenda
 * dynamic suspend screens
 * dictionary with fast word word lookup
+* thesaurus
 * widgets: battery, notes, todo list, dictionary, etc
+* simple note taking application with no brushes, just notes
 
 ### Drawing
 
 * picture inbox & messaging
 * procedural sketching
 * diagramming / modeling
+
+### Internet
+
+* wikipedia browser (using API)
+* simple RSS reader
+* simple browser
 
 
 ### Games

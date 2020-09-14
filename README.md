@@ -1,5 +1,16 @@
 # rmkit
 
+[![rm1](https://img.shields.io/badge/rM1-supported-green)](https://remarkable.com/store/remarkable)
+[![rm2](https://img.shields.io/badge/rM2-unknown-yellow)](https://remarkable.com/store/remarkable-2)
+
+
+
+[![opkg](https://img.shields.io/badge/OPKG-harmony-blue)](https://github.com/toltec-dev/toltec)
+[![opkg](https://img.shields.io/badge/OPKG-mines-blue)](https://github.com/toltec-dev/toltec)
+[![opkg](https://img.shields.io/badge/OPKG-nao-blue)](https://github.com/toltec-dev/toltec)
+[![opkg](https://img.shields.io/badge/OPKG-remux-blue)](https://github.com/toltec-dev/toltec)
+[![opkg](https://img.shields.io/badge/OPKG-simple-blue)](https://github.com/toltec-dev/toltec)
+
 This repo contains applications for the remarkable tablet. See the README in
 each application's directory to learn more about it. The general purpose of
 rmkit is to make it easy to write and deploy new apps to the remarkable tablet.
@@ -27,12 +38,15 @@ follow the philosophy of unix pipes.
 
 A batteries included library for building remarkable apps. [Read the documentation](https://rmkit-dev.github.io/rmkit)
 
-### [demo](src/demo)
-
-A small example app to demonstrate how to build apps with rmkit
-
-
 ## Installation
+
+#### Via Toltec
+
+The recommended way of installing the software in this repository is to use
+[toltec](https://github.com/toltec-dev/toltec) - a free software repository for
+remarkable. Once opkg and the toltec repository are setup, use `opkg install
+remux` to get remux, for example.
+
 
 #### Try it out
 
@@ -49,7 +63,8 @@ to launch remux and switch between apps, hold the center button for 2+ seconds.
 #### Uninstalling
 
 to remove remux, run `systemctl disable remux --now`. All the applications are
-installed into /home/root/apps, so you can delete that directory safely.
+installed into /home/root/apps with the above `install.sh` script, so you can
+delete that directory safely.
 
 ## Building from source
 
