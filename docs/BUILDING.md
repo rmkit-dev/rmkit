@@ -1,8 +1,7 @@
 ## Individual Projects
 
-You can compile an individual project by going to its directory and
-running `make` or `make run`. If it depends on rmkit.h, you should
-run `make rmkit.h` in the top level dir.
+You can compile an individual project by running `make <project>` or `make
+<project>_docker` to build the project inside a docker container.
 
 You can change whether you are compiling for the remarkable or a PC by
 adjusting the `ARCH` environment variable. See `src/actions.make` for the list
@@ -22,25 +21,27 @@ This is the easiest way to compile for the tablet if you have docker installed.
 
 * install okp: `sudo pip install okp`
 
-with framebuffer:
-
-* compile with real framebuffer: `ARCH=x86 make harmony`
-* switch to virtual terminal and run `sudo ./src/build/harmony.exe`
-
 with image framebuffer:
 
 * compile with fake framebuffer: `ARCH=dev make harmony`
-* run harmony with `sudo ./src/build/harmony.exe`
+* run harmony with `sudo ./src/build/harmony`
 * run local viewer: `make view`
 
-NOTE: sudo is necessary because the framebuffer capabilities are queried via
-ioctl to figure out the proper width and height to use, among other things
+with real framebuffer:
+
+* compile with real framebuffer: `ARCH=x86 make harmony`
+* switch to virtual terminal and run `sudo ./src/build/harmony`
+
+NOTE: sudo is necessary because 1) the framebuffer capabilities are queried via
+ioctl to figure out the proper width and height to use and 2) the keyboard /
+mouse are opened for reading
 
 ### Remarkable
 
 * install okp: `sudo pip install okp`
 * install arm toolchain
   * on ubuntu: `sudo apt install g++-arm-linux-gnueabihf`
-* compile harmony for remarkable: `make harmony_arm`
-* test on remarkable: `make test_arm` - assumes that the remarkable is plugged in on USB
-* test on remarkable over wifi: `HOST=192.168.1.10 make test_arm`
+  * on archlinux: install `arm-linux-gnueabihf-gcc` from AUR
+* compile harmony for remarkable: `make harmony`
+* test on remarkable: `make run_harmony` - assumes that the remarkable is plugged in on USB
+* test on remarkable over wifi: `HOST=192.168.1.10 make run_harmony`
