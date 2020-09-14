@@ -23,20 +23,24 @@ A [low latency drawing app](https://rmkit.dev/apps/harmony) with procedural brus
 
 A [minesweeper game](https://rmkit.dev/apps/minesweeper) for spending time between meetings and classes
 
+### [nao](src/nao)
+
+A [package manager](https://rmkit.dev/apps/nao) for opkg built in bash + simple app script.
+
 ### [remux](src/remux)
 
 An [app switcher](https://rmkit.dev/apps/remux) for switching between apps on the remarkable that is compatible
 with [draft-remarkable](https://github.com/dixonary/draft-reMarkable/)
 configuration files. Hold the middle button to bring it up.
 
+### [rmkit](src/rmkit)
+
+A batteries included library for building remarkable apps. [Read the documentation](https://rmkit-dev.github.io/rmkit)
+
 ### [simple app script](src/simple)
 
 A [simple markup language](https://rmkit.dev/apps/sas) for building apps that
 follow the philosophy of unix pipes.
-
-### [rmkit](src/rmkit)
-
-A batteries included library for building remarkable apps. [Read the documentation](https://rmkit-dev.github.io/rmkit)
 
 ## Installation
 
