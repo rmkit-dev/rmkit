@@ -31,12 +31,13 @@ DIALOG_HEIGHT := 800
 LAST_ACTION := 0
 
 string CURRENT_APP = "_"
-
+string NAO_BIN="/opt/bin/nao"
 
 class IApp:
   public:
   virtual void launch(string) = 0;
   virtual void on_suspend() = 0;
+  virtual void get_more() = 0;
 
 
 class ClockWatch:
@@ -50,6 +51,15 @@ class ClockWatch:
     t2 := chrono::high_resolution_clock::now();
     chrono::duration<double> time_span = chrono::duration_cast<chrono::duration<double>>(t2 - t1)
     return time_span.count()
+
+class NaoButton: public ui::Button:
+  public:
+  IApp *app
+  NaoButton(int x, int y, int w, int h, IApp *a): ui::Button(x, y, w, h, "Get More Apps"):
+    self.app = a
+
+  void on_mouse_click(input::SynMouseEvent &ev):
+    self.app->get_more()
 
 class SuspendButton: public ui::Button:
   public:
@@ -109,6 +119,7 @@ class AppDialog: public ui::Pager:
       self.app = a
       self.opt_h = 60
       self.page_size = self.page_size - 4
+      self.buttons = { "Get More Apps" }
 
     void add_shortcuts():
       _w, _h := fb->get_display_size()
@@ -117,6 +128,11 @@ class AppDialog: public ui::Pager:
       b1 := new SuspendButton(0, 0, 200, 50, self.app)
       h_layout.pack_end(b1)
       v_layout.pack_end(b1)
+
+      if system("test -f /opt/bin/nao") == 0:
+        cw := 250
+        b2 := new NaoButton(self.x+self.w-cw, self.y-50, cw, 50, self.app)
+        self.scene->add(b2)
 
 
     void render():
@@ -183,6 +199,9 @@ class App: public IApp:
     notebook := ui::make_scene()
     notebook->add(app_bg)
     ui::MainLoop::set_scene(notebook)
+
+  void get_more():
+    launch(NAO_BIN)
 
   def do_suspend():
     #ifdef REMARKABLE
@@ -414,7 +433,7 @@ class App: public IApp:
     string bin
 
     for auto a : app_dialog->get_apps():
-      if a.name == name:
+      if a.name == name or a.bin == name:
         bin = a.bin
         CURRENT_APP = string(a.name)
 
