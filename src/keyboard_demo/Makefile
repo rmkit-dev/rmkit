@@ -1,4 +1,4 @@
-EXE=demo
+EXE=keyboard_demo
 FILES=main.cpy
 ASSET_DIR=assets/
 
