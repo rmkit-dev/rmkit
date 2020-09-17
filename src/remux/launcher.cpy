@@ -19,9 +19,15 @@ TIMEOUT := 1
 SUSPEND_TIMER := 10
 
 // all time is in seconds
-SUSPEND_THRESHOLD := 60 * 4 
-CHARGING_THRESHOLD := 60 * 30
-TOO_MUCH_THRESHOLD := 60 * 7
+// TODO: read these from remarkable.conf file
+
+MIN := 60
+HOURS := MIN * MIN
+
+SUSPEND_THRESHOLD := MIN * 4
+CHARGING_THRESHOLD := MIN * 30
+TOO_MUCH_THRESHOLD := MIN * 7
+SHUTDOWN_THRESHOLD := HOURS * 10 // 10 hours
 
 #include "apps.h"
 
@@ -203,12 +209,6 @@ class App: public IApp:
   void get_more():
     launch(NAO_BIN)
 
-  def do_suspend():
-    #ifdef REMARKABLE
-    self.on_suspend()
-    #endif
-    return
-
   void get_current_app():
     RMApp active
 
@@ -241,12 +241,11 @@ class App: public IApp:
 
         if last_action > 0:
           if now - last_action > SUSPEND_THRESHOLD and now - LAST_ACTION < TOO_MUCH_THRESHOLD:
-            suspend_m.lock()
-            LAST_ACTION = 0
-            suspend_m.unlock()
             if not ui::MainLoop::overlay_is_visible:
               app_bg->snapshot()
-            do_suspend()
+            on_suspend()
+
+
         this_thread::sleep_for(chrono::seconds(10));
 
     });
@@ -340,6 +339,10 @@ class App: public IApp:
 
   // TODO: power button will cause suspend screen, why not?
   void on_suspend():
+    #ifndef REMARKABLE
+    return
+    #endif
+
     debug "SUSPENDING"
     ui::MainLoop::hide_overlay()
 
@@ -361,10 +364,19 @@ class App: public IApp:
     ui::MainLoop::in.grab()
 
     #ifdef REMARKABLE
-    _ := system("systemctl suspend")
+    cmd := "/usr/sbin/rtcwake -m no --seconds " + to_string(SHUTDOWN_THRESHOLD)
+    _ := system(cmd.c_str())
+    _ = system("systemctl suspend")
     #endif
     sleep(1)
 
+    now := time(NULL)
+    if now - LAST_ACTION >= SHUTDOWN_THRESHOLD:
+      debug "RESUMING FROM SUSPEND -> SHUTDOWN"
+      _ := system("systemctl poweroff")
+      return
+
+    _ = system("/usr/sbin/rtcwake --seconds 0 -m disable")
     debug "RESUMING FROM SUSPEND"
     ui::MainLoop::in.ungrab()
 
