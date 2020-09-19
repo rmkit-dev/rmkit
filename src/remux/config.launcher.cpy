@@ -19,7 +19,7 @@ RMApp APP_XOCHITL = RMApp %{
 
 RMApp APP_KOREADER = RMApp %{
   bin:"/home/root/koreader/koreader.sh",
-  which:"koreader",
+  which:"koreader.sh",
   name:"KOReader",
 }
 

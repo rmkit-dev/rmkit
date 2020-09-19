@@ -138,6 +138,9 @@ namespace framebuffer:
       if self.dirty:
         self.redraw_screen()
 
+    virtual void set_screen_depth(int d):
+      return
+
     tuple<int,int> get_size():
       size_f := ifstream("/sys/class/graphics/fb0/virtual_size")
       string width_s, height_s
@@ -581,16 +584,34 @@ namespace framebuffer:
         exit(0)
 
       #ifdef USE_GRAYSCALE_8BIT
-      vinfo.bits_per_pixel = 8;
-      vinfo.grayscale = 1;
+      set_screen_depth(8)
       #else
-      vinfo.bits_per_pixel = 16;
-      vinfo.grayscale = 0;
+      set_screen_depth(16)
       retval := ioctl(self.fd, FBIOPUT_VSCREENINFO, &vinfo);
       #endif
 
       auto_update_mode := AUTO_UPDATE_MODE_AUTOMATIC_MODE
       ioctl(self.fd, MXCFB_SET_AUTO_UPDATE_MODE, (pointer_size) &auto_update_mode);
+
+    void set_screen_depth(int d):
+      fb_var_screeninfo vinfo;
+      if (ioctl(self.fd, FBIOGET_VSCREENINFO, &vinfo)):
+        fprintf(stderr, "Could not get screen vinfo for %s\n", "/dev/fb0")
+        exit(0)
+
+      switch d:
+        case 8:
+          vinfo.bits_per_pixel = 8;
+          vinfo.grayscale = 1
+          break
+
+        case 16:
+        default:
+          vinfo.bits_per_pixel = 16;
+          vinfo.grayscale = 0;
+          break
+
+      retval := ioctl(self.fd, FBIOPUT_VSCREENINFO, &vinfo);
 
     void cleanup():
       debug "CLEANING UP FB"

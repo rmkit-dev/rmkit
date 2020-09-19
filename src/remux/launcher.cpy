@@ -454,6 +454,7 @@ class App: public IApp:
     flood_button_queue()
     // flood_button_queue()
     proc::launch_process(bin, true /* check running */, true /* background */)
+
     ui::MainLoop::hide_overlay()
 
   // we save the touch input until the finger lifts up
@@ -498,6 +499,10 @@ class App: public IApp:
 
 
   def run():
+    // for koreader
+    putenv("KO_DONT_SET_DEPTH=1")
+    putenv("KO_DONT_GRAB_INPUT=1")
+
     _ := system("systemctl stop xochitl")
     proc::launch_process("xochitl --system", true /* check running */, true /* background */)
 
