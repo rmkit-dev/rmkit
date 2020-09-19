@@ -101,7 +101,8 @@ namespace proc:
     return 0 == system(command);
 
   void launch_process(string name, bool check_running=false, background=false):
-    cstr := name.c_str()
+    tokens := str_utils::split(name, ' ')
+    cstr := tokens[0].c_str()
     base := basename((char *) cstr)
     if check_running && check_process(base):
       cmd := "killall -SIGCONT " + string(base) + " 2> /dev/null"

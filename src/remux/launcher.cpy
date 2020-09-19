@@ -499,7 +499,7 @@ class App: public IApp:
 
   def run():
     _ := system("systemctl stop xochitl")
-    proc::launch_process("xochitl", true /* check running */, true /* background */)
+    proc::launch_process("xochitl --system", true /* check running */, true /* background */)
 
     ui::Text::DEFAULT_FS = 32
 
