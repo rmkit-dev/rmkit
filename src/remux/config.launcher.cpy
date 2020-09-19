@@ -2,14 +2,15 @@ struct RMApp:
   string bin
   string which = "XBXA"
 
-  string name // from draft launcher
-  string term // from draft launcher
-  string desc // from draft launcher
+  string name = "" // from draft launcher
+  string term = "" // from draft launcher
+  string desc = "" // from draft launcher
+  string resume = ""
 
   bool always_show = false
 
   // this will contain a framebuffer snapshot if we have one
-  char *snapshot 
+  char *snapshot = NULL
 
 RMApp APP_XOCHITL = RMApp %{
   bin : "xochitl",
@@ -21,6 +22,8 @@ RMApp APP_KOREADER = RMApp %{
   bin:"/home/root/koreader/koreader.sh",
   which:"koreader.sh",
   name:"KOReader",
+  term: "killall -SIGSTOP koreader.sh luajit",
+  resume: "killall -SIGCONT koreader.sh luajit"
 }
 
 RMApp APP_FINGERTERM = RMApp %{

@@ -283,7 +283,8 @@ class App: public IApp:
     app_dialog->scene->on_hide += PLS_LAMBDA(auto &d):
       self.render_bg()
       launch(CURRENT_APP)
-      ui::MainLoop::in.ungrab()
+      if CURRENT_APP != "KOReader":
+        ui::MainLoop::in.ungrab()
     ;
 
     ui::MainLoop::in.grab()
@@ -443,17 +444,35 @@ class App: public IApp:
 
     debug "LAUNCHING APP", name
     string bin
+    string which
 
+    RMApp app
     for auto a : app_dialog->get_apps():
       if a.name == name or a.bin == name:
-        bin = a.bin
+        app = a
         CURRENT_APP = string(a.name)
 
     ui::MainLoop::in.ungrab()
     flood_touch_queue()
     flood_button_queue()
     // flood_button_queue()
-    proc::launch_process(bin, true /* check running */, true /* background */)
+
+    if app.resume != "" and proc::check_process(app.which):
+      proc::launch_process(app.resume)
+    else:
+      proc::launch_process(app.bin, true /* check running */, true /* background */)
+
+    // TODO: remove KOReader special codings
+    if CURRENT_APP == "KOReader":
+      ui::MainLoop::in.grab()
+      debug "FYI, GRABBING KOREADER INPUTS AWAY AND RESETTING SCREEN DEPTH"
+      ui::TaskQueue::add_task([=]() {
+        this_thread::sleep_for(chrono::seconds(3));
+        fb->set_screen_depth(16)
+        ui::MainLoop::in.ungrab()
+      })
+    else:
+      ioctl(ui::MainLoop::in.button.fd, EVIOCGRAB, false)
 
     ui::MainLoop::hide_overlay()
 
@@ -500,8 +519,8 @@ class App: public IApp:
 
   def run():
     // for koreader
-    putenv("KO_DONT_SET_DEPTH=1")
-    putenv("KO_DONT_GRAB_INPUT=1")
+    putenv((char*) "KO_DONT_SET_DEPTH=1")
+    putenv((char*) "KO_DONT_GRAB_INPUT=1")
 
     _ := system("systemctl stop xochitl")
     proc::launch_process("xochitl --system", true /* check running */, true /* background */)
