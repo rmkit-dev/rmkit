@@ -206,6 +206,33 @@ class App: public IApp:
     notebook->add(app_bg)
     ui::MainLoop::set_scene(notebook)
 
+    #ifdef REMARKABLE
+    self.update_thresholds()
+    #endif
+
+  void update_thresholds():
+    debug "READING TIMEOUTS FOR SLEEP/SHUTDOWN FROM XOCHITL"
+    ifstream f("/home/root/.config/remarkable/xochitl.conf")
+    string line
+    while getline(f, line):
+      // search line by line for IdleSuspendDelay, SuspendPowerOffDelay
+      if line.find("IdleSuspendDelay") != -1:
+        eq_sign_pos := line.find("=")
+        if eq_sign_pos != -1:
+          try:
+            SUSPEND_THRESHOLD = std::stoi(line.substr(eq_sign_pos+1, -1)) / 1000 - 10
+            debug "SUSPEND UPDATED", SUSPEND_THRESHOLD
+          catch (...):
+            debug "COULDNT PARSE FOR SUSPEND:", line
+      if line.find("SuspendPowerOffDelay") != -1:
+        eq_sign_pos := line.find("=")
+        if eq_sign_pos != -1:
+          try:
+            SHUTDOWN_THRESHOLD = std::stoi(line.substr(eq_sign_pos+1, -1)) / 1000
+            debug "SHUTDOWN UPDATED", SHUTDOWN_THRESHOLD
+          catch (...):
+            debug "COULDNT PARSE FOR SHUTDOWN:", line
+
   void get_more():
     launch(NAO_BIN)
 
