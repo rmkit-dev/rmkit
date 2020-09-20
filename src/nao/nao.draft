@@ -1,4 +1,5 @@
 name=nao package manager
 desc=Nao is a package manager UI for managing packages in opkg
 call=/opt/bin/nao
-term=killall -9 simple; ps | grep bash | grep nao | cut -f2 -d' ' | xargs kill -9
+which=nao
+term=killall -9 simple /opt/bin/nao

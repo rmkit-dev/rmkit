@@ -194,10 +194,10 @@ function main_menu() {
     MAKE_SCENE
     SET fontsize 64
     SET padding_y 20
-    SET justify center
-    half=$((D_W/2))
-    UI button 0 700 $half 80 MANAGE PACKAGES
-    UI button $half 700 $half 80 MANAGE REPOS
+    SET justify left
+    UI button 20% 200 60% 200 SYNC REPOS
+    UI button same step 60% 200 CHECK UPGRADES
+    UI button same step 60% 200 UPGRADE PACKAGES
     DISPLAY
 
     echo ${RETURN}
@@ -210,6 +210,24 @@ function main_menu() {
     if [[ ${RETURN} =~ "MANAGE REPOS" ]]; then
         echo "MANAGING REPOSITORIES"
         SHOW_SCENE repo_menu
+    fi
+
+    if [[ ${RETURN} =~ "SYNC REPOS" ]]; then
+        echo "SYNCING REPOSITORIES"
+        run_cmd "${OPKG} update"
+        main_menu
+    fi
+
+    if [[ ${RETURN} =~ "UPGRADE PACKAGES" ]]; then
+        echo "UPGRADING"
+        run_cmd "${OPKG} upgrade"
+        main_menu
+    fi
+
+    if [[ ${RETURN} =~ "CHECK UPGRADES" ]]; then
+        echo "UPGRADING"
+        run_cmd "${OPKG} list-upgradable"
+        main_menu
     fi
 
 }
