@@ -215,6 +215,7 @@ class App: public IApp:
     ifstream f("/home/root/.config/remarkable/xochitl.conf")
     string line
     while getline(f, line):
+      // TODO: switch this to using str_utils::split?
       // search line by line for IdleSuspendDelay, SuspendPowerOffDelay
       if line.find("IdleSuspendDelay") != -1:
         eq_sign_pos := line.find("=")

@@ -218,6 +218,8 @@ namespace framebuffer:
     // h - the height of the rectangle
     // color - the color of the rect, can be WHITE, BLACK, GRAY, RUBBER or ERASER
     // dither - how much dithering to apply to the pixels
+    //
+    // note that dithering does not work with GRAY, RUBBER or ERASER
     inline void draw_rect(int o_x, o_y, w, h, color, fill=true, float dither=1.0):
       self.dirty = 1
       remarkable_color* ptr = self.fbmem
