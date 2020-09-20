@@ -35,6 +35,7 @@ DIALOG_WIDTH  := 400
 DIALOG_HEIGHT := 800
 
 LAST_ACTION := 0
+USE_KOREADER_WORKAROUND := false
 
 string CURRENT_APP = "_"
 string NAO_BIN="/opt/bin/nao"
@@ -311,7 +312,7 @@ class App: public IApp:
     app_dialog->scene->on_hide += PLS_LAMBDA(auto &d):
       self.render_bg()
       launch(CURRENT_APP)
-      if CURRENT_APP != "KOReader":
+      if USE_KOREADER_WORKAROUND and CURRENT_APP != "KOReader":
         ui::MainLoop::in.ungrab()
     ;
 
@@ -353,17 +354,20 @@ class App: public IApp:
   void term_apps(string name=""):
     vector<string> term
     for auto a : app_dialog->get_apps():
+      tokens := str_utils::split(a.bin, ' ')
+      cstr := tokens[0].c_str()
+      base := basename((char *) cstr)
       if a.name != name:
-        if a.term != "":
+        str_utils::trim(a.term)
+        if a.term != "" and a.term != ":":
           proc::launch_process(a.term, false)
         else:
-          cstr := a.bin.c_str()
-          base := basename((char *) cstr)
           term.push_back(string(base))
 
     if term.size() > 0:
       termed := str_utils::join(term, ' ')
       stop_cmd := "killall -SIGSTOP " + termed + " 2>/dev/null"
+      debug stop_cmd
       proc::launch_process(stop_cmd)
 
   // TODO: power button will cause suspend screen, why not?
@@ -491,7 +495,7 @@ class App: public IApp:
       proc::launch_process(app.bin, true /* check running */, true /* background */)
 
     // TODO: remove KOReader special codings
-    if CURRENT_APP == "KOReader":
+    if USE_KOREADER_WORKAROUND and CURRENT_APP == "KOReader":
       ui::MainLoop::in.grab()
       debug "FYI, GRABBING KOREADER INPUTS AWAY AND RESETTING SCREEN DEPTH"
       ui::TaskQueue::add_task([=]() {
