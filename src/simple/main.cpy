@@ -151,7 +151,7 @@ auto parse_widget(int line_no, vector<string> tokens):
 
 bool handle_widget(int line_no, ui::Scene scene, vector<string> &tokens):
     first := tokens[0]
-    first_tokens := split(first, ':')
+    first_tokens := str_utils::split(first, ':')
     id := string("")
 
     x,y,w,h,t := parse_widget(line_no, tokens)
@@ -238,7 +238,7 @@ string until_closing_bracket(string line):
 
   line = ""
   for it := lines.begin(); it != lines.end(); it++:
-    line += *it + " "
+    line += *it + " \n"
   return line
 
 def main():
@@ -258,7 +258,7 @@ def main():
 
     if line[0] == '[':
       line = until_closing_bracket(line)
-    tokens := split(line, ' ')
+    tokens := str_utils::split(line, ' ')
 
     first := tokens[0]
     if first[0] == '@':
