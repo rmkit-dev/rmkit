@@ -34,6 +34,7 @@ This document has ideas for apps that might work well on the remarkable.
 * chess board (with variants)
 * connect 4
 * mad libs
+* nonograms
 
 ### Reading
 
