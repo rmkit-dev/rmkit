@@ -210,6 +210,7 @@ class App: public IApp:
     #ifdef REMARKABLE
     self.update_thresholds()
     #endif
+    return
 
   void update_thresholds():
     debug "READING TIMEOUTS FOR SLEEP/SHUTDOWN FROM XOCHITL"
@@ -400,7 +401,6 @@ class App: public IApp:
     cmd := "/usr/sbin/rtcwake -m no --seconds " + to_string(SHUTDOWN_THRESHOLD)
     _ := system(cmd.c_str())
     _ = system("systemctl suspend")
-    #endif
     sleep(1)
 
     now := time(NULL)
@@ -410,6 +410,8 @@ class App: public IApp:
       return
 
     _ = system("/usr/sbin/rtcwake --seconds 0 -m disable")
+    #endif
+
     debug "RESUMING FROM SUSPEND"
     ui::MainLoop::in.ungrab()
 
