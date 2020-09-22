@@ -1,7 +1,7 @@
 #include <linux/input.h>
 #include "../defines.h"
 
-//#define DEBUG_INPUT_EVENT 1
+// #define DEBUG_INPUT_EVENT 1
 
 namespace input:
   class Event:
@@ -194,6 +194,7 @@ namespace input:
 
       syn_ev.set_original(new MouseEvent(*self))
       return syn_ev
+
   int MouseEvent::width = 0
   int MouseEvent::height = 0
 

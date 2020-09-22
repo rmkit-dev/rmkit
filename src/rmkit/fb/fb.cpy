@@ -142,6 +142,12 @@ namespace framebuffer:
       return
 
     tuple<int,int> get_size():
+      #ifdef DEV
+      width = DISPLAYWIDTH
+      height = DISPLAYHEIGHT
+      return width, height
+      #endif
+
       size_f := ifstream("/sys/class/graphics/fb0/virtual_size")
       string width_s, height_s
       char delim = ',';
@@ -155,6 +161,7 @@ namespace framebuffer:
       height /= 2
       #endif
       return width, height
+
 
     void check_resize():
       w,h := self.get_size()
@@ -308,8 +315,8 @@ namespace framebuffer:
       fd = open("fb.pnm", O_CREAT|O_RDWR, 0755)
       lseek(fd, 0, 0)
       char c[100];
-      i := sprintf(c, "P6%d %d\n255\n", self.width, self.height)
-      wrote := write(fd, c, i-1)
+      i := sprintf(c, "P6\n%d %d\n255\n", self.width, self.height)
+      wrote := write(fd, c, i)
       if wrote == -1:
         fprintf(stderr, "ERROR %i", errno)
       buf := (char *) calloc(sizeof(char), self.width * self.height * 4)
@@ -328,6 +335,9 @@ namespace framebuffer:
         fprintf(stderr, "ERROR %i\n", errno)
       close(fd)
       free(buf)
+
+      if USE_RESIM:
+        return
 
       ret := system("pnmtopng fb.pnm > fb.png 2>/dev/null")
 

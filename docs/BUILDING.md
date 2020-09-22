@@ -19,13 +19,13 @@ This is the easiest way to compile for the tablet if you have docker installed.
 
 ### Linux
 
-* install okp: `sudo pip install okp`
+* install okp: `pip install okp`
+* install resim viewer: `pip install resim`
 
 with image framebuffer:
 
 * compile with fake framebuffer: `ARCH=dev make harmony`
-* run harmony with `sudo ./src/build/harmony`
-* run local viewer: `make view`
+* run harmony with `resim ./src/build/harmony`
 
 with real framebuffer:
 

@@ -12,7 +12,9 @@
 
 using namespace std
 
-//#define DEBUG_INPUT_EVENT 1
+USE_RESIM := true
+
+// #define DEBUG_INPUT_EVENT 1
 namespace input:
   static int ipc_fd[2] = { -1, -1 };
 
@@ -93,16 +95,24 @@ namespace input:
       FD_ZERO(&rdfs)
 
       // dev only
-      self.monitor(self.mouse.fd = open("/dev/input/mice", O_RDWR))
+      if !USE_RESIM:
+        self.monitor(self.mouse.fd = open("/dev/input/mice", O_RDWR))
       // used by remarkable
       #ifdef REMARKABLE
       self.open_device("/dev/input/event0")
       self.open_device("/dev/input/event1")
       self.open_device("/dev/input/event2")
+      #else
+      if USE_RESIM:
+        debug "MONITORING RESIM"
+        self.monitor(self.wacom.fd = open("./event0", O_RDWR))
+        self.monitor(self.touch.fd = open("./event1", O_RDWR))
+        self.monitor(self.button.fd = open("./event2", O_RDWR))
       #endif
 
       #ifdef DEV_KBD
-      self.monitor(self.button.fd = open(DEV_KBD, O_RDONLY))
+      if !USE_RESIM:
+        self.monitor(self.button.fd = open(DEV_KBD, O_RDONLY))
       #endif
 
       if ipc_fd[0] == -1:
@@ -174,7 +184,7 @@ namespace input:
         ioctl(fd, EVIOCGRAB, false)
 
 
-    def listen_all():
+    void listen_all():
       fd_set rdfs_cp
       int retval
       self.reset_events()
@@ -205,6 +215,13 @@ namespace input:
 
       for auto ev : self.button.events:
         self.all_key_events.push_back(self.button.marshal(ev))
+
+      #ifdef DEBUG_INPUT_EVENT
+      for auto syn_ev : self.all_motion_events:
+        debug "SYN MOUSE", syn_ev.x, syn_ev.y, syn_ev.pressure, syn_ev.left, syn_ev.eraser
+      #endif
+      return
+
 
   // TODO: should we just put this in the SynMouseEvent?
   static WacomEvent* is_wacom_event(SynMouseEvent &syn_ev):
