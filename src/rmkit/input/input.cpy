@@ -43,7 +43,13 @@ namespace input:
       if bytes < sizeof(struct input_event) || bytes == -1:
         return
 
+      #ifndef DEV
+      // in DEV mode we allow event coalescing between calls to read() for
+      // resim normally evdev will do one full event per read() call instead of
+      // splitting across multiple read() calls
       T event
+      #endif
+
       for int i = 0; i < bytes / sizeof(struct input_event); i++:
 //        debug fd, "READ EVENT", ev_data[i].type, ev_data[i].code, ev_data[i].value
         if ev_data[i].type == EV_SYN:
