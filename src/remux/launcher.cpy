@@ -366,10 +366,7 @@ class App: public IApp:
           term.push_back(string(base))
 
     if term.size() > 0:
-      termed := str_utils::join(term, ' ')
-      stop_cmd := "killall -SIGSTOP " + termed + " 2>/dev/null"
-      debug stop_cmd
-      proc::launch_process(stop_cmd)
+      proc::groupkill(SIGSTOP, term)
 
   // TODO: power button will cause suspend screen, why not?
   void on_suspend():

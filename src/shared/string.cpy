@@ -73,6 +73,8 @@ bool ends_with (std::string const &fullString, std::string const &ending) {
         return false;
     }
 }
+
 ```
+
 // }}}
 }

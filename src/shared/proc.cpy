@@ -1,6 +1,17 @@
 #include <dirent.h>
 #include <libgen.h>
 #include "string.h"
+#include <ctype.h>
+#include <iostream>
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <unordered_set>
+#define PID 1
+#define PGROUP 4
 
 // {{{ from https://stackoverflow.com/questions/478898/how-do-i-execute-a-command-and-get-the-output-of-the-command-within-c-using-po
 ```
@@ -29,38 +40,142 @@ std::string exec(const char* cmd) {
 
 
 namespace proc:
+  struct Proc:
+    int pid
+    string cmdline
+    vector<string> stat
+  ;
+
+  string join_path(vector<string> v):
+    ostringstream s;
+    for const auto& i : v:
+      if &i != &v[0]:
+        s << "/"
+      s << i
+    return s.str();
+
+  vector<string> read_dir(string bin_dir, bool set_path=false):
+    DIR *dir
+    struct dirent *ent
+
+    vector<string> filenames
+    if ((dir = opendir (bin_dir.c_str())) != NULL):
+      while ((ent = readdir (dir)) != NULL):
+        str_d_name := string(ent->d_name)
+        if str_d_name != "." and str_d_name != "..":
+          if set_path:
+            str_d_name = join_path({bin_dir, ent->d_name})
+          filenames.push_back(str_d_name)
+      closedir (dir)
+    else:
+      perror ("")
+
+    return filenames
+
+  vector<string> read_pids():
+    ret := vector<string>()
+    files := read_dir("/proc")
+    for auto file : files:
+      allnumbers := true
+      for auto c : file:
+        if not std::isdigit(c):
+          allnumbers = false
+          break
+
+      if allnumbers:
+        ret.push_back(file)
+
+    return ret
+
+  // checks that cmdline contains a value in args
+  // BUT it skips any tokens in cmdline that start with '-'
+  def check_args(string cmdline, vector<string> &args):
+    found := false
+    for auto needle : args:
+      if cmdline.find(needle) != -1:
+        found = true
+        break
+
+    if not found:
+      return false
+
+    found = false
+    cmd_tokens := str_utils::split(cmdline, 0)
+
+    for auto t : cmd_tokens:
+      if t[0] == '-':
+        continue
+
+      for auto needle : args:
+        if t.find(needle) != -1:
+          found = true
+          break
+
+      if found:
+        break
+
+    return found
+
+  def ls(vector<string> &args):
+    vector<Proc> ret;
+
+    needle := string("")
+    if len(args) > 1:
+      needle = args[1]
+
+    string cmdline
+    string stat
+    pids := read_pids()
+    mypid := to_string(getpid())
+
+    for auto p : pids:
+      if p == mypid:
+        continue
+
+      ifstream f(join_path({"/proc", p, "cmdline"}))
+      getline(f, cmdline)
+      if cmdline == "":
+        continue
+
+      if not check_args(cmdline, args):
+        continue
+
+      f = ifstream(join_path({"/proc", p, "stat"}))
+      getline(f, stat)
+      fields := str_utils::split(stat, ' ')
+
+      debug "PROC", p, cmdline, fields[PGROUP]
+      ret.push_back(Proc{std::stoi(p), cmdline, fields})
+
+    return ret
+
+  def groupkill(int signal, vector<string> &args):
+    procs := ls(args)
+    unordered_set<string> tokill
+    for auto proc : procs:
+      tokill.insert(proc.stat[PGROUP])
+
+    for auto p: tokill:
+      pid := std::stoi(p)
+      ret := kill(-pid, signal)
+      debug "SENDING", signal, "TO GROUP", -pid, "RET", ret
+
   bool is_running(string bin):
     char command[PATH_MAX]
     sprintf(command, "pidof %s 2> /dev/null", bin.c_str());
-    pid := exec(command)
-    if pid == "":
+    vector<string> bins = { bin }
+    procs := ls(bins)
+    if procs.size() == 0:
       return false
 
-    str_utils::trim(pid)
-    fname := "/proc/" + pid + "/wchan"
+    pid := procs[0].pid
+    fname := join_path({"/proc/", to_string(pid), "/wchan"})
+
     ifstream f(fname)
     string status
     getline(f, status)
 
     return status != "do_signal_stop"
-
-  string get_running_app(vector<string> binaries):
-    cmd := "pidof " + str_utils::join(binaries, ' ') + " 2>/dev/null"
-    pids := str_utils::split(exec(cmd.c_str()), ' ')
-
-    for auto pid : pids:
-      str_utils::trim(pid)
-      ifstream f1("/proc/" + pid + "/wchan")
-      string status
-      getline(f1, status)
-
-      if status != "do_signal_stop":
-        ifstream f2("/proc/" + pid + "/cmdline")
-        string name
-        getline(f2, name)
-        str_utils::trim(name)
-        return name
-    return ""
 
   def stop_programs(vector<string> programs, string signal=""):
     for auto s : programs:
@@ -103,11 +218,11 @@ namespace proc:
   void launch_process(string name, bool check_running=false, background=false):
     tokens := str_utils::split(name, ' ')
     cstr := tokens[0].c_str()
-    base := basename((char *) cstr)
+    base := string(basename((char *) cstr))
     if check_running && check_process(base):
-      cmd := "killall -SIGCONT " + string(base) + " 2> /dev/null"
-      _ := system(cmd.c_str())
       debug base, "IS ALREADY RUNNING, RESUMING"
+      term := vector<string> { base }
+      groupkill(SIGCONT, term)
       return
 
     proc := name
@@ -116,3 +231,4 @@ namespace proc:
 
     if system(proc.c_str()) != 0:
       pass
+

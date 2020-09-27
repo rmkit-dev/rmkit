@@ -27,6 +27,10 @@ function handle_back() {
         BACK
         return 0
     fi
+    if [[ ${RETURN} =~ "exit" ]]; then
+        exit 0
+        return 0
+    fi
 
     return 1
 }
@@ -119,6 +123,10 @@ function BACK_BUTTON() {
     UI "button 50 20 200 50 back"
 }
 
+function EXIT_BUTTON() {
+    UI "button 50 20 200 50 exit"
+}
+
 HISTORY=("")
 function SHOW_SCENE() {
     scene_line="${*}"
@@ -192,15 +200,19 @@ function list_packages() {
 # {{{ UI SCENES
 function main_menu() {
     MAKE_SCENE
+    EXIT_BUTTON
     SET fontsize 64
     SET padding_y 20
     SET justify left
-    UI button 20% 200 60% 200 SYNC REPOS
+    UI button 20% 200 60% 200 MANAGE PACKAGES
+    UI button 20% step 60% 200 SYNC REPOS
     UI button same step 60% 200 CHECK UPGRADES
     UI button same step 60% 200 UPGRADE PACKAGES
     DISPLAY
 
     echo ${RETURN}
+
+    handle_back
 
     if [[ ${RETURN} =~ "MANAGE PACKAGES" ]]; then
         echo "LISTING"
@@ -229,6 +241,7 @@ function main_menu() {
         run_cmd "${OPKG} list-upgradable"
         main_menu
     fi
+
 
 }
 

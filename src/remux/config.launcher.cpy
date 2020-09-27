@@ -22,8 +22,6 @@ RMApp APP_KOREADER = RMApp %{
   bin:"/home/root/koreader/koreader.sh",
   which:"koreader.sh",
   name:"KOReader",
-  term: "killall -SIGSTOP koreader.sh luajit",
-  resume: "killall -SIGCONT koreader.sh luajit"
 }
 
 RMApp APP_FINGERTERM = RMApp %{
