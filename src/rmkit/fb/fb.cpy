@@ -253,6 +253,12 @@ namespace framebuffer:
           if fill || (j == 0 || i == 0 || j == h-1 || i == w-1):
             do_dithering(self.fbmem, i+o_x, j+o_y, color, dither)
 
+    inline remarkable_color to_rgb565(char *src, int offset):
+        r := src[offset]
+        g := src[offset+1]
+        b := src[offset+2]
+        return (remarkable_color) ((r & 0b11111000) << 8) | ((g & 0b11111100) << 3) | (b >> 3);
+
     // function: draw_bitmap
     // this function draws the content of image into the framebuffer
     //
@@ -271,6 +277,8 @@ namespace framebuffer:
       update_dirty(dirty_area, o_x, o_y)
       update_dirty(dirty_area, o_x+image.w, o_y+image.h)
 
+      char *src_ptr;
+
       for j 0 image.h:
         if o_y + j < 0:
           src += image.w
@@ -285,7 +293,10 @@ namespace framebuffer:
             break
 
           if src[i] != alpha:
-            ptr[i] = (remarkable_color) src[i]
+            if image.channels >= 3:
+              ptr[i] = to_rgb565((char *) src, i*image.channels)
+            else:
+              ptr[i] = (remarkable_color) src[i]
         ptr += self.width
         src += image.w
 
@@ -368,8 +379,9 @@ namespace framebuffer:
       decoded := stbi_load(full_path, &neww, &newh, &channels, 4);
       image := image_data{(uint32_t*) decoded, (int) neww, (int) newh, channels}
       self->draw_bitmap(image,0,0,0)
-
       free(image.buffer)
+
+      self.waveform_mode = WAVEFORM_MODE_AUTO
 
 
     string save_lodepng():
