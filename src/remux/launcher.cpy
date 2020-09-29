@@ -547,14 +547,35 @@ class App: public IApp:
       self.show_launcher()
       return
 
+  string get_xochitl_cmd():
+    ifstream f("/lib/systemd/system/xochitl.service")
+    string line
+    find := "ExecStart"
+    default_cmd := "xochitl --system"
+    while getline(f, line):
+      if line.find(find) != -1:
+        tokens := str_utils::split(line, '=')
+        if tokens.size() == 1:
+          return default_cmd
+        tokens.erase(tokens.begin())
+
+        cmd := str_utils::join(tokens, '=')
+        debug "XOCHITL CMD IS", cmd
+        return cmd
+
+    return default_cmd
 
   def run():
     // for koreader
     putenv((char*) "KO_DONT_SET_DEPTH=1")
     putenv((char*) "KO_DONT_GRAB_INPUT=1")
 
+    #ifdef REMARKABLE
     _ := system("systemctl stop xochitl")
-    proc::launch_process("xochitl --system", true /* check running */, true /* background */)
+    // read the xochitl command line from the systemd file
+    xochitl_cmd := get_xochitl_cmd()
+    proc::launch_process(xochitl_cmd, true /* check running */, true /* background */)
+    #endif
 
     ui::Text::DEFAULT_FS = 32
 

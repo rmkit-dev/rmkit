@@ -45,11 +45,13 @@ static inline std::string trim_copy(std::string s) {
     return s;
 }
 
-static inline std::string join(std::vector<std::string> strs, char d) {
+static inline std::string join(std::vector<std::string> strs, char d=' ') {
   std::string r = "";
   for (auto s : strs) {
-    r += s + " ";
+    r += s + string(1, d);
   }
+
+  r.resize(r.size()-1);
 
   return r;
 }
