@@ -7,6 +7,7 @@ int FONT_SIZE = ui::Text::DEFAULT_FS
 WIDTH := 0
 HEIGHT := 0
 EXPECTING_INPUT := false
+CLEAR_SCREEN := true
 TIMEOUT := 0
 class App:
   public:
@@ -15,7 +16,6 @@ class App:
   App(ui::Scene s):
 
     fb := framebuffer::get()
-    fb->clear_screen()
     w, h = fb->get_display_size()
 
     ui::MainLoop::refresh()
@@ -77,6 +77,9 @@ def handle_directive(int line_no, ui::Scene s, vector<string> &tokens):
   debug "HANDLING DIRECTIVE", tokens[0], tokens[1]
   if tokens[0] == "@fontsize":
     ui::Text::DEFAULT_FS = stoi(tokens[1])
+
+  if tokens[0] == "@noclear":
+    CLEAR_SCREEN = false
 
   if tokens[0] == "@justify":
     if tokens[1] == "left":
@@ -246,7 +249,6 @@ def main():
   ui::MainLoop::set_scene(scene)
 
   fb := framebuffer::get()
-  fb->clear_screen()
   WIDTH, HEIGHT = fb->get_display_size()
 
   string line
@@ -279,6 +281,9 @@ def main():
       print "timeout:", TIMEOUT
       exit(0)
     });
+
+  if CLEAR_SCREEN:
+    fb->clear_screen()
 
   app := App(scene)
   app.run()
