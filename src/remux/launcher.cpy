@@ -359,11 +359,7 @@ class App: public IApp:
       cstr := tokens[0].c_str()
       base := basename((char *) cstr)
       if a.name != name:
-        str_utils::trim(a.term)
-        if a.term != "" and a.term != ":":
-          proc::launch_process(a.term, false)
-        else:
-          term.push_back(string(base))
+        term.push_back(string(base))
 
     if term.size() > 0:
       proc::groupkill(SIGSTOP, term)
