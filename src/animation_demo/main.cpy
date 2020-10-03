@@ -1,37 +1,8 @@
 #include <cstddef>
 #include "../build/rmkit.h"
-#include "assets.h"
+
 #include <unistd.h>
 using namespace std
-
-class Animation : public ui::Widget:
-  public:
-  shared_ptr<ui::Pixmap> img
-  int mx, my
-  int size = 100;
-  int dir = 1
-  int offset = 0
-  Animation(int x, y, w, h) : ui::Widget(x, y, w, h):
-    self.mx = self.x + self.w / 2
-    self.my = self.x + self.h / 2
-
-  void animate():
-    self.img = make_shared<ui::Pixmap>(self.mx - offset, self.my - offset, size, size, ICON(assets::flag_solid_png))
-
-    offset += (dir * 5)
-    size += 10 * dir;
-    if size >= 200 || size <= 100:
-      dir *= -1;
-
-    usleep(1000 * 200)
-    ui::TaskQueue::add_task([=]() {
-      self.animate()
-    })
-
-  void render():
-    if self.img != nullptr:
-      self.fb->draw_rect(self.x, self.y, self.w, self.h, WHITE, 1)
-      self.img->render()
 
 class CircleAnimation : public ui::Widget:
   public:

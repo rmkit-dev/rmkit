@@ -1,6 +1,5 @@
 #include <cstddef>
 #include "../build/rmkit.h"
-#include "assets.h"
 using namespace std
 
 class App:
