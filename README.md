@@ -15,6 +15,8 @@ This repo contains applications for the remarkable tablet. See the README in
 each application's directory to learn more about it. The general purpose of
 rmkit is to make it easy to write and deploy new apps to the remarkable tablet.
 
+## Apps & Libaries
+
 ### [harmony](src/harmony)
 
 A [low latency drawing app](https://rmkit.dev/apps/harmony) with procedural brushes
@@ -42,6 +44,20 @@ A batteries included library for building remarkable apps. [Read the documentati
 A [simple markup language](https://rmkit.dev/apps/sas) for building apps that
 follow the philosophy of unix pipes.
 
+## Demos
+
+### [animation](src/animation_demo)
+
+An example of generating multiple animations using idle timers
+
+### [drawing](src/drawing_demo)
+
+A simple black/white drawing demo
+
+### [keyboard](src/keyboard_demo)
+
+An app with a keyboard input
+
 ## Installation
 
 #### Via Toltec
@@ -56,6 +72,10 @@ If you are feeling adventurous, you can try out the bootstrap script from
 linusCDE that installs opkg, toltec and the rmkit packages in one line: `wget -qO-
 https://rmkit.dev/bs | sh -C harmony minesweeper remux nao`
 
+#### Build Server
+
+Binaries are generated on every push to this git repository and are hosted at
+https://build.rmkit.dev
 
 #### Try it out
 
