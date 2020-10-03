@@ -35,7 +35,7 @@ configuration files. Hold the middle button to bring it up.
 
 ### [rmkit](src/rmkit)
 
-A batteries included library for building remarkable apps. [Read the documentation](https://rmkit-dev.github.io/rmkit)
+A batteries included library for building remarkable apps. [Read the documentation](https://docs.rmkit.dev)
 
 ### [simple app script](src/simple)
 
