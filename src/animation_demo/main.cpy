@@ -76,7 +76,7 @@ class Launcher: public ui::Widget:
   Launcher(int x, y, w, h, ui::Scene s): ui::Widget(x, y, w, h):
     self.scene = s
 
-  void on_mouse_click(input::SynMouseEvent &ev):
+  void on_mouse_click(input::SynMotionEvent &ev):
     a := new CircleAnimation(ev.x, ev.y, 1, 1)
     self.scene->add(a)
     a->animate()
@@ -112,7 +112,7 @@ class App:
   def handle_key_event(input::SynKeyEvent &key_ev):
     debug "KEY PRESSED", key_ev.key
 
-  def handle_motion_event(input::SynMouseEvent &syn_ev):
+  def handle_motion_event(input::SynMotionEvent &syn_ev):
     pass
 
   def run():

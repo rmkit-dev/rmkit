@@ -65,7 +65,7 @@ class NaoButton: public ui::Button:
   NaoButton(int x, int y, int w, int h, IApp *a): ui::Button(x, y, w, h, "Get More Apps"):
     self.app = a
 
-  void on_mouse_click(input::SynMouseEvent &ev):
+  void on_mouse_click(input::SynMotionEvent &ev):
     self.app->get_more()
 
 class SuspendButton: public ui::Button:
@@ -74,7 +74,7 @@ class SuspendButton: public ui::Button:
   SuspendButton(int x, int y, int w, int h, IApp *a): ui::Button(x, y, w, h, "Suspend"):
     self.app = a
 
-  void on_mouse_click(input::SynMouseEvent &ev):
+  void on_mouse_click(input::SynMotionEvent &ev):
     self.app->on_suspend()
 
 class AppBackground: public ui::Widget:
@@ -280,7 +280,7 @@ class App: public IApp:
 
     });
 
-  def handle_motion_event(input::SynMouseEvent ev):
+  def handle_motion_event(input::SynMotionEvent ev):
     suspend_m.lock()
     LAST_ACTION = time(NULL)
     suspend_m.unlock()

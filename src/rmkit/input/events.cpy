@@ -37,13 +37,13 @@ namespace input:
     def set_original(Event *ev):
       self.original = shared_ptr<Event>(ev)
 
-  /// class: input::SynMouseEvent
+  /// class: input::SynMotionEvent
   /// A synthetic mouse event that covers
   /// mouse events, touch events and stylus events
-  class SynMouseEvent: public SynEvent:
+  class SynMotionEvent: public SynEvent:
     public:
     int x = -1, y = -1
-    // variables: SynMouseEvent
+    // variables: SynMotionEvent
     // left - is left mouse button pressed or the stylus touching the screen
     // right - is the right mouse button pressed or the stylus hovering?
     // middle - is the middle mouse button down?
@@ -120,7 +120,7 @@ namespace input:
 
 
     def marshal(TouchEvent &prev):
-      SynMouseEvent syn_ev;
+      SynMotionEvent syn_ev;
       syn_ev.left = self.left
 
       // if there's no left click, we re-use the last x,y coordinate
@@ -183,7 +183,7 @@ namespace input:
       if o_y >= self.height - 1:
         o_y = self.height - 5
 
-      SynMouseEvent syn_ev;
+      SynMotionEvent syn_ev;
       syn_ev.x = o_x
       syn_ev.y = o_y
       syn_ev.left = self.left
@@ -206,7 +206,7 @@ namespace input:
     int eraser = -1
 
     def marshal(WacomEvent &prev):
-      SynMouseEvent syn_ev;
+      SynMotionEvent syn_ev;
       syn_ev.x = self.x
       syn_ev.y = self.y
 

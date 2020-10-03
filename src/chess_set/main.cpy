@@ -29,7 +29,7 @@ class Cell: public ui::Widget:
   void empty():
     pass // TODO: piece should be null
 
-  void on_mouse_click(input::SynMouseEvent &ev):
+  void on_mouse_click(input::SynMotionEvent &ev):
     self.board->on_cell_clicked()
 
   void render():

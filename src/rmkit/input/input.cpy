@@ -89,12 +89,12 @@ namespace input:
     int max_fd
     fd_set rdfs
 
-    InputClass<WacomEvent, SynMouseEvent> wacom
-    InputClass<MouseEvent, SynMouseEvent> mouse
-    InputClass<TouchEvent, SynMouseEvent> touch
+    InputClass<WacomEvent, SynMotionEvent> wacom
+    InputClass<MouseEvent, SynMotionEvent> mouse
+    InputClass<TouchEvent, SynMotionEvent> touch
     InputClass<ButtonEvent, SynKeyEvent> button
 
-    vector<SynMouseEvent> all_motion_events
+    vector<SynMotionEvent> all_motion_events
     vector<SynKeyEvent> all_key_events
 
     Input():
@@ -229,10 +229,10 @@ namespace input:
       return
 
 
-  // TODO: should we just put this in the SynMouseEvent?
-  static WacomEvent* is_wacom_event(SynMouseEvent &syn_ev):
+  // TODO: should we just put this in the SynMotionEvent?
+  static WacomEvent* is_wacom_event(SynMotionEvent &syn_ev):
     return dynamic_cast<WacomEvent*>(syn_ev.original.get())
-  static MouseEvent* is_mouse_event(SynMouseEvent &syn_ev):
+  static MouseEvent* is_mouse_event(SynMotionEvent &syn_ev):
     return dynamic_cast<MouseEvent*>(syn_ev.original.get())
-  static TouchEvent* is_touch_event(SynMouseEvent &syn_ev):
+  static TouchEvent* is_touch_event(SynMotionEvent &syn_ev):
     return dynamic_cast<TouchEvent*>(syn_ev.original.get())

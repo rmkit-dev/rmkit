@@ -43,7 +43,7 @@ class App:
   def handle_key_event(input::SynKeyEvent &key_ev):
     debug "KEY PRESSED", key_ev.key
 
-  def handle_motion_event(input::SynMouseEvent &syn_ev):
+  def handle_motion_event(input::SynMotionEvent &syn_ev):
     pass
 
   def run():

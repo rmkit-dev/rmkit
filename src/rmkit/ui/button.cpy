@@ -43,25 +43,25 @@ namespace ui:
       #endif
       return
 
-    void on_mouse_move(input::SynMouseEvent &ev):
+    void on_mouse_move(input::SynMotionEvent &ev):
       ev.stop_propagation()
 
-    void on_mouse_down(input::SynMouseEvent &ev):
+    void on_mouse_down(input::SynMotionEvent &ev):
       ev.stop_propagation()
       self.dirty = 1
 
-    void on_mouse_up(input::SynMouseEvent &ev):
+    void on_mouse_up(input::SynMotionEvent &ev):
       self.dirty = 1
 
-    void on_mouse_leave(input::SynMouseEvent &ev):
+    void on_mouse_leave(input::SynMotionEvent &ev):
       self.dirty = 1
 
-    void on_mouse_enter(input::SynMouseEvent &ev):
+    void on_mouse_enter(input::SynMotionEvent &ev):
       self.dirty = 1
 
     void on_key_pressed(input::SynKeyEvent &ev):
       if ev.key == key && ev.is_pressed:
-        input::SynMouseEvent fake
+        input::SynMotionEvent fake
         self.on_mouse_click(fake)
 
     // function: set_justification

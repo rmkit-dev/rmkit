@@ -99,7 +99,7 @@ class App:
       key_ev.stop_propagation()
 
 
-  def handle_motion_event(input::SynMouseEvent &syn_ev):
+  def handle_motion_event(input::SynMotionEvent &syn_ev):
     #ifdef DEBUG_INPUT
     if (auto m_ev = input::is_mouse_event(syn_ev)):
       debug "MOUSE EVENT"

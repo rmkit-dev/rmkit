@@ -7,10 +7,10 @@ class Note: public ui::Widget:
   Note(int x, y, w, h): Widget(x, y, w, h):
     pass
 
-  void on_mouse_up(input::SynMouseEvent &ev):
+  void on_mouse_up(input::SynMotionEvent &ev):
     prevx = prevy = -1
 
-  void on_mouse_move(input::SynMouseEvent &ev):
+  void on_mouse_move(input::SynMotionEvent &ev):
     if not mouse_down:
       return
 

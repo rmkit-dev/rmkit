@@ -18,7 +18,7 @@ namespace ui:
     DialogButton(int x, y, w, h, IDialog *d, string t): Button(x,y,w,h,t):
       self.dialog = d
 
-    void on_mouse_click(input::SynMouseEvent&):
+    void on_mouse_click(input::SynMotionEvent&):
       self.dialog->on_button_selected(self.text)
 
   // class: ui::Dialog
@@ -82,7 +82,7 @@ namespace ui:
       h_layout := ui::HorizontalLayout(0, 0, width, height, self.scene)
       h_layout.pack_center(self)
 
-    bool ignore_event(input::SynMouseEvent&):
+    bool ignore_event(input::SynMotionEvent&):
       return true
 
     virtual void add_buttons(HorizontalLayout *button_bar):

@@ -11,7 +11,7 @@ namespace ui:
       self.mouse_inside = true
       self.textWidget->justify = ui::Text::JUSTIFY::CENTER
 
-    bool ignore_event(input::SynMouseEvent &ev):
+    bool ignore_event(input::SynMotionEvent &ev):
       return true
 
   class IOptionButton:
@@ -29,7 +29,7 @@ namespace ui:
       self.x_padding = 10
       self.set_justification(ui::Text::JUSTIFY::LEFT)
 
-    void on_mouse_click(input::SynMouseEvent &ev):
+    void on_mouse_click(input::SynMotionEvent &ev):
       self.tb->select(self.idx)
       self.dirty = 1
 
@@ -89,7 +89,7 @@ namespace ui:
       self.set_option_offset(0, 0)
       self.set_option_size(w, h)
 
-    void on_mouse_click(input::SynMouseEvent&):
+    void on_mouse_click(input::SynMotionEvent&):
       self.show_options()
 
     void set_option_offset(int x, y):

@@ -66,7 +66,7 @@ namespace framebuffer:
     RESIZE_EVENT resize
 
 
-    input::SynMouseEvent last_mouse_ev // used for tracking the mouse in DEV mode
+    input::SynMotionEvent last_mouse_ev // used for tracking the mouse in DEV mode
     remarkable_color* fbmem
     FBRect dirty_area
 

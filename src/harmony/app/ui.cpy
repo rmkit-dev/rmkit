@@ -115,7 +115,7 @@ namespace app_ui:
         ui::Button(x,y,w,h,"lift"):
       self.canvas = c
 
-    void on_mouse_click(input::SynMouseEvent &ev):
+    void on_mouse_click(input::SynMotionEvent &ev):
       self.dirty = 1
       self.canvas->curr_brush->reset()
 
@@ -197,7 +197,7 @@ namespace app_ui:
       if self.canvas->undo_stack.size() > 1:
         ui::Button::render()
 
-    void on_mouse_click(input::SynMouseEvent &ev):
+    void on_mouse_click(input::SynMotionEvent &ev):
       self.dirty = 1
       self.canvas->undo()
 
@@ -212,7 +212,7 @@ namespace app_ui:
       if STATE.reject_touch:
         self.fb->draw_line(self.x, self.y, self.w+self.x, self.h+self.y, 4, BLACK)
 
-    void on_mouse_click(input::SynMouseEvent &ev):
+    void on_mouse_click(input::SynMotionEvent &ev):
       STATE.reject_touch = !STATE.reject_touch
       self.dirty = 1
 
@@ -228,7 +228,7 @@ namespace app_ui:
       if self.canvas->redo_stack.size():
         ui::Button::render()
 
-    void on_mouse_click(input::SynMouseEvent &ev):
+    void on_mouse_click(input::SynMotionEvent &ev):
       self.dirty = 1
       self.canvas->redo()
 
@@ -239,7 +239,7 @@ namespace app_ui:
       self.toolbar = l
       self.minibar = m
 
-    void on_mouse_click(input::SynMouseEvent &ev):
+    void on_mouse_click(input::SynMotionEvent &ev):
       self.dirty = 1
 
       if self.toolbar->visible:

@@ -51,7 +51,7 @@ namespace ui:
     //
     //
     // ---Code
-    // // d is of type input::SynMouseEvent
+    // // d is of type input::SynMotionEvent
     // MainLoop::motion_event += [=](auto &d) { };
     // ---
     static MOUSE_EVENT motion_event
@@ -223,7 +223,7 @@ namespace ui:
 
     // TODO: refactor this into cleaner code
     // dispatch mouse / touch events to their widgets
-    static bool handle_motion_event(input::SynMouseEvent &ev):
+    static bool handle_motion_event(input::SynMotionEvent &ev):
       display_scene := scene
       if overlay_is_visible:
         display_scene = overlay

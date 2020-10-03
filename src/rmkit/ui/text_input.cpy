@@ -30,7 +30,7 @@ namespace ui:
     TextInput(int x, y, w, h, string t=""): ui::Text(x, y, w, h, t):
       self.justify = ui::Text::JUSTIFY::CENTER
 
-    void on_mouse_click(input::SynMouseEvent &ev):
+    void on_mouse_click(input::SynMotionEvent &ev):
       keyboard := new ui::Keyboard()
       keyboard->set_text(self.text)
       keyboard->show()
@@ -90,7 +90,7 @@ namespace ui:
     TextArea(int x, y, w, h, string t=""): ui::MultiText(x, y, w, h, t):
       pass
 
-    void on_mouse_click(input::SynMouseEvent &ev):
+    void on_mouse_click(input::SynMotionEvent &ev):
       keyboard := new ui::Keyboard()
       keyboard->set_text(self.text)
       keyboard->show()

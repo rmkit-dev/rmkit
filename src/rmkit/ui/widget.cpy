@@ -2,7 +2,7 @@
 #include "../util/signals.h"
 
 namespace ui:
-  PLS_DEFINE_SIGNAL(MOUSE_EVENT, input::SynMouseEvent)
+  PLS_DEFINE_SIGNAL(MOUSE_EVENT, input::SynMotionEvent)
   class MOUSE_EVENTS:
     public:
     MOUSE_EVENT enter
@@ -100,46 +100,46 @@ namespace ui:
     // and allows the widget to take itself out of the event handling
     // hierarchy by returning true. by removing itself from the hierarchy,
     // event will be handled by other widgets
-    virtual bool ignore_event(input::SynMouseEvent &ev):
+    virtual bool ignore_event(input::SynMotionEvent &ev):
       return false
 
     // function: on_mouse_enter
     // called when the motion device enters the widget's bounding box
-    virtual void on_mouse_enter(input::SynMouseEvent &ev):
+    virtual void on_mouse_enter(input::SynMotionEvent &ev):
       pass
 
     // function: on_mouse_leave
     // calls when the motion device leaves the widget's bounding box
-    virtual void on_mouse_leave(input::SynMouseEvent &ev):
+    virtual void on_mouse_leave(input::SynMotionEvent &ev):
       pass
 
     // function: on_mouse_click
     // called when the motion device is activated,
     // either by finger press or stylus press
-    virtual void on_mouse_click(input::SynMouseEvent &ev):
+    virtual void on_mouse_click(input::SynMotionEvent &ev):
       pass
 
     // function: on_mouse_down
     // called when the mouse is pressed down inside a widget
-    virtual void on_mouse_down(input::SynMouseEvent &ev):
+    virtual void on_mouse_down(input::SynMotionEvent &ev):
       pass
 
     // function: on_mouse_up
     // called when the mouse is unpressed inside a widget
-    virtual void on_mouse_up(input::SynMouseEvent &ev):
+    virtual void on_mouse_up(input::SynMotionEvent &ev):
       pass
 
     // function: on_mouse_move
     // called when the mouse is moving inside the widget's
     // area
-    virtual void on_mouse_move(input::SynMouseEvent &ev):
+    virtual void on_mouse_move(input::SynMotionEvent &ev):
       pass
 
     // function: on_mouse_hover
     // called when the mouse hovers over a widget.
     // this only works with the stylus which can detect
     // hover vs. press events
-    virtual void on_mouse_hover(input::SynMouseEvent &ev):
+    virtual void on_mouse_hover(input::SynMotionEvent &ev):
       pass
 
     // function: on_key_pressed

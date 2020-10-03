@@ -44,7 +44,7 @@ class SizeButton: public ui::Button:
   SizeButton(int x, y, w, h, n, string t=""): n(n), Button(x,y,w,h,t):
     self.textWidget->font_size = SIZE_BUTTON_FS
 
-  void on_mouse_click(input::SynMouseEvent &ev):
+  void on_mouse_click(input::SynMotionEvent &ev):
     if GRID_SIZE != n:
       resize_field(n)
 
@@ -59,7 +59,7 @@ class ScoresButton: public ui::Button:
   ScoresButton(int x, y, w, h, string t="HIGH SCORES") : Button(x,y,w,h,t):
     self.textWidget->font_size = SIZE_BUTTON_FS
 
-  void on_mouse_click(input::SynMouseEvent &ev):
+  void on_mouse_click(input::SynMotionEvent &ev):
     show_scores()
 
 
@@ -158,7 +158,7 @@ class Cell: public ui::Widget:
       pixmap.render()
 
 
-  void on_mouse_click(input::SynMouseEvent &ev):
+  void on_mouse_click(input::SynMotionEvent &ev):
     if OVER:
       return
     if MODE == 1
@@ -280,7 +280,7 @@ class Grid: public ui::Widget, public IGrid:
   void render():
     self.fb->draw_rect(self.x, self.y, self.w, self.h, BLACK, false /* fill */)
 
-  void on_mouse_click(input::SynMouseEvent &ev):
+  void on_mouse_click(input::SynMotionEvent &ev):
     debug "CLICKED IN GRID"
 
 class MenuButton: public ui::Button:
@@ -288,7 +288,7 @@ class MenuButton: public ui::Button:
   MenuButton(int x, y, w, h, string t="Back"): Button(x,y,w,h,t):
     pass
 
-  void on_mouse_click(input::SynMouseEvent &ev):
+  void on_mouse_click(input::SynMotionEvent &ev):
     main_menu()
 
 class RadioButton: public ui::Button:
@@ -308,7 +308,7 @@ class RadioButton: public ui::Button:
       self.fb->draw_rect(self.x, self.y, self.w, self.h, GRAY, (*self.selected == self.option))
       self.textWidget->render()
 
-  void on_mouse_click(input::SynMouseEvent &ev):
+  void on_mouse_click(input::SynMotionEvent &ev):
     *self.selected = self.option
     ui::MainLoop::refresh()
     self.on_button_selected(self.option)
@@ -503,7 +503,7 @@ class App:
     // debug "KEY PRESSED", key_ev.key
     pass
 
-  def handle_motion_event(input::SynMouseEvent &syn_ev):
+  def handle_motion_event(input::SynMotionEvent &syn_ev):
     if !GAME_STARTED:
       if syn_ev.left == 0:
         GAME_STARTED = true
