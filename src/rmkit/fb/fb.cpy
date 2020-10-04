@@ -579,7 +579,8 @@ namespace framebuffer:
       self.byte_size = self.width * self.height * sizeof(remarkable_color)
       // make an empty file of the right size
 
-      if not file_exists(filename):
+      exists := file_exists(filename)
+      if not exists:
         std::ofstream ofs(filename, std::ios::binary | std::ios::out);
         ofs.seekp(self.byte_size);
         ofs.write("", 1);
@@ -587,6 +588,9 @@ namespace framebuffer:
 
       self.fd = open(filename.c_str(), O_RDWR)
       self.fbmem = (remarkable_color*) mmap(NULL, self.byte_size, PROT_WRITE, MAP_SHARED, self.fd, 0)
+
+      if not exists:
+        memset(self.fbmem, WHITE, self.byte_size)
 
     int perform_redraw(bool):
       #ifndef PERF_BUILD

@@ -7,13 +7,16 @@ class Note: public ui::Widget:
   framebuffer::FileFB *vfb
   bool full_redraw
   Note(int x, y, w, h): Widget(x, y, w, h):
-    vfb = new framebuffer::FileFB("note.raw", w, h)
+    vfb = new framebuffer::FileFB("note.raw", self.fb->width, self.fb->height)
     self.full_redraw = true
 
   void on_mouse_up(input::SynMotionEvent &ev):
     prevx = prevy = -1
 
   void on_mouse_move(input::SynMotionEvent &ev):
+    if input::is_touch_event(ev):
+      return
+
     if not mouse_down:
       return
 
