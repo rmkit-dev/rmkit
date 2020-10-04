@@ -4,8 +4,11 @@
 class Note: public ui::Widget:
   public:
   int prevx = -1, prevy = -1
+  framebuffer::FileFB *vfb
+  bool full_redraw
   Note(int x, y, w, h): Widget(x, y, w, h):
-    pass
+    vfb = new framebuffer::FileFB("note.raw", w, h)
+    self.full_redraw = true
 
   void on_mouse_up(input::SynMotionEvent &ev):
     prevx = prevy = -1
@@ -15,13 +18,30 @@ class Note: public ui::Widget:
       return
 
     if prevx != -1:
-      fb->draw_line(prevx, prevy, ev.x, ev.y, 1, BLACK)
+      vfb->draw_line(prevx, prevy, ev.x, ev.y, 1, BLACK)
+      self.dirty = 1
 
     prevx = ev.x
     prevy = ev.y
 
+  void render():
+    if self.full_redraw:
+      self.full_redraw = false
+      memcpy(self.fb->fbmem, vfb->fbmem, vfb->byte_size)
+      return
+
+    dirty_rect := self.vfb->dirty_area
+    for int i = dirty_rect.y0; i < dirty_rect.y1; i++:
+      memcpy(&fb->fbmem[i*fb->width + dirty_rect.x0], &vfb->fbmem[i*fb->width + dirty_rect.x0],
+        (dirty_rect.x1 - dirty_rect.x0) * sizeof(remarkable_color))
+    self.fb->dirty_area = vfb->dirty_area
+    self.fb->dirty = 1
+    framebuffer::reset_dirty(vfb->dirty_area)
+
 class App:
   public:
+  Note *note
+
   App():
     demo_scene := ui::make_scene()
     ui::MainLoop::set_scene(demo_scene)
@@ -31,12 +51,13 @@ class App:
     fb->redraw_screen()
     w, h = fb->get_display_size()
 
-    note := new Note(0, 0, w, h)
+    note = new Note(0, 0, w, h)
     demo_scene->add(note)
 
 
   def handle_key_event(input::SynKeyEvent ev):
     // pressing any button will clear the screen
+    note->vfb->clear_screen()
     ui::MainLoop::fb->clear_screen()
 
   def run():

@@ -21,6 +21,11 @@
 using namespace std
 
 namespace framebuffer:
+
+  inline bool file_exists (const std::string& name):
+    struct stat buffer;
+    return (stat (name.c_str(), &buffer) == 0);
+
   class FBRect:
     public:
     int x0, y0, x1, y1
@@ -573,10 +578,12 @@ namespace framebuffer:
         self.height = h
       self.byte_size = self.width * self.height * sizeof(remarkable_color)
       // make an empty file of the right size
-      std::ofstream ofs(filename, std::ios::binary | std::ios::out);
-      ofs.seekp(self.byte_size);
-      ofs.write("", 1);
-      ofs.close()
+
+      if not file_exists(filename):
+        std::ofstream ofs(filename, std::ios::binary | std::ios::out);
+        ofs.seekp(self.byte_size);
+        ofs.write("", 1);
+        ofs.close()
 
       self.fd = open(filename.c_str(), O_RDWR)
       self.fbmem = (remarkable_color*) mmap(NULL, self.byte_size, PROT_WRITE, MAP_SHARED, self.fd, 0)
