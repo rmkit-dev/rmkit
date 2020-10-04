@@ -6,7 +6,10 @@
 #else
 #define UNDO_STACK_SIZE 100
 #endif
+
+
 namespace app_ui:
+
   class Canvas: public ui::Widget:
     public:
     remarkable_color *mem
@@ -14,12 +17,13 @@ namespace app_ui:
     deque<shared_ptr<remarkable_color>> redo_stack;
     int byte_size
     int stroke_width = 1, stroke_color = BLACK
+    int page_idx = 0
 
     bool erasing = false
     bool full_redraw = false
 
     framebuffer::FBRect dirty_rect
-    shared_ptr<framebuffer::VirtualFB> vfb
+    shared_ptr<framebuffer::FileFB> vfb
 
     Brush* curr_brush
     Brush* eraser
@@ -31,11 +35,10 @@ namespace app_ui:
 
       px_width, px_height = self.fb->get_display_size()
       self.byte_size = px_width * px_height * sizeof(remarkable_color)
-      vfb = make_shared<framebuffer::VirtualFB>(self.fb->width, self.fb->height)
-      self.mem = (remarkable_color*) malloc(sizeof(remarkable_color) * px_width * px_height)
+
+      self.load_vfb()
       fbcopy := shared_ptr<remarkable_color>((remarkable_color*) malloc(self.byte_size))
       memcpy(fbcopy.get(), self.fb->fbmem, self.byte_size)
-      memcpy(vfb->fbmem, self.fb->fbmem, self.byte_size)
 
       self.undo_stack.push_back(fbcopy)
       reset_dirty(self.dirty_rect)
@@ -47,9 +50,7 @@ namespace app_ui:
       self.set_brush(brush::PENCIL)
 
     ~Canvas():
-      if self.mem != NULL:
-        free(self.mem)
-      self.mem = NULL
+      pass
 
     void set_stroke_width(int s):
       self.stroke_width = s
@@ -131,6 +132,30 @@ namespace app_ui:
       self.dirty = 1
       ui::MainLoop::full_refresh()
       self.push_undo()
+
+    void load_vfb():
+      if self.vfb != nullptr:
+        msync(self.vfb->fbmem, self.byte_size, MS_SYNC)
+
+      char filename[PATH_MAX]
+      sprintf(filename, "%s/fb.%i.raw", SAVE_DIR, self.page_idx)
+      self.vfb = make_shared<framebuffer::FileFB>(filename, self.fb->width, self.fb->height)
+      memcpy(fb->fbmem, vfb->fbmem, self.byte_size)
+
+      self.dirty = 1
+      self.full_redraw = 1
+      ui::MainLoop::refresh()
+
+    int MAX_PAGES = 10
+    void next_page():
+      if self.page_idx < MAX_PAGES:
+        self.page_idx++;
+        self.load_vfb()
+
+    void prev_page():
+      if self.page_idx > 0:
+        self.page_idx--
+        self.load_vfb()
     // }}}
 
     // {{{ UNDO / REDO STUFF

@@ -592,6 +592,9 @@ namespace framebuffer:
       if not exists:
         memset(self.fbmem, WHITE, self.byte_size)
 
+    ~FileFB():
+      msync(self.fbmem, self.byte_size, MS_ASYNC)
+
     int perform_redraw(bool):
       #ifndef PERF_BUILD
       msync(self.fbmem, self.byte_size, MS_SYNC)

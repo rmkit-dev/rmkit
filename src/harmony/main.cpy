@@ -15,6 +15,7 @@ class App:
   ui::Scene notebook
 
   app_ui::ManageButton *manage_button
+  app_ui::Canvas *canvas
 
   // do we accept finger touch events
 
@@ -28,7 +29,7 @@ class App:
     notebook = ui::make_scene()
     ui::MainLoop::set_scene(notebook)
 
-    canvas := new app_ui::Canvas(0, 0, fb->width, fb->height)
+    canvas = new app_ui::Canvas(0, 0, fb->width, fb->height)
     notebook->add(canvas)
 
     toolbar_area := new ui::VerticalLayout(0, 0, w, h, notebook)
@@ -82,8 +83,10 @@ class App:
           break
         #elif REMARKABLE
         case KEY_LEFT:
+          canvas->prev_page()
           break
         case KEY_RIGHT:
+          canvas->next_page()
           break
         #endif
         case KEY_POWER:
