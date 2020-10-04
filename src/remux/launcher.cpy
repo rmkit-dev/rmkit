@@ -505,7 +505,7 @@ class App: public IApp:
 
   // we save the touch input until the finger lifts up
   // so we can analyze whether its a gesture or not
-  def save_input():
+  def save_touch_events():
     for auto ev: ui::MainLoop::in.touch.events:
       if ev.slots[0].left == 0:
         self.check_gesture()
@@ -539,7 +539,7 @@ class App: public IApp:
       if !left && ev.slots[0].x < fw - 100:
         return
 
-    if y_delta >= 300:
+    if y_delta >= 800:
       self.show_launcher()
       return
 
@@ -589,7 +589,7 @@ class App: public IApp:
         ui::MainLoop::redraw()
 
       ui::MainLoop::read_input()
-      // self.save_input()
+      self.save_touch_events()
 
 App app
 def main():
