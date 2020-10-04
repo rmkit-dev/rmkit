@@ -81,7 +81,7 @@ class AppBackground: public ui::Widget:
   public:
   int byte_size
   bool snapped = false
-  map<string, framebuffer::FileFB*> app_buffers;
+  map<string, framebuffer::VirtualFB*> app_buffers;
 
   AppBackground(int x, y, w, h): ui::Widget(x, y, w, h):
     mkdir(CACHE_DIR, 0x755)
@@ -96,11 +96,11 @@ class AppBackground: public ui::Widget:
 
     vfb->fbmem = (remarkable_color*) memcpy(vfb->fbmem, fb->fbmem, self.byte_size)
 
-  framebuffer::FileFB* get_vfb():
+  framebuffer::VirtualFB* get_vfb():
     if app_buffers.find(CURRENT_APP) == app_buffers.end():
       fw, fh := fb->get_display_size()
       fname := string(CACHE_DIR) + "." + CURRENT_APP + ".fb"
-      app_buffers[CURRENT_APP] = new framebuffer::FileFB(fname, fw, fh)
+      app_buffers[CURRENT_APP] = new framebuffer::VirtualFB(fw, fh)
       app_buffers[CURRENT_APP]->clear_screen()
 
     return app_buffers[CURRENT_APP]
