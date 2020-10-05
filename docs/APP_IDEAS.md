@@ -4,6 +4,7 @@ This document has ideas for apps that might work well on the remarkable.
 
 ### Productivity
 
+* calculator / graphing calculator
 * networked canvas / whiteboard
 * simple browser - readify any page and then display it as terminal text (https://github.com/mozilla/readability)
 * calendar / agenda
@@ -35,6 +36,7 @@ This document has ideas for apps that might work well on the remarkable.
 * connect 4
 * mad libs
 * nonograms
+* game of life animation
 
 ### Reading
 
