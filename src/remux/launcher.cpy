@@ -521,24 +521,31 @@ class App: public IApp:
     fb := framebuffer::get()
     fw, fh := fb->get_display_size()
     left := -1
-    y_delta := self.touch_events[0].slots[0].y - self.touch_events.back().slots[0].y
+    max_y := self.touch_events[0].slots[0].y
+    min_y := self.touch_events[0].slots[0].y
     for auto ev: self.touch_events:
-      if ev.slots[0].x == -1:
-        continue
+      if ev.slots[0].y != -1:
+        min_y = min(min_y, ev.slots[0].y)
 
-      if left == -1:
-        if ev.slots[0].x < 100:
-          left = true
-        else if ev.slots[0].x > fw - 100:
-          left = false
-        else:
+      if ev.slots[0].x != -1:
+
+        if left == -1:
+          if ev.slots[0].x < 100:
+            left = true
+          else if ev.slots[0].x > fw - 100:
+            left = false
+          else:
+            return
+
+        if left && ev.slots[0].x > 100:
+          return
+        if !left && ev.slots[0].x < fw - 100:
           return
 
-      if left && ev.slots[0].x > 100:
-        return
-      if !left && ev.slots[0].x < fw - 100:
-        return
+    if min_y == -1 or max_y == -1:
+      return
 
+    y_delta := max_y - min_y
     if y_delta >= 800:
       self.show_launcher()
       return
