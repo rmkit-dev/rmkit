@@ -397,7 +397,7 @@ namespace framebuffer:
       datestr := self.get_date()
       datecstr := datestr.c_str()
 
-      sprintf(mkdir_cmd, "mkdir %s 2>/dev/null", SAVE_DIR)
+      sprintf(mkdir_cmd, "mkdir -p %s 2>/dev/null", SAVE_DIR)
       err := system(mkdir_cmd)
       sprintf(filename, "%s/%s%s", SAVE_DIR, datecstr, ".png")
       px_w, px_h = self.get_display_size()
