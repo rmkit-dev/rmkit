@@ -40,6 +40,7 @@ namespace ui:
       if page >= 0 and page <= (self.options.size() / self.page_size):
         self.curr_page = page
       self.scene = ui::make_scene()
+      self.scene->on_hide = self.on_hide
       self.titleWidget->restore_coords()
       self.contentWidget->restore_coords()
       self.build_dialog()

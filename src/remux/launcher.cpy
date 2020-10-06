@@ -308,7 +308,7 @@ class App: public IApp:
     app_dialog->setup_for_render()
     app_dialog->add_shortcuts()
     app_dialog->show()
-    app_dialog->scene->on_hide += PLS_LAMBDA(auto &d):
+    app_dialog->on_hide += PLS_LAMBDA(auto &d):
       self.render_bg()
       launch(CURRENT_APP)
       if USE_KOREADER_WORKAROUND and CURRENT_APP != "KOReader":

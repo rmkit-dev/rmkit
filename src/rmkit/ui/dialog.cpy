@@ -46,6 +46,7 @@ namespace ui:
     Widget *contentWidget
     Scene scene
     vector<string> buttons
+    ui::InnerScene::DIALOG_VIS_EVENT on_hide
 
     Dialog(int x, y, w, h): Widget(x,y,w,h):
       self.buttons = { "OK", "CANCEL" }
@@ -56,6 +57,7 @@ namespace ui:
     // and packings for the modal overlay
     void build_dialog():
       self.scene = ui::make_scene()
+      self.scene->on_hide = self.on_hide
       self.scene->add(self)
 
       self.position_dialog()
