@@ -314,6 +314,7 @@ class App: public IApp:
       if USE_KOREADER_WORKAROUND and CURRENT_APP != "KOReader":
         ui::MainLoop::in.ungrab()
     ;
+    app_dialog->scene->on_hide += app_dialog->on_hide
 
     ui::MainLoop::in.grab()
 
