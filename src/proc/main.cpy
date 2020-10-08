@@ -16,6 +16,8 @@ int main(int argc, char* argv[]):
     procs := proc::ls(args)
     for auto p : procs:
       print p.pid, p.cmdline
+  else if subcmd == "is_running":
+    ret := proc::is_running(args)
   else if subcmd == "contall":
     proc::groupkill(SIGCONT, args)
   else if subcmd == "stopall":

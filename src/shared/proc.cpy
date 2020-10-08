@@ -144,7 +144,6 @@ namespace proc:
       getline(f, stat)
       fields := str_utils::split(stat, ' ')
 
-      debug "PROC", p, cmdline, fields[PGROUP]
       ret.push_back(Proc{std::stoi(p), cmdline, fields})
 
     return ret
@@ -161,8 +160,6 @@ namespace proc:
       debug "SENDING", signal, "TO GROUP", -pid, "RET", ret
 
   bool is_running(string bin):
-    char command[PATH_MAX]
-    sprintf(command, "pidof %s 2> /dev/null", bin.c_str());
     vector<string> bins = { bin }
     procs := ls(bins)
     if procs.size() == 0:
@@ -176,6 +173,18 @@ namespace proc:
     getline(f, status)
 
     return status != "do_signal_stop"
+
+  map<string, bool> is_running(vector<string> bins):
+    map<string, bool> ret;
+    procs := ls(bins)
+    for auto proc : procs:
+      for auto bin : bins:
+        args := vector<string> { bin }
+        if check_args(proc.cmdline, args):
+          ret[bin] = true
+
+    return ret
+
 
   def stop_programs(vector<string> programs, string signal=""):
     for auto s : programs:

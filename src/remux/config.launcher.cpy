@@ -12,6 +12,9 @@ struct RMApp:
   // this will contain a framebuffer snapshot if we have one
   char *snapshot = NULL
 
+  // whether this app is currently running
+  bool is_running = false
+
 RMApp APP_XOCHITL = RMApp %{
   bin : "xochitl",
   which : "xochitl",

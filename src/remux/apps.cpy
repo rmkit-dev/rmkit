@@ -143,6 +143,16 @@ class AppReader:
     read_binaries_from_dir(BIN_DIR)
     read_binaries_from_dir(DOT_BIN_DIR)
 
+    vector<string> bins
+    for auto &app : self.apps:
+      app.is_running = false
+      bins.push_back(app.bin)
+
+    is_running := proc::is_running(bins)
+    for auto &app : self.apps:
+      if is_running.find(app.bin) != is_running.end():
+        app.is_running = true
+
   def get_binaries():
     vector<string> binaries
     unordered_set<string> seen
