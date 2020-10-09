@@ -185,6 +185,61 @@ namespace proc:
 
     return ret
 
+  int read_mem_from_status(int pid):
+    val := -1
+    fname := join_path({"/proc/", to_string(pid), "/status"})
+    ifstream f(fname)
+    string line
+    while getline(f, line):
+      tokens := str_utils::split(line, ':')
+      if tokens.size() > 1 and tokens[0] == "VmSize":
+        val = stoi(tokens[1])
+
+    return val
+
+  int read_mem_from_smaps_rollup(int pid):
+    fname := join_path({"/proc/", to_string(pid), "/smaps_rollup"})
+    shared := 0
+    priv := 0
+    pss := 0
+    swap := 0
+    swap_pss := 0
+    ifstream f(fname)
+    string line
+    while getline(f, line):
+      tokens := str_utils::split(line, ':')
+      if tokens.size() > 1:
+        val_tokens := str_utils::split(tokens[1], ' ')
+        val := stoi(val_tokens[0])
+        if tokens[0].find("Shared") == 0:
+          shared += val
+        if tokens[0].find("Private") == 0:
+          priv += val
+        if tokens[0] == "Pss":
+          pss += val
+        if tokens[0] == "Swap":
+          swap += val
+        if tokens[0] == "SwapPss":
+          swap_pss += val
+
+
+    if pss > 0:
+      shared = pss - priv
+
+
+    return priv
+
+  // collect per process memory usage
+  map<int, int> collect_mem(vector<Proc> pids):
+    int val
+    map<int, int> mem_usage;
+    for auto p: pids:
+      val = mem_usage[p.pid] = read_mem_from_smaps_rollup(p.pid)
+      if val == 0:
+        mem_usage[p.pid] = read_mem_from_status(p.pid)
+
+    return mem_usage
+
 
   def stop_programs(vector<string> programs, string signal=""):
     for auto s : programs:

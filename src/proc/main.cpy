@@ -14,8 +14,9 @@ int main(int argc, char* argv[]):
 
   if subcmd == "ls":
     procs := proc::ls(args)
+    mem_usage := proc::collect_mem(procs)
     for auto p : procs:
-      print p.pid, p.cmdline
+      print p.pid, p.cmdline, mem_usage[p.pid]
   else if subcmd == "is_running":
     ret := proc::is_running(args)
   else if subcmd == "contall":

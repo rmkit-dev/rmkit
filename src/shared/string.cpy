@@ -61,8 +61,10 @@ std::vector<std::string> split (const std::string &s, char delim) {
   std::stringstream ss (s);
   std::string item;
 
+  string d(1, delim);
   while (getline (ss, item, delim)) {
-    result.push_back (item);
+    if (item != "" && item != d)
+      result.push_back (item);
   }
 
   return result;
