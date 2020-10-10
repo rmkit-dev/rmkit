@@ -12,8 +12,12 @@ struct RMApp:
   // this will contain a framebuffer snapshot if we have one
   char *snapshot = NULL
 
+  // proc management stuff below here
   // whether this app is currently running
   bool is_running = false
+  int mem_usage = 0 // in KB
+  vector<int> pids
+
 
 RMApp APP_XOCHITL = RMApp %{
   bin : "xochitl",

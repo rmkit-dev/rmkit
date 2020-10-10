@@ -57,7 +57,7 @@ namespace ui:
         ui::HorizontalLayout *row = new ui::HorizontalLayout(
           0,
           0,
-          self.contentWidget->w,
+          self.contentWidget->w-40,
           self.opt_h,
           self.scene)
         option := self.options[i]

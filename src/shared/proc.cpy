@@ -174,9 +174,8 @@ namespace proc:
 
     return status != "do_signal_stop"
 
-  map<string, bool> is_running(vector<string> bins):
+  map<string, bool> is_running(vector<string> bins, vector<Proc> &procs):
     map<string, bool> ret;
-    procs := ls(bins)
     for auto proc : procs:
       for auto bin : bins:
         args := vector<string> { bin }
@@ -184,6 +183,10 @@ namespace proc:
           ret[bin] = true
 
     return ret
+
+  map<string, bool> is_running(vector<string> bins):
+    procs := ls(bins)
+    return is_running(bins, procs)
 
   int read_mem_from_status(int pid):
     val := -1
@@ -197,8 +200,7 @@ namespace proc:
 
     return val
 
-  int read_mem_from_smaps_rollup(int pid):
-    fname := join_path({"/proc/", to_string(pid), "/smaps_rollup"})
+  int read_mem_from_smaps(string fname):
     shared := 0
     priv := 0
     pss := 0
@@ -210,22 +212,25 @@ namespace proc:
       tokens := str_utils::split(line, ':')
       if tokens.size() > 1:
         val_tokens := str_utils::split(tokens[1], ' ')
-        val := stoi(val_tokens[0])
         if tokens[0].find("Shared") == 0:
+          val := stoi(val_tokens[0])
           shared += val
         if tokens[0].find("Private") == 0:
+          val := stoi(val_tokens[0])
           priv += val
         if tokens[0] == "Pss":
+          val := stoi(val_tokens[0])
           pss += val
         if tokens[0] == "Swap":
+          val := stoi(val_tokens[0])
           swap += val
         if tokens[0] == "SwapPss":
+          val := stoi(val_tokens[0])
           swap_pss += val
 
 
     if pss > 0:
       shared = pss - priv
-
 
     return priv
 
@@ -234,7 +239,19 @@ namespace proc:
     int val
     map<int, int> mem_usage;
     for auto p: pids:
-      val = mem_usage[p.pid] = read_mem_from_smaps_rollup(p.pid)
+      fname := join_path({"/proc/", to_string(p.pid), "/smaps_rollup"})
+      try:
+        val = mem_usage[p.pid] = read_mem_from_smaps(fname)
+      catch(...):
+        pass
+
+      if val == 0:
+        fname = join_path({"/proc/", to_string(p.pid), "/smaps"})
+        try:
+          val = mem_usage[p.pid] = read_mem_from_smaps(fname)
+        catch(...):
+          pass
+
       if val == 0:
         mem_usage[p.pid] = read_mem_from_status(p.pid)
 

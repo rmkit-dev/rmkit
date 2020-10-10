@@ -69,6 +69,7 @@ namespace ui:
 
       button_bar := new HorizontalLayout(10, 0, self.w, 50, self.scene)
       a_layout.pack_end(button_bar)
+      button_bar->y -= 2
 
       self.add_buttons(button_bar)
 

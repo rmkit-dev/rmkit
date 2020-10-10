@@ -148,10 +148,20 @@ class AppReader:
       app.is_running = false
       bins.push_back(app.bin)
 
-    is_running := proc::is_running(bins)
+    procs := proc::ls(bins)
+    is_running := proc::is_running(bins, procs)
+
     for auto &app : self.apps:
       if is_running.find(app.bin) != is_running.end():
         app.is_running = true
+
+    mem_usage := proc::collect_mem(procs)
+    for auto &app : self.apps:
+      app.mem_usage = 0
+      for auto proc : procs:
+        bs := vector<string> { app.bin }
+        if proc::check_args(proc.cmdline, bs)
+          app.mem_usage += mem_usage[proc.pid]
 
   def get_binaries():
     vector<string> binaries

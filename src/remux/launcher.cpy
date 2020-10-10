@@ -156,19 +156,21 @@ class AppDialog: public ui::Pager:
       ui::MainLoop::hide_overlay()
 
     void render_row(ui::HorizontalLayout *row, string option):
-      status := ""
+      status := string("")
       for auto app : self.reader.apps:
         if app.name == option or app.bin == option:
-          status = app.is_running ? "*" : ""
+          if app.is_running:
+            status = to_string(app.mem_usage / 1024) + string("MB")
 
-      c := new ui::Text(0, 10, 50, self.opt_h, status)
+      c := new ui::Text(0, 10, 100, self.opt_h, status)
+      c->justify = ui::Text::JUSTIFY::RIGHT
       d := new ui::DialogButton(0, 0, self.w-90, self.opt_h, self, option)
       d->x_padding = 10
       d->y_padding = 5
       d->set_justification(ui::Text::JUSTIFY::LEFT)
       self.layout->pack_start(row)
-      row->pack_start(c)
       row->pack_start(d)
+      row->pack_end(c)
 
 class App: public IApp:
   int lastpress
