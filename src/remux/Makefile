@@ -2,7 +2,7 @@ include ../actions.make
 
 EXE=remux
 FILES=launcher.cpy
-_install:
+install:
 	make copy
 	make install_service
 

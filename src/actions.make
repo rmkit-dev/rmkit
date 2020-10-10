@@ -42,19 +42,22 @@ assets:
 	# ${SRC_DIR} ${APP}
 	bash ${ROOT_DIR}/scripts/build/build_assets.sh ${SRC_DIR}/${APP}/assets.h ${ASSET_DIR}
 
-_install:
+install-default:
 	make copy
 
-_install_draft:
+install_draft-default:
 	ssh -C root@${HOST} mkdir -p /opt/etc/draft 2>/dev/null
-	scp -C ${APP}.draft root@${HOST}:/opt/etc/draft/
+	scp -C ${DRAFT} root@${HOST}:/opt/etc/draft/
 
 
 copy:
 	ARCH=arm $(MAKE) compile
+	if [ -n "${DRAFT}" ]; then make install_draft; fi
+
 	ssh root@${HOST} killall -9 ${EXE} ${APP} || true
 	ssh root@${HOST} mkdir -p ${DEST} 2>/dev/null
 	scp -C ../build/${EXE} root@${HOST}:${DEST}/${APP}
+
 
 stop:
 	ssh root@${HOST} killall -9 ${EXE} || true
@@ -72,6 +75,9 @@ lint:
 
 reboot:
 	ssh root@10.11.99.1 systemctl start xochitl
+
+%: %-default
+	@ true
 
 .PHONY: assets clean reboot
 # vim: syntax=make
