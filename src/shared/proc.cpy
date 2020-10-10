@@ -89,7 +89,7 @@ namespace proc:
 
   // checks that cmdline contains a value in args
   // BUT it skips any tokens in cmdline that start with '-'
-  def check_args(string cmdline, vector<string> &args):
+  bool check_args(string cmdline, vector<string> &args):
     found := false
     for auto needle : args:
       if cmdline.find(needle) != -1:
@@ -116,7 +116,7 @@ namespace proc:
 
     return found
 
-  def ls(vector<string> &args):
+  vector<Proc> ls(vector<string> &args):
     vector<Proc> ret;
 
     needle := string("")
@@ -148,7 +148,7 @@ namespace proc:
 
     return ret
 
-  def groupkill(int signal, vector<string> &args):
+  void groupkill(int signal, vector<string> &args):
     procs := ls(args)
     unordered_set<string> tokill
     for auto proc : procs:
@@ -258,7 +258,7 @@ namespace proc:
     return mem_usage
 
 
-  def stop_programs(vector<string> programs, string signal=""):
+  void stop_programs(vector<string> programs, string signal=""):
     for auto s : programs:
       #ifdef REMARKABLE
       cmd := "killall" + signal + " " + s + " 2> /dev/null"
@@ -271,14 +271,14 @@ namespace proc:
       pass
     return
 
-  def stop_xochitl():
+  void stop_xochitl():
     #ifdef REMARKABLE
     if system("systemctl stop xochitl 2> /dev/null") == 0:
       debug "STOPPED XOCHITL"
     #endif
     return
 
-  def start_xochitl():
+  void start_xochitl():
     #ifdef REMARKABLE
     if system("systemctl restart xochitl 2> /dev/null") == 0:
       debug "STARTING XOCHITL"
