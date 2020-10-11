@@ -77,6 +77,15 @@ class SuspendButton: public ui::Button:
   void on_mouse_click(input::SynMotionEvent &ev):
     self.app->on_suspend()
 
+class StatusBar: public ui::Button:
+  public:
+  StatusBar(int x, int y, int w, int h, string t): ui::Button(x, y, w, h, t):
+    pass
+
+  void render():
+    ui::Button::render()
+    self.fb->draw_rect(self.x, self.y, self.w, self.h, BLACK, false)
+
 class AppBackground: public ui::Widget:
   public:
   int byte_size
@@ -127,6 +136,7 @@ class AppDialog: public ui::Pager:
       self.buttons = { "Get More Apps" }
 
     void add_shortcuts():
+      // draw suspend button in bottom right
       _w, _h := fb->get_display_size()
       h_layout := ui::HorizontalLayout(0, 0, _w, _h, self.scene)
       v_layout := ui::VerticalLayout(0, 0, _w, _h, self.scene)
@@ -134,15 +144,28 @@ class AppDialog: public ui::Pager:
       h_layout.pack_end(b1)
       v_layout.pack_end(b1)
 
-      if system("test -f /opt/bin/nao") == 0:
-        cw := 250
-        b2 := new NaoButton(self.x+self.w-cw, self.y-50, cw, 50, self.app)
-        self.scene->add(b2)
+      // draw memory info
+      mem_info := proc::read_mem_total()
+      if mem_info.available > 0:
+
+        mem_str := string("Used Mem: ") + proc::join_path(%{
+          to_string(mem_info.used/1024),
+          to_string(mem_info.total/1024) }) + string("MB ")
+
+        stat_str := mem_str
+
+        cw := 350
+        b3 := new StatusBar(self.x+self.w-cw, self.y-50, cw, 50, stat_str)
+        b3->set_justification(ui::Text::JUSTIFY::RIGHT)
+        self.scene->add(b3)
+
 
 
     void render():
       ui::Pager::render()
       self.fb->draw_line(self.x+self.w, self.y, self.x+self.w, self.y+self.h, 2, BLACK)
+
+      // render memory stats/
 
     void populate():
       self.reader.populate()

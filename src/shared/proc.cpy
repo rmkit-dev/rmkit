@@ -13,6 +13,7 @@
 #define PID 1
 #define PGROUP 4
 
+
 // {{{ from https://stackoverflow.com/questions/478898/how-do-i-execute-a-command-and-get-the-output-of-the-command-within-c-using-po
 ```
 #include <cstdio>
@@ -44,6 +45,12 @@ namespace proc:
     int pid
     string cmdline
     vector<string> stat
+  ;
+
+  struct MemInfo:
+    int total = 0
+    int available = 0
+    int used = 0
   ;
 
   string join_path(vector<string> v):
@@ -187,6 +194,30 @@ namespace proc:
   map<string, bool> is_running(vector<string> bins):
     procs := ls(bins)
     return is_running(bins, procs)
+
+  MemInfo read_mem_total():
+    mem_info := MemInfo{}
+    fname := "/proc/meminfo"
+    string line
+    int val = 0
+    ifstream f(fname)
+    while getline(f, line):
+      tokens := str_utils::split(line, ':')
+      if tokens.size() > 1:
+        try:
+          val = stoi(tokens[1])
+        catch(...):
+          continue
+
+        if tokens[0] == "MemTotal":
+          mem_info.total = val
+
+        if tokens[0] == "MemAvailable":
+          mem_info.available = val
+
+    mem_info.used = mem_info.total - mem_info.available
+
+    return mem_info
 
   int read_mem_from_status(int pid):
     val := -1
