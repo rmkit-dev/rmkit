@@ -7,6 +7,7 @@ APPS=$(shell ls src/ | grep -v build | grep -Ev ".make|shared|vendor|cpp")
 LINT_APPS=$(foreach app, $(APPS), lint_$(app))
 CLEAN_APPS=$(foreach app, $(APPS), clean_$(app))
 INSTALL_APPS=$(foreach app, $(APPS), install_$(app))
+RESIM_APPS=$(foreach app, $(APPS), resim_$(app))
 RUN_APPS=$(foreach app, $(APPS), run_$(app))
 DOCKER_APPS=$(foreach app, $(APPS), $(app)_docker)
 
@@ -14,6 +15,9 @@ SHA=$(shell git rev-parse --short HEAD)
 
 $(APPS): %: rmkit.h
 	cd src/${@} && make
+
+$(RESIM_APPS): %: rmkit.h
+	cd src/$(@:resim_%=%) && make resim
 
 $(INSTALL_APPS): %: rmkit.h
 	cd src/$(@:install_%=%) && make install

@@ -49,6 +49,8 @@ install_draft-default:
 	ssh -C root@${HOST} mkdir -p /opt/etc/draft 2>/dev/null
 	scp -C ${DRAFT} root@${HOST}:/opt/etc/draft/
 
+resim:
+	ARCH=dev make && cd ../../ && resim ./src/build/${EXE}
 
 copy:
 	ARCH=arm $(MAKE) compile
