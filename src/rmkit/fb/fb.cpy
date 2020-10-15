@@ -411,12 +411,35 @@ namespace framebuffer:
       buf[i] = 0
 
       stbi_write_png(filename, self.width, self.height, 1, buf.data(), self.width)
-//      lodepng::encode(filename, buf, self.width, self.height,
-//                      LodePNGColorType::LCT_GREY, 8);
       return string(filename)
 
+    // Barrera4
+    def draw_circle_outline(int x0, y0, radius, stroke, color):
+      int x = 0;
+      int y = radius;
+      int d = -(radius >> 1);
+      int w = stroke
+      int h = stroke
+
+      while(x <= y):
+        self.draw_rect(x+x0, y+y0, w, h, color, true);
+        self.draw_rect(-x+x0, y+y0, w, h, color, true);
+        self.draw_rect(x+x0, -y+y0, w, h, color, true);
+        self.draw_rect(-x+x0, -y+y0, w, h, color, true);
+        self.draw_rect(y+x0, x+y0, w, h, color, true);
+        self.draw_rect(-y+x0, x+y0, w, h, color, true);
+        self.draw_rect(y+x0, -x+y0, w, h, color, true);
+        self.draw_rect(-y+x0, -x+y0, w, h, color, true);
+
+        if(d <= 0):
+          x++;
+          d += x;
+        else:
+          y--;
+          d -= y;
+
     // bresenham's outline
-    def draw_circle_outline(int x0, y0, r, stroke,color):
+    def draw_circle_outline2(int x0, y0, r, stroke, color):
       y := r
       x := 0;
       w := stroke
@@ -433,10 +456,8 @@ namespace framebuffer:
         x++;
 
         self.draw_rect(x+x0, y+y0, w, h, color, true);
-
         self.draw_rect(-x+x0, y+y0, w, h, color, true);
         self.draw_rect(x+x0, -y+y0, w, h, color, true);
-
         self.draw_rect(-x+x0, -y+y0, w, h, color, true);
         self.draw_rect(y+x0, x+y0, w, h, color, true);
         self.draw_rect(-y+x0, x+y0, w, h, color, true);

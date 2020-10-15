@@ -309,5 +309,3 @@ namespace ui:
 
   shared_ptr<framebuffer::FB> MainLoop::fb = framebuffer::get()
 
-  std::mutex TaskQueue::task_m = {}
-  deque<std::function<void()>> TaskQueue::tasks = {}

@@ -31,15 +31,17 @@ class CircleAnimation : public ui::Widget:
         color = BLACK
 
     ui::TaskQueue::add_task([=]() {
-      self.animate()
+      if self.loops == 0:
+        self.undraw()
+
+      self.fb->draw_circle(self.x+self.w/2, self.y+self.h/2, self.size, 1, self.color, 0 /* fill */)
+
       usleep(1000 * 16)
+      self.animate()
     })
 
   void render():
-    if self.loops == 0:
-      self.undraw()
-
-    self.fb->draw_circle(self.x+self.w/2, self.y+self.h/2, self.size, 1, self.color, 0 /* fill */)
+    return
 
 class Launcher: public ui::Widget:
   public:
