@@ -35,14 +35,19 @@ namespace ui:
         return
 
 
-      task_q.lock()
-      t := TaskQueue::tasks.front()
-      TaskQueue::tasks.pop_front()
-      task_q.unlock()
       try:
         thread *th = new thread([=]() {
-          lock_guard<mutex> guard(task_m)
-          t()
+          count := 4
+          while tasks.size() > 0 and count > 0:
+            count--
+            task_q.lock()
+            t := TaskQueue::tasks.front()
+            TaskQueue::tasks.pop_front()
+            task_q.unlock()
+
+            task_m.lock()
+            t()
+            task_m.unlock()
           TaskQueue::wakeup()
         })
         th->detach()
