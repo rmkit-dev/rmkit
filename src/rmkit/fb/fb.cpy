@@ -388,17 +388,20 @@ namespace framebuffer:
 
       self.waveform_mode = WAVEFORM_MODE_AUTO
 
+    void make_save_dir():
+      char mkdir_cmd[100]
+      sprintf(mkdir_cmd, "mkdir -p %s 2>/dev/null", SAVE_DIR)
+      err := system(mkdir_cmd)
+
 
     string save_lodepng():
+      self.make_save_dir()
       char filename[100]
       char full_filename[100]
-      char mkdir_cmd[100]
 
       datestr := self.get_date()
       datecstr := datestr.c_str()
 
-      sprintf(mkdir_cmd, "mkdir -p %s 2>/dev/null", SAVE_DIR)
-      err := system(mkdir_cmd)
       sprintf(filename, "%s/%s%s", SAVE_DIR, datecstr, ".png")
       px_w, px_h = self.get_display_size()
 

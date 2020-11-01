@@ -21,6 +21,7 @@ class App:
 
   App():
     fb = framebuffer::get()
+    fb->make_save_dir()
     fb->clear_screen()
     fb->redraw_screen()
 
