@@ -58,7 +58,7 @@ copy:
 
 	ssh root@${HOST} killall -9 ${EXE} ${APP} || true
 	ssh root@${HOST} mkdir -p ${DEST} 2>/dev/null
-	scp -C ../build/${EXE} root@${HOST}:${DEST}/${APP}
+	scp -C ../build/${EXE} root@${HOST}:${DEST}/${EXE}
 
 
 stop:
