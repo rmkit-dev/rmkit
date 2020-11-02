@@ -228,6 +228,13 @@ class App: public IApp:
     app_dialog->populate()
     get_current_app()
 
+    app_dialog->on_hide += PLS_LAMBDA(auto &d):
+      self.render_bg()
+      launch(CURRENT_APP)
+      if USE_KOREADER_WORKAROUND and CURRENT_APP != "KOReader":
+        ui::MainLoop::in.ungrab()
+    ;
+
     app_bg = new AppBackground(0, 0, w, h)
 
     touch_flood = build_touch_flood()
@@ -340,12 +347,6 @@ class App: public IApp:
     app_dialog->setup_for_render()
     app_dialog->add_shortcuts()
     app_dialog->show()
-    app_dialog->on_hide += PLS_LAMBDA(auto &d):
-      self.render_bg()
-      launch(CURRENT_APP)
-      if USE_KOREADER_WORKAROUND and CURRENT_APP != "KOReader":
-        ui::MainLoop::in.ungrab()
-    ;
     app_dialog->scene->on_hide += app_dialog->on_hide
 
     ui::MainLoop::in.grab()
