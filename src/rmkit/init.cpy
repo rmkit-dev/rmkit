@@ -31,6 +31,10 @@ static void _rmkit_init() __attribute__((constructor))
 static void _rmkit_init():
   std::ios_base::Init i;
 
+  in_shim := getenv("RM2FB_SHIM")
+  if in_shim != NULL and strlen(in_shim) != 0:
+    framebuffer::IN_RM2FB_SHIM = true
+
   fb := framebuffer::get()
   ui::Widget::fb = fb.get()
   w, h = fb->get_display_size()

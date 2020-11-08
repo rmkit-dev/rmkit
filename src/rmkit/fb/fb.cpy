@@ -22,6 +22,7 @@ using namespace std
 
 namespace framebuffer:
 
+  IN_RM2FB_SHIM := false
   inline bool file_exists (const std::string& name):
     struct stat buffer;
     return (stat (name.c_str(), &buffer) == 0);
@@ -147,9 +148,16 @@ namespace framebuffer:
       return
 
     tuple<int,int> get_size():
+      #ifdef DEV
       width = DISPLAYWIDTH
       height = DISPLAYHEIGHT
       return width, height
+      #endif
+
+      if IN_RM2FB_SHIM:
+        width = DISPLAYWIDTH
+        height = DISPLAYHEIGHT
+        return width, height
 
       size_f := ifstream("/sys/class/graphics/fb0/virtual_size")
       string width_s, height_s
