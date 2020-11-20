@@ -147,11 +147,9 @@ namespace framebuffer:
       return
 
     tuple<int,int> get_size():
-      #ifdef DEV
       width = DISPLAYWIDTH
       height = DISPLAYHEIGHT
       return width, height
-      #endif
 
       size_f := ifstream("/sys/class/graphics/fb0/virtual_size")
       string width_s, height_s
