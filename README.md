@@ -67,7 +67,6 @@ The recommended way of installing the software in this repository is to use
 remarkable. Once opkg and the toltec repository are setup, use `opkg install
 remux` to get remux, for example.
 
-
 If you are feeling adventurous, you can try out the bootstrap script from
 linusCDE that installs opkg, toltec and the rmkit packages in one line: `wget -qO-
 https://rmkit.dev/bs | sh -C harmony minesweeper remux nao`
@@ -76,24 +75,6 @@ https://rmkit.dev/bs | sh -C harmony minesweeper remux nao`
 
 Binaries are generated on every push to this git repository and are hosted at
 https://build.rmkit.dev
-
-#### Try it out
-
-run `wget -O- https://rmkit.dev/try.sh -q | sh -` on the remarkable via SSH
-
-To exit harmony, press the power button to bring up the exit dialog.
-
-#### Install
-
-run `wget -O- https://rmkit.dev/install.sh -q | sh -` to install the remux app launcher until the next time the device is updated
-
-to launch remux and switch between apps, hold the center button for 2+ seconds.
-
-#### Uninstalling
-
-to remove remux, run `systemctl disable remux --now`. All the applications are
-installed into /home/root/apps with the above `install.sh` script, so you can
-delete that directory safely.
 
 ## Building from source
 
