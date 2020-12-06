@@ -15,6 +15,7 @@
 #include "../input/input.h"
 #include "../util/signals.h"
 #include "../util/image.h"
+#include "../util/rm2fb.h"
 #include "../../vendor/stb/stb_image.h"
 #include "../../vendor/stb/stb_image_write.h"
 
@@ -22,7 +23,6 @@ using namespace std
 
 namespace framebuffer:
 
-  IN_RM2FB_SHIM := false
   inline bool file_exists (const std::string& name):
     struct stat buffer;
     return (stat (name.c_str(), &buffer) == 0);
@@ -154,7 +154,7 @@ namespace framebuffer:
       return width, height
       #endif
 
-      if IN_RM2FB_SHIM:
+      if rm2fb::IN_RM2FB_SHIM:
         width = DISPLAYWIDTH
         height = DISPLAYHEIGHT
         return width, height

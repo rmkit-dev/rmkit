@@ -1,5 +1,6 @@
 #include <linux/input.h>
 #include "../defines.h"
+#include "../util/rm2fb.h"
 
 // #define DEBUG_INPUT_EVENT 1
 
@@ -109,10 +110,16 @@ namespace input:
           slot = data.value;
 
         case ABS_MT_POSITION_X:
-          slots[slot].x = self.x = (MTWIDTH - data.value)*MT_X_SCALAR
+          if not rm2fb::IN_RM2FB_SHIM:
+            slots[slot].x = self.x = (MTWIDTH - data.value)*MT_X_SCALAR
+          else:
+            slots[slot].x = self.x = data.value
           break
         case ABS_MT_POSITION_Y:
-          slots[slot].y = self.y = (MTHEIGHT - data.value)*MT_Y_SCALAR
+          if not rm2fb::IN_RM2FB_SHIM:
+            slots[slot].y = self.y = (MTHEIGHT - data.value)*MT_Y_SCALAR
+          else:
+            slots[slot].y = self.y = (DISPLAYHEIGHT - data.value)
           break
         case ABS_MT_TRACKING_ID:
           slots[slot].left = self.left = data.value > -1

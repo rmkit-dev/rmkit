@@ -5,6 +5,7 @@
 #include "ui/widget.h"
 #include "ui/main_loop.h"
 #include "input/input.h"
+#include "util/rm2fb.h"
 
 static void _rmkit_exit() __attribute__((destructor))
 static void _rmkit_exit(int signum):
@@ -33,7 +34,7 @@ static void _rmkit_init():
 
   in_shim := getenv("RM2FB_SHIM")
   if in_shim != NULL and strlen(in_shim) != 0:
-    framebuffer::IN_RM2FB_SHIM = true
+    rm2fb::IN_RM2FB_SHIM = true
 
   fb := framebuffer::get()
   ui::Widget::fb = fb.get()
