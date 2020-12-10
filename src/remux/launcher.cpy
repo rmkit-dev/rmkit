@@ -118,7 +118,10 @@ class AppBackground: public ui::Widget:
 
     vfb := self.get_vfb()
     debug "RENDERING", CURRENT_APP
-    fb->waveform_mode = WAVEFORM_MODE_GC16
+    if rm2fb::IN_RM2FB_SHIM:
+      fb->waveform_mode = WAVEFORM_MODE_GC16
+    else:
+      fb->waveform_mode = WAVEFORM_MODE_AUTO
     memcpy(fb->fbmem, vfb->fbmem, self.byte_size)
     fb->dirty = 1
 
@@ -293,7 +296,11 @@ class App: public IApp:
       while true:
         now := time(NULL)
         usb_in := false
-        usb_str := string(exec("cat /sys/class/power_supply/imx_usb_charger/present"))
+        string usb_str
+        if rm2fb::IN_RM2FB_SHIM:
+          usb_str = string(exec("cat /sys/class/power_supply/max77818-charger/online"))
+        else:
+          usb_str = string(exec("cat /sys/class/power_supply/imx_usb_charger/present"))
         str_utils::trim(usb_str)
         usb_in = usb_str == string("1")
         threshold := SUSPEND_THRESHOLD
