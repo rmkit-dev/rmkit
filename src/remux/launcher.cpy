@@ -118,7 +118,7 @@ class AppBackground: public ui::Widget:
 
     vfb := self.get_vfb()
     debug "RENDERING", CURRENT_APP
-    fb->waveform_mode = WAVEFORM_MODE_AUTO
+    fb->waveform_mode = WAVEFORM_MODE_GC16
     memcpy(fb->fbmem, vfb->fbmem, self.byte_size)
     fb->dirty = 1
 
