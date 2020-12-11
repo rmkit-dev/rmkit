@@ -45,7 +45,7 @@ class IApp:
   virtual void launch(string) = 0;
   virtual void on_suspend() = 0;
   virtual void get_more() = 0;
-
+  virtual void show_launcher() = 0;
 
 class ClockWatch:
   public:
@@ -183,13 +183,24 @@ class AppDialog: public ui::Pager:
 
     void render_row(ui::HorizontalLayout *row, string option):
       status := string("")
+      bin := string("")
       for auto app : self.reader.apps:
         if app.name == option or app.bin == option:
+          bin = app.bin
           if app.is_running:
             status = to_string(app.mem_usage / 1024) + string("MB")
 
-      c := new ui::Text(0, 10, 100, self.opt_h, status)
-      c->justify = ui::Text::JUSTIFY::RIGHT
+      c := new ui::Button(0, 0, 100, self.opt_h, status)
+
+      if bin != "":
+        c->mouse.click += PLS_LAMBDA(auto &ev) {
+          vector<string> bins = { bin }
+          proc::groupkill(SIGKILL, bins)
+          ui::MainLoop::hide_overlay()
+          app->show_launcher()
+        }
+
+      c->set_justification(ui::Text::JUSTIFY::RIGHT)
       d := new ui::DialogButton(0, 0, self.w-90, self.opt_h, self, option)
       d->x_padding = 10
       d->y_padding = 5
@@ -333,7 +344,7 @@ class App: public IApp:
     app_bg->render()
     ui::MainLoop::redraw()
 
-  def show_launcher():
+  void show_launcher():
     if ui::MainLoop::overlay_is_visible:
       return
 

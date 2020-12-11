@@ -392,7 +392,7 @@ namespace framebuffer:
       self->draw_bitmap(image,0,0,0)
       free(image.buffer)
 
-      self.waveform_mode = WAVEFORM_MODE_AUTO
+      self.waveform_mode = WAVEFORM_MODE_GC16
 
     void make_save_dir():
       char mkdir_cmd[100]
