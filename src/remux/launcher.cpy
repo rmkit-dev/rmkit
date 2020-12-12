@@ -443,6 +443,7 @@ class App: public IApp:
     #ifdef REMARKABLE
     cmd := "/usr/sbin/rtcwake -m no --seconds " + to_string(SHUTDOWN_THRESHOLD)
     _ := system(cmd.c_str())
+    sleep(1)
     _ = system("systemctl suspend")
     sleep(1)
 
