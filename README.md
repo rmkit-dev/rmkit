@@ -1,7 +1,7 @@
 # rmkit
 
 [![rm1](https://img.shields.io/badge/rM1-supported-green)](https://remarkable.com/store/remarkable)
-[![rm2](https://img.shields.io/badge/rM2-unsupported-red)](https://remarkable.com/store/remarkable-2)
+[![rm2](https://img.shields.io/badge/rM2-supported-green)](https://remarkable.com/store/remarkable-2)
 
 
 
@@ -14,6 +14,8 @@
 This repo contains applications for the remarkable tablet. See the README in
 each application's directory to learn more about it. The general purpose of
 rmkit is to make it easy to write and deploy new apps to the remarkable tablet.
+
+NOTE: for remarkable2 support, [rm2fb](https://github.com/ddvk/remarkable2-framebuffer) is required
 
 ## Apps & Libaries
 
