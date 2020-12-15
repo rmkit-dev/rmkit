@@ -314,9 +314,6 @@ class App: public IApp:
           usb_str = string(exec("cat /sys/class/power_supply/imx_usb_charger/present"))
         str_utils::trim(usb_str)
         usb_in = usb_str == string("1")
-        threshold := SUSPEND_THRESHOLD
-        if usb_in:
-          threshold = CHARGING_THRESHOLD
 
         suspend_m.lock()
         if LAST_ACTION == 0 or usb_in:
@@ -441,19 +438,22 @@ class App: public IApp:
     ui::MainLoop::in.grab()
 
     #ifdef REMARKABLE
-    cmd := "/usr/sbin/rtcwake -m no --seconds " + to_string(SHUTDOWN_THRESHOLD)
-    _ := system(cmd.c_str())
-    sleep(1)
-    _ = system("systemctl suspend")
-    sleep(1)
+    if not rm2fb::IN_RM2FB_SHIM:
+      now := time(NULL)
+      cmd := "echo " + to_string(SHUTDOWN_THRESHOLD + now) + " > /sys/class/rtc/rtc0/wakealarm"
 
-    now := time(NULL)
-    if now - LAST_ACTION >= SHUTDOWN_THRESHOLD:
-      debug "RESUMING FROM SUSPEND -> SHUTDOWN"
-      _ := system("systemctl poweroff")
-      return
+      _ := system(cmd.c_str())
+      sleep(1)
+      _ = system("systemctl suspend")
+      sleep(1)
 
-    _ = system("/usr/sbin/rtcwake --seconds 0 -m disable")
+      now = time(NULL)
+      if now - LAST_ACTION >= SHUTDOWN_THRESHOLD:
+        debug "RESUMING FROM SUSPEND -> SHUTDOWN"
+        _ := system("systemctl poweroff")
+        return
+
+      _ = system("echo 0 > /sys/class/rtc/rtc0/wakealarm")
     #endif
 
     debug "RESUMING FROM SUSPEND"
