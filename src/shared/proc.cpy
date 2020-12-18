@@ -98,23 +98,16 @@ namespace proc:
   // BUT it skips any tokens in cmdline that start with '-'
   bool check_args(string cmdline, vector<string> &args):
     found := false
-    for auto needle : args:
-      if cmdline.find(needle) != -1:
-        found = true
-        break
-
-    if not found:
-      return false
-
-    found = false
     cmd_tokens := str_utils::split(cmdline, 0)
 
-    for auto t : cmd_tokens:
-      if t[0] == '-':
-        continue
+    for auto cmd_token : cmd_tokens:
+      base := cmd_token.c_str()
+      full_str := string(base)
+      base = basename((char *) base)
+      base_str := string(base)
 
       for auto needle : args:
-        if t.find(needle) != -1:
+        if base_str == needle || full_str == needle:
           found = true
           break
 
