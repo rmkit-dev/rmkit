@@ -651,4 +651,5 @@ class App: public IApp:
 
 App app
 def main():
+  LAST_ACTION = time(NULL)
   app.run()
