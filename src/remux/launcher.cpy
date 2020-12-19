@@ -322,7 +322,7 @@ class App: public IApp:
         suspend_m.unlock()
 
         if last_action > 0:
-          if now - last_action > SUSPEND_THRESHOLD and now - LAST_ACTION < TOO_MUCH_THRESHOLD:
+          if now - last_action > SUSPEND_THRESHOLD and now - LAST_ACTION < 2*SUSPEND_THRESHOLD:
             if not ui::MainLoop::overlay_is_visible:
               app_bg->snapshot()
             on_suspend()
