@@ -111,15 +111,19 @@ namespace input:
 
         case ABS_MT_POSITION_X:
           if not rm2fb::IN_RM2FB_SHIM:
-            slots[slot].x = self.x = (MTWIDTH - data.value)*MT_X_SCALAR
+            slots[slot].x = (MTWIDTH - data.value)*MT_X_SCALAR
           else:
-            slots[slot].x = self.x = data.value
+            slots[slot].x = data.value
+          if slot == 0:
+            self.x = slots[0].x
           break
         case ABS_MT_POSITION_Y:
           if not rm2fb::IN_RM2FB_SHIM:
-            slots[slot].y = self.y = (MTHEIGHT - data.value)*MT_Y_SCALAR
+            slots[slot].y = (MTHEIGHT - data.value)*MT_Y_SCALAR
           else:
-            slots[slot].y = self.y = (DISPLAYHEIGHT - data.value)
+            slots[slot].y = (DISPLAYHEIGHT - data.value)
+          if slot == 0:
+            self.y = slots[0].y
           break
         case ABS_MT_TRACKING_ID:
           slots[slot].left = self.left = data.value > -1
