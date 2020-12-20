@@ -46,6 +46,11 @@ A batteries included library for building remarkable apps. [Read the documentati
 A [simple markup language](https://rmkit.dev/apps/sas) for building apps that
 follow the philosophy of unix pipes.
 
+### [genie](src/genie)
+
+[genie](https://rmkit.dev/apps/genie) is a config based gesture launcher.
+specify gestures and actions and get gesturing!
+
 ## Demos
 
 ### [animation](src/animation_demo)

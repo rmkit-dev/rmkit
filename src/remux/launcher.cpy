@@ -13,6 +13,7 @@
 #include <chrono>
 
 #include "../shared/proc.h"
+#include "../shared/clockwatch.h"
 #include "../build/rmkit.h"
 
 TIMEOUT := 1
@@ -47,17 +48,6 @@ class IApp:
   virtual void get_more() = 0;
   virtual void show_launcher() = 0;
 
-class ClockWatch:
-  public:
-  chrono::high_resolution_clock::time_point t1
-
-  ClockWatch():
-    t1 = chrono::high_resolution_clock::now();
-
-  def elapsed():
-    t2 := chrono::high_resolution_clock::now();
-    chrono::duration<double> time_span = chrono::duration_cast<chrono::duration<double>>(t2 - t1)
-    return time_span.count()
 
 class NaoButton: public ui::Button:
   public:
