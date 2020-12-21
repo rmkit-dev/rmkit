@@ -454,6 +454,10 @@ class App: public IApp:
         return
 
       _ = system("echo 0 > /sys/class/rtc/rtc0/wakealarm")
+    else:
+      sleep(1)
+      _ := system("systemctl suspend")
+      sleep(1)
     #endif
 
     debug "RESUMING FROM SUSPEND"
