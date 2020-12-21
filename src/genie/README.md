@@ -24,7 +24,7 @@ common config items:
 * **gesture** - type of gesture, can be **swipe** or **tap**
 * **command** - command to run when gesture is activated
 * **fingers** - number of fingers to use in the swipe or tap
-* **zone** - rectangle where the gesture must start in. specified as floats from 0 to 1
+* **zone** - rectangle where the gesture must start in. specified as space separated list of floats from 0 to 1. 0, 0 is the top left corner, the default is 0 0 1 1
 
 swipe specific config:
 
