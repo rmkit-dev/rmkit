@@ -315,10 +315,10 @@ namespace proc:
     return 0 == system(command);
 
   bool check_process(string name):
-    debug "CHECKING PROCESS", name
-    char command[PATH_MAX]
-    sprintf(command, "pidof %s 2>&1 > /dev/null", name.c_str());
-    return 0 == system(command);
+    args := vector<string>{name}
+    procs := ls(args)
+    debug "CHECKING PROCESS", name, procs.size()
+    return procs.size() > 0
 
   void launch_process(string name, bool check_running=false, background=false):
     tokens := str_utils::split(name, ' ')
