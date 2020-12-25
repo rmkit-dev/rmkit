@@ -628,7 +628,7 @@ namespace framebuffer:
     int perform_redraw(bool):
       #ifndef PERF_BUILD
       msync(self.fbmem, self.byte_size, MS_SYNC)
-      self.draw_circle_filled(last_mouse_ev.x, last_mouse_ev.y, 4, 2, BLACK)
+      // self.draw_circle_filled(last_mouse_ev.x, last_mouse_ev.y, 4, 2, BLACK)
       self.save_png()
       #endif
       return 0

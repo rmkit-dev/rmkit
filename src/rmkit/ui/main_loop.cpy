@@ -235,7 +235,7 @@ namespace ui:
       if ev.x == -1 || ev.y == -1:
         return false
 
-      mouse_down := ev.left || ev.right || ev.middle
+      mouse_down := ev.left > 0 || ev.right > 0 || ev.middle > 0
 
       widgets := display_scene->widgets;
       for auto it = widgets.rbegin(); it != widgets.rend(); it++:

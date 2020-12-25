@@ -28,6 +28,10 @@ namespace ui:
         w->show()
       self.visible = true
 
+    void refresh():
+      for auto ch : children:
+        ch->dirty = 1
+
     // Layouts generally don't receive events
     bool ignore_event(input::SynMotionEvent &ev):
       return true
