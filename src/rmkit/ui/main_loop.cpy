@@ -22,6 +22,7 @@
 
 #include "../util/signals.h"
 #include "../input/input.h"
+#include "../input/gestures.h"
 #include "../fb/fb.h"
 #include "scene.h"
 #include "widget.h"
@@ -45,6 +46,7 @@ namespace ui:
     static bool kbd_is_visible
 
     static input::Input in
+    static vector<input::Gesture*> gestures
 
     // variable: motion_event
     // motion_event is used for subscribing to motion_events
@@ -118,13 +120,39 @@ namespace ui:
         if ev._stop_propagation:
           continue
         handle_motion_event(ev)
-        fb->last_mouse_ev = ev
 
       for auto ev : in.all_key_events:
         MainLoop::key_event(ev)
         if ev._stop_propagation:
           continue
         handle_key_event(ev)
+
+    // we save the touch input until the finger lifts up
+    // so we can analyze whether its a gesture or not
+    static void handle_gestures():
+      for auto ev: ui::MainLoop::in.touch.events:
+        for auto g : gestures:
+          lifted := false
+          for int s = 0; s <= ev.slot; s++:
+            if ev.slots[s].left == 0:
+              lifted = true
+              break
+
+          if lifted:
+            if g->valid:
+              g->finalize()
+            g->reset()
+          else:
+            if g->filter(ev):
+              if !g->initialized:
+                if DEBUG_GESTURES:
+                  debug "INITIALIZING", ev.x, ev.y, ev.slot
+                g->init(ev)
+                g->setup(ev)
+                g->count++
+              else if g->valid:
+                g->handle_event(ev)
+                g->count++
 
     // function: main
     //
@@ -302,6 +330,7 @@ namespace ui:
   bool MainLoop::kbd_is_visible = false
 
   input::Input MainLoop::in = {}
+  vector<input::Gesture*> MainLoop::gestures = {}
 
   MOUSE_EVENT MainLoop::motion_event
   KEY_EVENT MainLoop::key_event

@@ -13,7 +13,6 @@
 #include <chrono>
 
 #include "../shared/proc.h"
-#include "../shared/clockwatch.h"
 #include "../build/rmkit.h"
 
 TIMEOUT := 1
@@ -635,6 +634,23 @@ class App: public IApp:
     // launches a thread that suspends on idle
     self.suspend_on_idle()
 
+    left := new input::SwipeGesture()
+    left->direction = {0, -1}
+    left->zone = {0, 0, int(DISPLAYWIDTH*0.1), int(DISPLAYHEIGHT)}
+    left->events.activate += PLS_LAMBDA(auto d) {
+      self.show_launcher()
+    }
+
+    right := new input::SwipeGesture()
+    right->direction = {0, -1}
+    left->zone = {int(DISPLAYWIDTH * 0.9), 0, int(DISPLAYWIDTH), int(DISPLAYHEIGHT)}
+    right->events.activate += PLS_LAMBDA(auto d) {
+      self.show_launcher()
+    }
+
+    ui::MainLoop::gestures.push_back(left)
+    ui::MainLoop::gestures.push_back(right)
+
     ui::MainLoop::key_event += PLS_DELEGATE(self.handle_key_event)
     ui::MainLoop::motion_event += PLS_DELEGATE(self.handle_motion_event)
     // ui::MainLoop::gesture_event += PLS_DELEGATE(self.handle_gesture_event)
@@ -646,7 +662,7 @@ class App: public IApp:
         ui::MainLoop::redraw()
 
       ui::MainLoop::read_input()
-      self.save_touch_events()
+      ui::MainLoop::handle_gestures()
 
 App app
 def main():

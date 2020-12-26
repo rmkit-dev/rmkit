@@ -8,6 +8,7 @@
 
 #include "../defines.h"
 #include "events.h"
+#include "gestures.h"
 #include "device_id.h"
 
 using namespace std
