@@ -1,3 +1,4 @@
 name=harmony
 desc=Procedural sketching app for remarkable
 call=/opt/bin/harmony
+imgFile=harmony
