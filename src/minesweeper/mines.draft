@@ -1,3 +1,4 @@
 name=mines
 desc=Mine detection game
 call=/opt/bin/mines
+imgFile=mines
