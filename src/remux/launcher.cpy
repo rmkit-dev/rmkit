@@ -428,7 +428,16 @@ class App: public IApp:
     ui::MainLoop::in.grab()
 
     #ifdef REMARKABLE
-    if not rm2fb::IN_RM2FB_SHIM:
+    if rm2fb::IN_RM2FB_SHIM:
+      sleep(1)
+      _ := system("systemctl suspend")
+      sleep(1)
+
+      if system("lsmod | grep brcmfmac") == 0:
+        debug "RELOADING WIFI DRIVERS"
+        system("modprobe -r brcmfmac brcmutil")
+        system("modprobe brcmfmac brcmutil")
+    else:
       now := time(NULL)
       cmd := "echo " + to_string(SHUTDOWN_THRESHOLD + now) + " > /sys/class/rtc/rtc0/wakealarm"
 
@@ -444,10 +453,6 @@ class App: public IApp:
         return
 
       _ = system("echo 0 > /sys/class/rtc/rtc0/wakealarm")
-    else:
-      sleep(1)
-      _ := system("systemctl suspend")
-      sleep(1)
     #endif
 
     debug "RESUMING FROM SUSPEND"
