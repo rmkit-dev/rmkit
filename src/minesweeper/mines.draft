@@ -1,4 +1,4 @@
 name=mines
 desc=Mine detection game
 call=/opt/bin/mines
-image=minesweeper
+imgFile=minesweeper
