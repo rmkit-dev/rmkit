@@ -126,7 +126,8 @@ namespace input:
             self.y = slots[0].y
           break
         case ABS_MT_TRACKING_ID:
-          slots[slot].left = self.left = data.value > -1
+          if slot >= 0:
+            slots[slot].left = self.left = data.value > -1
           break
 
 
