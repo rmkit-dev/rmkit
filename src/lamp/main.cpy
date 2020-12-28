@@ -45,8 +45,6 @@ vector<input_event> finger_down(int x, y):
 
   now := time(NULL) + offset++
   ev.push_back({ type:EV_ABS, code:ABS_MT_TRACKING_ID, value: now })
-  ev.push_back({ type:EV_ABS, code:ABS_MT_PRESSURE, value: 78 })
-  ev.push_back({ type:EV_ABS, code:ABS_MT_SLOT, value: 0 })
   ev.push_back({ type:EV_ABS, code:ABS_MT_POSITION_X, value: get_touch_x(x) })
   ev.push_back({ type:EV_ABS, code:ABS_MT_POSITION_Y, value: get_touch_y(y) })
   ev.push_back({ type:EV_SYN, code:SYN_REPORT, value:1 })
@@ -164,13 +162,9 @@ def main(int argc, char **argv):
   if argc == 2:
     if argv[1] == string("left"):
       write_events(touch_fd, finger_up())
-      write_events(touch_fd, finger_down(200, 500))
-      write_events(touch_fd, finger_up())
       write_events(touch_fd, finger_move(200, 500, 1000, 500, 20)) // swipe right
       write_events(touch_fd, finger_up())
     if argv[1] == string("right"):
-      write_events(touch_fd, finger_up())
-      write_events(touch_fd, finger_down(200, 500))
       write_events(touch_fd, finger_up())
       write_events(touch_fd, finger_move(1000, 500, 200, 500, 20)) // swipe left
       write_events(touch_fd, finger_up())
