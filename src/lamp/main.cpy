@@ -7,6 +7,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
+#include "../rmkit/input/device_id.h"
 #include "../rmkit/defines.h"
 #include "../shared/string.h"
 #include "../shared/clockwatch.h"
@@ -14,6 +15,8 @@ using namespace std
 
 int offset = 0
 
+// TODO: add finger translation for rM1 / rM2
+// TODO: detect rM1 / rM2 and behave correctly
 vector<input_event> finger_clear():
   vector<input_event> ev
   ev.push_back({ type:EV_ABS, code:ABS_MT_TRACKING_ID, value: -1 })
@@ -118,15 +121,31 @@ def write_events(int fd, vector<input_event> events):
 
 
 def main(int argc, char **argv):
-//  pen_fd := open("/dev/input/event1", O_RDWR)
+  fd0 := open("/dev/input/event0", O_RDWR)
+  fd1 := open("/dev/input/event1", O_RDWR)
+  fd2 := open("/dev/input/event2", O_RDWR)
+
+  int touch_fd, pen_fd
+  if input::id_by_capabilities(fd0) == input::EV_TYPE::TOUCH:
+    touch_fd = fd0
+  if input::id_by_capabilities(fd1) == input::EV_TYPE::TOUCH:
+    touch_fd = fd1
+  if input::id_by_capabilities(fd2) == input::EV_TYPE::TOUCH:
+    touch_fd = fd2
+
+  if input::id_by_capabilities(fd0) == input::EV_TYPE::STYLUS:
+    pen_fd = fd0
+  if input::id_by_capabilities(fd1) == input::EV_TYPE::STYLUS:
+    pen_fd = fd1
+  if input::id_by_capabilities(fd2) == input::EV_TYPE::STYLUS:
+    pen_fd = fd2
+
 //  write_events(pen_fd, pen_clear())
 //  write_events(pen_fd, pen_down(250, 250))
 //  write_events(pen_fd, pen_move(250, 250, 250, 1250))
 //  write_events(pen_fd, pen_up())
 
   if argc == 2:
-    touch_fd := open("/dev/input/event2", O_RDWR)
-
     if argv[1] == string("left"):
       write_events(touch_fd, finger_up())
       write_events(touch_fd, finger_down(200, 500))
