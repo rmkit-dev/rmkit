@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 
 #include "../rmkit/input/device_id.h"
+#include "../rmkit/util/machine_id.h"
 #include "../rmkit/defines.h"
 #include "../shared/string.h"
 #include "../shared/clockwatch.h"
@@ -15,8 +16,24 @@ using namespace std
 
 int offset = 0
 
-// TODO: add finger translation for rM1 / rM2
-// TODO: detect rM1 / rM2 and behave correctly
+rm_version := util::get_remarkable_version()
+
+int get_pen_x(int x):
+  return x / WACOM_X_SCALAR
+
+int get_pen_y(int y):
+  return (WACOMHEIGHT - y) / WACOM_Y_SCALAR
+
+int get_touch_x(int x):
+  if rm_version == util::RM_VERSION::RM2:
+    return x
+  return (MTWIDTH - x) / MT_X_SCALAR
+
+int get_touch_y(int y):
+  if rm_version == util::RM_VERSION::RM2:
+    return DISPLAYHEIGHT - y
+  return (MTHEIGHT - y) / MT_Y_SCALAR
+
 vector<input_event> finger_clear():
   vector<input_event> ev
   ev.push_back({ type:EV_ABS, code:ABS_MT_TRACKING_ID, value: -1 })
@@ -30,8 +47,8 @@ vector<input_event> finger_down(int x, y):
   ev.push_back({ type:EV_ABS, code:ABS_MT_TRACKING_ID, value: now })
   ev.push_back({ type:EV_ABS, code:ABS_MT_PRESSURE, value: 78 })
   ev.push_back({ type:EV_ABS, code:ABS_MT_SLOT, value: 0 })
-  ev.push_back({ type:EV_ABS, code:ABS_MT_POSITION_X, value: x })
-  ev.push_back({ type:EV_ABS, code:ABS_MT_POSITION_Y, value: DISPLAYHEIGHT - y })
+  ev.push_back({ type:EV_ABS, code:ABS_MT_POSITION_X, value: get_touch_x(x) })
+  ev.push_back({ type:EV_ABS, code:ABS_MT_POSITION_Y, value: get_touch_y(y) })
   ev.push_back({ type:EV_SYN, code:SYN_REPORT, value:1 })
   return ev
 
@@ -41,8 +58,8 @@ vector<input_event> finger_move(int ox, oy, x, y, points=1):
   double dy = float(y - oy) / float(points)
 
   for int i = 0; i <= points; i++:
-    ev.push_back({ type:EV_ABS, code:ABS_MT_POSITION_X, value: (ox + (i*dx)) })
-    ev.push_back({ type:EV_ABS, code:ABS_MT_POSITION_Y, value: DISPLAYHEIGHT - (oy + (i*dy)) })
+    ev.push_back({ type:EV_ABS, code:ABS_MT_POSITION_X, value: get_touch_x(ox + (i*dx)) })
+    ev.push_back({ type:EV_ABS, code:ABS_MT_POSITION_Y, value: get_touch_y(oy + (i*dy)) })
     ev.push_back({ type:EV_SYN, code:SYN_REPORT, value:1 })
 
   return ev
@@ -68,8 +85,8 @@ vector<input_event> pen_down(int x, y):
   ev.push_back({ type:EV_SYN, code:SYN_REPORT, value:1 })
   ev.push_back({ type:EV_KEY, code:BTN_TOOL_PEN, value: 1 })
   ev.push_back({ type:EV_KEY, code:BTN_TOUCH, value: 1 })
-  ev.push_back({ type:EV_ABS, code:ABS_Y, value: x / WACOM_X_SCALAR })
-  ev.push_back({ type:EV_ABS, code:ABS_X, value: y / WACOM_Y_SCALAR})
+  ev.push_back({ type:EV_ABS, code:ABS_Y, value: get_pen_x(x) })
+  ev.push_back({ type:EV_ABS, code:ABS_X, value: get_pen_y(y) })
   ev.push_back({ type:EV_ABS, code:ABS_DISTANCE, value: 0 })
   ev.push_back({ type:EV_ABS, code:ABS_PRESSURE, value: 2500 })
   ev.push_back({ type:EV_SYN, code:SYN_REPORT, value:1 })
@@ -83,8 +100,8 @@ vector<input_event> pen_move(int ox, oy, x, y, int points=1):
 
   ev.push_back({ type:EV_SYN, code:SYN_REPORT, value:1 })
   for int i = 0; i <= points; i++:
-    ev.push_back({ type:EV_ABS, code:ABS_Y, value: (ox + (i*dx)) / WACOM_X_SCALAR  })
-    ev.push_back({ type:EV_ABS, code:ABS_X, value: (oy + (i*dy)) / WACOM_Y_SCALAR  })
+    ev.push_back({ type:EV_ABS, code:ABS_Y, value: get_pen_x(ox + (i*dx)) })
+    ev.push_back({ type:EV_ABS, code:ABS_X, value: get_pen_y(oy + (i*dy)) })
     ev.push_back({ type:EV_SYN, code:SYN_REPORT, value:1 })
 
   return ev
@@ -117,7 +134,6 @@ def write_events(int fd, vector<input_event> events):
 
   if send.size() > 0:
     debug "DIDN'T SEND", send.size(), "EVENTS"
-
 
 
 def main(int argc, char **argv):
