@@ -10,3 +10,7 @@ export CPP_FLAGS := ${CPP_FLAGS} -DRMKIT_BUILD=1
 
 APP=rmkit
 ASSET_DIR=assets/
+
+clean:
+	rm ${SRC_DIR}/build/stb.o
+	rm ${SRC_DIR}/build/${EXE}
