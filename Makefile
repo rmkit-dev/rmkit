@@ -60,7 +60,10 @@ arm: default
 x86: export ARCH=x86
 x86: default
 
-rmkit.h:
+src/build/stb.o: src/vendor/stb/stb.cpp
+	cd src/vendor/stb && ${CXX_BIN} -c stb.cpp -o ../../build/stb.o -fPIC -Os
+
+rmkit.h: src/build/stb.o
 	mkdir src/build > /dev/null || true
 	cd src/rmkit && make
 

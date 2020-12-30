@@ -1,4 +1,5 @@
 #include "../../vendor/stb/stb_image_resize.h"
+#include <string.h>
 
 namespace util:
   resize_image(image_data &im, int new_w, new_h, threshold=255):

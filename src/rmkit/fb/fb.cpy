@@ -4,6 +4,7 @@
 #include <sys/mman.h>
 #include <sys/ioctl.h>
 #include <ctime>
+#include <linux/limits.h>
 
 // for parsing virtual_size of framebuffer
 #include <fstream>

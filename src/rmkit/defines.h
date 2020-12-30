@@ -6,12 +6,6 @@
 #include <sstream>
 #include "ui/icons.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_RESIZE_IMPLEMENTATION
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#define STB_TRUETYPE_IMPLEMENTATION
-
-
 // #define PERF_BUILD
 
 #define ICON(name) icons::Icon { name, name ## _len, #name}
