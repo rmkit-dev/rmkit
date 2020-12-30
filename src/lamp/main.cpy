@@ -36,18 +36,18 @@ int get_touch_y(int y):
 
 vector<input_event> finger_clear():
   vector<input_event> ev
-  ev.push_back({ type:EV_ABS, code:ABS_MT_TRACKING_ID, value: -1 })
-  ev.push_back({ type:EV_SYN, code:SYN_REPORT, value: 1 })
+  ev.push_back(input_event{ type:EV_ABS, code:ABS_MT_TRACKING_ID, value: -1 })
+  ev.push_back(input_event{ type:EV_SYN, code:SYN_REPORT, value: 1 })
   return ev
 
 vector<input_event> finger_down(int x, y):
   vector<input_event> ev
 
   now := time(NULL) + offset++
-  ev.push_back({ type:EV_ABS, code:ABS_MT_TRACKING_ID, value: now })
-  ev.push_back({ type:EV_ABS, code:ABS_MT_POSITION_X, value: get_touch_x(x) })
-  ev.push_back({ type:EV_ABS, code:ABS_MT_POSITION_Y, value: get_touch_y(y) })
-  ev.push_back({ type:EV_SYN, code:SYN_REPORT, value:1 })
+  ev.push_back(input_event{ type:EV_ABS, code:ABS_MT_TRACKING_ID, value: now })
+  ev.push_back(input_event{ type:EV_ABS, code:ABS_MT_POSITION_X, value: get_touch_x(x) })
+  ev.push_back(input_event{ type:EV_ABS, code:ABS_MT_POSITION_Y, value: get_touch_y(y) })
+  ev.push_back(input_event{ type:EV_SYN, code:SYN_REPORT, value:1 })
   return ev
 
 vector<input_event> finger_move(int ox, oy, x, y, points=1):
@@ -56,38 +56,38 @@ vector<input_event> finger_move(int ox, oy, x, y, points=1):
   double dy = float(y - oy) / float(points)
 
   for int i = 0; i <= points; i++:
-    ev.push_back({ type:EV_ABS, code:ABS_MT_POSITION_X, value: get_touch_x(ox + (i*dx)) })
-    ev.push_back({ type:EV_ABS, code:ABS_MT_POSITION_Y, value: get_touch_y(oy + (i*dy)) })
-    ev.push_back({ type:EV_SYN, code:SYN_REPORT, value:1 })
+    ev.push_back(input_event{ type:EV_ABS, code:ABS_MT_POSITION_X, value: get_touch_x(ox + (i*dx)) })
+    ev.push_back(input_event{ type:EV_ABS, code:ABS_MT_POSITION_Y, value: get_touch_y(oy + (i*dy)) })
+    ev.push_back(input_event{ type:EV_SYN, code:SYN_REPORT, value:1 })
 
   return ev
 
 vector<input_event> finger_up()
   vector<input_event> ev
-  ev.push_back({ type:EV_ABS, code:ABS_MT_TRACKING_ID, value: -1 })
-  ev.push_back({ type:EV_SYN, code:SYN_REPORT, value:1 })
+  ev.push_back(input_event{ type:EV_ABS, code:ABS_MT_TRACKING_ID, value: -1 })
+  ev.push_back(input_event{ type:EV_SYN, code:SYN_REPORT, value:1 })
   return ev
 
 vector<input_event> pen_clear():
   vector<input_event> ev
-  ev.push_back({ type:EV_ABS, code:ABS_X, value: -1 })
-  ev.push_back({ type:EV_ABS, code:ABS_DISTANCE, value: -1 })
-  ev.push_back({ type:EV_ABS, code:ABS_PRESSURE, value: -1})
-  ev.push_back({ type:EV_ABS, code:ABS_Y, value: -1 })
-  ev.push_back({ type:EV_SYN, code:SYN_REPORT, value:1 })
+  ev.push_back(input_event{ type:EV_ABS, code:ABS_X, value: -1 })
+  ev.push_back(input_event{ type:EV_ABS, code:ABS_DISTANCE, value: -1 })
+  ev.push_back(input_event{ type:EV_ABS, code:ABS_PRESSURE, value: -1})
+  ev.push_back(input_event{ type:EV_ABS, code:ABS_Y, value: -1 })
+  ev.push_back(input_event{ type:EV_SYN, code:SYN_REPORT, value:1 })
 
   return ev
 
 vector<input_event> pen_down(int x, y):
   vector<input_event> ev
-  ev.push_back({ type:EV_SYN, code:SYN_REPORT, value:1 })
-  ev.push_back({ type:EV_KEY, code:BTN_TOOL_PEN, value: 1 })
-  ev.push_back({ type:EV_KEY, code:BTN_TOUCH, value: 1 })
-  ev.push_back({ type:EV_ABS, code:ABS_Y, value: get_pen_x(x) })
-  ev.push_back({ type:EV_ABS, code:ABS_X, value: get_pen_y(y) })
-  ev.push_back({ type:EV_ABS, code:ABS_DISTANCE, value: 0 })
-  ev.push_back({ type:EV_ABS, code:ABS_PRESSURE, value: 2500 })
-  ev.push_back({ type:EV_SYN, code:SYN_REPORT, value:1 })
+  ev.push_back(input_event{ type:EV_SYN, code:SYN_REPORT, value:1 })
+  ev.push_back(input_event{ type:EV_KEY, code:BTN_TOOL_PEN, value: 1 })
+  ev.push_back(input_event{ type:EV_KEY, code:BTN_TOUCH, value: 1 })
+  ev.push_back(input_event{ type:EV_ABS, code:ABS_Y, value: get_pen_x(x) })
+  ev.push_back(input_event{ type:EV_ABS, code:ABS_X, value: get_pen_y(y) })
+  ev.push_back(input_event{ type:EV_ABS, code:ABS_DISTANCE, value: 0 })
+  ev.push_back(input_event{ type:EV_ABS, code:ABS_PRESSURE, value: 2500 })
+  ev.push_back(input_event{ type:EV_SYN, code:SYN_REPORT, value:1 })
 
   return ev
 
@@ -96,20 +96,20 @@ vector<input_event> pen_move(int ox, oy, x, y, int points=1):
   double dx = float(x - ox) / float(points)
   double dy = float(y - oy) / float(points)
 
-  ev.push_back({ type:EV_SYN, code:SYN_REPORT, value:1 })
+  ev.push_back(input_event{ type:EV_SYN, code:SYN_REPORT, value:1 })
   for int i = 0; i <= points; i++:
-    ev.push_back({ type:EV_ABS, code:ABS_Y, value: get_pen_x(ox + (i*dx)) })
-    ev.push_back({ type:EV_ABS, code:ABS_X, value: get_pen_y(oy + (i*dy)) })
-    ev.push_back({ type:EV_SYN, code:SYN_REPORT, value:1 })
+    ev.push_back(input_event{ type:EV_ABS, code:ABS_Y, value: get_pen_x(ox + (i*dx)) })
+    ev.push_back(input_event{ type:EV_ABS, code:ABS_X, value: get_pen_y(oy + (i*dy)) })
+    ev.push_back(input_event{ type:EV_SYN, code:SYN_REPORT, value:1 })
 
   return ev
 
 vector<input_event> pen_up():
   vector<input_event> ev
-  ev.push_back({ type:EV_SYN, code:SYN_REPORT, value:1 })
-  ev.push_back({ type:EV_KEY, code:BTN_TOOL_PEN, value: 0 })
-  ev.push_back({ type:EV_KEY, code:BTN_TOUCH, value: 0 })
-  ev.push_back({ type:EV_SYN, code:SYN_REPORT, value:1 })
+  ev.push_back(input_event{ type:EV_SYN, code:SYN_REPORT, value:1 })
+  ev.push_back(input_event{ type:EV_KEY, code:BTN_TOOL_PEN, value: 0 })
+  ev.push_back(input_event{ type:EV_KEY, code:BTN_TOUCH, value: 0 })
+  ev.push_back(input_event{ type:EV_SYN, code:SYN_REPORT, value:1 })
 
   return ev
 
