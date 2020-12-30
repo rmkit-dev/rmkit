@@ -86,7 +86,7 @@ bundle: $(APPS)
 	cp src/remux/remux.service ${BUILD_DIR}/.${ZIP_DEST}/
 
 	mv ${BUILD_DIR}/.${ZIP_DEST} ${BUILD_DIR}/${ZIP_DEST}
-	cd ${BUILD_DIR}; zip release.zip -r ${ZIP_DEST}/; cd ..
+	cd ${BUILD_DIR}; tar -cvzf release.tar.gz ${ZIP_DEST}/; cd ..
 	rm -fr ${BUILD_DIR}/${ZIP_DEST}/
 
 view:

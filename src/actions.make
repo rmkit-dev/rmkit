@@ -4,7 +4,6 @@ ROOT_DIR=$(shell realpath -s ${SRC_DIR}/../)
 APP?=$(EXE:.exe=)
 
 compile:
-	# $$ARCH is ${ARCH}
 ifeq ($(ARCH),x86)
 	make compile_x86
 else ifeq ($(ARCH),arm)
