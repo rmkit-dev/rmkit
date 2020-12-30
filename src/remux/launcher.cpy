@@ -434,8 +434,8 @@ class App: public IApp:
 
       if system("lsmod | grep brcmfmac") == 0:
         debug "RELOADING WIFI DRIVERS"
-        system("modprobe -r brcmfmac brcmutil")
-        system("modprobe brcmfmac brcmutil")
+        _ = system("modprobe -r brcmfmac brcmutil")
+        _ = system("modprobe brcmfmac brcmutil")
     else:
       now := time(NULL)
       cmd := "echo " + to_string(SHUTDOWN_THRESHOLD + now) + " > /sys/class/rtc/rtc0/wakealarm"
