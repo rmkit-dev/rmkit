@@ -1,6 +1,7 @@
 #include <cmath>
 #include <locale>
 #include <codecvt>
+#include <cstring>
 
 
 #include "../defines.h"
