@@ -21,7 +21,7 @@ endif
 clean:
 	rm ${SRC_DIR}/build/${EXE}
 
-compile_arm: export CPP_FLAGS += -Os
+compile_arm: export CPP_FLAGS += -O2
 compile_arm:
 	CXX=${CXX_BIN} okp ${OKP_FLAGS} -- -D"REMARKABLE=1" ${CPP_FLAGS}
 
