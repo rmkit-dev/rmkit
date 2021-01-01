@@ -412,7 +412,7 @@ class App: public IApp:
     _w, _h := fb->get_display_size()
 
     #ifdef REMARKABLE
-    fb->load_from_png("/usr/share/remarkable/sleeping.png")
+    fb->load_from_png("/usr/share/remarkable/suspended.png")
     #else
     text := ui::Text(0, _h-64, _w, 100, "Press any button to wake")
     text.font_size = 64
