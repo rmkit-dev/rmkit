@@ -310,7 +310,7 @@ class App: public IApp:
         last_action := LAST_ACTION
         suspend_m.unlock()
 
-        if last_action > 0:
+        if last_action > 0 and SUSPEND_THRESHOLD > 0:
           if now - last_action > SUSPEND_THRESHOLD and now - LAST_ACTION < 2*SUSPEND_THRESHOLD:
             if not ui::MainLoop::overlay_is_visible:
               app_bg->snapshot()
@@ -438,15 +438,16 @@ class App: public IApp:
         _ = system("modprobe brcmfmac brcmutil")
     else:
       now := time(NULL)
-      cmd := "echo " + to_string(SHUTDOWN_THRESHOLD + now) + " > /sys/class/rtc/rtc0/wakealarm"
+      if SHUTDOWN_THRESHOLD > 0:
+        cmd := "echo " + to_string(SHUTDOWN_THRESHOLD + now) + " > /sys/class/rtc/rtc0/wakealarm"
 
-      _ := system(cmd.c_str())
+        _ := system(cmd.c_str())
       sleep(1)
-      _ = system("systemctl suspend")
+      _ := system("systemctl suspend")
       sleep(1)
 
       now = time(NULL)
-      if now - LAST_ACTION >= SHUTDOWN_THRESHOLD:
+      if SHUTDOWN_THRESHOLD > 0 && now - LAST_ACTION >= SHUTDOWN_THRESHOLD:
         debug "RESUMING FROM SUSPEND -> SHUTDOWN"
         _ := system("systemctl poweroff")
         return
