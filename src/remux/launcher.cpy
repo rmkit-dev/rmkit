@@ -4,6 +4,7 @@
 #include <chrono>
 
 #include <time.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/time.h>
 #include <dirent.h>
@@ -400,6 +401,10 @@ class App: public IApp:
     if term.size() > 0:
       proc::groupkill(SIGSTOP, term)
 
+  bool file_exists(string s):
+    struct stat buffer;
+    return (stat (s.c_str(), &buffer) == 0);
+
   // TODO: power button will cause suspend screen, why not?
   void on_suspend():
     #ifndef REMARKABLE
@@ -412,7 +417,10 @@ class App: public IApp:
     _w, _h := fb->get_display_size()
 
     #ifdef REMARKABLE
-    fb->load_from_png("/usr/share/remarkable/suspended.png")
+    if file_exists("/usr/share/remarkable/sleeping.png"):
+      fb->load_from_png("/usr/share/remarkable/sleeping.png")
+    else:
+      fb->load_from_png("/usr/share/remarkable/suspended.png")
     #else
     text := ui::Text(0, _h-64, _w, 100, "Press any button to wake")
     text.font_size = 64
