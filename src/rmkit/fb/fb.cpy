@@ -22,6 +22,7 @@
 
 using namespace std
 
+DEBUG_FB_INFO := getenv("DEBUG_FB_INFO") != NULL
 namespace framebuffer:
 
   inline bool file_exists (const std::string& name):
@@ -81,7 +82,8 @@ namespace framebuffer:
       self.width = width
       self.height = height
 
-      fprintf(stderr, "W: %i H: %i\n", width, height)
+      if DEBUG_FB_INFO:
+        fprintf(stderr, "W: %i H: %i\n", width, height)
       size := width*height*sizeof(remarkable_color)
       self.byte_size = size
       reset_dirty(dirty_area)
@@ -400,7 +402,7 @@ namespace framebuffer:
       err := system(mkdir_cmd)
 
 
-    string save_lodepng():
+    string save_lodepng(string fname=""):
       self.make_save_dir()
       char filename[100]
       char full_filename[100]
@@ -408,16 +410,23 @@ namespace framebuffer:
       datestr := self.get_date()
       datecstr := datestr.c_str()
 
-      sprintf(filename, "%s/%s%s", SAVE_DIR, datecstr, ".png")
+      if fname == "":
+        sprintf(filename, "%s/%s%s", SAVE_DIR, datecstr, ".png")
+      else:
+        memcpy(filename, fname.c_str(), fname.size())
+        filename[fname.size()] = 0
+
       px_w, px_h = self.get_display_size()
 
       buf := vector<unsigned char>(px_w * px_h * 4+1)
       i := 0
       for y 0 self.height:
         for x 0 self.width:
-          d := self.fbmem[y*self.width + x] == 0 ? 0 : 0xff
+          d := self.fbmem[y*self.width + x]
           buf[i++] = d
       buf[i] = 0
+
+      debug "SAVING", filename
 
       stbi_write_png(filename, self.width, self.height, 1, buf.data(), self.width)
       return string(filename)
@@ -552,7 +561,8 @@ namespace framebuffer:
         fprintf(stderr, "Could not get screen vinfo for %s\n", "/dev/fb0")
         return
 
-      debug "XRES", vinfo.xres, "YRES", vinfo.yres, "BPP", vinfo.bits_per_pixel, "GRAYSCALE", vinfo.grayscale
+      if DEBUG_FB_INFO:
+        debug "XRES", vinfo.xres, "YRES", vinfo.yres, "BPP", vinfo.bits_per_pixel, "GRAYSCALE", vinfo.grayscale
 
     void wait_for_redraw(uint32_t update_marker):
       mxcfb_update_marker_data mdata = { update_marker, 0 }
