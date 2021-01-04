@@ -51,6 +51,11 @@ follow the philosophy of unix pipes.
 [genie](https://rmkit.dev/apps/genie) is a config based gesture launcher.
 specify gestures and actions and get gesturing!
 
+### [lamp](src/lamp)
+
+[lamp](https://rmkit.dev/apps/lamp) is a config based stroke injector, useful
+for injecting finger or stylus events.
+
 ### [bufshot](src/bufshot)
 
 bufshot saves the framebuffer into a png file, works for rm1 or rm2 (using

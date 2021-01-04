@@ -1,6 +1,7 @@
-pen rectangle 150 150 1200 1200
-pen line 150 150 1200 1200
-pen line 150 1200 1200 150
-pen circle 500 500 500 50
-pen circle 800 800 200 50
-pen circle 1000 1000 100 50
+pen rectangle 250 250 1300 1300
+pen line 250 250 1300 1300
+pen line 250 1300 1300 250
+pen circle 600 600 500 50
+pen circle 900 900 200 50
+pen circle 1100 1100 100 50
+pen circle 1200 1200 50 50
