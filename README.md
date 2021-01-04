@@ -51,6 +51,11 @@ follow the philosophy of unix pipes.
 [genie](https://rmkit.dev/apps/genie) is a config based gesture launcher.
 specify gestures and actions and get gesturing!
 
+### [bufshot](src/bufshot)
+
+bufshot saves the framebuffer into a png file, works for rm1 or rm2 (using
+rm2fb)
+
 ## Demos
 
 ### [animation](src/animation_demo)
