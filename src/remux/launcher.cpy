@@ -674,6 +674,10 @@ class App: public IApp:
       ui::MainLoop::handle_gestures()
 
 App app
+static void _remux_show(int signum):
+  app.show_launcher()
+
 def main():
   LAST_ACTION = time(NULL)
+  signal(SIGWINCH, _remux_show)
   app.run()
