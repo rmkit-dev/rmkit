@@ -1,0 +1,10 @@
+[Unit]
+Description=Genie Gesture Engine
+
+[Service]
+ExecStart=/opt/bin/genie /opt/etc/genie.conf
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
