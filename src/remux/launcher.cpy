@@ -652,13 +652,20 @@ class App: public IApp:
 
     right := new input::SwipeGesture()
     right->direction = {0, -1}
-    left->zone = {int(DISPLAYWIDTH * 0.9), 0, int(DISPLAYWIDTH), int(DISPLAYHEIGHT)}
+    right->zone = {int(DISPLAYWIDTH * 0.9), 0, int(DISPLAYWIDTH), int(DISPLAYHEIGHT)}
     right->events.activate += PLS_LAMBDA(auto d) {
+      self.show_launcher()
+    }
+
+    tap := new input::TapGesture()
+    tap->fingers = 3
+    tap->events.activate += PLS_LAMBDA(auto d) {
       self.show_launcher()
     }
 
     ui::MainLoop::gestures.push_back(left)
     ui::MainLoop::gestures.push_back(right)
+    ui::MainLoop::gestures.push_back(tap)
 
     ui::MainLoop::key_event += PLS_DELEGATE(self.handle_key_event)
     ui::MainLoop::motion_event += PLS_DELEGATE(self.handle_motion_event)
