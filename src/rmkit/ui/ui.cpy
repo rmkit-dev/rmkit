@@ -12,3 +12,4 @@
 #include "thumbnail.h"
 #include "keyboard.h"
 #include "text_input.h"
+#include "range_input.h"

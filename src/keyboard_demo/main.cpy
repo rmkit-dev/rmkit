@@ -37,6 +37,10 @@ class App:
     // showing how an input box works
     h_layout.pack_center(new ui::TextInput(0, 50, 1000, 50))
 
+    range := new ui::RangeInput(0, 150, 1000, 50)
+    range->set_range(0, 100)
+    h_layout.pack_center(range)
+
 
 
   def handle_key_event(input::SynKeyEvent &key_ev):
