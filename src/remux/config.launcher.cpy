@@ -25,12 +25,6 @@ RMApp APP_XOCHITL = RMApp %{
   name : "Remarkable",
   always_show : true }
 
-RMApp APP_KOREADER = RMApp %{
-  bin:"/home/root/koreader/koreader.sh",
-  which:"koreader.sh",
-  name:"KOReader",
-}
-
 RMApp APP_FINGERTERM = RMApp %{
   bin:"/home/root/apps/fingerterm",
   which:"fingerterm",
@@ -53,7 +47,6 @@ RMApp APP_EDIT = RMApp %{
 
 vector<RMApp> APPS = %{
    APP_XOCHITL
-  ,APP_KOREADER
   ,APP_FINGERTERM
   ,APP_KEYWRITER
   ,APP_EDIT
