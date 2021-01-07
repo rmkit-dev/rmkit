@@ -89,7 +89,7 @@ namespace ui:
           if widget.get() == w:
             return true
         return false
-        
+
       if overlay_is_visible:
         for auto widget : overlay->widgets:
           if widget.get() == w:
@@ -130,6 +130,10 @@ namespace ui:
     // we save the touch input until the finger lifts up
     // so we can analyze whether its a gesture or not
     static void handle_gestures():
+      if ui::MainLoop::in.wacom.events.size() > 0:
+        for auto g : gestures:
+          g->valid = false
+
       for auto ev: ui::MainLoop::in.touch.events:
         for auto g : gestures:
           lifted := false
