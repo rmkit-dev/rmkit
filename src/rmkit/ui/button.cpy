@@ -15,6 +15,7 @@ namespace ui:
     string text
     int x_padding = 0
     int y_padding = 10
+    bool underline = false
     shared_ptr<Text> textWidget
     int key
     static int key_ctr
@@ -109,6 +110,7 @@ namespace ui:
       if self.iconWidget.get() != nullptr:
         self.iconWidget->render()
 
+      self.textWidget->underline = self.underline
       self.textWidget->render()
 
       color := WHITE

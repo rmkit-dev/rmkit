@@ -175,6 +175,7 @@ bool handle_widget(int line_no, ui::Scene scene, vector<string> &tokens):
       button := new ui::Button(x,y,w,h,t)
       widget := give_id(id, button)
       button->set_justification(ui::Text::DEFAULT_JUSTIFY)
+      button->underline = true
       scene->add(widget)
       EXPECTING_INPUT = true
       string v = t

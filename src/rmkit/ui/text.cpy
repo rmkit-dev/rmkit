@@ -17,6 +17,7 @@ namespace ui:
     static int DEFAULT_FS
     int font_size
     string text
+    bool underline = false
     JUSTIFY justify
 
     // function: Constructor
@@ -58,6 +59,9 @@ namespace ui:
           break
 
       fb->draw_text(self.text, self.x + padding_x, self.y, image, self.font_size)
+      if self.underline:
+        fb->draw_line(self.x+padding_x, self.y+font_size, self.x+padding_x+image.w-font_size,
+                      self.y+font_size, 1, BLACK)
 
       free(image.buffer)
 
@@ -101,6 +105,9 @@ namespace ui:
             cur_x = 0
             cur_y += max_h
           self.fb->draw_text(w, self.x + cur_x, self.y + cur_y, image, self.font_size)
+          if self.underline:
+            self.fb->draw_line(self.x+cur_x, self.y+cur_y+font_size, self.x+cur_x+image.w,
+                               self.y + cur_y+font_size, 1, BLACK)
           free(image.buffer)
           cur_x += image.w
         cur_y += max_h
