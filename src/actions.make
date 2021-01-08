@@ -17,7 +17,7 @@ else
 	exit 1
 endif
 
-clean:
+clean-default:
 	rm ${SRC_DIR}/build/${EXE}
 
 compile_arm: ../build/stb.arm.o
@@ -66,7 +66,7 @@ install_draft-default:
 resim:
 	ARCH=dev make && cd ../../ && resim ./src/build/${EXE}
 
-copy:
+copy-default:
 	ARCH=arm $(MAKE) compile
 	if [ -n "${DRAFT}" ]; then make install_draft; fi
 
