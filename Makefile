@@ -46,6 +46,7 @@ install: rmkit.h dest_dir
 
 clean:
 	$(foreach app, $(APPS), cd src/${app} && make clean; cd ${ROOT}; )
+	rm src/build/*
 
 default: build
 
@@ -60,11 +61,7 @@ arm: default
 x86: export ARCH=x86
 x86: default
 
-src/build/stb.o: src/vendor/stb/stb.cpp
-	mkdir src/build > /dev/null || true
-	${CXX_BIN} -c src/vendor/stb/stb.cpp -o src/build/stb.o -fPIC -Os
-
-rmkit.h: src/build/stb.o
+rmkit.h:
 	mkdir src/build > /dev/null || true
 	cd src/rmkit && make
 

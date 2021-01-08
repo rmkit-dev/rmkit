@@ -17,25 +17,40 @@ else
 	exit 1
 endif
 
-
 clean:
 	rm ${SRC_DIR}/build/${EXE}
 
+compile_arm: ../build/stb.arm.o
 compile_arm: export CPP_FLAGS += -O2
+compile_arm: export OKP_FLAGS += ../build/stb.arm.o
 compile_arm:
 	CXX=${CXX_BIN} okp ${OKP_FLAGS} -- -D"REMARKABLE=1" ${CPP_FLAGS}
 
+compile_arm_fast: ../build/stb.arm.o
 compile_arm_fast: export CPP_FLAGS += -O0 -g
+compile_arm_fast: export OKP_FLAGS += ../build/stb.arm.o
 compile_arm_fast:
 	CXX=${CXX_BIN} okp ${OKP_FLAGS} -- -D"REMARKABLE=1" ${CPP_FLAGS}
 
+compile_dev: ../build/stb.x86.o
 compile_dev: export CPP_FLAGS += -O0 -g
+compile_dev: export OKP_FLAGS += ../build/stb.x86.o
 compile_dev:
 	okp ${OKP_FLAGS} -- -D"DEV=1" ${CPP_FLAGS} -D"DEV_KBD=\"${KBD}\""
 
+compile_x86: ../build/stb.x86.o
 compile_x86: export CPP_FLAGS += -O0 -g
+compile_x86: export OKP_FLAGS += ../build/stb.x86.o
 compile_x86:
 	okp ${OKP_FLAGS} -- ${CPP_FLAGS}
+
+../build/stb.x86.o: ../vendor/stb/stb.cpp
+	mkdir ../build 2> /dev/null || true
+	g++ -c ../vendor/stb/stb.cpp -o ../build/stb.x86.o -fPIC -Os
+
+../build/stb.arm.o: ../vendor/stb/stb.cpp
+	mkdir ../build 2> /dev/null || true
+	${CXX_BIN} -c ../vendor/stb/stb.cpp -o ../build/stb.arm.o -fPIC -Os
 
 assets:
 	# ${SRC_DIR} ${APP}

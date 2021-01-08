@@ -12,5 +12,4 @@ APP=rmkit
 ASSET_DIR=assets/
 
 clean:
-	rm ${SRC_DIR}/build/stb.o
 	rm ${SRC_DIR}/build/${EXE}
