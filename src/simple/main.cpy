@@ -160,9 +160,10 @@ bool handle_widget(int line_no, ui::Scene scene, vector<string> &tokens):
     x,y,w,h,t := parse_widget(line_no, tokens)
 
     ref := false
-    if tokens.size() == 2:
-      first = tokens[0]
-      id = tokens[1]
+    if first_tokens.size() == 2:
+      first = first_tokens[0]
+      id = first_tokens[1]
+      debug "SETTING ID TO", id
       ref = true
     else:
       id = next_id()
