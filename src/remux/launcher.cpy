@@ -40,6 +40,7 @@ USE_KOREADER_WORKAROUND := false
 
 string CURRENT_APP = "_"
 string NAO_BIN="/opt/bin/nao"
+deque<string> _launched = { "_" }
 
 class IApp:
   public:
@@ -47,6 +48,7 @@ class IApp:
   virtual void on_suspend() = 0;
   virtual void get_more() = 0;
   virtual void show_launcher() = 0;
+  virtual void show_last_app() = 0;
 
 
 class NaoButton: public ui::Button:
@@ -113,6 +115,7 @@ class AppBackground: public ui::Widget:
     else:
       fb->waveform_mode = WAVEFORM_MODE_AUTO
     memcpy(fb->fbmem, vfb->fbmem, self.byte_size)
+    fb->perform_redraw(true)
     fb->dirty = 1
 
 class AppDialog: public ui::Pager:
@@ -331,6 +334,16 @@ class App: public IApp:
     app_bg->render()
     ui::MainLoop::redraw()
 
+  void show_last_app():
+    debug "SHOWING LAST APP", CURRENT_APP
+    for auto app : _launched:
+      if app != CURRENT_APP && app != "_":
+        self.term_apps()
+        self.app_bg->snapshot()
+        self.launch(app)
+        self.render_bg()
+        break
+
   void show_launcher():
     if ui::MainLoop::overlay_is_visible:
       return
@@ -527,15 +540,21 @@ class App: public IApp:
     if name == "":
       return
 
-    debug "LAUNCHING APP", name
+    debug "LAUNCHING APP", name, CURRENT_APP
     string bin
     string which
+
+    if name != "_" && _launched[0] != name:
+      _launched.push_front(name)
+      if _launched.size() > 100:
+        _launched.pop_back()
 
     RMApp app
     for auto a : app_dialog->get_apps():
       if a.name == name or a.bin == name:
         app = a
         CURRENT_APP = string(a.name)
+
 
     ui::MainLoop::in.ungrab()
     flood_touch_queue()
