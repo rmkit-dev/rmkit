@@ -3,6 +3,7 @@
 #include "events.h"
 
 DEBUG_GESTURES := false
+DEBUG_GESTURE_FILTERS := false
 namespace input:
   class Gesture:
     public:
@@ -93,29 +94,29 @@ namespace input:
       // ignore events out of bounds
       if self.initialized:
         if abs(prev.y - ev.y) > 500:
-          if DEBUG_GESTURES:
+          if DEBUG_GESTURE_FILTERS:
             debug "FILTERED JUMP Y", ev.x, ev.y, ev.slot
           return false
         if abs(prev.x - ev.x) > 500:
-          if DEBUG_GESTURES:
+          if DEBUG_GESTURE_FILTERS:
             debug "FILTERED JUMP X", ev.x, ev.y, ev.slot
           return false
 
       if ev.slot + 1 != self.fingers:
-        if DEBUG_GESTURES:
+        if DEBUG_GESTURE_FILTERS:
           debug "FILTERED FINGERS", ev.x, ev.y, ev.slot
         return false
 
       if ev.y == -1 or ev.x == -1:
-        if DEBUG_GESTURES:
+        if DEBUG_GESTURE_FILTERS:
           debug "FILTERED -1", ev.x, ev.y, ev.slot
         return false
       if ev.y > DISPLAYHEIGHT || ev.x > DISPLAYWIDTH:
-        if DEBUG_GESTURES:
+        if DEBUG_GESTURE_FILTERS:
           debug "FILTERED MAX", ev.x, ev.y, ev.slot
         return false
 
-      if DEBUG_GESTURES:
+      if DEBUG_GESTURE_FILTERS:
         debug "ALLOWED", ev.x, ev.y, ev.slot
       return true
 
@@ -124,30 +125,30 @@ namespace input:
         debug "HANDLING EVENT", ev.x, ev.y, ev.slot
       if direction.y && abs(ev.x - start.x) > self.tolerance:
         if DEBUG_GESTURES:
-          debug "X TOLERANCE"
+          debug "X TOLERANCE", abs(ev.x - start.x)
         self.valid = false
 
-      if direction.x && abs(ev.y - start.y) > self.tolerance:
+      if direction.x && abs(ev.y - start.y) > self.tolerance*2:
         if DEBUG_GESTURES:
-          debug "Y TOLERANCE"
+          debug "Y TOLERANCE", abs(ev.y - start.y)
         self.valid = false
 
       if direction.x < 0 && prev.x - ev.x < 0:
         if DEBUG_GESTURES:
-          debug "X DIRECTION"
+          debug "X DIRECTION", prev.x, ev.x
         self.valid = false
       if direction.x > 0 && prev.x - ev.x > 0:
         if DEBUG_GESTURES:
-          debug "X DIRECTION"
+          debug "X DIRECTION", prev.x, ev.x
         self.valid = false
 
       if direction.y < 0 && prev.y - ev.y < 0:
         if DEBUG_GESTURES:
-          debug "Y DIRECTION"
+          debug "Y DIRECTION", prev.y, ev.y
         self.valid = false
       if direction.y > 0 && prev.y - ev.y > 0:
         if DEBUG_GESTURES:
-          debug "Y DIRECTION"
+          debug "Y DIRECTION", prev.y, ev.y
         self.valid = false
       prev = ev
 
