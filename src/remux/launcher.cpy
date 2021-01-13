@@ -306,6 +306,7 @@ class App: public IApp:
     else if line == "hide":
       ui::MainLoop::hide_overlay()
     else if line == "back":
+      ui::MainLoop::hide_overlay()
       self.show_last_app()
     else:
       debug "UNKNOWN API LINE:", line
