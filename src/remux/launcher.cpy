@@ -210,6 +210,7 @@ class App: public IApp:
   shared_ptr<framebuffer::FB> fb
   mutex suspend_m
   thread* idle_thread
+  thread* ipc_thread
 
   input_event *touch_flood
   input_event *button_flood
@@ -294,6 +295,54 @@ class App: public IApp:
         CURRENT_APP = active.name
         return
 
+
+  def handle_api_line(string line):
+    str_utils::trim(line)
+    if line == "":
+      return
+
+    if line == "show":
+      self.show_launcher()
+    else if line == "hide":
+      ui::MainLoop::hide_overlay()
+    else if line == "back":
+      self.show_last_app()
+    else:
+      debug "UNKNOWN API LINE:", line
+
+  def open_input_fifo():
+    #ifndef REMARKABLE
+    return
+    #endif
+
+    debug "STARTING FIFO THREAD"
+
+    _ := system("/usr/bin/mkfifo /tmp/remux.api 2>/dev/null")
+    self.ipc_thread = new thread([=]() {
+      fd := open("/tmp/remux.api", O_RDONLY)
+
+      string remainder = ""
+      char buf[4096]
+      while true:
+        bytes := read(fd, buf, 4096)
+
+        if bytes > 0:
+          buf[bytes] = 0
+          summed := remainder + string(buf)
+          lines := str_utils::split(summed, '\n')
+          remainder = ""
+
+          if lines.size() > 0 && buf[bytes-1] != '\n':
+            remainder = lines.back()
+            lines.pop_back()
+
+          for auto line : lines:
+            ui::TaskQueue::add_task([=]() {
+              handle_api_line(line)
+            })
+
+        usleep(50 * 1000)
+    })
 
   def suspend_on_idle():
     self.idle_thread = new thread([=]() {
@@ -661,6 +710,7 @@ class App: public IApp:
 
     // launches a thread that suspends on idle
     self.suspend_on_idle()
+    self.open_input_fifo()
 
     left := new input::SwipeGesture()
     left->direction = {0, -1}
