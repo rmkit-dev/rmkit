@@ -318,9 +318,9 @@ class App: public IApp:
 
     debug "STARTING FIFO THREAD"
 
-    _ := system("/usr/bin/mkfifo /tmp/remux.api 2>/dev/null")
+    _ := system("/usr/bin/mkfifo /run/remux.api 2>/dev/null")
     self.ipc_thread = new thread([=]() {
-      fd := open("/tmp/remux.api", O_RDONLY)
+      fd := open("/run/remux.api", O_RDONLY)
 
       string remainder = ""
       char buf[4096]
