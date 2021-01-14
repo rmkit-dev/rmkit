@@ -60,6 +60,10 @@ class App:
     toolbar->pack_end(new app_ui::UndoButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, canvas))
     toolbar->pack_end(new app_ui::PalmButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT))
 
+    canvas->mouse.up += PLS_LAMBDA(auto):
+      toolbar->refresh()
+    ;
+
   def handle_key_event(input::SynKeyEvent &key_ev):
     if key_ev.is_pressed:
       switch key_ev.key:
