@@ -3,6 +3,7 @@
 #define VERSION "0.0.1"
 
 #include <vector>
+#include <string>
 #include <sstream>
 #include "ui/icons.h"
 
