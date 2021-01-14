@@ -101,6 +101,9 @@ namespace proc:
     cmd_tokens := str_utils::split(cmdline, 0)
 
     for auto cmd_token : cmd_tokens:
+      if cmd_token.size() > 0 && cmd_token[0] == '-':
+        continue
+
       base := cmd_token.c_str()
       full_str := string(base)
       base = basename((char *) base)

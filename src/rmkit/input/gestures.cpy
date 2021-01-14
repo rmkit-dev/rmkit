@@ -81,6 +81,7 @@ namespace input:
     public:
     int distance = 800
     int tolerance = 200
+    int min_events = 15
     int fingers = 1
     Gesture::Point direction
     void setup(input::TouchEvent &ev):
@@ -153,7 +154,7 @@ namespace input:
       prev = ev
 
     void finalize():
-      if self.count < 5:
+      if self.count < self.min_events:
         if DEBUG_GESTURES:
           debug "FINALIZE COUNT"
         self.valid = false

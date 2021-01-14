@@ -15,6 +15,8 @@
 
 #include "../shared/proc.h"
 #include "../build/rmkit.h"
+#include "../rmkit/util/machine_id.h"
+#include "../genie/gesture_parser.h"
 
 TIMEOUT := 1
 SUSPEND_TIMER := 10
@@ -695,6 +697,33 @@ class App: public IApp:
 
     return default_cmd
 
+  void setup_gestures():
+    // TODO: read gesture config from remux.conf file
+    // since we want it to be backward compatible, what shall we do?
+    // launch_gesture=
+    // launch_gesture=
+    // launch_gesture=
+    // last_app_gesture=
+
+    debug "SETTING UP GESTURES"
+
+    DEFAULT_LAUNCH_GESTURES := vector<string> %{
+      "gesture=swipe; direction=up; zone=0 0 0.1 1",
+      "gesture=swipe; direction=up; zone=0.9 0 1 1",
+      "gesture=tap; fingers=3"
+    }
+
+    launch_gestures := DEFAULT_LAUNCH_GESTURES
+
+    for auto l : launch_gestures:
+      lines := str_utils::split(l, ';')
+      gestures := genie::parse_config(lines)
+      for auto g : gestures:
+        g->events.activate += PLS_LAMBDA(auto d):
+          self.show_launcher()
+        ;
+        ui::MainLoop::gestures.push_back(g)
+
   def run():
     // for koreader
     putenv((char*) "KO_DONT_SET_DEPTH=1")
@@ -712,30 +741,8 @@ class App: public IApp:
     // launches a thread that suspends on idle
     self.suspend_on_idle()
     self.open_input_fifo()
+    self.setup_gestures()
 
-    left := new input::SwipeGesture()
-    left->direction = {0, -1}
-    left->zone = {0, 0, int(DISPLAYWIDTH*0.1), int(DISPLAYHEIGHT)}
-    left->events.activate += PLS_LAMBDA(auto d) {
-      self.show_launcher()
-    }
-
-    right := new input::SwipeGesture()
-    right->direction = {0, -1}
-    right->zone = {int(DISPLAYWIDTH * 0.9), 0, int(DISPLAYWIDTH), int(DISPLAYHEIGHT)}
-    right->events.activate += PLS_LAMBDA(auto d) {
-      self.show_launcher()
-    }
-
-    tap := new input::TapGesture()
-    tap->fingers = 3
-    tap->events.activate += PLS_LAMBDA(auto d) {
-      self.show_launcher()
-    }
-
-    ui::MainLoop::gestures.push_back(left)
-    ui::MainLoop::gestures.push_back(right)
-    ui::MainLoop::gestures.push_back(tap)
 
     ui::MainLoop::key_event += PLS_DELEGATE(self.handle_key_event)
     ui::MainLoop::motion_event += PLS_DELEGATE(self.handle_motion_event)
