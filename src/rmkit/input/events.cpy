@@ -87,8 +87,8 @@ namespace input:
 
   class TouchEvent: public Event:
     public:
-    int x, y, left
-    int slot = 0
+    int x=-1, y=-1
+    int slot = 0, left = -1
     struct Point:
       int x=-1, y=-1, left=-1
     ;
@@ -108,7 +108,7 @@ namespace input:
       switch data.code:
         case ABS_MT_SLOT:
           slot = data.value;
-
+          break
         case ABS_MT_POSITION_X:
           if not rm2fb::IN_RM2FB_SHIM:
             slots[slot].x = (MTWIDTH - data.value)*MT_X_SCALAR
@@ -133,18 +133,18 @@ namespace input:
 
     def marshal(TouchEvent &prev):
       SynMotionEvent syn_ev;
+
+      if self.x == -1:
+        self.x = prev.x
+      if self.y == -1:
+        self.y = prev.y
+      if self.left == -1:
+        self.left = prev.left
+
       syn_ev.left = self.left
+      syn_ev.x = self.x
+      syn_ev.y = self.y
 
-      // if there's no left click, we re-use the last x,y coordinate
-      if !self.left:
-        syn_ev.x = prev.x
-        syn_ev.y = prev.y
-      else:
-        syn_ev.x = self.x
-        syn_ev.y = self.y
-
-      self.x = syn_ev.x
-      self.y = syn_ev.y
       syn_ev.set_original(new TouchEvent(*self))
 
       return syn_ev
