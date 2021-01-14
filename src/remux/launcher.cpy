@@ -15,8 +15,8 @@
 
 #include "../shared/proc.h"
 #include "../build/rmkit.h"
-#include "../rmkit/util/machine_id.h"
 #include "../genie/gesture_parser.h"
+#include "config.h"
 
 TIMEOUT := 1
 SUSPEND_TIMER := 10
@@ -43,6 +43,14 @@ USE_KOREADER_WORKAROUND := false
 string CURRENT_APP = "_"
 string NAO_BIN="/opt/bin/nao"
 deque<string> _launched = { "_" }
+
+
+DEFAULT_LAUNCH_GESTURES := vector<string> %{
+  "gesture=swipe; direction=up; zone=0 0 0.1 1",
+  "gesture=swipe; direction=up; zone=0.9 0 1 1",
+  "gesture=tap; fingers=3"
+}
+
 
 class IApp:
   public:
@@ -706,14 +714,11 @@ class App: public IApp:
     // last_app_gesture=
 
     debug "SETTING UP GESTURES"
-
-    DEFAULT_LAUNCH_GESTURES := vector<string> %{
-      "gesture=swipe; direction=up; zone=0 0 0.1 1",
-      "gesture=swipe; direction=up; zone=0.9 0 1 1",
-      "gesture=tap; fingers=3"
-    }
-
-    launch_gestures := DEFAULT_LAUNCH_GESTURES
+    config := read_remux_config()
+    launch_gestures := config.get_array("launch_gesture")
+    if launch_gestures.size() == 0:
+      debug "SETTING LAUNCH GESTURES TO DEFAULT"
+      launch_gestures = DEFAULT_LAUNCH_GESTURES
 
     for auto l : launch_gestures:
       lines := str_utils::split(l, ';')
@@ -724,10 +729,21 @@ class App: public IApp:
         ;
         ui::MainLoop::gestures.push_back(g)
 
+    back_gestures := config.get_array("back_gesture")
+    for auto l : back_gestures:
+      lines := str_utils::split(l, ';')
+      gestures := genie::parse_config(lines)
+      for auto g : gestures:
+        g->events.activate += PLS_LAMBDA(auto d):
+          self.show_last_app()
+        ;
+        ui::MainLoop::gestures.push_back(g)
+
   def run():
     // for koreader
     putenv((char*) "KO_DONT_SET_DEPTH=1")
     putenv((char*) "KO_DONT_GRAB_INPUT=1")
+
 
     #ifdef REMARKABLE
     _ := system("systemctl stop xochitl")
