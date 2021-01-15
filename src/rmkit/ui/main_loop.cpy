@@ -180,8 +180,8 @@ namespace ui:
 
 
     /// blocking read for input
-    static void read_input():
-      in.listen_all()
+    static void read_input(long timeout_ms = 0):
+      in.listen_all(timeout_ms)
 
     /// queue a render for all the widgets on the visible scenes
     static void refresh():

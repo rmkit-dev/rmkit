@@ -191,14 +191,19 @@ namespace input:
         ioctl(fd, EVIOCGRAB, false)
 
 
-    void listen_all():
+    void listen_all(long timeout_ms = 0):
       fd_set rdfs_cp
       int retval
       self.reset_events()
 
       rdfs_cp = rdfs
 
-      retval = select(max_fd, &rdfs_cp, NULL, NULL, NULL)
+      if timeout_ms > 0:
+          struct timeval tv = {timeout_ms / 1000, (timeout_ms % 1000) * 1000}
+          retval = select(max_fd, &rdfs_cp, NULL, NULL, &tv)
+      else:
+          retval = select(max_fd, &rdfs_cp, NULL, NULL, NULL)
+
       if retval > 0:
         if FD_ISSET(self.mouse.fd, &rdfs_cp):
           self.mouse.handle_mouse_fd()
