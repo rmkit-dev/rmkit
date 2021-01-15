@@ -94,7 +94,7 @@ namespace framebuffer:
       fprintf(stderr, "COPY CONSTRUCTOR CALLED\n")
       throw
 
-    ~FB():
+    virtual ~FB():
       if self.fd != -1:
         close(self.fd)
 
@@ -632,7 +632,7 @@ namespace framebuffer:
       if not exists:
         memset(self.fbmem, WHITE, self.byte_size)
 
-    ~FileFB():
+    virtual ~FileFB():
       msync(self.fbmem, self.byte_size, MS_ASYNC)
 
     int perform_redraw(bool):
