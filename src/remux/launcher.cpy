@@ -42,7 +42,10 @@ USE_KOREADER_WORKAROUND := false
 
 string CURRENT_APP = "_"
 string NAO_BIN="/opt/bin/nao"
-deque<string> _launched = { "_" }
+
+// start with Remarkable preloaded in the launch list
+// so we can switch back to it quickly
+deque<string> _launched = { "Remarkable", "_" }
 
 
 DEFAULT_LAUNCH_GESTURES := vector<string> %{
