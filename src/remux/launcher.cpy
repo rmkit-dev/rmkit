@@ -200,10 +200,15 @@ class AppDialog: public ui::Pager:
 
       if bin != "":
         c->mouse.click += PLS_LAMBDA(auto &ev) {
+          if bin == "xochitl":
+            return
+
           vector<string> bins = { bin }
           proc::groupkill(SIGKILL, bins)
-          ui::MainLoop::hide_overlay()
-          app->show_launcher()
+
+          if status != "":
+            c->text = "killed"
+            c->dirty = 1
         }
 
       c->set_justification(ui::Text::JUSTIFY::RIGHT)
