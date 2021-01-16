@@ -15,7 +15,6 @@ The built in ways of launching remux are:
 
 * holding home button
 * swiping up on either side of the display
-* tapping with three fingers.
 
 if you want to adjust them, they can be changed - see the config section below.
 
