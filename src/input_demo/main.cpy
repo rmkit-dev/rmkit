@@ -42,6 +42,21 @@ class App:
     h_layout.pack_center(range)
 
 
+    pager := new ui::Pager(0, 0, 500, 500, NULL)
+    pager->options = { "foo", "bar", "baz" }
+    pager->setup_for_render()
+    pager->events.selected += [=](string t):
+      debug "PAGER SELECTED", t
+      ui::MainLoop::hide_overlay()
+
+    ;
+
+    btn := new ui::Button(0, 250, 100, 50, "Show Pager")
+    btn->mouse.click += [=](input::SynMotionEvent &ev):
+      pager->show()
+    ;
+
+    h_layout.pack_center(btn)
 
   def handle_key_event(input::SynKeyEvent &key_ev):
     debug "KEY PRESSED", key_ev.key

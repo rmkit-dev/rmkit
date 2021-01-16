@@ -6,7 +6,8 @@ namespace ui:
   const string NEXT = "NEXT"
   class IPager:
     public:
-    virtual void on_row_selected(string t) = 0
+    virtual void on_row_selected(string t):
+      return
 
   // class: ui::Pager
   // --- Prototype ---
@@ -21,7 +22,14 @@ namespace ui:
     vector<string> options
     IPager *dialog
 
-    Pager(int x, y, w, h, IPager *d): ui::Dialog(x, y, w, h):
+    PLS_DEFINE_SIGNAL(PAGER_EVENT, string)
+    class PAGER_EVENTS:
+      public:
+      PAGER_EVENT selected;
+    ;
+    PAGER_EVENTS events
+
+    Pager(int x, y, w, h, IPager *d=NULL): ui::Dialog(x, y, w, h):
       self.dialog = d
       self.page_size = self.h / self.opt_h - 1
 
@@ -64,7 +72,6 @@ namespace ui:
 
         self.render_row(row, option)
 
-
     virtual void populate():
       pass
 
@@ -76,5 +83,8 @@ namespace ui:
         self.setup_for_render(self.curr_page+1)
         self.show()
       else:
-        self.dialog->on_row_selected(name)
+        if self.dialog != NULL:
+          self.dialog->on_row_selected(name)
+        self.events.selected(name)
+
       ui::MainLoop::refresh()
