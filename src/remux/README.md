@@ -39,7 +39,7 @@ to last app on a four finger tap.
 
 ```
 launch_gesture=gesture=tap;fingers=3
-swipe_gesture=gesture=tap;fingers=4
+back_gesture=gesture=tap;fingers=4
 ```
 
 You can repeat a key in order to setup multiple gestures for the same action, like so:
