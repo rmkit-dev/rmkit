@@ -51,7 +51,6 @@ deque<string> _launched = { "Remarkable", "_" }
 DEFAULT_LAUNCH_GESTURES := vector<string> %{
   "gesture=swipe; direction=up; zone=0 0 0.1 1",
   "gesture=swipe; direction=up; zone=0.9 0 1 1",
-  "gesture=tap; fingers=3"
 }
 
 
