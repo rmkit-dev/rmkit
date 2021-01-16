@@ -3,7 +3,7 @@
 namespace ui:
   // class: ui::RangeInput
   // --- Prototype ---
-  // class ui::RangeInput: public ui::Range:
+  // class ui::RangeInput: public ui::Widget:
   // -----------------
   class RangeInput: public ui::Widget:
     public:

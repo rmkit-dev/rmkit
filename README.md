@@ -71,9 +71,9 @@ An example of generating multiple animations using idle timers
 
 A simple black/white drawing demo
 
-### [keyboard](src/keyboard_demo)
+### [input demo](src/input_demo)
 
-An app with a keyboard input
+An app with a keyboard input and range slider
 
 ## Installation
 

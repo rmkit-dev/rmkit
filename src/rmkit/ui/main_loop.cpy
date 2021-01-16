@@ -341,4 +341,3 @@ namespace ui:
   MainLoop::GESTURE_EVENT MainLoop::gesture_event
 
   shared_ptr<framebuffer::FB> MainLoop::fb = framebuffer::get()
-
