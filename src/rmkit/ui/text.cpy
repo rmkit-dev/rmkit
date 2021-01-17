@@ -10,8 +10,6 @@ namespace ui:
   // the ui::Text class is a Widget that can render a single line of text.
   class Text: public Widget:
     public:
-    TextStyle style
-
     string text
     bool underline = false
 
@@ -29,12 +27,12 @@ namespace ui:
 
 
     tuple<int, int> get_render_size():
-      image := stbtext::get_text_size(self.text, self.style.font_size)
+      image := stbtext::get_text_size(self.text, self.style->font_size)
       return image.w, image.h
 
     // TODO: cache the image buffer
     void render():
-      font_size := style.font_size
+      font_size := style->font_size
       image := stbtext::get_text_size(self.text, font_size)
 
       image.buffer = (uint32_t*) malloc(sizeof(uint32_t) * image.w * image.h)
@@ -43,7 +41,7 @@ namespace ui:
       leftover_x := self.w - image.w
       padding_x := 0
 
-      switch self.style.justify:
+      switch self.style->justify:
         case TextStyle::JUSTIFY::CENTER:
           if leftover_x > 0:
             padding_x = leftover_x / 2
@@ -86,7 +84,7 @@ namespace ui:
       cur_x := 0
       cur_y := 0
       lines := split(self.text, '\n')
-      font_size := style.font_size
+      font_size := style->font_size
       for auto line: lines:
         cur_x = 0
         tokens := split(line, ' ')
@@ -120,7 +118,7 @@ namespace ui:
         int max_h = 0
         for auto w: tokens:
           w += " "
-          image := stbtext::get_text_size(w, self.style.font_size)
+          image := stbtext::get_text_size(w, self.style->font_size)
           max_h = max(image.h, max_h)
           if cur_x + image.w + 10 >= self.w:
             cur_x = 0

@@ -42,7 +42,7 @@ class SizeButton: public ui::Button:
   public:
   int n
   SizeButton(int x, y, w, h, n, string t=""): n(n), Button(x,y,w,h,t):
-    self.textWidget->style.font_size = SIZE_BUTTON_FS
+    self.style->font_size = SIZE_BUTTON_FS
 
   void on_mouse_click(input::SynMotionEvent &ev):
     if GRID_SIZE != n:
@@ -57,7 +57,7 @@ class SizeButton: public ui::Button:
 class ScoresButton: public ui::Button:
   public:
   ScoresButton(int x, y, w, h, string t="HIGH SCORES") : Button(x,y,w,h,t):
-    self.textWidget->style.font_size = SIZE_BUTTON_FS
+    self.style->font_size = SIZE_BUTTON_FS
 
   void on_mouse_click(input::SynMotionEvent &ev):
     show_scores()
@@ -106,7 +106,7 @@ class Cell: public ui::Widget:
 
   Cell(int x, y, w, h, IGrid *g, int i, j): grid(g), i(i), j(j), Widget(x, y, w, h):
     self.textWidget = new ui::Text(x, y, w, h, "")
-    self.textWidget->style.justify = ui::TextStyle::JUSTIFY::CENTER
+    self.style->justify = ui::TextStyle::JUSTIFY::CENTER
 
   void reset():
     self.flagged = 0
@@ -357,7 +357,7 @@ class HighScoreWidget: public ui::Widget:
 
   void render():
     text := ui::Text(self.x, self.y, 800, 500, "under construction")
-    text.style.justify = ui::TextStyle::JUSTIFY::CENTER
+    text.style->justify = ui::TextStyle::JUSTIFY::CENTER
     text.render()
 
 class App:
@@ -381,7 +381,7 @@ class App:
 
     image := stbtext::get_text_size("MineSweeper", 64)
     text := new ui::Text(0, 0, image.w, 50, "MineSweeper")
-    text->style.font_size = 64
+    text->style->font_size = 64
     h_layout.pack_center(text)
 
     size_button_container := ui::VerticalLayout(0, 0, 800, 200*5, title_menu)
@@ -442,7 +442,7 @@ class App:
 
     h_layout := ui::HorizontalLayout(0, 0, w, h, field_scene)
     text := new ui::Text(0, 0, w, 50, "MineSweeper")
-    text->style.font_size = SIZE_BUTTON_FS
+    text->style->font_size = SIZE_BUTTON_FS
     h_layout.pack_center(text)
     h_layout.pack_center(grid)
     // pack cells after centering grid

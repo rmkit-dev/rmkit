@@ -191,7 +191,7 @@ bool handle_widget(int line_no, ui::Scene scene, vector<string> &tokens):
       ;
     else if first == "textinput":
       textinput := new ui::TextInput(x,y,w,h,t)
-      textinput->style.justify = ui::TextStyle::DEFAULT_JUSTIFY
+      textinput->style->justify = ui::TextStyle::DEFAULT_JUSTIFY
       textinput->events.done += PLS_LAMBDA(string &s):
         debug "PRINTING REF", t, textinput->ref,  s
         if ref:

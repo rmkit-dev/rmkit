@@ -47,7 +47,7 @@ namespace ui:
     // should) draw directly to the framebuffer
     static framebuffer::FB *fb
     vector<shared_ptr<Widget>> children
-    TextStyle style
+    shared_ptr<TextStyle> style
 
     MOUSE_EVENTS mouse
     KEY_EVENTS kbd
@@ -74,6 +74,7 @@ namespace ui:
     // h - the height of the widget
     Widget(int x,y,w,h): x(x), y(y), w(w), h(h), _x(x), _y(y), _w(w), _h(h):
       self.install_signal_handlers()
+      self.style = make_shared<TextStyle>()
 
     // function: mark_redraw
     // marks this widget as needing to be redrawn during the next redraw cycle

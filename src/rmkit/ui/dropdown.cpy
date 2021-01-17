@@ -9,7 +9,7 @@ namespace ui:
 
     OptionSection(int x, y, w, h, string t): ui::Button(x,y,w,h,t):
       self.mouse_inside = true
-      self.textWidget->style.justify = ui::TextStyle::JUSTIFY::CENTER
+      self.style->justify = ui::TextStyle::JUSTIFY::CENTER
 
     bool ignore_event(input::SynMotionEvent &ev):
       return true

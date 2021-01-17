@@ -38,7 +38,9 @@ namespace ui:
       Button::key_ctr++
       self.text = t
       self.textWidget = make_shared<Text>(x, y, w, h, t)
-      self.set_justification(ui::TextStyle::JUSTIFY::CENTER)
+      self.textWidget->style = self.style // link our styles to the textWidget
+
+      self.style->justify = ui::TextStyle::JUSTIFY::CENTER
       #ifdef DEV
       debug self.text, "=", input::get_key_str(self.key)
       #endif
@@ -70,7 +72,7 @@ namespace ui:
     //      sets the alignment of the text of the button. j is one of ::LEFT,
     //      ::CENTER or ::RIGHT
     void set_justification(TextStyle::JUSTIFY j):
-      self.textWidget->style.justify = j
+      self.style->justify = j
 
     void before_render():
       has_icon := false
