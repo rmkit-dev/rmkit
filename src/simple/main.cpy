@@ -3,7 +3,7 @@
 #include "../shared/string.h"
 using namespace std
 
-int FONT_SIZE = ui::Text::DEFAULT_FS
+int FONT_SIZE = ui::TextStyle::DEFAULT_FS
 WIDTH := 0
 HEIGHT := 0
 EXPECTING_INPUT := false
@@ -69,25 +69,25 @@ def dump_widgets(ui::Scene s):
     pass
 
 // directives
-int OLD_DEFAULT_FS = ui::Text::DEFAULT_FS
-int OLD_DEFAULT_JUSTIFY = ui::Text::DEFAULT_JUSTIFY
+int OLD_DEFAULT_FS = ui::TextStyle::DEFAULT_FS
+int OLD_DEFAULT_JUSTIFY = ui::TextStyle::DEFAULT_JUSTIFY
 int PADDING_X = 0
 int PADDING_Y = 0
 def handle_directive(int line_no, ui::Scene s, vector<string> &tokens):
   debug "HANDLING DIRECTIVE", tokens[0], tokens[1]
   if tokens[0] == "@fontsize":
-    ui::Text::DEFAULT_FS = stoi(tokens[1])
+    ui::TextStyle::DEFAULT_FS = stoi(tokens[1])
 
   if tokens[0] == "@noclear":
     CLEAR_SCREEN = false
 
   if tokens[0] == "@justify":
     if tokens[1] == "left":
-      ui::Text::DEFAULT_JUSTIFY = ui::Text::JUSTIFY::LEFT
+      ui::TextStyle::DEFAULT_JUSTIFY = ui::TextStyle::JUSTIFY::LEFT
     if tokens[1] == "center":
-      ui::Text::DEFAULT_JUSTIFY = ui::Text::JUSTIFY::CENTER
+      ui::TextStyle::DEFAULT_JUSTIFY = ui::TextStyle::JUSTIFY::CENTER
     if tokens[1] == "right":
-      ui::Text::DEFAULT_JUSTIFY = ui::Text::JUSTIFY::RIGHT
+      ui::TextStyle::DEFAULT_JUSTIFY = ui::TextStyle::JUSTIFY::RIGHT
 
   if tokens[0] == "@padding_x":
     PADDING_X = stoi(tokens[1])
@@ -175,7 +175,7 @@ bool handle_widget(int line_no, ui::Scene scene, vector<string> &tokens):
     else if first == "button":
       button := new ui::Button(x,y,w,h,t)
       widget := give_id(id, button)
-      button->set_justification(ui::Text::DEFAULT_JUSTIFY)
+      button->set_justification(ui::TextStyle::DEFAULT_JUSTIFY)
       button->underline = true
       scene->add(widget)
       EXPECTING_INPUT = true
@@ -191,7 +191,7 @@ bool handle_widget(int line_no, ui::Scene scene, vector<string> &tokens):
       ;
     else if first == "textinput":
       textinput := new ui::TextInput(x,y,w,h,t)
-      textinput->justify = ui::Text::DEFAULT_JUSTIFY
+      textinput->style.justify = ui::TextStyle::DEFAULT_JUSTIFY
       textinput->events.done += PLS_LAMBDA(string &s):
         debug "PRINTING REF", t, textinput->ref,  s
         if ref:

@@ -2,6 +2,21 @@
 #include "../util/signals.h"
 
 namespace ui:
+  class TextStyle:
+    public:
+    enum JUSTIFY { LEFT, CENTER, RIGHT }
+    static JUSTIFY DEFAULT_JUSTIFY
+    static int DEFAULT_FS
+
+    int font_size = DEFAULT_FS
+    bool underline = false
+    JUSTIFY justify
+
+    TextStyle():
+      self.font_size = TextStyle::DEFAULT_FS
+      self.justify = TextStyle::DEFAULT_JUSTIFY
+
+
   PLS_DEFINE_SIGNAL(MOUSE_EVENT, input::SynMotionEvent)
   class MOUSE_EVENTS:
     public:
@@ -32,6 +47,7 @@ namespace ui:
     // should) draw directly to the framebuffer
     static framebuffer::FB *fb
     vector<shared_ptr<Widget>> children
+    TextStyle style
 
     MOUSE_EVENTS mouse
     KEY_EVENTS kbd
@@ -191,6 +207,5 @@ namespace ui:
     // supplied text
     virtual tuple<int, int> get_render_size():
       return self.w, self.h
-
 
   framebuffer::FB* Widget::fb = NULL

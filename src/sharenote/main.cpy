@@ -259,7 +259,7 @@ class App:
 
     erase_button := new EraseButton(0, 0, 200, 50)
     room_label := new ui::Text(0, 0, 200, 50, "room: ")
-    room_label->justify = ui::Text::JUSTIFY::RIGHT
+    room_label->style.justify = ui::TextStyle::JUSTIFY::RIGHT
     room_button := new RoomInput(0, 0, 200, 50, socket)
 
     button_bar->pack_start(erase_button)
