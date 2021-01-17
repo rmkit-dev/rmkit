@@ -1,6 +1,5 @@
 #ifndef DEFINES_H
 #define DEFINES_H
-#define VERSION "0.0.1"
 
 #include <vector>
 #include <string>

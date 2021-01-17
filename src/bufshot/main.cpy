@@ -1,8 +1,8 @@
 #include <cstddef>
 #include <fstream>
 
+#define RMKIT_NOWARN_RM2 1
 #include "../build/rmkit.h"
-#include "../rmkit/util/machine_id.h"
 using namespace std
 
 rm_version := util::get_remarkable_version()

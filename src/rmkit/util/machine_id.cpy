@@ -1,5 +1,3 @@
-#include "../../shared/string.h"
-
 #define VERSION_MAX 1024
 namespace util:
   enum RM_VERSION { UNKNOWN=0, RM1, RM2 }
@@ -21,7 +19,8 @@ namespace util:
 
         VERSION_STR[bytes] = 0
         version_str := string(VERSION_STR)
-        str_utils::trim(version_str)
+        while version_str.size() > 0 && std::isspace(version_str.back()):
+          version_str.resize(version_str.size()-1)
 
         if version_str == string("reMarkable 1"):
           CUR_VERSION = RM1
