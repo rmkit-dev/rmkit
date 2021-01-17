@@ -20,12 +20,10 @@ namespace stbtext:
       #ifdef REMARKABLE
       const char *filename = "/usr/share/fonts/ttf/noto/NotoMono-Regular.ttf";
      // TODO: fix the max size read to prevent overflows (or just abort on really large files)
-      _ := fread(font_buffer, 1, 24<<20, fopen(filename, "rb"));
       #else
       const char *filename = "src/vendor/NotoSansMono-Regular.ttf";
-      memcpy(font_buffer, assets::NotoSansMono_Regular_ttf, assets::NotoSansMono_Regular_ttf_len)
-      font_buffer[assets::NotoSansMono_Regular_ttf_len] = 0
       #endif
+      _ := fread(font_buffer, 1, 24<<20, fopen(filename, "rb"));
 
       stbtt_InitFont(&font, font_buffer, 0);
       did_setup = true
