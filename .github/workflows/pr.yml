@@ -1,0 +1,17 @@
+---
+name: "pr build"
+on:
+    pull_request
+
+jobs:
+  pre-release:
+    name: "pre-release"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout source"
+        uses: actions/checkout@v2
+
+      - name: "Build artifacts"
+        run: |
+          make docker
