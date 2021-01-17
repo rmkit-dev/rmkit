@@ -572,7 +572,7 @@ class App: public IApp:
     while i < n:
       ev[i++] = input_event{ type:EV_ABS, code:ABS_DISTANCE, value:1 }
       ev[i++] = input_event{ type:EV_SYN, code:0, value:0 }
-      ev[i++] = input_event{ type:EV_ABS, code:ABS_DISTANCE, value:0 }
+      ev[i++] = input_event{ type:EV_ABS, code:ABS_DISTANCE, value:2 }
       ev[i++] = input_event{ type:EV_SYN, code:0, value:0 }
 
     return ev
