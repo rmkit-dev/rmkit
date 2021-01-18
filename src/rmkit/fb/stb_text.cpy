@@ -110,6 +110,11 @@ namespace stbtext:
         uint32_t val = text_buffer[j][i]
         image.buffer[j*image.w+i] = val == 0 ? WHITE: BLACK;
 
+    // TODO: understand why we need to trim the top line
+    // to get rid of artifacts above text
+    for i = 0; i < image.w; i++:
+      image.buffer[i] = WHITE
+
     return 0;
 
   int render_text(const char *text, image_data &image, int font_size = FONT_SIZE):
