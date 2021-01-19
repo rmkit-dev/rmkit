@@ -363,12 +363,13 @@ class App: public IApp:
     })
 
   def suspend_on_idle():
+    version := util::get_remarkable_version()
     self.idle_thread = new thread([=]() {
       while true:
         now := time(NULL)
         usb_in := false
         string usb_str
-        if rm2fb::IN_RM2FB_SHIM:
+        if version == util::RM_VERSION::RM2:
           usb_str = string(exec("cat /sys/class/power_supply/max77818-charger/online"))
         else:
           usb_str = string(exec("cat /sys/class/power_supply/imx_usb_charger/present"))
