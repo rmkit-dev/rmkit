@@ -193,7 +193,11 @@ class AppDialog: public ui::Pager:
         if app.name == option or app.bin == option:
           bin = app.bin
           if app.is_running:
-            status = to_string(app.mem_usage / 1024) + string("MB")
+            used := app.mem_usage / 1024
+            if used == 0:
+              status = "?MB"
+            else:
+              status = to_string(app.mem_usage / 1024) + string("MB")
 
       c := new ui::Button(0, 0, 100, self.opt_h, status)
 
