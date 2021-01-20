@@ -16,7 +16,11 @@ struct Style {
     bool underline = DEFAULT.underline;
     JUSTIFY justify = DEFAULT.justify;
     VALIGN valign = DEFAULT.valign;
-    // TODO: border, background, padding
+    bool border_top = DEFAULT.border_top;
+    bool border_left = DEFAULT.border_left;
+    bool border_bottom = DEFAULT.border_bottom;
+    bool border_right = DEFAULT.border_right;
+    // TODO: background, padding
 
     static Style DEFAULT;
 };
@@ -97,6 +101,19 @@ public:
     Stylesheet & valign_middle() { return valign(Style::VALIGN::MIDDLE); }
     Stylesheet & valign_bottom() { return valign(Style::VALIGN::BOTTOM); }
 
+    Stylesheet & border_top(bool val=true) { return set(&Style::border_top, val); }
+    Stylesheet & border_left(bool val=true) { return set(&Style::border_left, val); }
+    Stylesheet & border_bottom(bool val=true) { return set(&Style::border_bottom, val); }
+    Stylesheet & border_right(bool val=true) { return set(&Style::border_right, val); }
+    Stylesheet & border_top(const Style & src) { return copy(&Style::border_top, src); }
+    Stylesheet & border_left(const Style & src) { return copy(&Style::border_left, src); }
+    Stylesheet & border_bottom(const Style & src) { return copy(&Style::border_bottom, src); }
+    Stylesheet & border_right(const Style & src) { return copy(&Style::border_right, src); }
+
+    Stylesheet & border_all(bool val=true) { return border_top(val).border_left(val).border_bottom(val).border_right(val); }
+    Stylesheet & border_none() { return border_all(false); }
+    Stylesheet & border(const Style & src) { return border_top(src).border_left(src).border_bottom(src).border_right(src); }
+
     // Shortcuts
     Stylesheet & text_style(const Style & src)
     {
@@ -131,6 +148,11 @@ public:
     Inherited & underline() { sheet.underline(src); return *this; }
     Inherited & justify() { sheet.justify(src); return *this; }
     Inherited & valign() { sheet.justify(src); return *this; }
+    Inherited & border() { sheet.border(src); return *this; }
+    Inherited & border_top() { sheet.border_top(src); return *this; }
+    Inherited & border_left() { sheet.border_left(src); return *this; }
+    Inherited & border_bottom() { sheet.border_bottom(src); return *this; }
+    Inherited & border_right() { sheet.border_right(src); return *this; }
     Inherited & text_style() { sheet.text_style(src); return *this; }
     Inherited & alignment() { sheet.alignment(src); return *this; }
 };
@@ -140,6 +162,7 @@ Style Style::DEFAULT = Stylesheet()
     .underline(false)
     .justify_center()
     .valign_top()
+    .border_none()
     .build();
 
 }
