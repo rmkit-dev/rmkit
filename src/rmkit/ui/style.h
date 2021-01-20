@@ -6,12 +6,14 @@
 
 namespace ui {
 
+class InheritedStylesheet;
+
 struct Style {
     enum JUSTIFY { LEFT, CENTER, RIGHT };
     enum VALIGN { TOP, MIDDLE, BOTTOM };
 
     // When adding a new style, make sure to also add builders in Stylesheet
-    // and Stylesheet::Inherited.
+    // and InheritedStylesheet.
     short font_size = DEFAULT.font_size;
     bool underline = DEFAULT.underline;
     JUSTIFY justify = DEFAULT.justify;
@@ -23,6 +25,8 @@ struct Style {
     // TODO: background, padding
 
     static Style DEFAULT;
+
+    InheritedStylesheet inherit() const;
 };
 
 // Style builder / updater
@@ -64,9 +68,6 @@ public:
     }
     Stylesheet operator+(const Stylesheet & other) { return Stylesheet(*this).merge(other);
     }
-
-    // Style inheritance
-    class Inherited;
 
     // Generic builders
     template<typename T>
@@ -128,12 +129,12 @@ public:
 // Stylesheet for Styles that should be inherited from another Style
 // e.g. copy font_size and underline from one style to another:
 // Stylesheet::Inherit(otherStyle).font_size().underline().apply(myStyle)
-class Stylesheet::Inherited {
+class InheritedStylesheet {
 private:
     const Style src;
     Stylesheet sheet;
 public:
-    Inherited(const Style & src) : src(src) {}
+    InheritedStylesheet(const Style & src) : src(src) {}
     // Conversion back to Stylesheet
     inline Stylesheet stylesheet() { return sheet; }
     inline const Stylesheet stylesheet() const { return sheet; }
@@ -144,18 +145,23 @@ public:
     inline void apply(Style &s) const { sheet.apply(&s); }
 
     // Builders
-    Inherited & font_size() { sheet.font_size(src); return *this; }
-    Inherited & underline() { sheet.underline(src); return *this; }
-    Inherited & justify() { sheet.justify(src); return *this; }
-    Inherited & valign() { sheet.justify(src); return *this; }
-    Inherited & border() { sheet.border(src); return *this; }
-    Inherited & border_top() { sheet.border_top(src); return *this; }
-    Inherited & border_left() { sheet.border_left(src); return *this; }
-    Inherited & border_bottom() { sheet.border_bottom(src); return *this; }
-    Inherited & border_right() { sheet.border_right(src); return *this; }
-    Inherited & text_style() { sheet.text_style(src); return *this; }
-    Inherited & alignment() { sheet.alignment(src); return *this; }
+    InheritedStylesheet & font_size() { sheet.font_size(src); return *this; }
+    InheritedStylesheet & underline() { sheet.underline(src); return *this; }
+    InheritedStylesheet & justify() { sheet.justify(src); return *this; }
+    InheritedStylesheet & valign() { sheet.justify(src); return *this; }
+    InheritedStylesheet & border() { sheet.border(src); return *this; }
+    InheritedStylesheet & border_top() { sheet.border_top(src); return *this; }
+    InheritedStylesheet & border_left() { sheet.border_left(src); return *this; }
+    InheritedStylesheet & border_bottom() { sheet.border_bottom(src); return *this; }
+    InheritedStylesheet & border_right() { sheet.border_right(src); return *this; }
+    InheritedStylesheet & text_style() { sheet.text_style(src); return *this; }
+    InheritedStylesheet & alignment() { sheet.alignment(src); return *this; }
 };
+
+InheritedStylesheet Style::inherit() const
+{
+    return InheritedStylesheet(*this);
+}
 
 Style Style::DEFAULT = Stylesheet()
     .font_size(24)
