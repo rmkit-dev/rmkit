@@ -164,7 +164,7 @@ class AppDialog: public ui::Pager:
 
         cw := 350
         b3 := new StatusBar(self.x+self.w-cw, self.y-50, cw, 50, stat_str)
-        b3->set_justification(ui::Text::JUSTIFY::RIGHT)
+        b3->set_style(ui::Stylesheet().justify_right())
         self.scene->add(b3)
 
 
@@ -214,11 +214,11 @@ class AppDialog: public ui::Pager:
             c->dirty = 1
         }
 
-      c->set_justification(ui::Text::JUSTIFY::RIGHT)
+      c->set_style(ui::Stylesheet().justify_right())
       d := new ui::DialogButton(0, 0, self.w-90, self.opt_h, self, option)
       d->x_padding = 10
       d->y_padding = 5
-      d->set_justification(ui::Text::JUSTIFY::LEFT)
+      d->set_style(ui::Stylesheet().justify_left())
       self.layout->pack_start(row)
       row->pack_start(d)
       row->pack_end(c)
@@ -508,8 +508,7 @@ class App: public IApp:
       fb->load_from_png("/usr/share/remarkable/suspended.png")
     #else
     text := ui::Text(0, _h-64, _w, 100, "Press any button to wake")
-    text.font_size = 64
-    text.justify = ui::Text::JUSTIFY::CENTER
+    text.set_style(ui::Stylesheet().font_size(64).justify_center())
 
     text.undraw()
     text.render()
@@ -767,7 +766,7 @@ class App: public IApp:
     proc::launch_process(xochitl_cmd, true /* check running */, true /* background */)
     #endif
 
-    ui::Text::DEFAULT_FS = 32
+    ui::Style::DEFAULT.font_size = 32
 
     // launches a thread that suspends on idle
     self.suspend_on_idle()

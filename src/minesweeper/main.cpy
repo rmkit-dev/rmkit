@@ -37,12 +37,13 @@ void main_menu()
 void resize_field(int)
 void show_scores()
 
-SIZE_BUTTON_FS := 64
+ui::Style LARGE_TEXT = Stylesheet().font_size(64)
+
 class SizeButton: public ui::Button:
   public:
   int n
   SizeButton(int x, y, w, h, n, string t=""): n(n), Button(x,y,w,h,t):
-    self.textWidget->font_size = SIZE_BUTTON_FS
+    self.set_style(LARGE_TEXT)
 
   void on_mouse_click(input::SynMotionEvent &ev):
     if GRID_SIZE != n:
@@ -57,7 +58,7 @@ class SizeButton: public ui::Button:
 class ScoresButton: public ui::Button:
   public:
   ScoresButton(int x, y, w, h, string t="HIGH SCORES") : Button(x,y,w,h,t):
-    self.textWidget->font_size = SIZE_BUTTON_FS
+    self.set_style(LARGE_TEXT)
 
   void on_mouse_click(input::SynMotionEvent &ev):
     show_scores()
@@ -106,7 +107,7 @@ class Cell: public ui::Widget:
 
   Cell(int x, y, w, h, IGrid *g, int i, j): grid(g), i(i), j(j), Widget(x, y, w, h):
     self.textWidget = new ui::Text(x, y, w, h, "")
-    self.textWidget->justify = ui::Text::JUSTIFY::CENTER
+    self.textWidget->set_style(ui::Stylesheet().justify_center())
 
   void reset():
     self.flagged = 0
@@ -357,7 +358,7 @@ class HighScoreWidget: public ui::Widget:
 
   void render():
     text := ui::Text(self.x, self.y, 800, 500, "under construction")
-    text.justify = ui::Text::JUSTIFY::CENTER
+    text.set_style(ui::Stylesheet().justify_center())
     text.render()
 
 class App:
@@ -381,7 +382,7 @@ class App:
 
     image := stbtext::get_text_size("MineSweeper", 64)
     text := new ui::Text(0, 0, image.w, 50, "MineSweeper")
-    text->font_size = 64
+    text->set_style(LARGE_TEXT)
     h_layout.pack_center(text)
 
     size_button_container := ui::VerticalLayout(0, 0, 800, 200*5, title_menu)
@@ -390,8 +391,7 @@ class App:
     button_height := 200
     for auto p : sizes:
       btn := new SizeButton(w/2-400, 500, 800, button_height, p.first, p.second)
-      btn->set_justification(ui::Text::JUSTIFY::CENTER)
-      btn->y_padding = (button_height - SIZE_BUTTON_FS) / 2
+      btn->y_padding = (button_height - btn.style.font_size) / 2
       size_button_container.pack_start(btn)
       debug "BTN", btn->x, btn->y
 
@@ -401,8 +401,7 @@ class App:
 //    size_button_container.pack_start(new SizeButton(w/2-400, 50, 800, 200, 20, "20x20"))
 
     scores := new ScoresButton(w/2-400, 500, 800, button_height)
-    scores->set_justification(ui::Text::JUSTIFY::CENTER)
-    scores->y_padding = (button_height - SIZE_BUTTON_FS) / 2
+    scores->y_padding = (button_height - btn.style.font_size) / 2
     debug scores->x, scores->y
     size_button_container.pack_start(scores)
     debug scores->x, scores->y
@@ -442,7 +441,7 @@ class App:
 
     h_layout := ui::HorizontalLayout(0, 0, w, h, field_scene)
     text := new ui::Text(0, 0, w, 50, "MineSweeper")
-    text->font_size = SIZE_BUTTON_FS
+    text->set_style(LARGE_TEXT)
     h_layout.pack_center(text)
     h_layout.pack_center(grid)
     // pack cells after centering grid
@@ -544,7 +543,7 @@ void show_scores():
   ui::MainLoop::refresh()
 
 def main():
-  ui::Text::DEFAULT_FS = 32
+  ui::Style::DEFAULT.font_size = 32;
   app.run()
 
 // vim:syntax=cpp
