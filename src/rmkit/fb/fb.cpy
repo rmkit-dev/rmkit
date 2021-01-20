@@ -272,6 +272,12 @@ namespace framebuffer:
         b := src[offset+2]
         return (remarkable_color) ((r & 0b11111000) << 8) | ((g & 0b11111100) << 3) | (b >> 3);
 
+    inline void grayscale_to_rgb32(uint8_t src, char *dst):
+        uint32_t color = (src * 0x00010101);
+        dst[0] = color & 0x00FF
+        dst[1] = color & 0x0000FF
+        dst[2] = color & 0x000000FF
+
     // function: draw_bitmap
     // this function draws the content of image into the framebuffer
     //
@@ -291,6 +297,7 @@ namespace framebuffer:
       update_dirty(dirty_area, o_x+image.w, o_y+image.h)
 
       char *src_ptr;
+      char src_val[4]
 
       for j 0 image.h:
         if o_y + j < 0:
@@ -308,6 +315,9 @@ namespace framebuffer:
           if src[i] != alpha:
             if image.channels >= 3:
               ptr[i] = to_rgb565((char *) src, i*image.channels)
+            else if image.channels == 1:
+              grayscale_to_rgb32(src[i], src_val)
+              ptr[i] = (remarkable_color) to_rgb565(src_val, 0)
             else:
               ptr[i] = (remarkable_color) src[i]
         ptr += self.width
