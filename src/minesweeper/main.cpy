@@ -37,7 +37,7 @@ void main_menu()
 void resize_field(int)
 void show_scores()
 
-ui::Style LARGE_TEXT = Stylesheet().font_size(64)
+LARGE_TEXT := ui::Stylesheet().font_size(64)
 
 class SizeButton: public ui::Button:
   public:
@@ -391,7 +391,7 @@ class App:
     button_height := 200
     for auto p : sizes:
       btn := new SizeButton(w/2-400, 500, 800, button_height, p.first, p.second)
-      btn->y_padding = (button_height - btn.style.font_size) / 2
+      btn->y_padding = (button_height - btn->style.font_size) / 2
       size_button_container.pack_start(btn)
       debug "BTN", btn->x, btn->y
 
@@ -401,7 +401,7 @@ class App:
 //    size_button_container.pack_start(new SizeButton(w/2-400, 50, 800, 200, 20, "20x20"))
 
     scores := new ScoresButton(w/2-400, 500, 800, button_height)
-    scores->y_padding = (button_height - btn.style.font_size) / 2
+    scores->y_padding = (button_height - scores->style.font_size) / 2
     debug scores->x, scores->y
     size_button_container.pack_start(scores)
     debug scores->x, scores->y
