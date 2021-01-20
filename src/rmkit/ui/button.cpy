@@ -12,10 +12,10 @@ namespace ui:
   // an ICON for the start of the button.
   class Button: public Widget
     public:
+    static Stylesheet DEFAULT_STYLE
     string text
     int x_padding = 0
     int y_padding = 10
-    bool underline = false
     shared_ptr<Text> textWidget
     int key
     static int key_ctr
@@ -38,11 +38,15 @@ namespace ui:
       Button::key_ctr++
       self.text = t
       self.textWidget = make_shared<Text>(x, y, w, h, t)
-      self.set_justification(ui::Text::JUSTIFY::CENTER)
       #ifdef DEV
       debug self.text, "=", input::get_key_str(self.key)
       #endif
+      self.set_style(DEFAULT_STYLE)
       return
+
+    void set_style(const Stylesheet & style):
+      Widget::set_style(style)
+      self.textWidget->set_style(Stylesheet::Inherited(self.style).text_style())
 
     void on_mouse_move(input::SynMotionEvent &ev):
       ev.stop_propagation()
@@ -64,13 +68,6 @@ namespace ui:
       if ev.key == key && ev.is_pressed:
         input::SynMotionEvent fake
         self.on_mouse_click(fake)
-
-    // function: set_justification
-    //
-    //      sets the alignment of the text of the button. j is one of ::LEFT,
-    //      ::CENTER or ::RIGHT
-    void set_justification(Text::JUSTIFY j):
-      self.textWidget->justify = j
 
     void before_render():
       has_icon := false
@@ -110,7 +107,6 @@ namespace ui:
       if self.iconWidget.get() != nullptr:
         self.iconWidget->render()
 
-      self.textWidget->underline = self.underline
       self.textWidget->render()
 
       color := WHITE
@@ -122,3 +118,4 @@ namespace ui:
       fb->draw_rect(self.x, self.y, self.w, self.h, color, fill)
 
   int Button::key_ctr = 16 // "q"
+  Stylesheet Button::DEFAULT_STYLE = Stylesheet().justify_center()

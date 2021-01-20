@@ -1,3 +1,4 @@
+#include "style.h"
 #include "../fb/fb.h"
 #include "../util/signals.h"
 
@@ -48,6 +49,7 @@ namespace ui:
     int dirty = 1
     bool visible = true
     string ref // a name to call the widget by
+    Style style
 
     // function: Constructor
     // parameters:
@@ -58,6 +60,18 @@ namespace ui:
     // h - the height of the widget
     Widget(int x,y,w,h): x(x), y(y), w(w), h(h), _x(x), _y(y), _w(w), _h(h):
       self.install_signal_handlers()
+
+    // function: set_style
+    // parameters:
+    //
+    // style - a ui::Stylesheet or ui::Style
+    // Updates the widget's style. Derived classes may override this to copy
+    // styles to their children.
+    virtual void set_style(const Stylesheet & style):
+      style.apply(self.style)
+
+    void operator+=(const Stylesheet & style):
+      self.set_style(style)
 
     // function: mark_redraw
     // marks this widget as needing to be redrawn during the next redraw cycle
