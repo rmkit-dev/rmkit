@@ -70,6 +70,9 @@ namespace ui:
     virtual void set_style(const Stylesheet & style):
       style.apply(self.style)
 
+    void operator+=(const Stylesheet & style):
+      self.set_style(style)
+
     // function: mark_redraw
     // marks this widget as needing to be redrawn during the next redraw cycle
     // of the main loop
