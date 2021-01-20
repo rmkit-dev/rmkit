@@ -9,7 +9,6 @@ namespace ui:
 
     OptionSection(int x, y, w, h, string t): ui::Button(x,y,w,h,t):
       self.mouse_inside = true
-      self.textWidget->justify = ui::Text::JUSTIFY::CENTER
 
     bool ignore_event(input::SynMotionEvent &ev):
       return true
@@ -20,6 +19,7 @@ namespace ui:
 
   class OptionButton: public ui::Button:
     public:
+    inline static Stylesheet DEFAULT_STYLE = Stylesheet().justify_left()
     IOptionButton* tb
     string text
     int idx
@@ -27,7 +27,7 @@ namespace ui:
     OptionButton(int x, y, w, h, IOptionButton* tb, string text, int idx): \
                  tb(tb), text(text), idx(idx), ui::Button(x,y,w,h,text):
       self.x_padding = 10
-      self.set_justification(ui::Text::JUSTIFY::LEFT)
+      self.set_style(DEFAULT_STYLE)
 
     void on_mouse_click(input::SynMotionEvent &ev):
       self.tb->select(self.idx)

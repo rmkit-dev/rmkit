@@ -10,15 +10,7 @@ namespace ui:
   // the ui::Text class is a Widget that can render a single line of text.
   class Text: public Widget:
     public:
-
-    // function: Text Dropdown
-    enum JUSTIFY { LEFT, CENTER, RIGHT }
-    static JUSTIFY DEFAULT_JUSTIFY
-    static int DEFAULT_FS
-    int font_size
     string text
-    bool underline = false
-    JUSTIFY justify
 
     // function: Constructor
     // parameters:
@@ -30,17 +22,15 @@ namespace ui:
     // t - the text to render in the widget
     Text(int x, y, w, h, string t): Widget(x, y, w, h):
       self.text = t
-      self.font_size = DEFAULT_FS
-      self.justify = DEFAULT_JUSTIFY
-
 
     tuple<int, int> get_render_size():
-      image := stbtext::get_text_size(self.text, self.font_size)
+      image := stbtext::get_text_size(self.text, self.style.font_size)
       return image.w, image.h
 
     // TODO: cache the image buffer
     void render():
-      image := stbtext::get_text_size(self.text, self.font_size)
+      font_size := self.style.font_size
+      image := stbtext::get_text_size(self.text, font_size)
 
       image.buffer = (uint32_t*) malloc(sizeof(uint32_t) * image.w * image.h)
       memset(image.buffer, WHITE, sizeof(uint32_t) * image.w * image.h)
@@ -48,18 +38,18 @@ namespace ui:
       leftover_x := self.w - image.w
       padding_x := 0
 
-      switch self.justify:
-        case JUSTIFY::CENTER:
+      switch self.style.justify:
+        case Style::JUSTIFY::CENTER:
           if leftover_x > 0:
             padding_x = leftover_x / 2
           break
-        case JUSTIFY::RIGHT:
+        case Style::JUSTIFY::RIGHT:
           if leftover_x > 0:
             padding_x = leftover_x
           break
 
-      fb->draw_text(self.text, self.x + padding_x, self.y, image, self.font_size)
-      if self.underline:
+      fb->draw_text(self.text, self.x + padding_x, self.y, image, font_size)
+      if self.style.underline:
         fb->draw_line(self.x+padding_x, self.y+font_size, self.x+padding_x+image.w-font_size,
                       self.y+font_size, 1, BLACK)
 
@@ -91,21 +81,22 @@ namespace ui:
       cur_x := 0
       cur_y := 0
       lines := split(self.text, '\n')
+      font_size := self.style.font_size
       for auto line: lines:
         cur_x = 0
         tokens := split(line, ' ')
         int max_h = 0
         for auto w: tokens:
           w += " "
-          image := stbtext::get_text_size(w, self.font_size)
+          image := stbtext::get_text_size(w, font_size)
           image.buffer = (uint32_t*) malloc(sizeof(uint32_t) * image.w * image.h)
           max_h = max(image.h, max_h)
           memset(image.buffer, WHITE, sizeof(uint32_t) * image.w * image.h)
           if cur_x + image.w + 10 >= self.w:
             cur_x = 0
             cur_y += max_h
-          self.fb->draw_text(w, self.x + cur_x, self.y + cur_y, image, self.font_size)
-          if self.underline:
+          self.fb->draw_text(w, self.x + cur_x, self.y + cur_y, image, font_size)
+          if self.style.underline:
             self.fb->draw_line(self.x+cur_x, self.y+cur_y+font_size, self.x+cur_x+image.w,
                                self.y + cur_y+font_size, 1, BLACK)
           free(image.buffer)
@@ -124,7 +115,7 @@ namespace ui:
         int max_h = 0
         for auto w: tokens:
           w += " "
-          image := stbtext::get_text_size(w, self.font_size)
+          image := stbtext::get_text_size(w, self.style.font_size)
           max_h = max(image.h, max_h)
           if cur_x + image.w + 10 >= self.w:
             cur_x = 0
@@ -136,6 +127,3 @@ namespace ui:
         ret_w = max(ret_w, cur_y)
 
       return ret_w, ret_h
-
-  int Text::DEFAULT_FS = 24
-  Text::JUSTIFY Text::DEFAULT_JUSTIFY = ui::Text::JUSTIFY::CENTER

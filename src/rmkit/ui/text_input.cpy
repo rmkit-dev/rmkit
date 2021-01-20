@@ -19,6 +19,8 @@ namespace ui:
     ;
     TEXTINPUT_EVENTS events
 
+    inline static Stylesheet DEFAULT_STYLE = Stylesheet().justify_center()
+
     // function: TextInput
     // Parameters
     //
@@ -28,7 +30,7 @@ namespace ui:
     // h - height
     // t - the content of the text input
     TextInput(int x, y, w, h, string t=""): ui::Text(x, y, w, h, t):
-      self.justify = ui::Text::JUSTIFY::CENTER
+      self.set_style(DEFAULT_STYLE)
 
     void on_mouse_click(input::SynMotionEvent &ev):
       keyboard := new ui::Keyboard()

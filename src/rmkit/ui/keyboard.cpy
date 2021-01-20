@@ -60,7 +60,8 @@ namespace ui:
     string text = ""
     int btn_width
     int btn_height
-    int btn_font_size = 48
+    inline static Stylesheet BTN_STYLE = Stylesheet().font_size(48)
+    inline static Stylesheet INPUT_STYLE = Stylesheet().font_size(64)
 
     KEYBOARD_EVENTS events
 
@@ -129,7 +130,7 @@ namespace ui:
       v_layout := ui::VerticalLayout(0, 0, fw, fh, self.scene)
 
       self.input_box = new MultiText(0,0,w,50,self.text)
-      self.input_box->font_size = 64
+      self.input_box->set_style(INPUT_STYLE)
       v_layout.pack_start(input_box)
 
       v_layout.pack_end(row4)
@@ -144,7 +145,7 @@ namespace ui:
         row2->add_key(self.make_char_button(c))
 
       shift_key := new KeyButton(0, 0, self.btn_width, btn_height, "shift")
-      shift_key->textWidget->font_size = btn_font_size
+      shift_key->set_style(BTN_STYLE)
       shift_key->mouse.click += PLS_LAMBDA(auto &ev):
         if !numbers and !shifted:
           self.upper_layout()
@@ -159,7 +160,7 @@ namespace ui:
       for (auto c: row3chars):
         row3->add_key(self.make_char_button(c))
       backspace_key := new KeyButton(0,0,self.btn_width,btn_height,"back")
-      backspace_key->textWidget->font_size = btn_font_size
+      backspace_key->set_style(BTN_STYLE)
 
 
       backspace_key->mouse.click += PLS_LAMBDA(auto &ev):
@@ -179,7 +180,7 @@ namespace ui:
           self.number_layout()
       ;
       space_key := new KeyButton(0,0,self.btn_width*8,btn_height,"space")
-      space_key->textWidget->font_size = btn_font_size
+      space_key->set_style(BTN_STYLE)
       space_key->mouse.click += PLS_LAMBDA(auto &ev):
         self.text += " "
         self.input_box->text = text
@@ -188,7 +189,7 @@ namespace ui:
       ;
 
       enter_key := new KeyButton(0,0,self.btn_width,btn_height,"done")
-      enter_key->textWidget->font_size = btn_font_size
+      enter_key->set_style(BTN_STYLE)
       enter_key->mouse.click += PLS_LAMBDA(auto &ev):
         self.hide()
         ui::MainLoop::refresh()
@@ -212,7 +213,7 @@ namespace ui:
     KeyButton* make_char_button(char c):
       string s(1, c)
       key := new KeyButton(0,0,self.btn_width,btn_height,s)
-      key->textWidget->font_size = btn_font_size
+      key->set_style(BTN_STYLE)
       key->mouse.click += PLS_LAMBDA(auto &ev):
         self.dirty = 1
         if c == ' ':

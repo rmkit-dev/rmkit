@@ -89,10 +89,11 @@ namespace ui:
       return true
 
     virtual void add_buttons(HorizontalLayout *button_bar):
+      default_fs := ui::Style::DEFAULT.font_size
       for auto b : self.buttons:
-        image := stbtext::get_text_size(b, ui::Text::DEFAULT_FS)
+        image := stbtext::get_text_size(b, default_fs)
 
-        button_bar->pack_start(new DialogButton(20, 0, image.w + ui::Text::DEFAULT_FS, 50, self, b))
+        button_bar->pack_start(new DialogButton(20, 0, image.w + default_fs, 50, self, b))
 
     // function: on_button_selected
     // this is called when the dialog's buttons are pressed

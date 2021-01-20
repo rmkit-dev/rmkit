@@ -41,7 +41,7 @@ namespace ui:
 
     virtual void render_row(ui::HorizontalLayout *row, string option):
       d := new ui::DialogButton(20,0, self.w-80, self.opt_h, self, option)
-      d->set_justification(ui::Text::JUSTIFY::LEFT)
+      d->set_style(Stylesheet().justify_left())
       layout->pack_start(d)
 
     void setup_for_render(int page=0):
