@@ -19,7 +19,7 @@ namespace ui:
     ;
     TEXTINPUT_EVENTS events
 
-    inline static Stylesheet DEFAULT_STYLE = Stylesheet().justify_center()
+    static Stylesheet DEFAULT_STYLE
 
     // function: TextInput
     // Parameters
@@ -120,3 +120,6 @@ namespace ui:
     void render():
       self.fb->draw_rect(self.x, self.y, self.w, self.h, BLACK, 0 /* fill */)
       ui::MultiText::render()
+
+  ;
+  Stylesheet TextInput::DEFAULT_STYLE = Stylesheet().justify_center()

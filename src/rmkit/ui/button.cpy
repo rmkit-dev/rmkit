@@ -12,7 +12,7 @@ namespace ui:
   // an ICON for the start of the button.
   class Button: public Widget
     public:
-    inline static Stylesheet DEFAULT_STYLE = Stylesheet().justify_center()
+    static Stylesheet DEFAULT_STYLE
     string text
     int x_padding = 0
     int y_padding = 10
@@ -118,3 +118,4 @@ namespace ui:
       fb->draw_rect(self.x, self.y, self.w, self.h, color, fill)
 
   int Button::key_ctr = 16 // "q"
+  Stylesheet Button::DEFAULT_STYLE = Stylesheet().justify_center()

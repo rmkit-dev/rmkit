@@ -121,7 +121,7 @@ public:
     Inherited & text_style() { sheet.text_style(src); return *this; }
 };
 
-inline Style Style::DEFAULT = Stylesheet()
+Style Style::DEFAULT = Stylesheet()
     .font_size(24)
     .underline(false)
     .justify_center()

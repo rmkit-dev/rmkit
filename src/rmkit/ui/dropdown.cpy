@@ -19,7 +19,7 @@ namespace ui:
 
   class OptionButton: public ui::Button:
     public:
-    inline static Stylesheet DEFAULT_STYLE = Stylesheet().justify_left()
+    static Stylesheet DEFAULT_STYLE
     IOptionButton* tb
     string text
     int idx
@@ -187,3 +187,5 @@ namespace ui:
         ds := make_shared<DropdownSection>(t)
         self.sections.push_back(ds)
         return ds
+
+  Stylesheet OptionButton::DEFAULT_STYLE = Stylesheet().justify_left()
