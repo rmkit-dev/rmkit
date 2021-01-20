@@ -8,13 +8,15 @@ namespace ui {
 
 struct Style {
     enum JUSTIFY { LEFT, CENTER, RIGHT };
+    enum VALIGN { TOP, MIDDLE, BOTTOM };
 
     // When adding a new style, make sure to also add builders in Stylesheet
     // and Stylesheet::Inherited.
     short font_size = DEFAULT.font_size;
     bool underline = DEFAULT.underline;
     JUSTIFY justify = DEFAULT.justify;
-    // TODO: valign, border, background, padding
+    VALIGN valign = DEFAULT.valign;
+    // TODO: border, background, padding
 
     static Style DEFAULT;
 };
@@ -89,10 +91,20 @@ public:
     Stylesheet & justify_center() { return justify(Style::JUSTIFY::CENTER); }
     Stylesheet & justify_right()  { return justify(Style::JUSTIFY::RIGHT); }
 
+    Stylesheet & valign(Style::VALIGN val) { return set(&Style::valign, val); }
+    Stylesheet & valign(const Style & src) { return copy(&Style::valign, src); }
+    Stylesheet & valign_top()    { return valign(Style::VALIGN::TOP); }
+    Stylesheet & valign_middle() { return valign(Style::VALIGN::MIDDLE); }
+    Stylesheet & valign_bottom() { return valign(Style::VALIGN::BOTTOM); }
+
     // Shortcuts
     Stylesheet & text_style(const Style & src)
     {
         return font_size(src).justify(src).underline(src);
+    }
+    Stylesheet & alignment(const Style & src)
+    {
+        return justify(src).valign(src);
     }
 };
 
@@ -118,13 +130,16 @@ public:
     Inherited & font_size() { sheet.font_size(src); return *this; }
     Inherited & underline() { sheet.underline(src); return *this; }
     Inherited & justify() { sheet.justify(src); return *this; }
+    Inherited & valign() { sheet.justify(src); return *this; }
     Inherited & text_style() { sheet.text_style(src); return *this; }
+    Inherited & alignment() { sheet.alignment(src); return *this; }
 };
 
 Style Style::DEFAULT = Stylesheet()
     .font_size(24)
     .underline(false)
     .justify_center()
+    .valign_top()
     .build();
 
 }

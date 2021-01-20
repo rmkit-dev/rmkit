@@ -36,22 +36,31 @@ namespace ui:
       memset(image.buffer, WHITE, sizeof(uint32_t) * image.w * image.h)
 
       leftover_x := self.w - image.w
-      padding_x := 0
+      draw_x := self.x
+      draw_y := self.y
 
       switch self.style.justify:
         case Style::JUSTIFY::CENTER:
           if leftover_x > 0:
-            padding_x = leftover_x / 2
+            draw_x += leftover_x / 2
           break
         case Style::JUSTIFY::RIGHT:
           if leftover_x > 0:
-            padding_x = leftover_x
+            draw_x += leftover_x
           break
 
-      fb->draw_text(self.text, self.x + padding_x, self.y, image, font_size)
+      switch self.style.valign:
+        case Style::VALIGN::MIDDLE:
+          draw_y += (self.h - font_size) / 2
+          break
+        case Style::VALIGN::BOTTOM:
+          draw_y += self.h - font_size
+          break
+
+      fb->draw_text(self.text, draw_x, draw_y, image, font_size)
       if self.style.underline:
-        fb->draw_line(self.x+padding_x, self.y+font_size, self.x+padding_x+image.w-font_size,
-                      self.y+font_size, 1, BLACK)
+        fb->draw_line(draw_x, draw_y+font_size, draw_x+image.w-font_size,
+                      draw_y+font_size, 1, BLACK)
 
       free(image.buffer)
 
