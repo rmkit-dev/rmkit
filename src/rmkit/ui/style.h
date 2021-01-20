@@ -82,7 +82,7 @@ public:
     Stylesheet & font_size(short val) { return set(&Style::font_size, val); }
     Stylesheet & font_size(const Style & src) { return copy(&Style::font_size, src); }
 
-    Stylesheet & underline(bool val) { return set(&Style::underline, val); }
+    Stylesheet & underline(bool val=true) { return set(&Style::underline, val); }
     Stylesheet & underline(const Style & src) { return copy(&Style::underline, src); }
 
     Stylesheet & justify(Style::JUSTIFY val) { return set(&Style::justify, val); }
