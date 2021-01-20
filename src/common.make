@@ -2,8 +2,7 @@ HOST?=10.11.99.1
 ARCH?=arm
 CXX_BIN?=arm-linux-gnueabihf-g++
 CC_BIN?=arm-linux-gnueabihf-gcc
-CPP_FLAGS=-pthread -lpthread -fdata-sections -ffunction-sections -Wl,--gc-sections
-
+CPP_FLAGS=-pthread -lpthread --std=c++17 -fdata-sections -ffunction-sections -Wl,--gc-sections
 
 # BUILD STUFF
 ROOT=${PWD}
