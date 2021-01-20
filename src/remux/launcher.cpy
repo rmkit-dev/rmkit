@@ -545,6 +545,9 @@ class App: public IApp:
         _ := system("systemctl poweroff")
         return
 
+      // reset LAST_ACTION after wake so we don't go into sleep loop
+      LAST_ACTION = time(NULL)
+
       _ = system("echo 0 > /sys/class/rtc/rtc0/wakealarm")
     #endif
 
