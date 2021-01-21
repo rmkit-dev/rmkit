@@ -211,6 +211,15 @@ namespace framebuffer:
             if (i + j) % 2 == 0 || (i + j) % 3 == 0:
               ptr[i+j*self.width] = WHITE
           break
+        case BLACK:
+           if dither != 1.0:
+             if dither > dither_noise(i, j):
+                ptr[i + j*self.width] = BLACK
+             else
+                ptr[i + j*self.width] = WHITE
+           else:
+             ptr[i + j*self.width] = color
+           break
         default:
           if dither != 1.0:
             if fast_rand() / float(2 << 15) < dither:
