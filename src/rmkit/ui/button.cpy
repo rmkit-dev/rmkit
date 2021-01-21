@@ -46,7 +46,7 @@ namespace ui:
 
     void set_style(const Stylesheet & style):
       Widget::set_style(style)
-      self.textWidget->set_style(Stylesheet::Inherited(self.style).text_style().alignment())
+      self.textWidget->set_style(self.style.inherit().text_style().alignment())
 
     void on_mouse_move(input::SynMotionEvent &ev):
       ev.stop_propagation()
