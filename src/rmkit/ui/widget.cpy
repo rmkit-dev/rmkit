@@ -95,6 +95,20 @@ namespace ui:
     virtual void render():
       pass
 
+    // function: render_border
+    // redraws the widget border (happens after render())
+    virtual void render_border():
+      size := 1
+      if self.style.border_top:
+        self.fb->draw_rect(self.x, self.y, self.w, size, BLACK)
+      if self.style.border_bottom:
+        self.fb->draw_rect(self.x, self.y + self.h - size, self.w, size, BLACK)
+      if self.style.border_left:
+        self.fb->draw_rect(self.x, self.y, size, self.h, BLACK)
+      if self.style.border_right:
+        self.fb->draw_rect(self.x + self.w - size, self.y, size, self.h, BLACK)
+
+
     virtual void undraw():
       self.fb->draw_rect(self.x, self.y, self.w, self.h, WHITE, true)
 

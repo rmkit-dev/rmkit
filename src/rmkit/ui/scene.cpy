@@ -41,6 +41,7 @@ namespace ui:
 
         if widget->dirty:
           widget->render()
+          widget->render_border()
           widget->dirty = 0
 
         if widget->children.size():
