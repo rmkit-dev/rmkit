@@ -197,8 +197,11 @@ class Grid: public ui::Widget, public IGrid:
     debug "OPENING CELL", row, col
     if cells[row][col]->is_bomb:
       cells[row][col]->opened = 1
-      END = time(NULL)
-      end_game(0)
+      if !OVER:
+        END = time(NULL)
+        end_game(0)
+      return
+
     if FIRST_CLICK:
       START = time(NULL)
       FIRST_CLICK = 0
