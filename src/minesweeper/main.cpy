@@ -51,10 +51,6 @@ class SizeButton: public ui::Button:
 
     new_game()
 
-  void render():
-    ui::Button::render()
-    self.fb->draw_rect(self.x, self.y, self.w, self.h, BLACK, false /* fill */)
-
 class ScoresButton: public ui::Button:
   public:
   ScoresButton(int x, y, w, h, string t="HIGH SCORES") : Button(x,y,w,h,t):
@@ -391,7 +387,7 @@ class App:
     button_height := 200
     for auto p : sizes:
       btn := new SizeButton(w/2-400, 500, 800, button_height, p.first, p.second)
-      btn->y_padding = (button_height - btn->style.font_size) / 2
+      *btn += ui::Button::DEFAULT_STYLE.valign_middle().border_all();
       size_button_container.pack_start(btn)
       debug "BTN", btn->x, btn->y
 
@@ -401,10 +397,8 @@ class App:
 //    size_button_container.pack_start(new SizeButton(w/2-400, 50, 800, 200, 20, "20x20"))
 
     scores := new ScoresButton(w/2-400, 500, 800, button_height)
-    scores->y_padding = (button_height - scores->style.font_size) / 2
-    debug scores->x, scores->y
+    *scores += ui::Button::DEFAULT_STYLE.valign_middle().border_all();
     size_button_container.pack_start(scores)
-    debug scores->x, scores->y
 
     make_field()
 
