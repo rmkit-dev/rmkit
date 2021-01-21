@@ -117,7 +117,7 @@ public:
     // Shortcuts
     Stylesheet & text_style(const Style & src)
     {
-        return font_size(src).justify(src).underline(src);
+        return font_size(src).underline(src);
     }
     Stylesheet & alignment(const Style & src)
     {
