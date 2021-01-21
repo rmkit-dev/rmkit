@@ -57,70 +57,72 @@ public:
     Style build() const { return from(Style()); }
 
     // Merging
-    Stylesheet & merge(const Stylesheet & other)
+    Stylesheet merge(const Stylesheet & other)
+    {
+        return Stylesheet(*this) += other;
+    }
+    Stylesheet & operator+=(const Stylesheet & other)
     {
         styles.insert(styles.end(), other.styles.begin(), other.styles.end());
         return *this;
     }
-    Stylesheet & operator+=(const Stylesheet & other)
-    {
-        return merge(other);
-    }
-    Stylesheet operator+(const Stylesheet & other) { return Stylesheet(*this).merge(other);
+    Stylesheet operator+(const Stylesheet & other) {
+        return Stylesheet(*this) += other;
     }
 
     // Generic builders
     template<typename T>
-    inline Stylesheet & set(T Style::*field, T val)
+    inline Stylesheet set(T Style::*field, T val)
     {
-        styles.push_back([=](Style *s) { s->*field = val; });
-        return *this;
+        Stylesheet ret = *this;
+        ret.styles.push_back([=](Style *s) { s->*field = val; });
+        return ret;
     }
 
     template<typename T, typename V>
-    inline Stylesheet & copy(V T::*field, const T & src)
+    inline Stylesheet copy(V T::*field, const T & src)
     {
         return set(field, src.*field);
     }
 
     // Specific builders
-    Stylesheet & font_size(short val) { return set(&Style::font_size, val); }
-    Stylesheet & font_size(const Style & src) { return copy(&Style::font_size, src); }
+    Stylesheet font_size(short val) { return set(&Style::font_size, val); }
+    Stylesheet font_size(const Style & src) { return copy(&Style::font_size, src); }
 
-    Stylesheet & underline(bool val=true) { return set(&Style::underline, val); }
-    Stylesheet & underline(const Style & src) { return copy(&Style::underline, src); }
+    Stylesheet underline(bool val=true) { return set(&Style::underline, val); }
+    Stylesheet underline(const Style & src) { return copy(&Style::underline, src); }
 
-    Stylesheet & justify(Style::JUSTIFY val) { return set(&Style::justify, val); }
-    Stylesheet & justify(const Style & src) { return copy(&Style::justify, src); }
-    Stylesheet & justify_left()   { return justify(Style::JUSTIFY::LEFT); }
-    Stylesheet & justify_center() { return justify(Style::JUSTIFY::CENTER); }
-    Stylesheet & justify_right()  { return justify(Style::JUSTIFY::RIGHT); }
+    Stylesheet justify(Style::JUSTIFY val) { return set(&Style::justify, val); }
+    Stylesheet justify(const Style & src) { return copy(&Style::justify, src); }
+    Stylesheet justify_left()   { return justify(Style::JUSTIFY::LEFT); }
+    Stylesheet justify_center() { return justify(Style::JUSTIFY::CENTER); }
+    Stylesheet justify_right()  { return justify(Style::JUSTIFY::RIGHT); }
 
-    Stylesheet & valign(Style::VALIGN val) { return set(&Style::valign, val); }
-    Stylesheet & valign(const Style & src) { return copy(&Style::valign, src); }
-    Stylesheet & valign_top()    { return valign(Style::VALIGN::TOP); }
-    Stylesheet & valign_middle() { return valign(Style::VALIGN::MIDDLE); }
-    Stylesheet & valign_bottom() { return valign(Style::VALIGN::BOTTOM); }
+    Stylesheet valign(Style::VALIGN val) { return set(&Style::valign, val); }
+    Stylesheet valign(const Style & src) { return copy(&Style::valign, src); }
+    Stylesheet valign_top()    { return valign(Style::VALIGN::TOP); }
+    Stylesheet valign_middle() { return valign(Style::VALIGN::MIDDLE); }
+    Stylesheet valign_bottom() { return valign(Style::VALIGN::BOTTOM); }
 
-    Stylesheet & border_top(bool val=true) { return set(&Style::border_top, val); }
-    Stylesheet & border_left(bool val=true) { return set(&Style::border_left, val); }
-    Stylesheet & border_bottom(bool val=true) { return set(&Style::border_bottom, val); }
-    Stylesheet & border_right(bool val=true) { return set(&Style::border_right, val); }
-    Stylesheet & border_top(const Style & src) { return copy(&Style::border_top, src); }
-    Stylesheet & border_left(const Style & src) { return copy(&Style::border_left, src); }
-    Stylesheet & border_bottom(const Style & src) { return copy(&Style::border_bottom, src); }
-    Stylesheet & border_right(const Style & src) { return copy(&Style::border_right, src); }
+    Stylesheet border_top(bool val=true) { return set(&Style::border_top, val); }
+    Stylesheet border_left(bool val=true) { return set(&Style::border_left, val); }
+    Stylesheet border_bottom(bool val=true) { return set(&Style::border_bottom, val); }
+    Stylesheet border_right(bool val=true) { return set(&Style::border_right, val); }
+    Stylesheet border_top(const Style & src) { return copy(&Style::border_top, src); }
+    Stylesheet border_left(const Style & src) { return copy(&Style::border_left, src); }
+    Stylesheet border_bottom(const Style & src) { return copy(&Style::border_bottom, src); }
+    Stylesheet border_right(const Style & src) { return copy(&Style::border_right, src); }
 
-    Stylesheet & border_all(bool val=true) { return border_top(val).border_left(val).border_bottom(val).border_right(val); }
-    Stylesheet & border_none() { return border_all(false); }
-    Stylesheet & border(const Style & src) { return border_top(src).border_left(src).border_bottom(src).border_right(src); }
+    Stylesheet border_all(bool val=true) { return border_top(val).border_left(val).border_bottom(val).border_right(val); }
+    Stylesheet border_none() { return border_all(false); }
+    Stylesheet border(const Style & src) { return border_top(src).border_left(src).border_bottom(src).border_right(src); }
 
     // Shortcuts
-    Stylesheet & text_style(const Style & src)
+    Stylesheet text_style(const Style & src)
     {
         return font_size(src).underline(src);
     }
-    Stylesheet & alignment(const Style & src)
+    Stylesheet alignment(const Style & src)
     {
         return justify(src).valign(src);
     }
@@ -135,6 +137,8 @@ private:
     Stylesheet sheet;
 public:
     InheritedStylesheet(const Style & src) : src(src) {}
+    InheritedStylesheet(const Style & src, const Stylesheet & sheet)
+        : src(src), sheet(sheet) {}
     // Conversion back to Stylesheet
     inline Stylesheet stylesheet() { return sheet; }
     inline const Stylesheet stylesheet() const { return sheet; }
@@ -144,18 +148,23 @@ public:
     inline void apply(Style *s) const { sheet.apply(s); }
     inline void apply(Style &s) const { sheet.apply(&s); }
 
+    inline InheritedStylesheet _inherit(Stylesheet (Stylesheet::*fn)(const Style &))
+    {
+        return InheritedStylesheet(src, (sheet.*fn)(src));
+    }
+
     // Builders
-    InheritedStylesheet & font_size() { sheet.font_size(src); return *this; }
-    InheritedStylesheet & underline() { sheet.underline(src); return *this; }
-    InheritedStylesheet & justify() { sheet.justify(src); return *this; }
-    InheritedStylesheet & valign() { sheet.justify(src); return *this; }
-    InheritedStylesheet & border() { sheet.border(src); return *this; }
-    InheritedStylesheet & border_top() { sheet.border_top(src); return *this; }
-    InheritedStylesheet & border_left() { sheet.border_left(src); return *this; }
-    InheritedStylesheet & border_bottom() { sheet.border_bottom(src); return *this; }
-    InheritedStylesheet & border_right() { sheet.border_right(src); return *this; }
-    InheritedStylesheet & text_style() { sheet.text_style(src); return *this; }
-    InheritedStylesheet & alignment() { sheet.alignment(src); return *this; }
+    InheritedStylesheet font_size() { return _inherit(&Stylesheet::font_size); }
+    InheritedStylesheet underline() { return _inherit(&Stylesheet::underline); }
+    InheritedStylesheet justify() { return _inherit(&Stylesheet::justify); }
+    InheritedStylesheet valign() { return _inherit(&Stylesheet::valign); }
+    InheritedStylesheet border() { return _inherit(&Stylesheet::border); }
+    InheritedStylesheet border_top() { return _inherit(&Stylesheet::border_top); }
+    InheritedStylesheet border_left() { return _inherit(&Stylesheet::border_left); }
+    InheritedStylesheet border_bottom() { return _inherit(&Stylesheet::border_bottom); }
+    InheritedStylesheet border_right() { return _inherit(&Stylesheet::border_right); }
+    InheritedStylesheet text_style() { return _inherit(&Stylesheet::text_style); }
+    InheritedStylesheet alignment() { return _inherit(&Stylesheet::alignment); }
 };
 
 InheritedStylesheet Style::inherit() const
