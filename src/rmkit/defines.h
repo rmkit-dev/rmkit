@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 #include "ui/icons.h"
+#include "color.h"
 
 // #define PERF_BUILD
 
@@ -21,9 +22,6 @@
 #endif
 
 // {{{ CANVAS RELATED DEFINES
-#define WHITE remarkable_color(0x000FFFFF)
-#define GRAY remarkable_color(0x4444)
-#define BLACK remarkable_color(0)
 #define ERASER_STYLUS -10
 #define ERASER_RUBBER -11
 #define MAX_PRESSURE 4096.0
@@ -48,17 +46,8 @@
 
 // {{{ VARIABLE SIZE DEFINES
 #ifdef REMARKABLE
-// remarkable uses rgb565_le but is grayscale
-  #ifdef USE_GRAYSCALE_8BIT
-    #define remarkable_color uint8_t
-  #else
-    #define remarkable_color uint16_t
-  #endif
-
   #define pointer_size uint32_t
 #else
-  // on linux framebuffer we have 32bit colors
-  #define remarkable_color uint32_t
   #define pointer_size uint64_t
 #endif
 // }}}
