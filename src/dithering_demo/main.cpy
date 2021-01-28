@@ -71,13 +71,13 @@ class ImageDropdown : public ui::TextDropdown:
 class WaveformDropdown : public ui::TextDropdown:
   public:
   IApp *app
-  vector<pair<string,int>> modes = { \
-     WAVEFORM_PAIR(WAVEFORM_MODE_DU), \
-     WAVEFORM_PAIR(WAVEFORM_MODE_GC16), \
-     WAVEFORM_PAIR(WAVEFORM_MODE_GC4), \
-     WAVEFORM_PAIR(WAVEFORM_MODE_A2), \
-     WAVEFORM_PAIR(WAVEFORM_MODE_DU4), \
-     WAVEFORM_PAIR(WAVEFORM_MODE_AUTO) \
+  vector<pair<string,int>> modes = %{
+     WAVEFORM_PAIR(WAVEFORM_MODE_DU),
+     WAVEFORM_PAIR(WAVEFORM_MODE_GC16),
+     WAVEFORM_PAIR(WAVEFORM_MODE_GC4),
+     WAVEFORM_PAIR(WAVEFORM_MODE_A2),
+     WAVEFORM_PAIR(WAVEFORM_MODE_DU4),
+     WAVEFORM_PAIR(WAVEFORM_MODE_AUTO)
   }
 
   WaveformDropdown(int x, y, w, h, IApp *app) \
@@ -101,12 +101,12 @@ class WaveformDropdown : public ui::TextDropdown:
 class DitheringDropdown : public ui::TextDropdown:
   public:
   IApp *app
-  vector<pair<string,framebuffer::DITHER::MODE>> modes = { \
-     DITHER_PAIR(NONE), \
-     DITHER_PAIR(BAYER_2), \
-     DITHER_PAIR(BAYER_16), \
-     DITHER_PAIR(BLUE_NOISE_2), \
-     DITHER_PAIR(BLUE_NOISE_16), \
+  vector<pair<string,framebuffer::DITHER::MODE>> modes = %{
+     DITHER_PAIR(NONE),
+     DITHER_PAIR(BAYER_2),
+     DITHER_PAIR(BAYER_16),
+     DITHER_PAIR(BLUE_NOISE_2),
+     DITHER_PAIR(BLUE_NOISE_16),
   }
 
   DitheringDropdown(int x, y, w, h, IApp *app) \
@@ -149,7 +149,6 @@ class App : public IApp:
     fb := framebuffer::get()
     fb->clear_screen()
     fb->redraw_screen()
-    int w, h
     w, h = fb->get_display_size()
 
     // toolbar
