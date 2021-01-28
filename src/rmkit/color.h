@@ -47,24 +47,25 @@ constexpr float to_float(remarkable_color c)
 }
 
 // 16-gray palette (BLACK, WHITE, and 14 shades of gray)
-static const remarkable_color GRAY_6  = gray32(2);
-static const remarkable_color GRAY_13 = gray32(4);
-static const remarkable_color GRAY_20 = gray32(6);
-static const remarkable_color GRAY_27 = gray32(8);
-static const remarkable_color GRAY_33 = gray32(10);
-static const remarkable_color GRAY_40 = gray32(12);
-static const remarkable_color GRAY_47 = gray32(14);
-static const remarkable_color GRAY_53 = gray32(16);
-static const remarkable_color GRAY_60 = gray32(18);
-static const remarkable_color GRAY_67 = gray32(20);
-static const remarkable_color GRAY_73 = gray32(22);
-static const remarkable_color GRAY_80 = gray32(24);
-static const remarkable_color GRAY_87 = gray32(26);
-static const remarkable_color GRAY_93 = gray32(28);
+// 50% is between GRAY_7 and GRAY_8
+static const remarkable_color GRAY_1  = gray32(2);
+static const remarkable_color GRAY_2 = gray32(4);
+static const remarkable_color GRAY_3 = gray32(6);
+static const remarkable_color GRAY_4 = gray32(8);
+static const remarkable_color GRAY_5 = gray32(10);
+static const remarkable_color GRAY_6 = gray32(12);
+static const remarkable_color GRAY_7 = gray32(14);
+static const remarkable_color GRAY_8 = gray32(16);
+static const remarkable_color GRAY_9 = gray32(18);
+static const remarkable_color GRAY_10 = gray32(20);
+static const remarkable_color GRAY_11 = gray32(22);
+static const remarkable_color GRAY_12 = gray32(24);
+static const remarkable_color GRAY_13 = gray32(26);
+static const remarkable_color GRAY_14 = gray32(28);
 
 static const remarkable_color SCALE_16[16] = {
-    BLACK,   GRAY_6,  GRAY_13, GRAY_20, GRAY_27, GRAY_33, GRAY_40, GRAY_47,
-    GRAY_53, GRAY_60, GRAY_67, GRAY_73, GRAY_80, GRAY_87, GRAY_93, WHITE
+    BLACK,   GRAY_1,  GRAY_2, GRAY_3, GRAY_4, GRAY_5, GRAY_6, GRAY_7,
+    GRAY_8, GRAY_9, GRAY_10, GRAY_11, GRAY_12, GRAY_13, GRAY_14, WHITE
 };
 
 // -- Quantization --
@@ -83,7 +84,7 @@ remarkable_color quantize<4>(float c)
 {
     return c <  0.25 ? BLACK
          : c >= 0.75 ? WHITE
-         : c >= 0.5  ? GRAY_67 : GRAY_33;
+         : c >= 0.5  ? GRAY_10 : GRAY_5;
 }
 
 template<>
