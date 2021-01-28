@@ -13,6 +13,7 @@
 #include "../defines.h"
 #include "mxcfb.h"
 #include "stb_text.h"
+#include "dither.h"
 #include "../input/input.h"
 #include "../util/signals.h"
 #include "../util/image.h"
@@ -70,6 +71,7 @@ namespace framebuffer:
     int byte_size = 0, dirty = 0
     int update_marker = 1
     int waveform_mode = WAVEFORM_MODE_DU
+    DITHER::MODE dither = DITHER::NONE
 
     RESIZE_EVENT resize
 
@@ -149,6 +151,12 @@ namespace framebuffer:
     virtual void set_screen_depth(int d):
       return
 
+    inline void _set_pixel(remarkable_color *dst, int x, int y, remarkable_color c):
+      *dst = self.dither(x, y, c);
+
+    inline void _set_pixel(int x, int y, remarkable_color c):
+      self._set_pixel(&self.fbmem[y*width+x], x, y, c)
+
     tuple<int,int> get_size():
       #ifdef DEV
       width = DISPLAYWIDTH
@@ -196,27 +204,27 @@ namespace framebuffer:
       switch color:
         case GRAY:
           if (i + j) % 2 == 0:
-            ptr[i+j*self.width] = WHITE
+            self._set_pixel(i, j, WHITE)
           else:
-            ptr[i+j*self.width] = BLACK
+            self._set_pixel(i, j, BLACK)
           break
         case ERASER_RUBBER:
           if (i + j) % 2 == 0 || (i + j) % 3 == 0:
-            ptr[i+j*self.width] = WHITE
+            self._set_pixel(i, j, WHITE)
           else:
-            ptr[i+j*self.width] = BLACK
+            self._set_pixel(i, j, BLACK)
           break
         case ERASER_STYLUS:
           if ptr[i+j*self.width] != WHITE:
             if (i + j) % 2 == 0 || (i + j) % 3 == 0:
-              ptr[i+j*self.width] = WHITE
+              self._set_pixel(i, j, WHITE)
           break
         default:
           if dither != 1.0:
             if fast_rand() / float(2 << 15) < dither:
-              ptr[i + j*self.width] = color
+              self._set_pixel(i, j, color)
           else:
-              ptr[i + j*self.width] = color
+              self._set_pixel(i, j, color)
 
     // function: draw_pixel
     // draw a pixel at the x,y position
@@ -224,8 +232,7 @@ namespace framebuffer:
     //
     // color must be one of BLACK or WHITE
     inline void draw_pixel(int x, y, color):
-      ptr := self.fbmem
-      ptr[y * self.width + x] = color
+      self._set_pixel(x, y, color)
       update_dirty(dirty_area, x, y)
 
     // function: draw_rect
@@ -242,15 +249,12 @@ namespace framebuffer:
     // note that dithering does not work with GRAY, RUBBER or ERASER
     inline void draw_rect(int o_x, o_y, w, h, color, fill=true, float dither=1.0):
       self.dirty = 1
-      remarkable_color* ptr = self.fbmem
       #ifdef DEBUG_FB
       fprintf(stderr, "DRAWING RECT X: %i Y: %i W: %i H: %i, COLOR: %i\n", o_x, o_y, w, h, color)
       #endif
 
       if o_y >= self.height || o_x >= self.width || o_y < 0 || o_x < 0:
         return
-
-      ptr += (o_x + o_y * self.width)
 
       update_dirty(dirty_area, o_x, o_y)
       update_dirty(dirty_area, o_x+w, o_y+h)
@@ -314,12 +318,13 @@ namespace framebuffer:
 
           if src[i] != alpha:
             if image.channels >= 3:
-              ptr[i] = to_rgb565((char *) src, i*image.channels)
+              self._set_pixel(&ptr[i], i, j, to_rgb565((char *) src, i*image.channels))
             else if image.channels == 1:
               grayscale_to_rgb32(src[i], src_val)
-              ptr[i] = (remarkable_color) to_rgb565(src_val, 0)
+              self._set_pixel(&ptr[i], i, j, to_rgb565(src_val, 0))
             else:
-              ptr[i] = (remarkable_color) src[i]
+              self._set_pixel(&ptr[i], i, j, src[i])
+
         ptr += self.width
         src += image.w
 
