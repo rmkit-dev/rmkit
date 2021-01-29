@@ -41,9 +41,9 @@ constexpr remarkable_color from_float(float n)
 constexpr float to_float(remarkable_color c)
 {
     // 0.21 R + 0.72 G + 0.07 B
-    return ((c >> 11) & 30) * (0.21 / 30)  // red
-         + ((c >> 5)  & 60) * (0.72 / 60)  // green
-         + (c         & 30) * (0.07 / 30); // blue
+    return ((c >> 11) & 31) * (0.21 / 31)  // red
+         + ((c >> 5)  & 63) * (0.72 / 63)  // green
+         + (c         & 31) * (0.07 / 31); // blue
 }
 
 // 16-gray palette (BLACK, WHITE, and 14 shades of gray)
