@@ -51,12 +51,22 @@ class App:
 
     ;
 
-    btn := new ui::Button(0, 250, 100, 50, "Show Pager")
+    btn := new ui::Button(0, 250, 200, 50, "Show Pager")
     btn->mouse.click += [=](input::SynMotionEvent &ev):
       pager->show()
     ;
 
     h_layout.pack_center(btn)
+
+    text_dropdown := new ui::TextDropdown(0, h-200, 200, 50, "Options")
+    text_dropdown->dir = ui::TextDropdown::DIRECTION::UP
+    ds := text_dropdown->add_section("options")
+    ds->add_options({"foo", "bar", "baz"})
+
+    text_dropdown->events.selected += PLS_LAMBDA(int idx):
+      debug "SELECTED", idx, text_dropdown->options[idx]->name
+    ;
+    h_layout.pack_center(text_dropdown)
 
   def handle_key_event(input::SynKeyEvent &key_ev):
     debug "KEY PRESSED", key_ev.key

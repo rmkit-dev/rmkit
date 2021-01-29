@@ -82,8 +82,19 @@ namespace ui:
     vector<shared_ptr<DropdownSection>> sections;
     ui::Scene scene = NULL
 
-    DropdownButton(int x, y, w, h, vector<shared_ptr<IOption>> options, string name):\
+    PLS_DEFINE_SIGNAL(DROPDOWN_EVENT, int)
+    class DROPDOWN_EVENTS:
+      public:
+      DROPDOWN_EVENT selected
+    ;
+    DROPDOWN_EVENTS events
+
+    DropdownButton(int x, int y, int w, int h,
+       vector<shared_ptr<IOption>> options, string name=""): \
                    options(options), ui::Button(x,y,w,h,name):
+      // install signal handlers first
+      self.events.selected += PLS_DELEGATE(self.on_select)
+
       self.select(0)
 
       self.set_option_offset(0, 0)
@@ -151,7 +162,7 @@ namespace ui:
         self.icon = option->icon
         self.text = option->name
 
-        self.on_select(idx)
+        self.events.selected(idx)
 
     virtual void on_select(int idx):
       pass
