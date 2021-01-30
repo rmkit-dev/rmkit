@@ -23,9 +23,9 @@ class App:
     h_layout2 := ui::HorizontalLayout(0, 0, w, 50, demo_scene)
     h_layout3 := ui::HorizontalLayout(0, 0, w, 50, demo_scene)
 
-    v_layout.pack_start(h_layout1)
-    v_layout.pack_start(h_layout2)
-    v_layout.pack_start(h_layout3)
+    v_layout.pack_start(h_layout1, 30)
+    v_layout.pack_start(h_layout2, 30)
+    v_layout.pack_start(h_layout3, 30)
 
     h_layout1.pack_start(new ui::Text(0, 0, 200, 50, "Héllo world"))
     h_layout2.pack_center(new ui::Text(0, 0, 200, 50, "Hello world"))
