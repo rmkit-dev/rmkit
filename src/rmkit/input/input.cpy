@@ -173,6 +173,10 @@ namespace input:
 
       rdfs_cp = rdfs
 
+      #ifdef DEV
+      timeout_ms = 1000
+      #endif
+
       if timeout_ms > 0:
           struct timeval tv = {timeout_ms / 1000, (timeout_ms % 1000) * 1000}
           retval = select(max_fd, &rdfs_cp, NULL, NULL, &tv)

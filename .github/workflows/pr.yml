@@ -14,4 +14,10 @@ jobs:
 
       - name: "Build artifacts"
         run: |
-          make docker
+          make docker_test
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: test output
+          path: artifacts/
+

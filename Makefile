@@ -69,6 +69,10 @@ docker:
 	docker build --tag rmkit:latest .
 	bash scripts/build/docker_release.sh
 
+docker_test:
+	docker build --tag rmkit:latest .
+	bash scripts/build/docker_test.sh
+
 docker_install: docker
 	echo "Not implemented yet"
 
