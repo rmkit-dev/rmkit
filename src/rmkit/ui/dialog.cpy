@@ -63,9 +63,10 @@ namespace ui:
     // the dialog's scene.
     virtual void build_dialog() = 0;
 
-    // function: update_dialog
-    // override update_dialog to update widgets before the overlay is shown
-    virtual void update_dialog():
+    // function: before_show
+    // override before_show to update widgets before the overlay is shown (but
+    // after build_dialog)
+    virtual void before_show():
       pass
 
     virtual void render():
@@ -75,7 +76,7 @@ namespace ui:
     void show():
       if self.scene == NULL:
          self.build_dialog()
-      self.update_dialog()
+      self.before_show()
       MainLoop::show_overlay(self.scene)
 
   // class: ui::Dialog
