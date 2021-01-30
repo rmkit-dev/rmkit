@@ -21,9 +21,67 @@ namespace ui:
     void on_mouse_click(input::SynMotionEvent&):
       self.dialog->on_button_selected(self.text)
 
+  // class: ui::DialogBase
+  // --- Prototype ---
+  // class ui::DialogBase: public ui::Widget:
+  // -----------------
+  // All dialogs inherit from DialogBase, which handles basic overlay
+  // functions, like managing an overlay Scene, drawing a background,
+  // positioning, and events.
+  class DialogBase: public Widget:
+    public:
+    Scene scene
+    ui::InnerScene::DIALOG_VIS_EVENT on_hide
+
+    DialogBase(int x, y, w, h): Widget(x,y,w,h):
+      pass
+
+    bool ignore_event(input::SynMotionEvent&):
+      return true
+
+    virtual Scene create_scene():
+      self.scene = ui::make_scene()
+      self.scene->on_hide = self.on_hide
+      self.scene->add(self)
+      self->position_dialog()
+      return self.scene
+
+    // function: position_dialog
+    // override position_dialog if you want to control where the dialog is
+    // placed on the page. by default, the dialog will be centered
+    virtual void position_dialog():
+      self.restore_coords()
+      width, height = self.fb->get_display_size()
+      v_layout := ui::VerticalLayout(0, 0, width, height, self.scene)
+      v_layout.pack_center(self)
+      h_layout := ui::HorizontalLayout(0, 0, width, height, self.scene)
+      h_layout.pack_center(self)
+
+    // function: build_dialog
+    // override build_dialog to add widgets to the dialog's scene.
+    // build_dialog overrides should typically call create_scene() to set up
+    // the dialog's scene.
+    virtual void build_dialog() = 0;
+
+    // function: before_show
+    // override before_show to update widgets before the overlay is shown (but
+    // after build_dialog)
+    virtual void before_show():
+      pass
+
+    virtual void render():
+      self.fb->draw_rect(self.x, self.y, self.w, self.h, WHITE, true)
+      self.fb->draw_rect(self.x, self.y, self.w, self.h, BLACK, false)
+
+    void show():
+      if self.scene == NULL:
+         self.build_dialog()
+      self.before_show()
+      MainLoop::show_overlay(self.scene)
+
   // class: ui::Dialog
   // --- Prototype ---
-  // class ui::Dialog: public ui::Widget, public ui::IDialog:
+  // class ui::Dialog: public ui::DialogBase, public ui::IDialog:
   // -----------------
   // A dialog is used to display a frame on the screen.  The normal way to use
   // a dialog is to instantiate it, then set its title and content widget
@@ -39,16 +97,14 @@ namespace ui:
   //
   // When these buttons are clicked, the on_button_selected callback in the
   // Dialog will be called
-  class Dialog: public Widget, public IDialog:
+  class Dialog: public DialogBase, public IDialog:
     public:
     string title = "", content = ""
     MultiText *titleWidget
     Widget *contentWidget
-    Scene scene
     vector<string> buttons
-    ui::InnerScene::DIALOG_VIS_EVENT on_hide
 
-    Dialog(int x, y, w, h): Widget(x,y,w,h):
+    Dialog(int x, y, w, h): DialogBase(x,y,w,h):
       self.buttons = { "OK", "CANCEL" }
       self.titleWidget = new MultiText(20, 20, self.w, 50, self.title)
       self.contentWidget = new MultiText(20, 20, self.w, self.h - 100, self.content)
@@ -56,11 +112,7 @@ namespace ui:
     // this function actually builds the dialog scene and necessary widgets /
     // and packings for the modal overlay
     void build_dialog():
-      self.scene = ui::make_scene()
-      self.scene->on_hide = self.on_hide
-      self.scene->add(self)
-
-      self.position_dialog()
+      self.create_scene()
 
       width, height = self.fb->get_display_size()
       a_layout := ui::VerticalLayout(self.x, self.y, self.w, self.h, self.scene)
@@ -72,21 +124,6 @@ namespace ui:
       button_bar->y -= 2
 
       self.add_buttons(button_bar)
-
-    // function: position_dialog
-    // override position_dialog if you want to control where the dialog is
-    // placed on the page. by default, the dialog will be centered
-    virtual void position_dialog():
-      self.restore_coords()
-      width, height = self.fb->get_display_size()
-      v_layout := ui::VerticalLayout(0, 0, width, height, self.scene)
-      v_layout.pack_center(self)
-
-      h_layout := ui::HorizontalLayout(0, 0, width, height, self.scene)
-      h_layout.pack_center(self)
-
-    bool ignore_event(input::SynMotionEvent&):
-      return true
 
     virtual void add_buttons(HorizontalLayout *button_bar):
       default_fs := ui::Style::DEFAULT.font_size
@@ -100,18 +137,8 @@ namespace ui:
     virtual void on_button_selected(string s):
       pass
 
-    void render():
-      self.fb->draw_rect(self.x, self.y, self.w, self.h, WHITE, true)
-      self.fb->draw_rect(self.x, self.y, self.w, self.h, BLACK, false)
-
     void set_title(string s):
       self.titleWidget->text = s
-
-    void show():
-      if self.scene == NULL:
-        self.build_dialog()
-
-      MainLoop::show_overlay(self.scene)
 
   class ConfirmationDialog: public Dialog:
     public:
