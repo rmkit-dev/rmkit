@@ -28,21 +28,25 @@ static const float BLUE_NOISE_MATRIX_16[32][32] = {{ 0.005338541666666667,-0.019
 
 inline remarkable_color BAYER_2(int x, int y, remarkable_color c)
 {
+    if (c == WHITE || c == BLACK) return c;
     return color::quantize<2>(color::to_float(c) + BAYER_MATRIX_2[x%32][y%32]);
 }
 
 inline remarkable_color BAYER_16(int x, int y, remarkable_color c)
 {
+    if (c == WHITE || c == BLACK) return c;
     return color::quantize<16>(color::to_float(c) + BAYER_MATRIX_16[x%32][y%32]);
 }
 
 inline remarkable_color BLUE_NOISE_2(int x, int y, remarkable_color c)
 {
+    if (c == WHITE || c == BLACK) return c;
     return color::quantize<2>(color::to_float(c) + BLUE_NOISE_MATRIX_2[x%32][y%32]);
 }
 
 inline remarkable_color BLUE_NOISE_16(int x, int y, remarkable_color c)
 {
+    if (c == WHITE || c == BLACK) return c;
     return color::quantize<16>(color::to_float(c) + BLUE_NOISE_MATRIX_16[x%32][y%32]);
 }
 
