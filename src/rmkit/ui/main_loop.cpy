@@ -137,7 +137,7 @@ namespace ui:
       for auto ev: ui::MainLoop::in.touch.events:
         for auto g : gestures:
           lifted := false
-          for int s = 0; s <= ev.slot; s++:
+          for int s = 0; s < input::TouchEvent::MAX_SLOTS; s++:
             if ev.slots[s].left == 0:
               lifted = true
               break

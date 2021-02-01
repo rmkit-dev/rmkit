@@ -89,12 +89,16 @@ namespace input:
     public:
     int x=-1, y=-1
     int slot = 0, left = -1
+    int fingers = 0
+    bool is_multitouch = false
+    static int MAX_SLOTS
     struct Point:
       int x=-1, y=-1, left=-1
     ;
+
     vector<Point> slots;
     TouchEvent():
-      slots.resize(10)
+      slots.resize(MAX_SLOTS)
 
     TouchEvent(const TouchEvent &t):
       self.slot = t.slot
@@ -102,7 +106,6 @@ namespace input:
       self.x = t.x
       self.y = t.y
       self.left = t.left
-
 
     handle_abs(input_event data):
       switch data.code:
@@ -130,7 +133,6 @@ namespace input:
             slots[slot].left = self.left = data.value > -1
           break
 
-
     def marshal(TouchEvent &prev):
       SynMotionEvent syn_ev;
 
@@ -140,6 +142,26 @@ namespace input:
         self.y = prev.y
       if self.left == -1:
         self.left = prev.left
+
+      self.fingers = 0
+      // merge slots from previous mt into this one
+      for i := 0; i < MAX_SLOTS; i++:
+        if prev.slots[i].left == 1:
+          if slots[i].x == -1:
+            slots[i].x = prev.slots[i].x
+          if slots[i].y == -1:
+            slots[i].y = prev.slots[i].y
+          if slots[i].left == -1:
+            slots[i].left = prev.slots[i].left
+
+        if slots[i].left == 1:
+          self.fingers++
+
+      if self.fingers > 1 or prev.is_multitouch:
+        self.is_multitouch = true
+
+      if self.fingers == 0:
+        self.is_multitouch = false
 
       syn_ev.left = self.left
       syn_ev.x = self.x
@@ -154,6 +176,8 @@ namespace input:
       switch data.type:
         case 3:
           self.handle_abs(data)
+
+  int TouchEvent::MAX_SLOTS = 10
 
   class MouseEvent: public Event:
     public:

@@ -198,6 +198,9 @@ namespace input:
       handle_event(ev)
 
     void handle_event(input::TouchEvent &ev):
+      if abs(ev.y - start.y) > 10 or abs(ev.x - start.x) > 10:
+        self.valid = false
+
       if ev.slot >= self.fingers:
         self.valid = false
       else:
@@ -208,6 +211,9 @@ namespace input:
 
 
     bool filter(input::TouchEvent &ev):
+      if ev.y == -1 or ev.x == -1:
+        return false
+
       if ev.slot + 1 < self.fingers:
         return false
 

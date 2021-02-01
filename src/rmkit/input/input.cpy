@@ -34,7 +34,8 @@ namespace input:
     clear():
       self.events.clear()
 
-    def marshal(T ev):
+    // marshal can update the event
+    def marshal(T &ev):
       EV syn_ev = ev.marshal(prev_ev)
       prev_ev = ev
       return syn_ev
@@ -216,16 +217,16 @@ namespace input:
         if FD_ISSET(input::ipc_fd[0], &rdfs_cp):
           self.handle_ipc()
 
-      for auto ev : self.wacom.events:
+      for auto &ev : self.wacom.events:
         self.all_motion_events.push_back(self.wacom.marshal(ev))
 
-      for auto ev : self.mouse.events:
+      for auto &ev : self.mouse.events:
         self.all_motion_events.push_back(self.mouse.marshal(ev))
 
-      for auto ev : self.touch.events:
+      for auto &ev : self.touch.events:
         self.all_motion_events.push_back(self.touch.marshal(ev))
 
-      for auto ev : self.button.events:
+      for auto &ev : self.button.events:
         self.all_key_events.push_back(self.button.marshal(ev))
 
       #ifdef DEBUG_INPUT_EVENT
