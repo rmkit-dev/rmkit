@@ -89,7 +89,7 @@ namespace ui:
     void render():
       cur_x := 0
       cur_y := 0
-      lines := split(self.text, '\n')
+      lines := split_lines(self.text)
       font_size := self.style.font_size
       line_height := stbtext::get_line_height(font_size) * self.style.line_height
       for auto line: lines:
@@ -116,7 +116,7 @@ namespace ui:
       cur_y := 0
       ret_w := 0
       ret_h := 0
-      lines := split(self.text, '\n')
+      lines := split_lines(self.text)
       font_size := self.style.font_size
       line_height := stbtext::get_line_height(font_size) * self.style.line_height
       for auto line: lines:
