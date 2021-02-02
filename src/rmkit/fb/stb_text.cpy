@@ -42,6 +42,13 @@ namespace stbtext:
         uint32_t val = bitmap.buffer[q * bitmap.w + p];
         image.buffer[j*image.w+i] = val == 0 ? WHITE: BLACK;
 
+  int get_line_height(int font_size=FONT_SIZE):
+    setup_font()
+    float scale = stbtt_ScaleForPixelHeight(&font, font_size)
+    int ascent, descent, lineGap
+    stbtt_GetFontVMetrics(&font, &ascent, &descent, &lineGap)
+    return scale * (ascent - descent + lineGap) + 0.5;
+
   image_data get_text_size(std::string &text, int font_size=FONT_SIZE):
     int i,j,ascent,baseline;
     int ch=0;

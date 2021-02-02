@@ -91,26 +91,25 @@ namespace ui:
       cur_y := 0
       lines := split(self.text, '\n')
       font_size := self.style.font_size
+      line_height := stbtext::get_line_height(font_size) * self.style.line_height
       for auto line: lines:
         cur_x = 0
         tokens := split(line, ' ')
-        int max_h = 0
         for auto w: tokens:
           w += " "
           image := stbtext::get_text_size(w, font_size)
           image.buffer = (uint32_t*) malloc(sizeof(uint32_t) * image.w * image.h)
-          max_h = max(image.h, max_h)
           memset(image.buffer, WHITE, sizeof(uint32_t) * image.w * image.h)
           if cur_x + image.w + 10 >= self.w:
             cur_x = 0
-            cur_y += max_h
+            cur_y += line_height
           self.fb->draw_text(w, self.x + cur_x, self.y + cur_y, image, font_size)
           if self.style.underline:
             self.fb->draw_line(self.x+cur_x, self.y+cur_y+font_size, self.x+cur_x+image.w,
                                self.y + cur_y+font_size, 1, BLACK)
           free(image.buffer)
           cur_x += image.w
-        cur_y += max_h
+        cur_y += line_height
 
     tuple<int, int> get_render_size():
       cur_x := 0
@@ -118,19 +117,19 @@ namespace ui:
       ret_w := 0
       ret_h := 0
       lines := split(self.text, '\n')
+      font_size := self.style.font_size
+      line_height := stbtext::get_line_height(font_size) * self.style.line_height
       for auto line: lines:
         cur_x = 0
         tokens := split(line, ' ')
-        int max_h = 0
         for auto w: tokens:
           w += " "
-          image := stbtext::get_text_size(w, self.style.font_size)
-          max_h = max(image.h, max_h)
+          image := stbtext::get_text_size(w, font_size)
           if cur_x + image.w + 10 >= self.w:
             cur_x = 0
-            cur_y += max_h
+            cur_y += line_height
           cur_x += image.w
-        cur_y += max_h
+        cur_y += line_height
 
         ret_h = max(ret_h, cur_y)
         ret_w = max(ret_w, cur_y)
