@@ -36,9 +36,10 @@ namespace input:
 
     // marshal can update the event
     def marshal(T &ev):
-      EV syn_ev = ev.marshal(prev_ev)
+      ev.merge(prev_ev)
       prev_ev = ev
-      return syn_ev
+
+      return ev.marshal()
 
     void handle_event_fd():
       int bytes = read(fd, ev_data, sizeof(input_event) * 64);

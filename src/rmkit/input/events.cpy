@@ -78,7 +78,10 @@ namespace input:
 
       self.print_event(data)
 
-    def marshal(ButtonEvent &prev):
+    def merge(ButtonEvent &prev):
+      pass
+
+    def marshal():
       SynKeyEvent key_ev
       key_ev.key = self.key
       key_ev.is_pressed = self.is_pressed
@@ -133,9 +136,7 @@ namespace input:
             slots[slot].left = self.left = data.value > -1
           break
 
-    def marshal(TouchEvent &prev):
-      SynMotionEvent syn_ev;
-
+    def merge(TouchEvent &prev):
       if self.x == -1:
         self.x = prev.x
       if self.y == -1:
@@ -162,6 +163,9 @@ namespace input:
 
       if self.fingers == 0:
         self.is_multitouch = false
+
+    def marshal():
+      SynMotionEvent syn_ev;
 
       syn_ev.left = self.left
       syn_ev.x = self.x
@@ -198,7 +202,7 @@ namespace input:
     def update(input_event data):
       self.print_event(data)
 
-    def marshal(MouseEvent &prev):
+    def merge(MouseEvent &prev):
       self.x = prev.x + self.dx
       self.y = prev.y + self.dy
 
@@ -213,6 +217,7 @@ namespace input:
       if self.x >= self.width - 1:
         self.x = (int) self.width - 5
 
+    def marshal():
       o_x := self.x
       o_y := self.height - self.y
 
@@ -241,11 +246,8 @@ namespace input:
     int btn_touch = -1
     int eraser = -1
 
-    def marshal(WacomEvent &prev):
-      SynMotionEvent syn_ev;
-      syn_ev.x = self.x
-      syn_ev.y = self.y
 
+    def merge(WacomEvent &prev):
       if self.btn_touch == -1:
         self.btn_touch = prev.btn_touch
       if self.eraser == -1:
@@ -256,6 +258,11 @@ namespace input:
         self.tilt_x = prev.tilt_x
       if self.tilt_y == 0xFFFF:
         self.tilt_y = prev.tilt_y
+
+    def marshal():
+      SynMotionEvent syn_ev;
+      syn_ev.x = self.x
+      syn_ev.y = self.y
 
       syn_ev.pressure = self.pressure
       syn_ev.tilt_x = self.tilt_x
