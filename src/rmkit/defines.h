@@ -102,6 +102,16 @@ std::vector<std::string> split (const std::string &s, char delim) {
   return result;
 }
 
+std::vector<std::string> split_lines(const std::string &s) {
+  std::vector<std::string> result;
+  std::stringstream ss (s);
+  std::string item;
+  while (getline (ss, item)) {
+    result.push_back (item);
+  }
+  return result;
+}
+
 bool ends_with (std::string const &fullString, std::string const &ending) {
     if (fullString.length() >= ending.length()) {
         return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));

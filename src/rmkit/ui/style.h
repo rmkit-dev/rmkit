@@ -15,6 +15,7 @@ struct Style {
     // When adding a new style, make sure to also add builders in Stylesheet
     // and InheritedStylesheet.
     short font_size = DEFAULT.font_size;
+    float line_height = DEFAULT.line_height;
     bool underline = DEFAULT.underline;
     JUSTIFY justify = DEFAULT.justify;
     VALIGN valign = DEFAULT.valign;
@@ -89,6 +90,9 @@ public:
     Stylesheet font_size(short val) { return set(&Style::font_size, val); }
     Stylesheet font_size(const Style & src) { return copy(&Style::font_size, src); }
 
+    Stylesheet line_height(float val) { return set(&Style::line_height, val); }
+    Stylesheet line_height(const Style & src) { return copy(&Style::line_height, src); }
+
     Stylesheet underline(bool val=true) { return set(&Style::underline, val); }
     Stylesheet underline(const Style & src) { return copy(&Style::underline, src); }
 
@@ -120,7 +124,7 @@ public:
     // Shortcuts
     Stylesheet text_style(const Style & src)
     {
-        return font_size(src).underline(src);
+        return font_size(src).line_height(src).underline(src);
     }
     Stylesheet alignment(const Style & src)
     {
@@ -155,6 +159,7 @@ public:
 
     // Builders
     InheritedStylesheet font_size() { return _inherit(&Stylesheet::font_size); }
+    InheritedStylesheet line_height() { return _inherit(&Stylesheet::line_height); }
     InheritedStylesheet underline() { return _inherit(&Stylesheet::underline); }
     InheritedStylesheet justify() { return _inherit(&Stylesheet::justify); }
     InheritedStylesheet valign() { return _inherit(&Stylesheet::valign); }
@@ -174,6 +179,7 @@ InheritedStylesheet Style::inherit() const
 
 Style Style::DEFAULT = Stylesheet()
     .font_size(24)
+    .line_height(1.2)
     .underline(false)
     .justify_center()
     .valign_top()
