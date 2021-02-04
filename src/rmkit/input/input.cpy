@@ -34,11 +34,7 @@ namespace input:
     clear():
       self.events.clear()
 
-    // marshal can update the event
     def marshal(T &ev):
-      // ev.merge(prev_ev)
-      // prev_ev = ev
-
       return ev.marshal()
 
     void handle_event_fd():
