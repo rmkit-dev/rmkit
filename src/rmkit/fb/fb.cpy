@@ -21,6 +21,9 @@
 #include "../../vendor/stb/stb_image.h"
 #include "../../vendor/stb/stb_image_write.h"
 
+#define likely(x)      __builtin_expect(!!(x), 1)
+#define unlikely(x)      __builtin_expect(!!(x), 0)
+
 using namespace std
 
 DEBUG_FB_INFO := getenv("DEBUG_FB_INFO") != NULL
@@ -220,7 +223,7 @@ namespace framebuffer:
               self._set_pixel(i, j, WHITE)
           break
         default:
-          if dither != 1.0:
+          if unlikely(dither != 1.0):
             if fast_rand() / float(2 << 15) < dither:
               self._set_pixel(i, j, color)
           else:
@@ -248,6 +251,18 @@ namespace framebuffer:
     //
     // note that dithering does not work with GRAY, RUBBER or ERASER
     inline void draw_rect(int o_x, o_y, w, h, color, fill=true, float dither=1.0):
+      update_dirty(dirty_area, o_x, o_y)
+      update_dirty(dirty_area, o_x+w, o_y+h)
+
+      if fill:
+        _draw_rect_fast(o_x, o_y, w, h, color, dither)
+      else:
+        _draw_rect_fast(o_x, o_y, w, 1, color, dither)
+        _draw_rect_fast(o_x, o_y+h-1, w, 1, color, dither)
+        _draw_rect_fast(o_x, o_y, 1, h, color, dither)
+        _draw_rect_fast(o_x+w-1, o_y, 1, h, color, dither)
+
+    inline void _draw_rect_fast(int o_x, o_y, w, h, color, float dither=1.0):
       self.dirty = 1
       #ifdef DEBUG_FB
       fprintf(stderr, "DRAWING RECT X: %i Y: %i W: %i H: %i, COLOR: %i\n", o_x, o_y, w, h, color)
@@ -255,9 +270,6 @@ namespace framebuffer:
 
       if o_y >= self.height || o_x >= self.width || o_y < 0 || o_x < 0:
         return
-
-      update_dirty(dirty_area, o_x, o_y)
-      update_dirty(dirty_area, o_x+w, o_y+h)
 
       for j 0 h:
         if j+o_y >= self.height:
@@ -267,8 +279,7 @@ namespace framebuffer:
           if i+o_x >= self.width:
             break
 
-          if fill || (j == 0 || i == 0 || j == h-1 || i == w-1):
-            do_dithering(self.fbmem, i+o_x, j+o_y, color, dither)
+          do_dithering(self.fbmem, i+o_x, j+o_y, color, dither)
 
     inline remarkable_color to_rgb565(char *src, int offset):
         r := src[offset]
@@ -454,15 +465,18 @@ namespace framebuffer:
       int w = stroke
       int h = stroke
 
+      update_dirty(dirty_area, x0-radius, y0-radius)
+      update_dirty(dirty_area, x0+radius, y0+radius)
+
       while(x <= y):
-        self.draw_rect(x+x0, y+y0, w, h, color, true);
-        self.draw_rect(-x+x0, y+y0, w, h, color, true);
-        self.draw_rect(x+x0, -y+y0, w, h, color, true);
-        self.draw_rect(-x+x0, -y+y0, w, h, color, true);
-        self.draw_rect(y+x0, x+y0, w, h, color, true);
-        self.draw_rect(-y+x0, x+y0, w, h, color, true);
-        self.draw_rect(y+x0, -x+y0, w, h, color, true);
-        self.draw_rect(-y+x0, -x+y0, w, h, color, true);
+        _draw_rect_fast(x+x0, y+y0, w, h, color);
+        _draw_rect_fast(-x+x0, y+y0, w, h, color);
+        _draw_rect_fast(x+x0, -y+y0, w, h, color);
+        _draw_rect_fast(-x+x0, -y+y0, w, h, color);
+        _draw_rect_fast(y+x0, x+y0, w, h, color);
+        _draw_rect_fast(-y+x0, x+y0, w, h, color);
+        _draw_rect_fast(y+x0, -x+y0, w, h, color);
+        _draw_rect_fast(-y+x0, -x+y0, w, h, color);
 
         if(d <= 0):
           x++;
@@ -478,7 +492,10 @@ namespace framebuffer:
       w := stroke
       h := stroke
 
-      self.draw_rect(x, y, w, h, color, true);
+      update_dirty(dirty_area, x0-r, y0-r)
+      update_dirty(dirty_area, x0+r, y0+r)
+
+      _draw_rect_fast(x, y, w, h, color);
       d := (3-2*(int)r);
       while (x <= y):
         if (d <= 0):
@@ -488,21 +505,24 @@ namespace framebuffer:
           y--;
         x++;
 
-        self.draw_rect(x+x0, y+y0, w, h, color, true);
-        self.draw_rect(-x+x0, y+y0, w, h, color, true);
-        self.draw_rect(x+x0, -y+y0, w, h, color, true);
-        self.draw_rect(-x+x0, -y+y0, w, h, color, true);
-        self.draw_rect(y+x0, x+y0, w, h, color, true);
-        self.draw_rect(-y+x0, x+y0, w, h, color, true);
-        self.draw_rect(y+x0, -x+y0, w, h, color, true);
+        _draw_rect_fast(x+x0, y+y0, w, h, color);
+        _draw_rect_fast(-x+x0, y+y0, w, h, color);
+        _draw_rect_fast(x+x0, -y+y0, w, h, color);
+        _draw_rect_fast(-x+x0, -y+y0, w, h, color);
+        _draw_rect_fast(y+x0, x+y0, w, h, color);
+        _draw_rect_fast(-y+x0, x+y0, w, h, color);
+        _draw_rect_fast(y+x0, -x+y0, w, h, color);
 
-        self.draw_rect(-y+x0, -x+y0, w, h, color, true);
+        _draw_rect_fast(-y+x0, -x+y0, w, h, color);
 
     def draw_circle_filled(int x0, y0, radius, stroke, color):
+      update_dirty(dirty_area, x0-radius, y0-radius)
+      update_dirty(dirty_area, x0+radius, y0+radius)
+
       for x := -radius; x <= radius; x++:
         for y := -radius; y <= radius; y++:
           if (x*x+y*y) <= radius*radius:
-            self.draw_rect(x+x0, y+y0, stroke, stroke, color, true)
+            _draw_rect_fast(x+x0, y+y0, stroke, stroke, color)
 
     // function: draw_circle
     //
@@ -548,13 +568,17 @@ namespace framebuffer:
       fprintf(stderr, "DRAWING LINE %i %i %i %i\n", x0, y0, x1, y1)
       #endif
       self.dirty = 1
+
+      update_dirty(dirty_area, x0, y0)
+      update_dirty(dirty_area, x1, y1)
+
       dx := abs(x1-x0)
       sx := x0<x1 ? 1 : -1
       dy := -abs(y1-y0)
       sy := y0<y1 ? 1 : -1
       err := dx+dy  /* error value e_xy */
       while (true):   /* loop */
-        self.draw_rect(x0, y0, width, width, color,true,dither)
+        _draw_rect_fast(x0, y0, width, width, color, dither)
         // self.fbmem[y0*self.width + x0] = color
         if (x0==x1 && y0==y1) break;
         e2 := 2*err
