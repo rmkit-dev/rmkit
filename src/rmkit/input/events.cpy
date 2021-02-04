@@ -22,7 +22,10 @@ namespace input:
       #endif
       return
 
-    def finalize():
+    virtual void initialize():
+      pass
+
+    virtual void finalize():
       pass
 
     virtual ~Event() = default
@@ -93,7 +96,7 @@ namespace input:
     int x=-1, y=-1
     int slot = 0, left = -1
     int fingers = 0
-    bool is_multitouch = false
+    bool lifted=false
     static int MAX_SLOTS
     struct Point:
       int x=-1, y=-1, left=-1
@@ -109,6 +112,10 @@ namespace input:
       self.x = t.x
       self.y = t.y
       self.left = t.left
+      self.lifted = t.lifted
+
+    void initialize():
+      self.lifted = false
 
     handle_abs(input_event data):
       switch data.code:
@@ -134,6 +141,9 @@ namespace input:
         case ABS_MT_TRACKING_ID:
           if slot >= 0:
             slots[slot].left = self.left = data.value > -1
+            if self.left == 0:
+              self.lifted = true
+
           break
 
     def merge(TouchEvent &prev):
@@ -155,15 +165,6 @@ namespace input:
           if slots[i].left == -1:
             slots[i].left = prev.slots[i].left
 
-        if slots[i].left == 1:
-          self.fingers++
-
-      if self.fingers > 1 or prev.is_multitouch:
-        self.is_multitouch = true
-
-      if self.fingers == 0:
-        self.is_multitouch = false
-
     def marshal():
       SynMotionEvent syn_ev;
 
@@ -180,6 +181,25 @@ namespace input:
       switch data.type:
         case 3:
           self.handle_abs(data)
+
+    def count_fingers():
+      self.fingers = 0
+      for i := 0; i < MAX_SLOTS; i++:
+        if slots[i].left == 1:
+          self.fingers++
+
+    def is_multitouch():
+      self.count_fingers()
+
+      if self.fingers > 1:
+        return true
+
+      if self.fingers == 0:
+        return false
+
+    void finalize():
+      self.count_fingers()
+
 
   int TouchEvent::MAX_SLOTS = 10
 

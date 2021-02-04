@@ -36,8 +36,8 @@ namespace input:
 
     // marshal can update the event
     def marshal(T &ev):
-      ev.merge(prev_ev)
-      prev_ev = ev
+      // ev.merge(prev_ev)
+      // prev_ev = ev
 
       return ev.marshal()
 
@@ -50,8 +50,9 @@ namespace input:
       // in DEV mode we allow event coalescing between calls to read() for
       // resim normally evdev will do one full event per read() call instead of
       // splitting across multiple read() calls
-      T event
+      T event = prev_ev
       #endif
+      event.initialize()
 
       for int i = 0; i < bytes / sizeof(struct input_event); i++:
 //        debug fd, "READ EVENT", ev_data[i].type, ev_data[i].code, ev_data[i].value
@@ -61,7 +62,8 @@ namespace input:
           #ifdef DEBUG_INPUT_EVENT
           fprintf(stderr, "\n")
           #endif
-          event = {} // clear the event?
+          prev_ev = event
+          event = prev_ev
         else:
           event.update(ev_data[i])
 

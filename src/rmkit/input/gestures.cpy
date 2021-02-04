@@ -103,7 +103,7 @@ namespace input:
             debug "FILTERED JUMP X", ev.x, ev.y, ev.slot
           return false
 
-      if ev.slot + 1 != self.fingers:
+      if ev.fingers != self.fingers:
         if DEBUG_GESTURE_FILTERS:
           debug "FILTERED FINGERS", ev.x, ev.y, ev.slot
         return false
@@ -201,7 +201,7 @@ namespace input:
       if abs(ev.y - start.y) > 10 or abs(ev.x - start.x) > 10:
         self.valid = false
 
-      if ev.slot >= self.fingers:
+      if ev.fingers > self.fingers:
         self.valid = false
       else:
         if duration > 0:
@@ -214,7 +214,7 @@ namespace input:
       if ev.y == -1 or ev.x == -1:
         return false
 
-      if ev.slot + 1 < self.fingers:
+      if ev.fingers < self.fingers:
         return false
 
       return true
