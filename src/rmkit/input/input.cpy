@@ -59,7 +59,7 @@ namespace input:
           fprintf(stderr, "\n")
           #endif
           prev_ev = event
-          event = prev_ev
+          event.initialize()
         else:
           event.update(ev_data[i])
 

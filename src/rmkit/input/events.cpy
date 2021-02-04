@@ -103,14 +103,6 @@ namespace input:
     TouchEvent():
       slots.resize(MAX_SLOTS)
 
-    TouchEvent(const TouchEvent &t):
-      self.slot = t.slot
-      self.slots = t.slots
-      self.x = t.x
-      self.y = t.y
-      self.left = t.left
-      self.lifted = t.lifted
-
     void initialize():
       self.lifted = false
 
