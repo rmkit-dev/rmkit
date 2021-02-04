@@ -146,25 +146,6 @@ namespace input:
 
           break
 
-    def merge(TouchEvent &prev):
-      if self.x == -1:
-        self.x = prev.x
-      if self.y == -1:
-        self.y = prev.y
-      if self.left == -1:
-        self.left = prev.left
-
-      self.fingers = 0
-      // merge slots from previous mt into this one
-      for i := 0; i < MAX_SLOTS; i++:
-        if prev.slots[i].left == 1:
-          if slots[i].x == -1:
-            slots[i].x = prev.slots[i].x
-          if slots[i].y == -1:
-            slots[i].y = prev.slots[i].y
-          if slots[i].left == -1:
-            slots[i].left = prev.slots[i].left
-
     def marshal():
       SynMotionEvent syn_ev;
 
@@ -202,62 +183,6 @@ namespace input:
 
 
   int TouchEvent::MAX_SLOTS = 10
-
-  class MouseEvent: public Event:
-    public:
-    MouseEvent() {}
-    int x = 0, y = 0
-    signed char dx = 0, dy = 0
-    int left = 0 , right = 0 , middle = 0
-    static int width, height
-    static int tilt_x
-    static int tilt_y
-    static int pressure
-
-
-    static void set_screen_size(int w, h):
-      width = w
-      height = h
-
-    def update(input_event data):
-      self.print_event(data)
-
-    def merge(MouseEvent &prev):
-      self.x = prev.x + self.dx
-      self.y = prev.y + self.dy
-
-      if self.y < 0:
-        self.y = 0
-      if self.x < 0:
-        self.x = 0
-
-      if self.y >= self.height - 1:
-        self.y = (int) self.height - 5
-
-      if self.x >= self.width - 1:
-        self.x = (int) self.width - 5
-
-    def marshal():
-      o_x := self.x
-      o_y := self.height - self.y
-
-      if o_y >= self.height - 1:
-        o_y = self.height - 5
-
-      SynMotionEvent syn_ev;
-      syn_ev.x = o_x
-      syn_ev.y = o_y
-      syn_ev.left = self.left
-      syn_ev.right = self.right
-      syn_ev.pressure = MouseEvent::pressure
-      syn_ev.tilt_x = MouseEvent::tilt_x
-      syn_ev.tilt_y = MouseEvent::tilt_y
-
-      syn_ev.set_original(new MouseEvent(*self))
-      return syn_ev
-
-  int MouseEvent::width = 0
-  int MouseEvent::height = 0
 
   class WacomEvent: public Event:
     public:
@@ -330,7 +255,3 @@ namespace input:
           self.handle_key(data)
         case 3:
           self.handle_abs(data)
-
-  int MouseEvent::pressure = 2000
-  int MouseEvent::tilt_x = 0
-  int MouseEvent::tilt_y = 0

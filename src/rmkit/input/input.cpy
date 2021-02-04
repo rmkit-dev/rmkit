@@ -67,26 +67,6 @@ namespace input:
         else:
           event.update(ev_data[i])
 
-    // not going to use this on remarkable
-    void handle_mouse_fd():
-      unsigned char data[3]
-      int bytes = read(self.fd, data, sizeof(data));
-
-      #ifdef REMARKABLE
-      // we return after reading so that the socket is not indefinitely active
-      return
-      #endif
-
-      ev := T()
-      if bytes > 0:
-        ev.left = data[0]&0x1
-        ev.right = data[0]&0x2
-        ev.middle = data[0]&0x4
-        ev.dx = data[1]
-        ev.dy = data[2]
-      self.events.push_back(ev)
-
-
   class Input:
     private:
 
@@ -95,7 +75,6 @@ namespace input:
     fd_set rdfs
 
     InputClass<WacomEvent, SynMotionEvent> wacom
-    InputClass<MouseEvent, SynMotionEvent> mouse
     InputClass<TouchEvent, SynMotionEvent> touch
     InputClass<ButtonEvent, SynKeyEvent> button
 
@@ -106,8 +85,6 @@ namespace input:
       FD_ZERO(&rdfs)
 
       // dev only
-      if !USE_RESIM:
-        self.monitor(self.mouse.fd = open("/dev/input/mice", O_RDWR))
       // used by remarkable
       #ifdef REMARKABLE
       self.open_device("/dev/input/event0")
@@ -134,7 +111,6 @@ namespace input:
 
 
     ~Input():
-      close(self.mouse.fd)
       close(self.touch.fd)
       close(self.wacom.fd)
       close(self.button.fd)
@@ -163,7 +139,6 @@ namespace input:
 
     void reset_events():
       self.wacom.clear()
-      self.mouse.clear()
       self.touch.clear()
       self.button.clear()
 
@@ -184,14 +159,14 @@ namespace input:
       #ifndef REMARKABLE
       return
       #endif
-      for auto fd : { self.mouse.fd, self.touch.fd, self.wacom.fd, self.button.fd }:
+      for auto fd : { self.touch.fd, self.wacom.fd, self.button.fd }:
         ioctl(fd, EVIOCGRAB, true)
 
     void ungrab():
       #ifndef REMARKABLE
       return
       #endif
-      for auto fd : { self.mouse.fd, self.touch.fd, self.wacom.fd, self.button.fd }:
+      for auto fd : { self.touch.fd, self.wacom.fd, self.button.fd }:
         ioctl(fd, EVIOCGRAB, false)
 
 
@@ -209,8 +184,6 @@ namespace input:
           retval = select(max_fd, &rdfs_cp, NULL, NULL, NULL)
 
       if retval > 0:
-        if FD_ISSET(self.mouse.fd, &rdfs_cp):
-          self.mouse.handle_mouse_fd()
         if FD_ISSET(self.wacom.fd, &rdfs_cp):
           self.wacom.handle_event_fd()
         if FD_ISSET(self.touch.fd, &rdfs_cp):
@@ -220,16 +193,14 @@ namespace input:
         if FD_ISSET(input::ipc_fd[0], &rdfs_cp):
           self.handle_ipc()
 
-      for auto &ev : self.wacom.events:
+      for auto ev : self.wacom.events:
         self.all_motion_events.push_back(self.wacom.marshal(ev))
 
-      for auto &ev : self.mouse.events:
-        self.all_motion_events.push_back(self.mouse.marshal(ev))
 
-      for auto &ev : self.touch.events:
+      for auto ev : self.touch.events:
         self.all_motion_events.push_back(self.touch.marshal(ev))
 
-      for auto &ev : self.button.events:
+      for auto ev : self.button.events:
         self.all_key_events.push_back(self.button.marshal(ev))
 
       #ifdef DEBUG_INPUT_EVENT
@@ -242,7 +213,5 @@ namespace input:
   // TODO: should we just put this in the SynMotionEvent?
   static WacomEvent* is_wacom_event(SynMotionEvent &syn_ev):
     return dynamic_cast<WacomEvent*>(syn_ev.original.get())
-  static MouseEvent* is_mouse_event(SynMotionEvent &syn_ev):
-    return dynamic_cast<MouseEvent*>(syn_ev.original.get())
   static TouchEvent* is_touch_event(SynMotionEvent &syn_ev):
     return dynamic_cast<TouchEvent*>(syn_ev.original.get())
