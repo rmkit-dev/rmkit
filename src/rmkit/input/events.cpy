@@ -81,9 +81,6 @@ namespace input:
 
       self.print_event(data)
 
-    def merge(ButtonEvent &prev):
-      pass
-
     def marshal():
       SynKeyEvent key_ev
       key_ev.key = self.key
@@ -190,19 +187,6 @@ namespace input:
     int tilt_x = 0xFFFF, tilt_y = 0xFFFF
     int btn_touch = -1
     int eraser = -1
-
-
-    def merge(WacomEvent &prev):
-      if self.btn_touch == -1:
-        self.btn_touch = prev.btn_touch
-      if self.eraser == -1:
-        self.eraser = prev.eraser
-      if self.pressure == -1 || self.pressure == 0:
-        self.pressure = prev.pressure
-      if self.tilt_x == 0xFFFF:
-        self.tilt_x = prev.tilt_x
-      if self.tilt_y == 0xFFFF:
-        self.tilt_y = prev.tilt_y
 
     def marshal():
       SynMotionEvent syn_ev;
