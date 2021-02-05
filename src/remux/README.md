@@ -28,8 +28,13 @@ Finally, if you want to make the installation permanent, change into the
 `src/remux` directory and run `make install_service` followed by `make
 start_service`
 
+## Changelog
 
-## Config (0.1.7+)
+### 0.1.8
+
+* added `manage_power=` boolean option to configuration. setting to `false` or `no` tells remux to not enter suspend mode automatically - this lets you use xochitl solely for power management. useful if remux is messing up drawing your suspend screen
+
+### Config (0.1.7)
 
 As of remux 0.1.7, remux supports configuration kept in `/home/root/.config/remux/remux.conf`. The configuration is kept as key=value lines. As of right now, the two main config options are `launch_gesture` and `back_gesture`. They can be used to configure the gestures in remux. The format is the same as genie, except semi-colons (`;`) are used to separate directives instead of newlines.
 
@@ -48,8 +53,7 @@ launch_gesture=gesture=tap;fingers=3
 launch_gesture=gesture=tap;fingers=4
 ```
 
-
-## API (0.1.6+)
+### API (0.1.6)
 
 remux opens `/run/remux.api` as a FIFO and listens for incoming commands. The supported commands are `show`, `hide`, and `back`.
 

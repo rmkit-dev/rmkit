@@ -19,17 +19,11 @@
 #include "config.h"
 
 TIMEOUT := 1
-SUSPEND_TIMER := 10
-
 // all time is in seconds
-// TODO: read these from remarkable.conf file
-
 MIN := 60
 HOURS := MIN * MIN
 
-SUSPEND_THRESHOLD := MIN * 4
-CHARGING_THRESHOLD := MIN * 30
-TOO_MUCH_THRESHOLD := MIN * 7
+SUSPEND_THRESHOLD := MIN * 15 // default to 15 minutes
 SHUTDOWN_THRESHOLD := HOURS * 10 // 10 hours
 
 #include "apps.h"
@@ -54,6 +48,7 @@ DEFAULT_LAUNCH_GESTURES := vector<string> %{
 }
 
 
+CONFIG := read_remux_config()
 class IApp:
   public:
   virtual void launch(string) = 0;
@@ -367,6 +362,7 @@ class App: public IApp:
     })
 
   def suspend_on_idle():
+    debug "STARTING SUSPEND THREAD"
     version := util::get_remarkable_version()
     self.idle_thread = new thread([=]() {
       while true:
@@ -729,7 +725,7 @@ class App: public IApp:
 
     debug "SETTING UP GESTURES"
     config := read_remux_config()
-    launch_gestures := config.get_array("launch_gesture")
+    launch_gestures := CONFIG.get_array("launch_gesture")
     if launch_gestures.size() == 0:
       debug "SETTING LAUNCH GESTURES TO DEFAULT"
       launch_gestures = DEFAULT_LAUNCH_GESTURES
@@ -743,7 +739,7 @@ class App: public IApp:
         ;
         ui::MainLoop::gestures.push_back(g)
 
-    back_gestures := config.get_array("back_gesture")
+    back_gestures := CONFIG.get_array("back_gesture")
     for auto l : back_gestures:
       lines := str_utils::split(l, ';')
       gestures := genie::parse_config(lines)
@@ -769,7 +765,11 @@ class App: public IApp:
     ui::Style::DEFAULT.font_size = 32
 
     // launches a thread that suspends on idle
-    self.suspend_on_idle()
+    handle_power_mgmt := CONFIG.get_bool("manage_power", true)
+    if handle_power_mgmt:
+      self.suspend_on_idle()
+    else:
+      debug "NOT HANDLING POWER MANAGEMENT"
     self.open_input_fifo()
     self.setup_gestures()
 

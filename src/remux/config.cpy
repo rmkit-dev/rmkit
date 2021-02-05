@@ -22,6 +22,20 @@ class RemuxConfig:
 
     return val
 
+  bool get_bool(string key, bool default_value=false):
+    val := default_value
+    for auto p : values:
+      if p.first == key:
+        if p.second == "yes" or p.second == "true" or p.second == "1":
+          val = true
+        else if p.second == "no" or p.second == "false" or p.second == "" or p.second == "0":
+          val = false
+        else:
+          debug "* KEY", key, "HAS UNRECOGNIZED BOOLEAN VALUE:", p.second, "MUST BE 'yes' or 'no'"
+          debug "  DEFAULTING TO", default_value
+
+    return val
+
   bool has_key(string key):
     for auto p : values:
       if p.first == key:
