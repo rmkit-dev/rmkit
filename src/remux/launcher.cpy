@@ -365,8 +365,19 @@ class App: public IApp:
     debug "STARTING SUSPEND THREAD"
     version := util::get_remarkable_version()
     self.idle_thread = new thread([=]() {
+      last_wake := 0
       while true:
         now := time(NULL)
+        // if its been more than 2 minute since our last loop iteration,
+        // we may have just woken up. in this case, we reset the idle timer
+        // so we don't fall back asleep immediately
+        if now - last_wake > 2*MIN:
+          debug "LAST SUSPEND LOOP WAS", (now - last_wake), "AGO, RESETTING IDLE TIMER"
+          suspend_m.lock()
+          LAST_ACTION = now
+          suspend_m.unlock()
+        last_wake = now
+
         usb_in := false
         string usb_str
         if version == util::RM_VERSION::RM2:
