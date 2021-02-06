@@ -92,7 +92,6 @@ namespace input:
     public:
     int x=-1, y=-1
     int slot = 0, left = -1
-    int fingers = 0
     bool lifted=false
     static int MAX_SLOTS
     struct Point:
@@ -153,23 +152,21 @@ namespace input:
           self.handle_abs(data)
 
     def count_fingers():
-      self.fingers = 0
+      fingers := 0
       for i := 0; i < MAX_SLOTS; i++:
         if slots[i].left == 1:
-          self.fingers++
+          fingers++
+
+      return fingers
 
     def is_multitouch():
-      self.count_fingers()
+      fingers := self.count_fingers()
 
-      if self.fingers > 1:
+      if fingers > 1:
         return true
 
-      if self.fingers == 0:
+      if fingers == 0:
         return false
-
-    void finalize():
-      self.count_fingers()
-
 
   int TouchEvent::MAX_SLOTS = 10
 
