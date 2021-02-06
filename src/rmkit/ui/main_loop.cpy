@@ -136,17 +136,12 @@ namespace ui:
 
       for auto ev: ui::MainLoop::in.touch.events:
         for auto g : gestures:
-          lifted := false
-          for int s = 0; s <= ev.slot; s++:
-            if ev.slots[s].left == 0:
-              lifted = true
-              break
-
-          if lifted:
+          if ev.lifted:
             if g->valid:
               g->finalize()
             g->reset()
           else:
+            ev.count_fingers()
             if g->filter(ev):
               if !g->initialized:
                 if DEBUG_GESTURES:

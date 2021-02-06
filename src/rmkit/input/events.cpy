@@ -22,7 +22,10 @@ namespace input:
       #endif
       return
 
-    def finalize():
+    virtual void initialize():
+      pass
+
+    virtual void finalize():
       pass
 
     virtual ~Event() = default
@@ -78,7 +81,7 @@ namespace input:
 
       self.print_event(data)
 
-    def marshal(ButtonEvent &prev):
+    def marshal():
       SynKeyEvent key_ev
       key_ev.key = self.key
       key_ev.is_pressed = self.is_pressed
@@ -89,20 +92,18 @@ namespace input:
     public:
     int x=-1, y=-1
     int slot = 0, left = -1
+    bool lifted=false
+    static int MAX_SLOTS
     struct Point:
       int x=-1, y=-1, left=-1
     ;
+
     vector<Point> slots;
     TouchEvent():
-      slots.resize(10)
+      slots.resize(MAX_SLOTS)
 
-    TouchEvent(const TouchEvent &t):
-      self.slot = t.slot
-      self.slots = t.slots
-      self.x = t.x
-      self.y = t.y
-      self.left = t.left
-
+    void initialize():
+      self.lifted = false
 
     handle_abs(input_event data):
       switch data.code:
@@ -128,18 +129,13 @@ namespace input:
         case ABS_MT_TRACKING_ID:
           if slot >= 0:
             slots[slot].left = self.left = data.value > -1
+            if self.left == 0:
+              self.lifted = true
+
           break
 
-
-    def marshal(TouchEvent &prev):
+    def marshal():
       SynMotionEvent syn_ev;
-
-      if self.x == -1:
-        self.x = prev.x
-      if self.y == -1:
-        self.y = prev.y
-      if self.left == -1:
-        self.left = prev.left
 
       syn_ev.left = self.left
       syn_ev.x = self.x
@@ -155,60 +151,24 @@ namespace input:
         case 3:
           self.handle_abs(data)
 
-  class MouseEvent: public Event:
-    public:
-    MouseEvent() {}
-    int x = 0, y = 0
-    signed char dx = 0, dy = 0
-    int left = 0 , right = 0 , middle = 0
-    static int width, height
-    static int tilt_x
-    static int tilt_y
-    static int pressure
+    def count_fingers():
+      fingers := 0
+      for i := 0; i < MAX_SLOTS; i++:
+        if slots[i].left == 1:
+          fingers++
 
+      return fingers
 
-    static void set_screen_size(int w, h):
-      width = w
-      height = h
+    def is_multitouch():
+      fingers := self.count_fingers()
 
-    def update(input_event data):
-      self.print_event(data)
+      if fingers > 1:
+        return true
 
-    def marshal(MouseEvent &prev):
-      self.x = prev.x + self.dx
-      self.y = prev.y + self.dy
+      if fingers == 0:
+        return false
 
-      if self.y < 0:
-        self.y = 0
-      if self.x < 0:
-        self.x = 0
-
-      if self.y >= self.height - 1:
-        self.y = (int) self.height - 5
-
-      if self.x >= self.width - 1:
-        self.x = (int) self.width - 5
-
-      o_x := self.x
-      o_y := self.height - self.y
-
-      if o_y >= self.height - 1:
-        o_y = self.height - 5
-
-      SynMotionEvent syn_ev;
-      syn_ev.x = o_x
-      syn_ev.y = o_y
-      syn_ev.left = self.left
-      syn_ev.right = self.right
-      syn_ev.pressure = MouseEvent::pressure
-      syn_ev.tilt_x = MouseEvent::tilt_x
-      syn_ev.tilt_y = MouseEvent::tilt_y
-
-      syn_ev.set_original(new MouseEvent(*self))
-      return syn_ev
-
-  int MouseEvent::width = 0
-  int MouseEvent::height = 0
+  int TouchEvent::MAX_SLOTS = 10
 
   class WacomEvent: public Event:
     public:
@@ -217,21 +177,10 @@ namespace input:
     int btn_touch = -1
     int eraser = -1
 
-    def marshal(WacomEvent &prev):
+    def marshal():
       SynMotionEvent syn_ev;
       syn_ev.x = self.x
       syn_ev.y = self.y
-
-      if self.btn_touch == -1:
-        self.btn_touch = prev.btn_touch
-      if self.eraser == -1:
-        self.eraser = prev.eraser
-      if self.pressure == -1 || self.pressure == 0:
-        self.pressure = prev.pressure
-      if self.tilt_x == 0xFFFF:
-        self.tilt_x = prev.tilt_x
-      if self.tilt_y == 0xFFFF:
-        self.tilt_y = prev.tilt_y
 
       syn_ev.pressure = self.pressure
       syn_ev.tilt_x = self.tilt_x
@@ -279,7 +228,3 @@ namespace input:
           self.handle_key(data)
         case 3:
           self.handle_abs(data)
-
-  int MouseEvent::pressure = 2000
-  int MouseEvent::tilt_x = 0
-  int MouseEvent::tilt_y = 0

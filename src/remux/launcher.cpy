@@ -610,6 +610,10 @@ class App: public IApp:
     fd := ui::MainLoop::in.touch.fd
     bytes := write(fd, touch_flood, 512 * 8 * 4 * sizeof(input_event))
 
+    for i := 0; i < input::TouchEvent::MAX_SLOTS; i++:
+      ui::MainLoop::in.touch.prev_ev.slots[i].left = 0
+      ui::MainLoop::in.touch.event.slots[i].left = 0
+
   // TODO: figure out the right events here to properly flood this device
   void flood_button_queue():
     fd := ui::MainLoop::in.button.fd
