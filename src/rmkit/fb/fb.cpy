@@ -427,8 +427,11 @@ namespace framebuffer:
       sprintf(mkdir_cmd, "mkdir -p %s 2>/dev/null", SAVE_DIR)
       err := system(mkdir_cmd)
 
+    string save_lodepng(string fname="")
+      w, h := self.get_display_size()
+      return self.save_lodepng(fname, 0, 0, w, h)
 
-    string save_lodepng(string fname=""):
+    string save_lodepng(string fname, int o_x,o_y,w,h):
       self.make_save_dir()
       char filename[100]
       char full_filename[100]
@@ -442,19 +445,17 @@ namespace framebuffer:
         memcpy(filename, fname.c_str(), fname.size())
         filename[fname.size()] = 0
 
-      px_w, px_h = self.get_display_size()
-
-      buf := vector<unsigned char>(px_w * px_h * 4+1)
+      buf := vector<unsigned char>(w * h * 4+1)
       i := 0
-      for y 0 self.height:
-        for x 0 self.width:
+      for y o_y h:
+        for x o_x w:
           d := self.fbmem[y*self.width + x]
           buf[i++] = d
       buf[i] = 0
 
       debug "SAVING", filename
 
-      stbi_write_png(filename, self.width, self.height, 1, buf.data(), self.width)
+      stbi_write_png(filename, w, h, 1, buf.data(), w)
       return string(filename)
 
     // Barrera4
