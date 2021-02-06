@@ -134,8 +134,8 @@ class AppDialog: public ui::Pager:
     AppDialog(int x, y, w, h, IApp* a): ui::Pager(x, y, w, h, self):
       self.set_title("")
       self.app = a
-      self.opt_h = 60
-      self.page_size = self.page_size - 4
+      self.opt_h = 55
+      self.page_size = (self.h - 100) / self.opt_h
       self.buttons = { "Get More Apps" }
 
     void add_shortcuts():
@@ -210,7 +210,7 @@ class AppDialog: public ui::Pager:
         }
 
       c->set_style(ui::Stylesheet().justify_right())
-      d := new ui::DialogButton(0, 0, self.w-90, self.opt_h, self, option)
+      d := new ui::DialogButton(0, 0, self.w-120, self.opt_h, self, option)
       d->x_padding = 10
       d->y_padding = 5
       d->set_style(ui::Stylesheet().justify_left())

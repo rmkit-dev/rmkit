@@ -35,9 +35,9 @@ namespace ui:
 
     void add_buttons(HorizontalLayout *button_bar):
       if curr_page > 0:
-        button_bar->pack_start(new DialogButton(0, 0, 100, 50, self, PREV), 10)
-      if curr_page < self.options.size() / self.page_size:
-        button_bar->pack_end(new DialogButton(0, 0, 100, 50, self, NEXT), 10)
+        button_bar->pack_start(new DialogButton(1, 0, 100, 50, self, PREV))
+      if (curr_page+1) * self.page_size < self.options.size():
+        button_bar->pack_end(new DialogButton(-1, 0, 100, 50, self, NEXT))
 
     virtual void render_row(ui::HorizontalLayout *row, string option):
       d := new ui::DialogButton(20,0, self.w-80, self.opt_h, self, option)
