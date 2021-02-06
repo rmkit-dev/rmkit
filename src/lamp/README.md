@@ -22,7 +22,7 @@ and used like `lamp < example.in`
 
 * pen rectangle x1 y1 x2 y2
 * pen line x1 y2 x2 y2
-* pen circle x1 y1 r1
+* pen circle x1 y1 r1 n2 (the n2 does nothing yet)
 * pen down x1 y1
 * pen move x1 y1
 * pen up
