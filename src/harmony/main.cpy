@@ -67,26 +67,7 @@ class App:
   def handle_key_event(input::SynKeyEvent &key_ev):
     if key_ev.is_pressed:
       switch key_ev.key:
-        #ifdef DEV
-        case KEY_LEFT:
-          input::MouseEvent::tilt_x -= 100
-          break
-        case KEY_RIGHT:
-          input::MouseEvent::tilt_x += 100
-          break
-        case KEY_DOWN:
-          input::MouseEvent::tilt_y -= 100
-          break
-        case KEY_UP:
-          input::MouseEvent::tilt_y += 100
-          break
-        case KEY_F1:
-          input::MouseEvent::pressure -= 100
-          break
-        case KEY_F2:
-          input::MouseEvent::pressure += 100
-          break
-        #elif REMARKABLE
+        #if REMARKABLE
         case KEY_LEFT:
           canvas->prev_page()
           break
