@@ -18,6 +18,11 @@ The built in ways of launching remux are:
 
 if you want to adjust them, they can be changed - see the config section below.
 
+## Known issues
+
+* remux restarts xochitl at first launch, it is not crashing
+* remux does not show itself after an app exits, you must swipe to show it
+* after dismissing remux UI, you need to tap the touch screen before swiping again to show remux
 
 ## Building
 
@@ -30,7 +35,7 @@ start_service`
 
 ## Changelog
 
-### 0.1.8
+### Disable Power Management (0.1.8)
 
 * added `manage_power=` boolean option to configuration. setting to `false` or `no` tells remux to not enter suspend mode automatically - this lets you use xochitl solely for power management. useful if remux is messing up drawing your suspend screen
 
