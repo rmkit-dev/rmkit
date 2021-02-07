@@ -24,6 +24,8 @@ namespace util:
 
         if version_str == string("reMarkable 1"):
           CUR_VERSION = RM1
+        if version_str == string("reMarkable 1.0"):
+          CUR_VERSION = RM1
         if version_str == string("reMarkable Prototype 1"):
           CUR_VERSION = RM1
         if version_str == string("reMarkable 2.0"):
