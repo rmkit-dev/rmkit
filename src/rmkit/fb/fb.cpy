@@ -466,8 +466,8 @@ namespace framebuffer:
       int w = stroke
       int h = stroke
 
-      update_dirty(dirty_area, x0-radius, y0-radius)
-      update_dirty(dirty_area, x0+radius, y0+radius)
+      update_dirty(dirty_area, x0-radius-stroke, y0-radius-stroke)
+      update_dirty(dirty_area, x0+radius+stroke, y0+radius+stroke)
 
       while(x <= y):
         _draw_rect_fast(x+x0, y+y0, w, h, color);
@@ -493,8 +493,8 @@ namespace framebuffer:
       w := stroke
       h := stroke
 
-      update_dirty(dirty_area, x0-r, y0-r)
-      update_dirty(dirty_area, x0+r, y0+r)
+      update_dirty(dirty_area, x0-r-stroke, y0-r-stroke)
+      update_dirty(dirty_area, x0+r+stroke, y0+r+stroke)
 
       _draw_rect_fast(x, y, w, h, color);
       d := (3-2*(int)r);
@@ -517,8 +517,8 @@ namespace framebuffer:
         _draw_rect_fast(-y+x0, -x+y0, w, h, color);
 
     def draw_circle_filled(int x0, y0, radius, stroke, color):
-      update_dirty(dirty_area, x0-radius, y0-radius)
-      update_dirty(dirty_area, x0+radius, y0+radius)
+      update_dirty(dirty_area, x0-radius-stroke, y0-radius-stroke)
+      update_dirty(dirty_area, x0+radius+stroke, y0+radius+stroke)
 
       for x := -radius; x <= radius; x++:
         for y := -radius; y <= radius; y++:
@@ -570,8 +570,8 @@ namespace framebuffer:
       #endif
       self.dirty = 1
 
-      update_dirty(dirty_area, x0, y0)
-      update_dirty(dirty_area, x1, y1)
+      update_dirty(dirty_area, x0-width, y0-width)
+      update_dirty(dirty_area, x1+width, y1+width)
 
       dx := abs(x1-x0)
       sx := x0<x1 ? 1 : -1
