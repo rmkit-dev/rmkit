@@ -1,25 +1,9 @@
+#include "events.h"
 #include "style.h"
 #include "../fb/fb.h"
 #include "../util/signals.h"
 
 namespace ui:
-  PLS_DEFINE_SIGNAL(MOUSE_EVENT, input::SynMotionEvent)
-  class MOUSE_EVENTS:
-    public:
-    MOUSE_EVENT enter
-    MOUSE_EVENT leave
-    MOUSE_EVENT down
-    MOUSE_EVENT up
-    MOUSE_EVENT click
-    MOUSE_EVENT hover
-    MOUSE_EVENT move
-  ;
-
-  PLS_DEFINE_SIGNAL(KEY_EVENT, input::SynKeyEvent)
-  class KEY_EVENTS:
-    public:
-    KEY_EVENT pressed
-  ;
   // Class: ui::Widget
   //
   // The widget class is the base of all other widgets. A widget is typically
@@ -35,6 +19,7 @@ namespace ui:
     vector<shared_ptr<Widget>> children
 
     MOUSE_EVENTS mouse
+    GESTURE_EVENTS_DELEGATE gesture = { &mouse }
     KEY_EVENTS kbd
 
     // variables: x, y, w, h
