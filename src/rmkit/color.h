@@ -6,16 +6,11 @@
 
 // Color defines
 
-#ifdef REMARKABLE
 // remarkable uses rgb565_le but is grayscale
-  #ifdef USE_GRAYSCALE_8BIT
-    #define remarkable_color std::uint8_t
-  #else
-    #define remarkable_color std::uint16_t
-  #endif
+#ifdef USE_GRAYSCALE_8BIT
+  #define remarkable_color std::uint8_t
 #else
-  // on linux framebuffer we have 32bit colors
-  #define remarkable_color std::uint32_t
+  #define remarkable_color std::uint16_t
 #endif
 
 #define WHITE remarkable_color(0x000FFFFF)
@@ -24,8 +19,13 @@
 
 namespace color {
 
-// -- Color scale and conversions --
+struct rgb_color {
+  uint8_t r;
+  uint8_t g;
+  uint8_t b;
+};
 
+// -- Color scale and conversions --
 // 0(black) - 31(white)
 constexpr remarkable_color gray32(int n)
 {
@@ -36,6 +36,18 @@ constexpr remarkable_color gray32(int n)
 constexpr remarkable_color from_float(float n)
 {
     return gray32(31.0 * n);
+}
+
+constexpr rgb_color to_rgb8(remarkable_color s)
+{
+  #ifndef USE_GRAYSCALE_8BIT
+    return {
+      uint8_t((s & 0xf800) >> 8),
+      uint8_t((s & 0x7e0) >> 3),
+      uint8_t((s & 0x1f) << 3)
+    };
+  #endif
+
 }
 
 constexpr float to_float(remarkable_color c)
