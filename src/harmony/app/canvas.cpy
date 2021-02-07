@@ -16,7 +16,8 @@ namespace app_ui:
     deque<shared_ptr<remarkable_color>> undo_stack;
     deque<shared_ptr<remarkable_color>> redo_stack;
     int byte_size
-    int stroke_width = 1, stroke_color = BLACK
+    int stroke_width = 1
+    remarkable_color stroke_color = BLACK
     int page_idx = 0
 
     bool erasing = false
@@ -36,6 +37,7 @@ namespace app_ui:
       px_width, px_height = self.fb->get_display_size()
       self.byte_size = px_width * px_height * sizeof(remarkable_color)
 
+      fb->dither = framebuffer::DITHER::BAYER_2
       self.load_vfb()
       fbcopy := shared_ptr<remarkable_color>((remarkable_color*) malloc(self.byte_size))
       memcpy(fbcopy.get(), self.fb->fbmem, self.byte_size)
@@ -139,6 +141,7 @@ namespace app_ui:
       char filename[PATH_MAX]
       sprintf(filename, "%s/fb.%i.raw", SAVE_DIR, self.page_idx)
       self.vfb = make_shared<framebuffer::FileFB>(filename, self.fb->width, self.fb->height)
+      self.vfb->dither = framebuffer::DITHER::BAYER_2
       memcpy(fb->fbmem, vfb->fbmem, self.byte_size)
 
       self.dirty = 1

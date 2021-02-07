@@ -51,7 +51,7 @@ namespace app_ui:
         ds->add_options({b->name})
 
       ds = add_section("color")
-      ds->add_options({"black", "gray", "white"})
+      ds->add_options({"black", "gray1", "gray2", "gray3", "gray4", "white"})
 
     void on_select(int i):
       option := self.options[i]->name
@@ -72,8 +72,17 @@ namespace app_ui:
         if option == "white":
           STATE.color = WHITE
           break
-        if option == "gray":
-          STATE.color = GRAY
+        if option == "gray1":
+          STATE.color = color::GRAY_3
+          break
+        if option == "gray2":
+          STATE.color = color::GRAY_6
+          break
+        if option == "gray3":
+          STATE.color = color::GRAY_9
+          break
+        if option == "gray4":
+          STATE.color = color::GRAY_12
           break
       } while(false);
 
@@ -86,17 +95,8 @@ namespace app_ui:
           sw = (size->val+1) * 5
           break
 
-      color := BLACK
-      bg_color := WHITE
-      if STATE.color == BLACK:
-        color = BLACK
-        bg_color = WHITE
-      if STATE.color == WHITE:
-        color = WHITE
-        bg_color = BLACK
-      if STATE.color == GRAY:
-        color = GRAY
-        bg_color = WHITE
+      color := STATE.color
+      bg_color := color == WHITE ? BLACK : WHITE
 
       self.fb->draw_rect(self.x, self.y, self.w, self.h, WHITE, true)
 

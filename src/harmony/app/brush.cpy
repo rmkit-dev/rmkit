@@ -41,7 +41,7 @@ namespace app_ui:
     int last_x = -1, last_y = -1
     vector<Point> points
     string name = "brush"
-    int color = BLACK
+    remarkable_color color = BLACK
     icons::Icon icon
 
     // stroke sizing
