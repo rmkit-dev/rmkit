@@ -129,7 +129,7 @@ auto parse_widget(int line_no, vector<string> tokens):
         x = LAST_WIDGET->x
 
   else:
-    x = parse_to_int(x_token, line_no, WIDTH)
+    x = parse_to_int(x_token, line_no, WIDTH) + PADDING_X
 
   if y_token == "next" or y_token == "same" or y_token == "step" or y_token == "stay":
     if LAST_WIDGET == NULL:
@@ -141,7 +141,7 @@ auto parse_widget(int line_no, vector<string> tokens):
       if y_token == "same" or y_token == "stay":
         y = LAST_WIDGET->y
   else:
-    y = parse_to_int(y_token, line_no, HEIGHT)
+    y = parse_to_int(y_token, line_no, HEIGHT) + PADDING_Y
 
   string t
   for it := tokens.begin() + 5; it != tokens.end(); it++:
