@@ -88,9 +88,9 @@ def handle_directive(int line_no, ui::Scene s, vector<string> &tokens):
       ui::Style::DEFAULT.justify = ui::Style::JUSTIFY::RIGHT
 
   if tokens[0] == "@padding_x":
-    PADDING_X = stoi(tokens[1])
+    PADDING_X = parse_to_int(tokens[1])
   if tokens[0] == "@padding_y":
-    PADDING_Y = stoi(tokens[1])
+    PADDING_Y = parse_to_int(tokens[1])
 
   if tokens[0] == "@timeout":
     TIMEOUT = max(TIMEOUT, stoi(tokens[1]))
@@ -120,20 +120,21 @@ auto parse_widget(int line_no, vector<string> tokens):
   // TODO: % format might also need to be implemented for padding?
   if x_token == "next" or x_token == "same" or x_token == "step" or x_token == "stay":
     if LAST_WIDGET == NULL:
-      x = 0
+      x = 0 + PADDING_X
     else:
       if x_token == "next" or x_token == "step":
         rx, ry = LAST_WIDGET->get_render_size()
         x = LAST_WIDGET->x + rx
       if x_token == "same" or x_token == "stay":
         x = LAST_WIDGET->x
-
   else:
     x = parse_to_int(x_token, line_no, WIDTH) + PADDING_X
+  if x > WIDTH:
+    x = WIDTH
 
   if y_token == "next" or y_token == "same" or y_token == "step" or y_token == "stay":
     if LAST_WIDGET == NULL:
-      y = 0
+      y = 0 + PADDING_Y
     else:
       if y_token == "next" or y_token == "step":
         rx, ry = LAST_WIDGET->get_render_size()
@@ -142,7 +143,9 @@ auto parse_widget(int line_no, vector<string> tokens):
         y = LAST_WIDGET->y
   else:
     y = parse_to_int(y_token, line_no, HEIGHT) + PADDING_Y
-
+  if y > HEIGHT: 
+    y = HEIGHT
+      
   string t
   for it := tokens.begin() + 5; it != tokens.end(); it++:
     t += *it + " "
