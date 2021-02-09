@@ -88,9 +88,9 @@ def handle_directive(int line_no, ui::Scene s, vector<string> &tokens):
       ui::Style::DEFAULT.justify = ui::Style::JUSTIFY::RIGHT
 
   if tokens[0] == "@padding_x":
-    PADDING_X = parse_to_int(tokens[1])
+    PADDING_X = parse_to_int(tokens[1], line_no, WIDTH)
   if tokens[0] == "@padding_y":
-    PADDING_Y = parse_to_int(tokens[1])
+    PADDING_Y = parse_to_int(tokens[1], line_no, HEIGHT)
 
   if tokens[0] == "@timeout":
     TIMEOUT = max(TIMEOUT, stoi(tokens[1]))
