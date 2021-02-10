@@ -111,11 +111,6 @@ namespace app_ui:
       vfb->dirty_area = {0, 0, self.fb->width, self.fb->height}
 
     void render():
-      if self.full_redraw:
-        self.full_redraw = false
-        memcpy(self.fb->fbmem, vfb->fbmem, self.byte_size)
-        return
-
       dirty_rect = self.vfb->dirty_area
       for int i = dirty_rect.y0; i < dirty_rect.y1; i++:
         memcpy(&fb->fbmem[i*fb->width + dirty_rect.x0], &vfb->fbmem[i*fb->width + dirty_rect.x0],

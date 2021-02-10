@@ -8,6 +8,17 @@
 using namespace std
 using app_ui::STATE
 
+class ToolBar : public ui::HorizontalLayout:
+  public:
+  ToolBar(int x, y, w, h, ui::Scene s): ui::HorizontalLayout(x, y, w, h, s):
+    s->add(self)
+
+  void render():
+    self.fb->draw_rect(x, y, w, h, WHITE, true /* fill */)
+
+
+;
+
 class App:
   public:
   shared_ptr<framebuffer::FB> fb
@@ -34,7 +45,7 @@ class App:
     notebook->add(canvas)
 
     toolbar_area := new ui::VerticalLayout(0, 0, w, h, notebook)
-    toolbar := new ui::HorizontalLayout(0, 0, w, TOOLBAR_HEIGHT, notebook)
+    toolbar := new ToolBar(0, 0, w, TOOLBAR_HEIGHT, notebook)
 
     // aligns the toolbar to the bottom of the screen using pack_end
     // NOTE: this is an example of nesting layouts
