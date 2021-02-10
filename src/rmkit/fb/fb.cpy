@@ -573,7 +573,9 @@ namespace framebuffer:
       self.dirty = 1
 
       update_dirty(dirty_area, x0-width, y0-width)
+      update_dirty(dirty_area, x0+width, y0+width)
       update_dirty(dirty_area, x1+width, y1+width)
+      update_dirty(dirty_area, x1-width, y1-width)
 
       dx := abs(x1-x0)
       sx := x0<x1 ? 1 : -1
