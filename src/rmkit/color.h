@@ -42,9 +42,9 @@ constexpr rgb_color to_rgb8(remarkable_color s)
 {
   #ifndef USE_GRAYSCALE_8BIT
     return {
-      uint8_t((s & 0xf800) >> 8),
-      uint8_t((s & 0x7e0) >> 3),
-      uint8_t((s & 0x1f) << 3)
+      uint8_t(((s & 0xf800) >> 11) / 31. * 255.),
+      uint8_t(((s & 0x7e0) >> 5) / 63. * 255.),
+      uint8_t((s & 0x1f) / 31. * 255.)
     };
   #endif
 
