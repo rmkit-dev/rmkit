@@ -17,12 +17,14 @@ namespace stbtext:
 
   void setup_font():
     if !did_setup:
-      #ifdef REMARKABLE
-      const char *filename = "/usr/share/fonts/ttf/noto/NotoMono-Regular.ttf";
-     // TODO: fix the max size read to prevent overflows (or just abort on really large files)
-      #else
-      const char *filename = "src/vendor/NotoSansMono-Regular.ttf";
-      #endif
+      const char *filename = getenv("RMKIT_DEFAULT_FONT");
+      if filename == NULL:
+        #ifdef REMARKABLE
+        filename = "/usr/share/fonts/ttf/noto/NotoMono-Regular.ttf";
+       // TODO: fix the max size read to prevent overflows (or just abort on really large files)
+        #else
+        filename = "src/vendor/NotoSansMono-Regular.ttf";
+        #endif
       _ := fread(font_buffer, 1, 24<<20, fopen(filename, "rb"));
 
       stbtt_InitFont(&font, font_buffer, 0);
