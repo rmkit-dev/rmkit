@@ -25,7 +25,12 @@ namespace stbtext:
         #else
         filename = "src/vendor/NotoSansMono-Regular.ttf";
         #endif
-      _ := fread(font_buffer, 1, 24<<20, fopen(filename, "rb"));
+      FILE * file = fopen(filename, "rb");
+      if file == NULL:
+        cerr << "Unable to read font file: " << filename << endl;
+        return;
+      _ := fread(font_buffer, 1, 24<<20, file);
+      fclose(file);
 
       stbtt_InitFont(&font, font_buffer, 0);
       did_setup = true
