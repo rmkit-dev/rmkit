@@ -27,7 +27,7 @@ namespace stbtext:
         #endif
       FILE * file = fopen(filename, "rb");
       if file == NULL:
-        cerr << "Unable to read font file: " << filename << endl;
+        debug "Unable to read font file: ", filename
         return;
       _ := fread(font_buffer, 1, 24<<20, file);
       fclose(file);
