@@ -23,6 +23,7 @@ if you want to adjust them, they can be changed - see the config section below.
 * remux restarts xochitl at first launch, it is not crashing
 * remux does not show itself after an app exits, you must swipe to show it
 * after dismissing remux UI, you need to tap the touch screen before swiping again to show remux
+* if the UI is hard to bring up, try tapping with finger first and then launching it
 
 ## Building
 

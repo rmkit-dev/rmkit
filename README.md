@@ -37,6 +37,9 @@ An [app switcher](https://rmkit.dev/apps/remux) for switching between apps on th
 with [draft-remarkable](https://github.com/dixonary/draft-reMarkable/)
 configuration files. Hold the middle button or swipe up the side of the display to bring it up.
 
+NOTE: if you have trouble with swiping, tap the screen with your finger once
+and then swipe, this should help a bit.
+
 ### [rmkit](src/rmkit)
 
 A batteries included library for building remarkable apps. [Read the documentation](https://docs.rmkit.dev)
