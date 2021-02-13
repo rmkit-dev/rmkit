@@ -132,7 +132,7 @@ namespace ui:
     static void handle_gestures():
       if ui::MainLoop::in.wacom.events.size() > 0:
         for auto g : gestures:
-          g->valid = false
+          g->reset()
 
       for auto ev: ui::MainLoop::in.touch.events:
         for auto g : gestures:
