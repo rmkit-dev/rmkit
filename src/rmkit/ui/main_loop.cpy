@@ -21,6 +21,7 @@
 #include "../defines.h"
 
 #include "../util/signals.h"
+#include "../util/timer.h"
 #include "../input/input.h"
 #include "../input/gestures.h"
 #include "../fb/fb.h"
@@ -47,6 +48,7 @@ namespace ui:
 
     static input::Input in
     static vector<input::Gesture*> gestures
+    static TimerList timers
 
     // variable: motion_event
     // motion_event is used for subscribing to motion_events
@@ -162,6 +164,7 @@ namespace ui:
     // - redraws the current scene and overlay's dirty widgets
     static void main():
       handle_events()
+      timers.trigger()
 
       TaskQueue::run_task()
 
@@ -175,8 +178,8 @@ namespace ui:
 
 
     /// blocking read for input
-    static void read_input(long timeout_ms = 0):
-      in.listen_all(timeout_ms)
+    static void read_input():
+      in.listen_all(timers.next_timeout_usec())
 
     /// queue a render for all the widgets on the visible scenes
     static void refresh():
@@ -334,5 +337,6 @@ namespace ui:
   MOUSE_EVENT MainLoop::motion_event
   KEY_EVENT MainLoop::key_event
   MainLoop::GESTURE_EVENT MainLoop::gesture_event
+  TimerList MainLoop::timers
 
   shared_ptr<framebuffer::FB> MainLoop::fb = framebuffer::get()
