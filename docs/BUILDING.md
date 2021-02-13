@@ -20,7 +20,7 @@ This is the easiest way to compile for the tablet if you have docker installed.
 ### Linux
 
 * install okp: `pip install okp`
-* install resim viewer: `pip install remarkable_sim`
+* install resim viewer: `pip install rmkit-sim`
 
 with image framebuffer:
 
