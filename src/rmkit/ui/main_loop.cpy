@@ -231,6 +231,22 @@ namespace ui:
         MainLoop::refresh()
         kbd->on_hide()
 
+    // function: set_timeout
+    //   calls `callback` after the given timeout (in millseconds)
+    //   the returned shared_ptr can be used to cancel the timer
+    static TimerPtr set_timeout(std::function<void()> callback, long ms):
+      return timers.set_timeout(callback, ms)
+
+    // function: set_interval
+    //   calls `callback` repeatedly at the given interval (in millseconds)
+    //   the returned shared_ptr can be used to cancel the timer
+    static TimerPtr set_interval(std::function<void()> callback, long ms):
+      return timers.set_interval(callback, ms)
+
+    // function: cancel_timer
+    //   cancels a timer started by either set_timeout or set_interval
+    static void cancel_timer(TimerPtr timer):
+      return timers.cancel(timer)
 
     // clear and refresh the widgets on screen
     // useful if changing scenes or otherwise

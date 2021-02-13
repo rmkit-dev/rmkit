@@ -31,7 +31,7 @@ class CircleAnimation : public ui::Widget:
       else:
         color = BLACK
 
-    ui::MainLoop::timers.set_timeout([=]() {
+    ui::MainLoop::set_timeout([=]() {
       self.fb->draw_circle(self.x+self.w/2, self.y+self.h/2, self.size, 1, self.color, 0 /* fill */)
       self.animate()
     }, 16)
