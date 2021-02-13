@@ -25,6 +25,8 @@ namespace stbtext:
         #else
         filename = "src/vendor/NotoSansMono-Regular.ttf";
         #endif
+        pass
+
       FILE * file = fopen(filename, "rb");
       if file == NULL:
         debug "Unable to read font file: ", filename
