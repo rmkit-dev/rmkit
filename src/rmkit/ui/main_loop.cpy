@@ -179,7 +179,7 @@ namespace ui:
 
     /// blocking read for input
     static void read_input():
-      in.listen_all(timers.next_timeout_usec())
+      in.listen_all(timers.next_timeout_ms())
 
     /// queue a render for all the widgets on the visible scenes
     static void refresh():

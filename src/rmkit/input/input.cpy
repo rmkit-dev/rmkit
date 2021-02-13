@@ -166,15 +166,15 @@ namespace input:
         ioctl(fd, EVIOCGRAB, false)
 
 
-    void listen_all(int64_t timeout_usec = 0):
+    void listen_all(long timeout_ms = 0):
       fd_set rdfs_cp
       int retval
       self.reset_events()
 
       rdfs_cp = rdfs
 
-      if timeout_usec > 0:
-          struct timeval tv = {time_t(timeout_usec / 1000000), int(timeout_usec % 1000000)}
+      if timeout_ms > 0:
+          struct timeval tv = {timeout_ms / 1000, (timeout_ms % 1000) * 1000}
           retval = select(max_fd, &rdfs_cp, NULL, NULL, &tv)
       else:
           retval = select(max_fd, &rdfs_cp, NULL, NULL, NULL)
