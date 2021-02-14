@@ -614,6 +614,9 @@ class App: public IApp:
       ui::MainLoop::in.touch.prev_ev.slots[i].left = 0
       ui::MainLoop::in.touch.event.slots[i].left = 0
 
+    for auto g : ui::MainLoop::gestures:
+      g->reset()
+
   // TODO: figure out the right events here to properly flood this device
   void flood_button_queue():
     fd := ui::MainLoop::in.button.fd
