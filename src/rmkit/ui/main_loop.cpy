@@ -21,13 +21,13 @@
 #include "../defines.h"
 
 #include "../util/signals.h"
-#include "../util/timer.h"
 #include "../input/input.h"
 #include "../input/gestures.h"
 #include "../fb/fb.h"
 #include "scene.h"
 #include "widget.h"
 #include "task_queue.h"
+#include "timer.h"
 
 #include <unistd.h>
 
@@ -48,7 +48,6 @@ namespace ui:
 
     static input::Input in
     static vector<input::Gesture*> gestures
-    static TimerList timers
 
     // variable: motion_event
     // motion_event is used for subscribing to motion_events
@@ -164,7 +163,7 @@ namespace ui:
     // - redraws the current scene and overlay's dirty widgets
     static void main():
       handle_events()
-      timers.trigger()
+      TimerList::get()->trigger()
 
       TaskQueue::run_task()
 
@@ -179,7 +178,7 @@ namespace ui:
 
     /// blocking read for input
     static void read_input():
-      in.listen_all(timers.next_timeout_ms())
+      in.listen_all(TimerList::get()->next_timeout_ms())
 
     /// queue a render for all the widgets on the visible scenes
     static void refresh():
@@ -230,23 +229,6 @@ namespace ui:
         Widget::fb->clear_screen()
         MainLoop::refresh()
         kbd->on_hide()
-
-    // function: set_timeout
-    //   calls `callback` after the given timeout (in millseconds)
-    //   the returned shared_ptr can be used to cancel the timer
-    static TimerPtr set_timeout(std::function<void()> callback, long ms):
-      return timers.set_timeout(callback, ms)
-
-    // function: set_interval
-    //   calls `callback` repeatedly at the given interval (in millseconds)
-    //   the returned shared_ptr can be used to cancel the timer
-    static TimerPtr set_interval(std::function<void()> callback, long ms):
-      return timers.set_interval(callback, ms)
-
-    // function: cancel_timer
-    //   cancels a timer started by either set_timeout or set_interval
-    static void cancel_timer(TimerPtr timer):
-      return timers.cancel(timer)
 
     // clear and refresh the widgets on screen
     // useful if changing scenes or otherwise
@@ -353,6 +335,5 @@ namespace ui:
   MOUSE_EVENT MainLoop::motion_event
   KEY_EVENT MainLoop::key_event
   MainLoop::GESTURE_EVENT MainLoop::gesture_event
-  TimerList MainLoop::timers
 
   shared_ptr<framebuffer::FB> MainLoop::fb = framebuffer::get()
