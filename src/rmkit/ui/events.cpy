@@ -150,8 +150,7 @@ namespace ui:
     MOUSE_EVENTS * mouse;
 
     template<MOUSE_EVENT GESTURE_EVENTS::*MEM>
-    class event_delegate:
-      private:
+    struct event_delegate:
       GESTURE_EVENTS_DELEGATE * parent;
 
       MOUSE_EVENT & get():
@@ -160,7 +159,6 @@ namespace ui:
           parent->gestures->attach(parent->mouse)
         return (*parent->gestures).*MEM
 
-      public:
       void operator+=(std::function<void(input::SynMotionEvent &)> f):
         get() += f
 
