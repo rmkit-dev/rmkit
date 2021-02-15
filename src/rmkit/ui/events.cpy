@@ -142,7 +142,7 @@ namespace ui:
         single_click_timer = nullptr
 
     bool outside_tolerance(const input::SynMotionEvent & ev, int tolerance):
-     return std::abs(ev.x - prev_ev.x) > tolerance || std::abs(ev.y - prev_ev.y) > tolerance
+      return std::abs(ev.x - prev_ev.x) > tolerance || std::abs(ev.y - prev_ev.y) > tolerance
   ;
 
   class GESTURE_EVENTS_DELEGATE:
