@@ -108,7 +108,8 @@ namespace ui:
       if outside_tolerance(ev, touch_slop_size):
         state = DRAGGING
         cancel_long_press()
-        drag_start(ev)
+        drag_start(prev_ev)
+        prev_ev = ev
 
     inline void WAIT_DOUBLE_CLICK_down(input::SynMotionEvent &ev):
       state = SECOND_DOWN
