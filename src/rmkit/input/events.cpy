@@ -115,16 +115,16 @@ namespace input:
             slots[slot].x = (MTWIDTH - data.value)*MT_X_SCALAR
           else:
             slots[slot].x = data.value
-          if slot == 0:
-            self.x = slots[0].x
+          if self.first_used_slot() == slot:
+            self.x = slots[slot].x
           break
         case ABS_MT_POSITION_Y:
           if not rm2fb::IN_RM2FB_SHIM:
             slots[slot].y = (MTHEIGHT - data.value)*MT_Y_SCALAR
           else:
             slots[slot].y = (DISPLAYHEIGHT - data.value)
-          if slot == 0:
-            self.y = slots[0].y
+          if self.first_used_slot() == slot:
+            self.y = slots[slot].y
           break
         case ABS_MT_TRACKING_ID:
           if slot >= 0:
@@ -151,13 +151,19 @@ namespace input:
         case 3:
           self.handle_abs(data)
 
-    def count_fingers():
+    inline int count_fingers():
       fingers := 0
       for i := 0; i < MAX_SLOTS; i++:
         if slots[i].left == 1:
           fingers++
 
       return fingers
+
+    inline int first_used_slot():
+      for i := 0; i < MAX_SLOTS; i++:
+        if slots[i].left > 0:
+          return i
+      return -1
 
     def is_multitouch():
       fingers := self.count_fingers()
