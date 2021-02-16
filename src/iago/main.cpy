@@ -27,19 +27,27 @@ class AppBackground: public ui::Widget:
 
 class DragHandle: public ui::Widget:
   public:
+  int shape = 0
   DragHandle(int x, int y, int w, int h): ui::Widget(x, y, w, h) {}
 
+  void set_shape(int s):
+    shape = s
+
   void render():
-    r := min(w/2, h/2)
-    fb->draw_circle(x+r, y+r, r, 5, GRAY, true)
+    if shape == 0:
+      r := min(w/2, h/2)
+      fb->draw_circle(x+r, y+r, r, 5, GRAY, true)
+    else:
+      for i := 0; i < 5; i++:
+        fb->draw_rect(x+i, y+i, w-i*2, h-i*2, GRAY, false)
 
 class Shape: public ui::Widget:
   public:
   enum SHAPE { LINE=0, SQUARE, CIRCLE }
   int shape = LINE
-  static vector<Shape*> shapes 
+  static vector<Shape*> shapes
 
-  ui::Widget *handle_one, *handle_two
+  DragHandle *handle_one, *handle_two
   Shape(int x, y, w, h, ui::Scene scene, SHAPE sh) : ui::Widget(x, y, w, h):
     scene->add(self)
     shapes.push_back(self)
@@ -48,6 +56,7 @@ class Shape: public ui::Widget:
     sz := 25
     handle_one = new DragHandle(x, y, sz, sz)
     handle_two = new DragHandle(x+w, y+h, sz, sz)
+    handle_two->set_shape(1)
 
     style := ui::Stylesheet() \
       .valign(ui::Style::VALIGN::MIDDLE) \
@@ -74,9 +83,8 @@ class Shape: public ui::Widget:
       dx := handle_one->x - ox
       dy := handle_one->y - oy
 
-      if shape == CIRCLE:
-        handle_two->x += dx
-        handle_two->y += dy
+      handle_two->x += dx
+      handle_two->y += dy
 
       draw_pixel(handle_one)
     }
