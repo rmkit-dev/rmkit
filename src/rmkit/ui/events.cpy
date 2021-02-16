@@ -69,6 +69,7 @@ namespace ui:
       mouse->move += PLS_LAMBDA(auto &ev) {
         switch state:
           case DOWN:        return DOWN_move(ev)
+          case SECOND_DOWN: return SECOND_DOWN_move(ev)
           case DRAGGING:    return DRAGGING_move(ev)
           default:          return
       }
@@ -114,9 +115,31 @@ namespace ui:
         prev_ev = ev
 
     inline void WAIT_DOUBLE_CLICK_down(input::SynMotionEvent &ev):
-      state = SECOND_DOWN
-      cancel_single_click()
-      prev_ev = ev
+      if outside_tolerance(ev, touch_threshold):
+        // We were waiting for a double_click, but the second down event
+        // happened far away from the previous click. This should trigger:
+        // (1) the previous single click (at the previous position)
+        finish(single_click, prev_ev)
+        // (2) a new down event from IDLE
+        state = IDLE
+        IDLE_down(ev)
+      else:
+        // otherwise we got the second down event, and just need one more up
+        // event to make this a double_click
+        state = SECOND_DOWN
+        cancel_single_click()
+        prev_ev = ev
+
+    inline void SECOND_DOWN_move(input::SynMotionEvent &ev):
+      if outside_tolerance(ev, touch_threshold):
+        // We were waiting for a double_click, but moved too far from the
+        // second down event. This should trigger:
+        // (1) the previously canceled single click
+        single_click(prev_ev)
+        // (2) a new move event from DOWN
+        state = DOWN
+        DOWN_move(ev)
+      // otherwise we're still waiting for an up event to trigger double_click
 
     inline void DRAGGING_move(input::SynMotionEvent &ev):
       if outside_tolerance(ev, dragging_step_size):
