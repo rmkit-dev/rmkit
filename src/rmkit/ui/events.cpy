@@ -32,9 +32,11 @@ namespace ui:
     MOUSE_EVENT dragging
     MOUSE_EVENT drag_end
 
-    // The threshold area that determines if this is a touch-based gesture
-    // (e.g. long_press, double_click) or a motion-based gesture (e.g. drag).
-    int touch_slop_size = 50
+    // The threshold that determines if this is a touch-based gesture (e.g.
+    // long_press, double_click) or a motion-based gesture (e.g. drag). For
+    // touch-based gestures, the x and y deltas are always < this value; once
+    // the x or y delta > this value, it is considered a motion-based gesture.
+    int touch_threshold = 50
 
     // Once dragging, only submit events when the x or y delta > this step.
     // This limits the number of dragging events.
@@ -105,7 +107,7 @@ namespace ui:
         }, double_click_timeout)
 
     inline void DOWN_move(input::SynMotionEvent &ev):
-      if outside_tolerance(ev, touch_slop_size):
+      if outside_tolerance(ev, touch_threshold):
         state = DRAGGING
         cancel_long_press()
         drag_start(prev_ev)
