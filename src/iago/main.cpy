@@ -25,10 +25,18 @@ class AppBackground: public ui::Widget:
     fb->perform_redraw(true)
     fb->dirty = 1
 
+class DragHandle: public ui::Widget:
+  public:
+  DragHandle(int x, int y, int w, int h): ui::Widget(x, y, w, h) {}
+
+  void render():
+    r := min(w/2, h/2)
+    fb->draw_circle(x+r, y+r, r, 5, GRAY, true)
+
 class Shape: public ui::Widget:
   public:
   enum SHAPE { LINE=0, SQUARE, CIRCLE }
-  int shape = LINE, draw_shape = 0
+  int shape = LINE
   static vector<Shape*> shapes 
 
   ui::Widget *handle_one, *handle_two
@@ -37,8 +45,9 @@ class Shape: public ui::Widget:
     shapes.push_back(self)
 
     shape = sh
-    handle_one = new ui::Text(x, y, 50, 50, "ø")
-    handle_two = new ui::Text(x+w, y+h, 50, 50, "×")
+    sz := 25
+    handle_one = new DragHandle(x, y, sz, sz)
+    handle_two = new DragHandle(x+w, y+h, sz, sz)
 
     style := ui::Stylesheet() \
       .valign(ui::Style::VALIGN::MIDDLE) \
@@ -92,8 +101,6 @@ class Shape: public ui::Widget:
     redraw()
 
   void redraw(bool skip_shape=false):
-    self.draw_shape = true
-    self.dirty = 1
     ui::MainLoop::full_refresh()
 
   void draw_pixel(ui::Widget *w1):
@@ -144,9 +151,6 @@ class Shape: public ui::Widget:
     handle_one->render()
     handle_two->render()
 
-    if not self.draw_shape:
-      return
-
     x1 := w1->x + w1->w/2
     y1 := w1->y + w1->h/2
     x2 := w2->x + w2->w/2
@@ -194,14 +198,14 @@ class App:
     h_layout := ui::HorizontalLayout(0, h-60, w, 50, scene)
 
 
-    no_button := new ui::Text(0, 0, 200, 50, "cancel")
-    ok_button := new ui::Text(0, 0, 200, 50, "ok")
+    no_button := new ui::Button(0, 0, 200, 50, "cancel")
+    ok_button := new ui::Button(0, 0, 200, 50, "ok")
     h_layout.pack_end(ok_button)
     h_layout.pack_end(no_button)
 
     shape_dropdown := new ui::TextDropdown(0, 0, 250, 50, "add")
     shape_dropdown->dir = ui::DropdownButton::DIRECTION::UP
-    shape_dropdown->add_section("add shape")->add_options({"line", "circle", "rect"})
+    shape_dropdown->add_section("add shape")->add_options({"line", "rect", "circle"})
     h_layout.pack_center(shape_dropdown)
 
     no_button->set_style(style)
@@ -226,12 +230,13 @@ class App:
 
     shape_dropdown->events.selected += PLS_LAMBDA(int i) {
       val := shape_dropdown->options[i]->name
+      r := 100
       if val == "circle":
-        s := new Shape(500, 500, 100, 100, scene, Shape::SHAPE::CIRCLE)
+        s := new Shape(w/2-r/2, h/2-r/2, r, r, scene, Shape::SHAPE::CIRCLE)
       if val == "line":
-        s := new Shape(500, 500, 100, 100, scene, Shape::SHAPE::LINE)
+        s := new Shape(w/2-r/2, h/2-r/2, r, r, scene, Shape::SHAPE::LINE)
       if val == "rect":
-        s := new Shape(500, 500, 100, 100, scene, Shape::SHAPE::SQUARE)
+        s := new Shape(w/2-r/2, h/2-r/2, r, r, scene, Shape::SHAPE::SQUARE)
     }
 
   void redraw(bool skip_shape=false):
