@@ -2,6 +2,66 @@
 #include "../build/rmkit.h"
 using namespace std
 
+class GestureWidget : public ui::Widget:
+  public:
+  int square_x, square_y
+  int size = 60
+  int drag_x, drag_y
+  remarkable_color default_fill = BLACK
+  remarkable_color fill = BLACK
+  remarkable_color outline = BLACK
+  remarkable_color widget_outline = BLACK
+
+  GestureWidget(int x, y, w, h) : ui::Widget(x, y, w, h):
+    square_x = w / 2
+    square_y = h / 2
+    // drag events
+    gestures.drag_start += PLS_LAMBDA(auto & ev) {
+      debug "DRAG START"
+      fill = GRAY
+      drag_x = ev.x - square_x
+      drag_y = ev.y - square_y
+      dirty = 1
+    }
+    gestures.drag_end += PLS_LAMBDA(auto & ev) {
+      debug "DRAG END"
+      fill = default_fill
+      dirty = 1
+    }
+    gestures.dragging += PLS_LAMBDA(auto & ev) {
+      debug "DRAGGING", ev.x, ev.y
+      square_x = max(x+(size/2),min(x+w-(size/2), ev.x - drag_x))
+      square_y = max(y+(size/2),min(y+h-(size/2), ev.y - drag_y))
+      dirty = 1
+    }
+    // click events
+    gestures.long_press += PLS_LAMBDA(auto & ev) {
+      debug "LONG PRESS", ev.x, ev.y
+      widget_outline = (widget_outline == BLACK) ? GRAY : BLACK
+      dirty = 1
+    }
+    gestures.single_click += PLS_LAMBDA(auto & ev) {
+      debug "SINGLE CLICK", ev.x, ev.y
+      default_fill = fill = (fill == BLACK) ? WHITE : BLACK
+      dirty = 1
+    }
+    gestures.double_click += PLS_LAMBDA(auto & ev) {
+      debug "DOUBLE CLICK", ev.x, ev.y
+      outline = (outline == BLACK) ? GRAY : BLACK
+      dirty = 1
+    }
+
+  void render():
+    // background
+    fb->draw_rect(x+10, y+10, w-20, h-20, WHITE, true)
+    for i 0 10:
+      fb->draw_rect(x+i, y+i, w-2*i, h-2*i, widget_outline, false)
+    // drag rect
+    cx := x + square_x
+    cy := y + square_y
+    fb->draw_rect(cx - (size/2),     cy - (size/2),     size,    size,    outline)
+    fb->draw_rect(cx - (size/2) + 5, cy - (size/2) + 5, size-10, size-10, fill)
+
 class App:
   public:
   ui::Scene demo_scene
@@ -67,6 +127,10 @@ class App:
       debug "SELECTED", idx, text_dropdown->options[idx]->name
     ;
     h_layout.pack_center(text_dropdown)
+
+    auto drag = new GestureWidget(0, 0, 800, 800)
+    v_layout.pack_center(drag)
+    h_layout.pack_center(drag)
 
   def handle_key_event(input::SynKeyEvent &key_ev):
     debug "KEY PRESSED", key_ev.key

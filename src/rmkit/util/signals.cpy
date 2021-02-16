@@ -37,6 +37,9 @@ namespace PLS:
     void clear():
       cbs.clear()
 
+    bool empty():
+      return cbs.empty()
+
   template<typename T>
   class Observable:
     T value
