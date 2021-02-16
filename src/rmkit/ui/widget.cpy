@@ -19,7 +19,7 @@ namespace ui:
     vector<shared_ptr<Widget>> children
 
     MOUSE_EVENTS mouse
-    GESTURE_EVENTS_DELEGATE gesture = { &mouse }
+    GESTURE_EVENTS_DELEGATE gestures = { &mouse }
     KEY_EVENTS kbd
 
     // variables: x, y, w, h

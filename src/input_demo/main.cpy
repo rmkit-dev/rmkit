@@ -16,36 +16,36 @@ class GestureWidget : public ui::Widget:
     square_x = w / 2
     square_y = h / 2
     // drag events
-    gesture.drag_start += PLS_LAMBDA(auto & ev) {
+    gestures.drag_start += PLS_LAMBDA(auto & ev) {
       debug "DRAG START"
       fill = GRAY
       drag_x = ev.x - square_x
       drag_y = ev.y - square_y
       dirty = 1
     }
-    gesture.drag_end += PLS_LAMBDA(auto & ev) {
+    gestures.drag_end += PLS_LAMBDA(auto & ev) {
       debug "DRAG END"
       fill = default_fill
       dirty = 1
     }
-    gesture.dragging += PLS_LAMBDA(auto & ev) {
+    gestures.dragging += PLS_LAMBDA(auto & ev) {
       debug "DRAGGING", ev.x, ev.y
       square_x = max(x+(size/2),min(x+w-(size/2), ev.x - drag_x))
       square_y = max(y+(size/2),min(y+h-(size/2), ev.y - drag_y))
       dirty = 1
     }
     // click events
-    gesture.long_press += PLS_LAMBDA(auto & ev) {
+    gestures.long_press += PLS_LAMBDA(auto & ev) {
       debug "LONG PRESS", ev.x, ev.y
       widget_outline = (widget_outline == BLACK) ? GRAY : BLACK
       dirty = 1
     }
-    gesture.single_click += PLS_LAMBDA(auto & ev) {
+    gestures.single_click += PLS_LAMBDA(auto & ev) {
       debug "SINGLE CLICK", ev.x, ev.y
       default_fill = fill = (fill == BLACK) ? WHITE : BLACK
       dirty = 1
     }
-    gesture.double_click += PLS_LAMBDA(auto & ev) {
+    gestures.double_click += PLS_LAMBDA(auto & ev) {
       debug "DOUBLE CLICK", ev.x, ev.y
       outline = (outline == BLACK) ? GRAY : BLACK
       dirty = 1
