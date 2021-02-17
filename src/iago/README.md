@@ -5,8 +5,9 @@ and can draw circles, rectangles and lines.
 
 ## launching
 
-use `genie` to launch iago. it's preferable to launch it with a swipe and not
-tap (as there are some weird bugs when using taps)
+use `genie` or ddvk's `touchinjector` to launch iago. it's preferable to launch
+it with a swipe and not tap (as there are some weird bugs when using taps with
+genie)
 
 ## usage
 
