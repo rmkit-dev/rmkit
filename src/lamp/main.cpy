@@ -178,7 +178,7 @@ void pen_draw_circle(int ox, oy, r1, r2):
   act_on_line("pen down " + to_string(int(ox + r1)) + " " + to_string(int(oy)))
   old_move_pts := move_pts
   move_pts = 10
-  trace_arc(ox, oy, r1, r2, 0, 360, 10)
+  trace_arc(ox, oy, r1, r2, 0, 360, 1)
   move_pts = old_move_pts
   act_on_line("pen up")
 
