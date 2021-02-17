@@ -5,3 +5,5 @@ pen circle 600 600 500 50
 pen circle 900 900 200 50
 pen circle 1100 1100 100 50
 pen circle 1200 1200 50 50
+pen roundedrectangle 900 1000 1300 1600 100
+pen bezier 700 200 1300 900 200 400 800 1700

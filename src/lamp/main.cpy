@@ -17,6 +17,7 @@ using namespace std
 
 int offset = 0
 int move_pts = 500
+double denom = 360/(2*3.14)
 
 
 rm_version := util::get_remarkable_version()
@@ -166,17 +167,96 @@ void pen_draw_line(int x1, y1, x2, y2):
   act_on_line("pen move " + to_string(x2) + " " + to_string(y2))
   act_on_line("pen up")
 
-void pen_draw_circle(int ox, oy, r1, r2, points=360):
+void trace_arc(int ox, oy, r1, r2, a1=0, a2=360, step=1):
+  for i := a1; i < a2+10; i+=step:
+    rx := cos(i / denom) * r1 + ox
+    ry := sin(i / denom) * r2 + oy
+    act_on_line("fastpen move " + to_string(int(rx)) + " " + to_string(int(ry)))
 
+void pen_draw_circle(int ox, oy, r1, r2):
+  debug "DRAWING CIRCLE", ox, oy, r1, r2
   act_on_line("pen down " + to_string(int(ox + r1)) + " " + to_string(int(oy)))
-  denom := points/(2*3.14)
   old_move_pts := move_pts
   move_pts = 10
-  for i := 0; i < points+10; i++:
-    rx := cos(i / denom) * r1
-    ry := sin(i / denom) * r1
-    act_on_line("fastpen move " + to_string(int(ox + rx)) + " " + to_string(int(oy + ry)))
+  trace_arc(ox, oy, r1, r2, 0, 360, 10)
   move_pts = old_move_pts
+  act_on_line("pen up")
+
+void pen_draw_arc(int ox, oy, r1, r2, a1=0, a2=360):
+  while a2 < a1:
+    a2 += 360
+
+  pointx := cos(a1 / denom) * r1 + ox
+  pointy := sin(a1 / denom) * r2 + oy
+  debug "DRAWING ARC", ox, oy, r1, r2, a1, a2
+  act_on_line("pen down " + to_string(int(pointx)) + " " + to_string(int(pointy)))
+
+  old_move_pts := move_pts
+  move_pts = 10
+
+  trace_arc(ox, oy, r1, r2, a1, a2, 2)
+  
+  move_pts = old_move_pts
+  act_on_line("pen up")
+
+void pen_draw_rounded_rectangle(int x1, y1, x2, y2, r):
+  if x2 == -1:
+    x2 = pen_x
+    y2 = pen_y
+  debug "DRAWING ROUNDED RECT", x1, y1, x2, y2, r
+  step:=10
+  segmentx:=abs(x2-x1)
+  segmenty:=abs(y2-y1)
+  if (r > (0.5*segmentx))
+    r=0.5*segmentx
+  if (r > (0.5*segmenty))
+    r=0.5*segmenty
+
+  pointx:=x1+segmentx-r
+  pointy:=y1+r
+  degreesx:=270
+  degreesy:=360
+  act_on_line("pen down " + to_string(pointx) + " " + to_string(y1))
+  trace_arc(pointx, pointy, r, r, degreesx, degreesy, step)
+  pointx=x1+segmentx-r
+  pointy=y1+segmenty-r
+  degreesx=0
+  degreesy=90
+  trace_arc(pointx, pointy, r, r, degreesx, degreesy, step)
+  pointx=x1+r
+  pointy=y1+segmenty-r
+  degreesx=90
+  degreesy=180
+  trace_arc(pointx, pointy, r, r, degreesx, degreesy, step)
+  pointx=x1+r
+  pointy=y1+r
+  degreesx=180
+  degreesy=270
+  trace_arc(pointx, pointy, r, r, degreesx, degreesy, step)
+
+  pointx=x1+segmentx-r
+  act_on_line("pen move " + to_string(pointx) + " " + to_string(y1))
+  act_on_line("pen up")
+
+void trace_bezier(vector<int> coors):
+  double pointx, pointy
+  step:=0.01
+  if (len(coors) == 6):
+    for t:=step; t<=1.0+step; t=t+step:
+      it:=1-t
+      pointx = it*it*coors[0] + 2*t*it*coors[2] + t*t*coors[4];
+      pointy = it*it*coors[1] + 2*t*it*coors[3] + t*t*coors[5];
+      act_on_line("fastpen move " + to_string(int(pointx)) + " " + to_string(int(pointy)))
+  else if (len(coors) == 8)
+    for t:=step; t<=1.0+step; t=t+step:
+      it:=1-t
+      pointx = it*it*it*coors[0] + 3*t*it*it*coors[2] + 3*t*t*it*coors[4] + t*t*t*coors[6];
+      pointy = it*it*it*coors[1] + 3*t*it*it*coors[3] + 3*t*t*it*coors[5] + t*t*t*coors[7];
+      act_on_line("fastpen move " + to_string(int(pointx)) + " " + to_string(int(pointy)))
+
+void pen_draw_bezier(vector<int> coors):
+  act_on_line("pen down " + to_string(coors[0]) + " " + to_string(coors[1]))
+  trace_bezier(coors)
   act_on_line("pen up")
 
 void pen_draw_circle(int x1, y1, radius):
@@ -193,7 +273,8 @@ void act_on_line(string line):
   stringstream ss(line)
   string action, tool
   ss >> tool >> action;
-  int x, y, ox=-1, oy=-1
+  int x, y, ox=-1, oy=-1, a1=0, a2=360, r=10
+  vector<int> coors
   tokens := str_utils::split(line, ' ')
 
   if tool == "swipe":
@@ -223,6 +304,21 @@ void act_on_line(string line):
       ss >> ox >> oy >> x >> y
     else:
       debug "UNRECOGNIZED DRAW LINE", line, "REQUIRES 4 COORDINATES"
+  if action == "arc":
+    if len(tokens) == 8:
+      ss >> ox >> oy >> x >> y >> a1 >> a2
+    else:
+      debug "UNRECOGNIZED DRAW ARC", line, "REQUIRES 4 COORDINATES AND 2 ANGLES"
+  if action == "roundedrectangle":
+    if len(tokens) == 7:
+      ss >> ox >> oy >> x >> y >> r
+    else:
+      debug "UNRECOGNIZED DRAW ROUNDED RECTANGLE", line, "REQUIRES 4 COORDINATES AND 1 RADIUS"
+  if action == "bezier":
+    while (ss >> ox):
+      coors.push_back(ox);
+    if !(len(coors) == 6 || len(coors) == 8)
+      debug "UNRECOGNIZED DRAW BEZIER", line, "REQUIRES 6 OR 8 COORDINATES"
 
   if action == "down":
     if len(tokens) == 4:
@@ -256,6 +352,14 @@ void act_on_line(string line):
     else if action == "circle":
       pen_draw_circle(ox, oy, x, y)
       usleep(200 * 1000)
+    else if action == "arc":
+      pen_draw_arc(ox, oy, x, y, a1, a2)
+      usleep(200 * 1000)
+    else if action == "roundedrectangle":
+      pen_draw_rounded_rectangle(ox, oy, x, y, r)
+      usleep(200 * 1000)
+    else if action == "bezier":
+      pen_draw_bezier(coors)
 
     else:
       debug "UNKNOWN ACTION", action, "IN", line
