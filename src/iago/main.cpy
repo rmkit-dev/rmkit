@@ -50,7 +50,6 @@ class App:
 
     h_layout := ui::HorizontalLayout(0, h-60, w, 50, scene)
 
-
     no_button := new ui::Button(0, 0, 200, 50, "cancel")
     ok_button := new ui::Button(0, 0, 200, 50, "ok")
     h_layout.pack_end(ok_button)
@@ -58,6 +57,8 @@ class App:
 
     shape_dropdown := new ui::TextDropdown(0, 0, 250, 50, "add")
     shape_dropdown->dir = ui::DropdownButton::DIRECTION::UP
+
+    // TODO: pull these from the list of available shapes
     shape_dropdown->add_section("add shape")->add_options({"line", "rect", "circle"})
     h_layout.pack_center(shape_dropdown)
 
@@ -71,7 +72,7 @@ class App:
     ok_button->mouse.click += PLS_LAMBDA(auto &ev) {
       self.cleanup()
       shape_strs := vector<string>{}
-      for auto sh : Shape::shapes:
+      for auto sh : shape::to_draw:
         str := sh->to_lamp()
         cmd := "echo '"+ str + "' | /opt/bin/lamp"
         debug "RUNNING", cmd
@@ -81,15 +82,16 @@ class App:
       exit(0)
     }
 
+    // TODO: this should use Shape to get the shape to use
     shape_dropdown->events.selected += PLS_LAMBDA(int i) {
       val := shape_dropdown->options[i]->name
       r := 100
       if val == "circle":
-        s := new Shape(w/2-r/2, h/2-r/2, r, r, scene, Shape::SHAPE::CIRCLE)
+        s := new shape::Circle(w/2-r/2, h/2-r/2, r, r, scene)
       if val == "line":
-        s := new Shape(w/2-r/2, h/2-r/2, r, r, scene, Shape::SHAPE::LINE)
+        s := new shape::Line(w/2-r/2, h/2-r/2, r, r, scene)
       if val == "rect":
-        s := new Shape(w/2-r/2, h/2-r/2, r, r, scene, Shape::SHAPE::SQUARE)
+        s := new shape::Rectangle(w/2-r/2, h/2-r/2, r, r, scene)
     }
 
   void redraw(bool skip_shape=false):
@@ -97,7 +99,6 @@ class App:
 
   void redraw(input::SynMotionEvent &ev):
     redraw(false)
-
 
   void cleanup():
     ui::MainLoop::in.ungrab()
@@ -112,7 +113,6 @@ class App:
       ui::MainLoop::main()
       ui::MainLoop::redraw()
       ui::MainLoop::read_input()
-
 
 App app
 void catch_sigint(int):
