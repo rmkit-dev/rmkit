@@ -259,14 +259,6 @@ void pen_draw_bezier(vector<int> coors):
   trace_bezier(coors)
   act_on_line("pen up")
 
-void pen_draw_circle(int x1, y1, radius):
-  if radius <= 1:
-    debug "INVALID RADIUS FOR CIRCLE", radius
-    return
-
-  pass
-
-
 
 int touch_fd, pen_fd
 void act_on_line(string line):
@@ -299,11 +291,19 @@ void act_on_line(string line):
       ss >> ox >> oy >> x >> y
     else:
       debug "UNRECOGNIZED MOVE LINE", line, "REQUIRES 2 or 4 COORDINATES"
-  if action == "rectangle" || action == "line" || action == "circle":
+  if action == "rectangle" || action == "line":
     if len(tokens) == 6:
       ss >> ox >> oy >> x >> y
     else:
       debug "UNRECOGNIZED DRAW LINE", line, "REQUIRES 4 COORDINATES"
+  if action == "circle":
+    if len(tokens) == 6:
+      ss >> ox >> oy >> x >> y
+    else if len(tokens) == 5:
+      ss >> ox >> oy >> x
+      y = x
+    else:
+      debug "UNRECOGNIZED DRAW LINE", line, "REQUIRES 2 COORDINATES AND 1 OR 2 RADIUS"
   if action == "arc":
     if len(tokens) == 8:
       ss >> ox >> oy >> x >> y >> a1 >> a2
