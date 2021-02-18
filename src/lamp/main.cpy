@@ -207,61 +207,61 @@ void pen_draw_rounded_rectangle(int x1, y1, x2, y2, r):
   step:=10
 
   if x2 < x1:
-    temp:=x1
-    x1=x2
-    x2=temp
+    temp := x1
+    x1 = x2
+    x2 = temp
   if y2 < y1:
-    temp:=y1
-    y1=y2
-    y2=temp
+    temp := y1
+    y1 = y2
+    y2 = temp
 
-  segmentx:=abs(x2-x1)
-  segmenty:=abs(y2-y1)
-  if (r > (0.5*segmentx))
-    r=0.5*segmentx
-  if (r > (0.5*segmenty))
-    r=0.5*segmenty
+  segmentx := abs(x2 - x1)
+  segmenty := abs(y2 - y1)
+  if (r > (0.5 * segmentx))
+    r = 0.5 * segmentx
+  if (r > (0.5 * segmenty))
+    r = 0.5 * segmenty
 
-  pointx:=x1+segmentx-r
-  pointy:=y1+r
-  degreesx:=270
-  degreesy:=360
+  pointx := x1 + segmentx - r
+  pointy := y1 + r
+  degreesx := 270
+  degreesy := 360
   act_on_line("pen down " + to_string(pointx) + " " + to_string(y1))
   trace_arc(pointx, pointy, r, r, degreesx, degreesy, step)
-  pointx=x1+segmentx-r
-  pointy=y1+segmenty-r
-  degreesx=0
-  degreesy=90
+  pointx = x1 + segmentx - r
+  pointy = y1 + segmenty - r
+  degreesx = 0
+  degreesy = 90
   trace_arc(pointx, pointy, r, r, degreesx, degreesy, step)
-  pointx=x1+r
-  pointy=y1+segmenty-r
-  degreesx=90
-  degreesy=180
+  pointx = x1 + r
+  pointy = y1 + segmenty - r
+  degreesx = 90
+  degreesy = 180
   trace_arc(pointx, pointy, r, r, degreesx, degreesy, step)
-  pointx=x1+r
-  pointy=y1+r
-  degreesx=180
-  degreesy=270
+  pointx = x1 + r
+  pointy = y1 + r
+  degreesx = 180
+  degreesy = 270
   trace_arc(pointx, pointy, r, r, degreesx, degreesy, step)
 
-  pointx=x1+segmentx-r
+  pointx = x1 + segmentx - r
   act_on_line("pen move " + to_string(pointx) + " " + to_string(y1))
   act_on_line("pen up")
 
 void trace_bezier(vector<int> coors):
   double pointx, pointy
-  step:=0.01
+  step := 0.01
   if (len(coors) == 6):
-    for t:=step; t<=1.0+step; t=t+step:
-      it:=1-t
-      pointx = it*it*coors[0] + 2*t*it*coors[2] + t*t*coors[4];
-      pointy = it*it*coors[1] + 2*t*it*coors[3] + t*t*coors[5];
+    for t := step; t <= (1.0 + step); t = t + step:
+      it := 1 - t
+      pointx = it * it * coors[0] + 2 * t * it * coors[2] + t * t * coors[4];
+      pointy = it * it * coors[1] + 2 * t * it * coors[3] + t * t * coors[5];
       act_on_line("fastpen move " + to_string(int(pointx)) + " " + to_string(int(pointy)))
   else if (len(coors) == 8)
-    for t:=step; t<=1.0+step; t=t+step:
-      it:=1-t
-      pointx = it*it*it*coors[0] + 3*t*it*it*coors[2] + 3*t*t*it*coors[4] + t*t*t*coors[6];
-      pointy = it*it*it*coors[1] + 3*t*it*it*coors[3] + 3*t*t*it*coors[5] + t*t*t*coors[7];
+    for t := step; t <= (1.0 + step); t = t + step:
+      it := 1 - t
+      pointx = it * it * it * coors[0] + 3 * t * it * it * coors[2] + 3 * t * t * it * coors[4] + t * t * t * coors[6];
+      pointy = it * it * it * coors[1] + 3 * t * it * it * coors[3] + 3 * t * t * it * coors[5] + t * t * t * coors[7];
       act_on_line("fastpen move " + to_string(int(pointx)) + " " + to_string(int(pointy)))
 
 void pen_draw_bezier(vector<int> coors):
@@ -313,7 +313,7 @@ void act_on_line(string line):
       ss >> ox >> oy >> x
       y = x
     else:
-      debug "UNRECOGNIZED DRAW LINE", line, "REQUIRES 2 COORDINATES AND 1 OR 2 RADIUS"
+      debug "UNRECOGNIZED DRAW CIRCLE", line, "REQUIRES 2 COORDINATES AND 1 OR 2 RADIUS"
   if action == "arc":
     if len(tokens) == 8:
       ss >> ox >> oy >> x >> y >> a1 >> a2
