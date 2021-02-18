@@ -1,13 +1,20 @@
-# reMux
+# remux
 
-reMux is an app switcher for remarkable. once its running, hold the middle
-button down for several seconds until the reMux launcher appears
+remux is an app switcher for the remarkable tablet. once its running, hold the
+middle button down for several seconds until the remux launcher appears or
+swipe up either side of the screen.
 
-there are a couple ways to configure the list of apps that appear in reMux:
+## Adding Apps
 
-1. via code configuration - edit config.launcher.cpy
-2. add a binary to the remux watch dir on the remarkable
-3. using draft remarkable configuration files
+usually, most people install [toltec](toltec-dev.org) and the apps in toltec
+all use draft format and are installed into /opt/etc/draft.
+
+but if you are writing a new app or trying out an unpackaged app, there are a
+few ways to configure the list of apps that appear in remux:
+
+1. via code configuration - edit config.launcher.cpy and recompile remux
+2. add a binary to `/home/root/apps` on the remarkable and make sure it is `chmod +x`
+3. using draft remarkable configuration files. they are installed into /opt/etc/draft
 
 ## Launching
 
