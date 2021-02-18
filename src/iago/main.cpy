@@ -2,6 +2,10 @@
 #include "../shared/string.h"
 
 #include "shapes.h"
+#include <sys/types.h>
+#include <sys/wait.h>
+
+pid_t _pid
 
 class AppBackground: public ui::Widget:
   public:
@@ -71,6 +75,9 @@ class App:
 
     ok_button->mouse.click += PLS_LAMBDA(auto &ev) {
       self.cleanup()
+
+      ui::MainLoop::in.touch.lock()
+
       shape_strs := vector<string>{}
       for auto sh : shape::to_draw:
         str := sh->to_lamp()
@@ -79,6 +86,8 @@ class App:
         _ := system("sleep 0.1")
         _ = system(cmd.c_str())
       _ := system("sleep 0.5")
+
+      ui::MainLoop::in.ungrab()
       exit(0)
     }
 
@@ -101,6 +110,7 @@ class App:
     redraw(false)
 
   void cleanup():
+    debug "CLEANING UP", _pid
     ui::MainLoop::in.ungrab()
     app_bg->render()
 
@@ -115,11 +125,27 @@ class App:
       ui::MainLoop::read_input()
 
 App app
-void catch_sigint(int):
-  debug "CAUGHT SIGINT"
+did_clean := false
+void cleanup():
+  if did_clean:
+    return
+  did_clean = true
+
   app.cleanup()
   exit(0)
 
+void catch_sigint(int):
+  debug "CAUGHT SIGINT", _pid
+  cleanup()
+
 def main():
   signal(SIGINT, catch_sigint);
-  app.run()
+
+  // we fork just to be a little bit extra safe with
+  // unlocking the input file descriptors
+  _pid = fork()
+  if _pid:
+    wait(NULL)
+    ui::MainLoop::in.ungrab()
+  else:
+    app.run()

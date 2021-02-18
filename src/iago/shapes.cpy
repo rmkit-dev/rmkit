@@ -162,11 +162,11 @@ namespace shape:
 
       r := int(sqrt(w * w + h * h))
 
-      return "fastpen circle " + str_utils::join(%{
+      return "pen circle " + str_utils::join(%{
         to_string(x1),
         to_string(y1),
         to_string(r),
-        to_string(0)}, ' ')
+        to_string(r)}, ' ')
 
   class Rectangle : public Shape:
     public:
@@ -194,7 +194,7 @@ namespace shape:
       x1, y1 := get_handle_coords(handle_one)
       x2, y2 := get_handle_coords(handle_two)
 
-      return "fastpen rectangle " + str_utils::join(%{
+      return "pen rectangle " + str_utils::join(%{
         to_string(x1),
         to_string(y1),
         to_string(x2),
