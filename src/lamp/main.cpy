@@ -205,6 +205,16 @@ void pen_draw_rounded_rectangle(int x1, y1, x2, y2, r):
     y2 = pen_y
   debug "DRAWING ROUNDED RECT", x1, y1, x2, y2, r
   step:=10
+
+  if x2 < x1:
+    temp:=x1
+    x1=x2
+    x2=temp
+  if y2 < y1:
+    temp:=y1
+    y1=y2
+    y2=temp
+
   segmentx:=abs(x2-x1)
   segmenty:=abs(y2-y1)
   if (r > (0.5*segmentx))
