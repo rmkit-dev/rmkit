@@ -594,6 +594,28 @@ namespace framebuffer:
           err += dx
           y0 += sy
 
+    // function: draw_bezier
+    // draw a bezier curve from x0,y0 to x3,y3
+    // curve shape is controled by 2 points x1,y1 and x2,y2
+    def draw_bezier(int x0,y0,x1,y1,x2,y2,x3,y3,width,color,float dither=1.0):
+      #ifdef DEBUG_FB
+      fprintf(stderr, "DRAWING BEZIER %i %i %i %i %i %i %i %i\n",
+              x0, y0, x1, y1, x2, y2, x3, y3)
+      #endif
+      self.dirty = 1
+
+      update_dirty(dirty_area, x0-width, y0-width)
+      update_dirty(dirty_area, x0+width, y0+width)
+      update_dirty(dirty_area, x3+width, y3+width)
+      update_dirty(dirty_area, x3-width, y3-width)
+
+      step := 0.001
+      for t := 0.0; t <= (1.0+step); t += step:
+        it := 1-t
+        pointx := it*it*it*x0 + 3*t*it*it*x1 + 3*t*t*it*x2 + t*t*t*x3
+        pointy := it*it*it*y0 + 3*t*it*it*y1 + 3*t*t*it*y2 + t*t*t*y3
+        _draw_rect_fast(pointx, pointy, width, width, color, dither)
+
   class HardwareFB: public FB:
     public:
     HardwareFB(): FB():
