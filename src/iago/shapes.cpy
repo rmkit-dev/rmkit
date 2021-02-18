@@ -19,8 +19,6 @@ namespace shape:
           fb->draw_rect(x+i, y+i, w-i*2, h-i*2, GRAY, false)
 
 
-  enum SHAPE { LINE=0, SQUARE, CIRCLE }
-
   class Shape;
   static vector<Shape*> to_draw = {}
   class Shape: public ui::Widget:
@@ -36,13 +34,6 @@ namespace shape:
       handle_one = new DragHandle(x, y, sz, sz)
       handle_two = new DragHandle(x+w, y+h, sz, sz)
       handle_two->set_shape(1)
-
-      style := ui::Stylesheet() \
-        .valign(ui::Style::VALIGN::MIDDLE) \
-        .justify(ui::Style::JUSTIFY::CENTER)
-
-      handle_one->set_style(style.font_size(50))
-      handle_two->set_style(style.font_size(50))
 
       scene->add(handle_one)
       scene->add(handle_two)
