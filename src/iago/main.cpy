@@ -63,7 +63,14 @@ class App:
     shape_dropdown->dir = ui::DropdownButton::DIRECTION::UP
 
     // TODO: pull these from the list of available shapes
-    shape_dropdown->add_section("add shape")->add_options({"line", "rect", "circle", "bezier"})
+    shape_dropdown->add_section("add shape")->add_options(%{
+      "line",
+      "v. line",
+      "h. line",
+      "rect",
+      "circle",
+      "bezier"})
+
     h_layout.pack_center(shape_dropdown)
 
     no_button->set_style(style)
@@ -97,6 +104,10 @@ class App:
       r := 100
       if val == "circle":
         s := new shape::Circle(w/2-r/2, h/2-r/2, r, r, scene)
+      if val == "h. line":
+        s := new shape::HLine(w/2-r/2, h/2-r/2, r, r, scene)
+      if val == "v. line":
+        s := new shape::VLine(w/2-r/2, h/2-r/2, r, r, scene)
       if val == "line":
         s := new shape::Line(w/2-r/2, h/2-r/2, r, r, scene)
       if val == "rect":

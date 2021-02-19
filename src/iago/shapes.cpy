@@ -106,7 +106,6 @@ namespace shape:
     const string name = "Line"
     Line(int x, y, w, h, ui::Scene scene) : Shape(x, y, w, h, scene):
       handle_two->y = handle_one->y
-      return
 
     void render():
       handle_one->render()
@@ -131,6 +130,22 @@ namespace shape:
         to_string(y1),
         to_string(x2),
         to_string(y2)}, ' ')
+
+  class HLine: Line:
+    public:
+    HLine(int x, y, w, h, ui::Scene scene) : Line(x, y, w, h, scene):
+      handle_two->x = handle_one->x + w
+
+    void before_render():
+      handle_one->y = handle_two->y
+
+  class VLine: Line:
+    public:
+    VLine(int x, y, w, h, ui::Scene scene) : Line(x, y, w, h, scene):
+      handle_two->y = handle_one->y + h
+
+    void before_render():
+      handle_one->x = handle_two->x
 
   class Circle : public Shape:
     public:
