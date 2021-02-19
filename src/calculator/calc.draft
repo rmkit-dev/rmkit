@@ -1,0 +1,4 @@
+name=calc
+desc=Calculator
+call=/home/root/calc
+imgFile=mines
