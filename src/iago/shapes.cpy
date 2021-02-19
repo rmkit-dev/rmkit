@@ -10,6 +10,10 @@ namespace shape:
     void set_shape(int s):
       shape = s
 
+    bool ignore_event(input::SynMotionEvent &syn_ev):
+      return input::is_touch_event(syn_ev)
+
+
     void render():
       if shape == 0:
         r := min(w/2, h/2)

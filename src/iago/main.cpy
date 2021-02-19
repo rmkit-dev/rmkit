@@ -118,9 +118,9 @@ class App:
     app_bg->render()
 
   void run():
-    // just to kick off the app, we do a full redraw
     ui::MainLoop::in.grab()
     ui::MainLoop::refresh()
+    // just to kick off the app, we do a full redraw
     ui::MainLoop::redraw()
     while true:
       ui::MainLoop::main()
