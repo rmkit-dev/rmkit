@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <iostream>
 #include <stdlib.h>
 #include "calc.h"
 
@@ -14,15 +15,13 @@ class CalcDisplay: public ui::Text {
 StackElement::StackElement(int width, int height) {
     content = "";
     display = new CalcDisplay(width, height);
-    ui::Style format = ui::Stylesheet()
+    display->set_style(ui::Stylesheet()
         .font_size(64)
         .line_height(1.2)
         .underline(false)
         .justify_right()
         .valign_middle()
-        .border_all()
-        .build();
-    display->set_style(format);
+        .border_all());
 }
 
 void StackElement::setText(const char* text) {
@@ -66,15 +65,13 @@ class CalcButton: public ui::Button {
   public:
     CalcButton(Calculator& c, Key key)
       : calculator(c), key(key), Button(0, 0, 150, 90, key.text) {
-        ui::Style button = ui::Stylesheet()
+      this->set_style(ui::Stylesheet()
           .font_size(58)
           .line_height(1.2)
           .underline(false)
           .justify_center()
           .valign_top()
-          .border_all()
-          .build();
-      this->set_style(button);
+          .border_all());
     }
 
     virtual void on_mouse_click(input::SynMotionEvent &ev) {
@@ -108,13 +105,14 @@ std::vector<StackElement*> buildCalculatorLayout(ui::Scene scene, Calculator &ca
     calcs->pack_start(stack[i]->getLine());
   }
   std::reverse(stack.begin(), stack.end());
+  cout << "Stack created" << endl;
   // Keyboard - upsidedown so pack_end works properly
   Key keyboard[] = {
-              {".", kdot}, {"0", kzero}, {"E", kexp}, {"+", kplus}, {"mod", kmod}, {"round", kround}, {"%", kpercent}, {"spare", kdeg}, {"spare", krad}, {EOL, keol},
+              {".", kdot}, {"0", kzero}, {"E", kexp}, {"+", kplus}, {"mod", kmod}, {"round", kround}, {"%", kpercent}, {"", kspare}, {"", kspare}, {EOL, keol},
               {"1", kone}, {"2", ktwo}, {"3", kthree}, {"-", kminus}, {"π", kpi}, {"e", ke}, {"√", ksqrt}, {"log", klog}, {"ln", kln}, {EOL, keol},
               {"4", kfour}, {"5", kfive}, {"6", ksix}, {"*", ktimes}, {"x²", ksquare}, {"1/x", kreciprocal}, {"x!", kfact}, {"|x|", kabs}, {"x^y", kpower}, {EOL, keol},
               {"7", kseven}, {"8", keight}, {"9", knine}, {"/", kdiv}, {"push", kpush}, {"swap", kswap}, {"cosh", kcosh}, {"sinh", ksinh}, {"tanh", ktanh}, {EOL, keol},
-              {"Exit", kexit}, {"C", kc}, {"cos", kcos}, {"sin", ksin}, {"tan", ktan}, {EOL, keol}, 
+              {"exit", kexit}, {"drop", kdrop}, {"cos", kcos}, {"sin", ksin}, {"tan", ktan}, {EOL, keol}, 
       };
 
   size_t numberOfElements = sizeof(keyboard)/sizeof(keyboard[0]);
@@ -122,6 +120,7 @@ std::vector<StackElement*> buildCalculatorLayout(ui::Scene scene, Calculator &ca
   v->pack_end(kbd);
   for (int i = 0; i < numberOfElements; i++) {
     auto key = keyboard[i];
+    cout << "creating " << key.text << endl;
     if (EOL == key.text) {
       kbd = new ui::HorizontalLayout(0, 0, width, lineHeight, scene);
       v->pack_end(kbd);
@@ -134,6 +133,7 @@ std::vector<StackElement*> buildCalculatorLayout(ui::Scene scene, Calculator &ca
 
 int main() {
   // get the framebuffer
+  cout << "Starting" << endl;
   auto fb = framebuffer::get();
   auto dims = fb->get_display_size();
   auto width = std::get<0>(dims);
@@ -142,17 +142,15 @@ int main() {
   // clear the framebuffer using a white rect
   fb->clear_screen();
 
-  // Logic
+  // Logic in this class
   Calculator calculator;
 
-  // make a new scene
   auto scene = ui::make_scene();
-  // set the scene
   ui::MainLoop::set_scene(scene);
-
+  cout << "Building Layout" << endl;
   auto stack = buildCalculatorLayout(scene, calculator, width, height);
   calculator.setOutputs(stack);
-
+  cout << "Starting main loop" << endl;
   while (true) {
     ui::MainLoop::main();
     ui::MainLoop::redraw();

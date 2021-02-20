@@ -87,7 +87,7 @@ void Calculator::buttonPressed(Key key) {
                 shuffleDown();
                 stack[0]->setValue(res);
                 break;
-            case keycodes::kc:
+            case keycodes::kdrop:
                 if (!stack[0]->isBlank()) {
                     stack[0]->setText("");
                     break;
@@ -211,7 +211,7 @@ void Calculator::buttonPressed(Key key) {
         }
     } catch(std::exception& e) {
         std::ofstream file;
-        file.open("/tmp/err.txt");
+        file.open("/tmp/rpnerr.txt");
         file<< "Exception" << e.what() << std::endl;
         file.close();
     }

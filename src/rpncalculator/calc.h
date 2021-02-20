@@ -3,11 +3,11 @@
 
 enum keycodes {
     kzero, kone, ktwo, kthree, kfour, kfive, ksix, kseven, keight, knine, 
-    kdot, kexp, kplus, kmod, ke, kpercent, kdeg, krad,
+    kdot, kexp, kplus, kmod, ke, kpercent,
     kminus, kpi, kround, ksqrt, klog, kln,
     ktimes, ksquare, kreciprocal, kfact, kabs, kpower,
     kdiv, kpush, kswap, kcosh, ksinh, ktanh,
-    kexit, kc, kcos, ksin, ktan, keol
+    kexit, kdrop, kcos, ksin, ktan, kspare, keol
 };
 
 typedef struct key {

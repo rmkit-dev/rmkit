@@ -1,4 +1,4 @@
 name=calc
 desc=Calculator
-call=/home/root/calc
+call=/opt/bin/rpncalc
 imgFile=mines
