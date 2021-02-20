@@ -23,14 +23,25 @@ namespace ui:
     KEY_EVENT pressed
   ;
 
+  class WidgetGestureEvent : public input::SynMotionEvent
+    public:
+    bool is_long_press = false;
+    WidgetGestureEvent(const input::SynMotionEvent & ev, bool is_long_press=false) \
+        : input::SynMotionEvent(ev), is_long_press(is_long_press):
+      pass
+  ;
+
+  PLS_DEFINE_SIGNAL(WIDGET_GESTURE_EVENT, WidgetGestureEvent)
+
   class GESTURE_EVENTS:
     public:
-    MOUSE_EVENT long_press
-    MOUSE_EVENT single_click
-    MOUSE_EVENT double_click
-    MOUSE_EVENT drag_start
-    MOUSE_EVENT dragging
-    MOUSE_EVENT drag_end
+
+    WIDGET_GESTURE_EVENT long_press
+    WIDGET_GESTURE_EVENT single_click
+    WIDGET_GESTURE_EVENT double_click
+    WIDGET_GESTURE_EVENT drag_start
+    WIDGET_GESTURE_EVENT dragging
+    WIDGET_GESTURE_EVENT drag_end
 
     // The threshold that determines if this is a touch-based gesture (e.g.
     // long_press, double_click) or a motion-based gesture (e.g. drag). For
@@ -51,7 +62,23 @@ namespace ui:
     // triggered (otherwise single_click is triggered immediately on up).
     long double_click_timeout = 250
 
-    // State machine
+    // == State machine ==
+    // Possible state transition sequences
+
+    // click events
+    // without a double_click handler
+    //   DOWN -> UP = single_click
+    // with a double_click handler
+    //   DOWN -> UP -> WAIT_DOUBLE_CLICK -> (timeout)         = single_click
+    //   DOWN -> UP -> WAIT_DOUBLE_CLICK -> SECOND_DOWN -> UP = double_click
+
+    // drag events
+    //   DOWN -> (move) -> DRAGGING -> UP/LEAVE = drag_start + dragging + drag_end
+
+    // long_press events
+    //   DOWN -> (timeout) = long_press
+    //   (from long_press) -> LONG_DOWN -> (move) -> DRAGGING -> UP/LEAVE = drag events
+
     void attach(MOUSE_EVENTS * mouse):
       mouse->down += PLS_LAMBDA(auto &ev) {
         switch state:
@@ -70,6 +97,7 @@ namespace ui:
         switch state:
           case DOWN:        return DOWN_move(ev)
           case SECOND_DOWN: return SECOND_DOWN_move(ev)
+          case LONG_DOWN:   return LONG_DOWN_move(ev)
           case DRAGGING:    return DRAGGING_move(ev)
           default:          return
       }
@@ -83,8 +111,9 @@ namespace ui:
     input::SynMotionEvent prev_ev
     TimerPtr long_press_timer
     TimerPtr single_click_timer
-    enum STATE { IDLE, DOWN, DRAGGING, WAIT_DOUBLE_CLICK, SECOND_DOWN }
+    enum STATE { IDLE, DOWN, DRAGGING, WAIT_DOUBLE_CLICK, SECOND_DOWN, LONG_DOWN }
     STATE state = IDLE
+    bool is_long_press = false
 
     inline void IDLE_down(input::SynMotionEvent &ev):
       reset()
@@ -93,7 +122,11 @@ namespace ui:
       if not long_press.empty():
         long_press_timer = ui::set_timeout([=]() {
           auto ev_copy = ev
-          finish(long_press, ev_copy)
+          is_long_press = true
+          dispatch(long_press, ev_copy)
+          // set up LONG_DOWN
+          prev_ev = ev_copy
+          state = LONG_DOWN
         }, long_press_timeout)
 
     inline void DOWN_up(input::SynMotionEvent &ev):
@@ -111,8 +144,15 @@ namespace ui:
       if outside_tolerance(ev, touch_threshold):
         state = DRAGGING
         cancel_long_press()
-        drag_start(prev_ev)
+        dispatch(drag_start, prev_ev)
         prev_ev = ev
+
+    inline void LONG_DOWN_move(input::SynMotionEvent &ev):
+      // DOWN_move just checks if we're ready to switch to drag, which is all
+      // we need to do in LONG_DOWN as well. This LONG_DOWN_move handler is
+      // only here in case we add more gestures and the state transition ends
+      // up needing to be different.
+      DOWN_move(ev)
 
     inline void WAIT_DOUBLE_CLICK_down(input::SynMotionEvent &ev):
       if outside_tolerance(ev, touch_threshold):
@@ -135,7 +175,7 @@ namespace ui:
         // We were waiting for a double_click, but moved too far from the
         // second down event. This should trigger:
         // (1) the previously canceled single click
-        single_click(prev_ev)
+        dispatch(single_click, prev_ev)
         // (2) a new move event from DOWN
         state = DOWN
         DOWN_move(ev)
@@ -143,17 +183,22 @@ namespace ui:
 
     inline void DRAGGING_move(input::SynMotionEvent &ev):
       if outside_tolerance(ev, dragging_step_size):
-        dragging(ev)
+        dispatch(dragging, ev)
         prev_ev = ev
 
     // helpers
     void reset():
       cancel_long_press()
       cancel_single_click()
+      is_long_press = false
       state = IDLE
 
-    inline void finish(MOUSE_EVENT & handler, input::SynMotionEvent & ev):
+    inline void dispatch(WIDGET_GESTURE_EVENT & handler, input::SynMotionEvent & syn_ev):
+      WidgetGestureEvent ev(syn_ev, is_long_press);
       handler(ev)
+
+    inline void finish(WIDGET_GESTURE_EVENT & handler, input::SynMotionEvent & ev):
+      dispatch(handler, ev)
       reset()
 
     void cancel_long_press()
@@ -181,14 +226,14 @@ namespace ui:
         self.gestures->attach(self.mouse)
       return *self.gestures
 
-    template<MOUSE_EVENT GESTURE_EVENTS::*MEM>
+    template<WIDGET_GESTURE_EVENT GESTURE_EVENTS::*MEM>
     struct event_delegate:
       GESTURE_EVENTS_DELEGATE * parent;
 
-      MOUSE_EVENT & get():
+      WIDGET_GESTURE_EVENT & get():
         return parent->get().*MEM
 
-      void operator+=(std::function<void(input::SynMotionEvent &)> f):
+      void operator+=(std::function<void(WidgetGestureEvent &)> f):
         get() += f
 
       void clear():

@@ -18,7 +18,8 @@ class GestureWidget : public ui::Widget:
     // drag events
     gestures.drag_start += PLS_LAMBDA(auto & ev) {
       debug "DRAG START"
-      fill = GRAY
+      if ev.is_long_press:
+        fill = GRAY
       drag_x = ev.x - square_x
       drag_y = ev.y - square_y
       dirty = 1
