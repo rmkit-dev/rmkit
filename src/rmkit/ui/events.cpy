@@ -152,15 +152,18 @@ namespace ui:
     std::unique_ptr<GESTURE_EVENTS> gestures;
     MOUSE_EVENTS * mouse;
 
+    GESTURE_EVENTS & get():
+      if !self.gestures:
+        self.gestures = std::make_unique<GESTURE_EVENTS>()
+        self.gestures->attach(self.mouse)
+      return *self.gestures
+
     template<MOUSE_EVENT GESTURE_EVENTS::*MEM>
     struct event_delegate:
       GESTURE_EVENTS_DELEGATE * parent;
 
       MOUSE_EVENT & get():
-        if !parent->gestures:
-          parent->gestures = std::make_unique<GESTURE_EVENTS>()
-          parent->gestures->attach(parent->mouse)
-        return (*parent->gestures).*MEM
+        return parent->get().*MEM
 
       void operator+=(std::function<void(input::SynMotionEvent &)> f):
         get() += f
@@ -183,4 +186,13 @@ namespace ui:
     event_delegate<&GESTURE_EVENTS::drag_start>   drag_start   = { this }
     event_delegate<&GESTURE_EVENTS::dragging>     dragging     = { this }
     event_delegate<&GESTURE_EVENTS::drag_end>     drag_end     = { this }
+
+    void set_touch_threshold(int val):
+      get().touch_threshold = val
+    void set_dragging_step_size(int val):
+      get().dragging_step_size = val
+    void set_long_press_timeout(long val):
+      get().long_press_timeout = val
+    void set_double_click_timeout(long val):
+      get().double_click_timeout = val
   ;
