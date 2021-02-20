@@ -1,4 +1,0 @@
-name=calc
-desc=Calculator
-call=/opt/bin/rpncalc
-imgFile=mines

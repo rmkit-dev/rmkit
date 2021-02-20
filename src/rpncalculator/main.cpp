@@ -3,7 +3,6 @@
 #include <vector>
 #include <algorithm>
 #include <iostream>
-#include <stdlib.h>
 #include "calc.h"
 
 class CalcDisplay: public ui::Text {
