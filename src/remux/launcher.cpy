@@ -255,6 +255,7 @@ class App: public IApp:
     app_dialog->on_hide += PLS_LAMBDA(auto &d):
       self.render_bg()
       launch(CURRENT_APP)
+      ui::MainLoop::in.unmonitor(ui::MainLoop::in.wacom.fd)
       if USE_KOREADER_WORKAROUND and CURRENT_APP != "KOReader":
         ui::MainLoop::in.ungrab()
     ;
@@ -427,6 +428,7 @@ class App: public IApp:
     if ui::MainLoop::overlay_is_visible:
       return
 
+    ui::MainLoop::in.monitor(ui::MainLoop::in.wacom.fd)
     ClockWatch cz
 
     ClockWatch c0
@@ -795,6 +797,8 @@ class App: public IApp:
     ui::MainLoop::key_event += PLS_DELEGATE(self.handle_key_event)
     ui::MainLoop::motion_event += PLS_DELEGATE(self.handle_motion_event)
     // ui::MainLoop::gesture_event += PLS_DELEGATE(self.handle_gesture_event)
+
+    ui::MainLoop::in.unmonitor(ui::MainLoop::in.wacom.fd)
 
     while true:
       ui::MainLoop::main()

@@ -145,6 +145,9 @@ namespace input:
       FD_SET(fd,&rdfs)
       max_fd = max(max_fd, fd+1)
 
+    void unmonitor(int fd):
+      FD_CLR(fd, &rdfs)
+
     def handle_ipc():
       char buf[1024];
       int bytes = read(input::ipc_fd[0], buf, 1024);
