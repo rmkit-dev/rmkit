@@ -67,7 +67,7 @@ def read_remux_config():
 
     if tokens.size() == 2:
       config.set(tokens[0], tokens[1])
-    else:
+    else if tokens.size() == 1:
       config.set(tokens[0], "")
 
   return config
