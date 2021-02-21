@@ -255,7 +255,11 @@ class App: public IApp:
     app_dialog->on_hide += PLS_LAMBDA(auto &d):
       self.render_bg()
       launch(CURRENT_APP)
-      ui::MainLoop::in.unmonitor(ui::MainLoop::in.wacom.fd)
+      // we put the unmonitor in a timeout to prevent
+      // pen events from interrupting remux from displaying
+      ui::set_timeout([=]() {
+        ui::MainLoop::in.unmonitor(ui::MainLoop::in.wacom.fd)
+      }, 10)
       if USE_KOREADER_WORKAROUND and CURRENT_APP != "KOReader":
         ui::MainLoop::in.ungrab()
     ;
