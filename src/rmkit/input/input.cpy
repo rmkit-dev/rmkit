@@ -37,6 +37,12 @@ namespace input:
     def marshal(T &ev):
       return ev.marshal()
 
+    void unlock():
+      ioctl(fd, EVIOCGRAB, false)
+
+    void lock():
+      ioctl(fd, EVIOCGRAB, true)
+
     void handle_event_fd():
       int bytes = read(fd, ev_data, sizeof(input_event) * 64);
       if bytes < sizeof(struct input_event) || bytes == -1:
