@@ -4,6 +4,11 @@
 #include <fstream>
 #include "calc.h"
 
+// arm-linux-gnueabihf-g++ (Ubuntu 9.3.0-17ubuntu1~20.04) 9.3.0
+// links against 2.29 instead of 2.4, but the rM1 may not have 2.29 symbols
+__asm__(".symver log,log@GLIBC_2.4"); // was 2.29
+__asm__(".symver pow,pow@GLIBC_2.4"); // was 2.29
+
 void Calculator::buttonPressed(Key key) {
     double res;
     try {
