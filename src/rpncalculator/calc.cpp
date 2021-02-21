@@ -6,6 +6,7 @@
 
 // arm-linux-gnueabihf-g++ (Ubuntu 9.3.0-17ubuntu1~20.04) 9.3.0
 // links against 2.29 instead of 2.4, but the rM1 may not have 2.29 symbols
+// NOTE: use `objdump -T src/build/<binary> | grep GLIBC_` to check symbols
 __asm__(".symver log,log@GLIBC_2.4"); // was 2.29
 __asm__(".symver pow,pow@GLIBC_2.4"); // was 2.29
 
