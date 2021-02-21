@@ -1,13 +1,9 @@
 # About
 
-rmHarmony is a drawing app for the remarkable tablet
+harmony is a drawing app for the remarkable tablet
 
 ![](https://i.imgur.com/KJlWdAAl.png)
 ![](https://i.imgur.com/KJ4rReu.gifv)
-
-## Status
-
-Approaching first release. Stay tuned!
 
 ### Implemented
 
@@ -18,26 +14,14 @@ Approaching first release. Stay tuned!
 
 ## Installation
 
-### Try it out
-
-run `wget -O- https://rmkit.dev/try.sh -q | sh -` on the remarkable via SSH
-
-To exit harmony, press the power button to bring up the exit dialog.
-
-### Install
-
-run `wget -O- https://rmkit.dev/install.sh -q | sh -` on the remarkable via SSH
-to install the harmony launcher until the next time the device is updated
-
-
-to launch harmony, hold the center button for 2+ seconds. To exit harmony,
-press the power button to bring up the exit dialog.
+It's recommended to install harmony from toltec, but you can
+also get the binaries from https://build.rmkit.dev/
 
 ### Manual Installation
 
 * download or build the binaries for harmony (see docs/BUILDING.md)
-* copy `harmony` to /home/root/harmony/harmony on the remarkable
-* launch `/home/root/harmony/harmony` through SSH
+* copy `harmony` to /home/root/harmony on the remarkable
+* launch `/home/root/harmony` through SSH
 
 ## Compilation
 

@@ -21,20 +21,8 @@ This is the easiest way to compile for the tablet if you have docker installed.
 
 * install okp: `pip install okp`
 * install resim viewer: `pip install rmkit-sim`
-
-with image framebuffer:
-
-* compile with fake framebuffer: `ARCH=dev make harmony`
+* compile with DEV mode: `ARCH=dev make harmony`
 * run harmony with `resim ./src/build/harmony`
-
-with real framebuffer:
-
-* compile with real framebuffer: `ARCH=x86 make harmony`
-* switch to virtual terminal and run `sudo ./src/build/harmony`
-
-NOTE: sudo is necessary because 1) the framebuffer capabilities are queried via
-ioctl to figure out the proper width and height to use and 2) the keyboard /
-mouse are opened for reading
 
 ### Remarkable
 

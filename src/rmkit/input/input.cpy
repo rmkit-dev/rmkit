@@ -37,6 +37,12 @@ namespace input:
     def marshal(T &ev):
       return ev.marshal()
 
+    void unlock():
+      ioctl(fd, EVIOCGRAB, false)
+
+    void lock():
+      ioctl(fd, EVIOCGRAB, true)
+
     void handle_event_fd():
       int bytes = read(fd, ev_data, sizeof(input_event) * 64);
       if bytes < sizeof(struct input_event) || bytes == -1:
@@ -144,6 +150,9 @@ namespace input:
     void monitor(int fd):
       FD_SET(fd,&rdfs)
       max_fd = max(max_fd, fd+1)
+
+    void unmonitor(int fd):
+      FD_CLR(fd, &rdfs)
 
     def handle_ipc():
       char buf[1024];
