@@ -105,3 +105,8 @@ see [BUILDING.md](docs/BUILDING.md)
 [There's a list of app ideas just waiting to be built!](docs/APP_IDEAS.md). If
 you have ideas for new apps or features, please open an issue or get in touch
 :-D
+
+## Acknowledgements
+
+* [libremarkable](https://github.com/canselcik/libremarkable) for reverse engineering remarkable IO
+* [stb](https://github.com/nothings/stb) for image resizing and font rendering libraries
