@@ -18,7 +18,7 @@ using namespace std
 int offset = 0
 int move_pts = 500
 double denom = 360/(2*3.14)
-
+bool bsleep = false
 
 rm_version := util::get_remarkable_version()
 
@@ -387,6 +387,19 @@ void act_on_line(string line):
         write_events(touch_fd, finger_move(finger_x, finger_y, x, y))
       finger_x = x
       finger_y = y
+    else:
+      debug "UNKNOWN ACTION", action, "IN", line
+  else if tool == "sleep":
+    int val = strtol(action.c_str(), NULL, 10) 
+    if action == "on"
+      bsleep = true
+    else if action == "off"
+      bsleep = false
+    else if bsleep == false:
+      pass
+    else if 1 <= val && val <= 10000:
+      usleep(val * 1000)
+      debug "SLEEP FOR" val "ms"
     else:
       debug "UNKNOWN ACTION", action, "IN", line
   else:
