@@ -14,6 +14,18 @@ namespace genie:
     string min_events = ""
   ;
 
+  void run_command(string command):
+    ui::TaskQueue::add_task([=]() {
+      usleep(1e3 * 50)
+
+      debug "RUNNING COMMAND", command
+      string cmd = command
+      c_str := cmd.c_str()
+      _ := system(c_str)
+
+      ui::MainLoop::reset_gestures()
+    })
+
   input::SwipeGesture* build_swipe_gesture(GestureConfigData gcd):
     fb := framebuffer::get()
     fw, fh := fb->get_display_size()
@@ -49,10 +61,8 @@ namespace genie:
       if gcd.command == "":
         return
 
-      debug "RUNNING COMMAND", gcd.command
-      string cmd = gcd.command + string(" &")
-      c_str := cmd.c_str()
-      _ := system(c_str)
+      run_command(gcd.command)
+
     }
 
     debug "ADDED SWIPE GESTURE:"
@@ -91,10 +101,7 @@ namespace genie:
       if gcd.command == "":
         return
 
-      debug "RUNNING COMMAND", gcd.command
-      string cmd = gcd.command + string(" &")
-      c_str := cmd.c_str()
-      _ := system(c_str)
+      run_command(gcd.command)
     }
 
     debug "ADDED TAP GESTURE:"

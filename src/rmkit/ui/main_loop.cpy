@@ -128,6 +128,18 @@ namespace ui:
           continue
         handle_key_event(ev)
 
+    static void reset_gestures():
+      // lift all fingers
+      debug "RESETTING MT GESTURES"
+      for i := 0; i < input::TouchEvent::MAX_SLOTS; i++:
+        ui::MainLoop::in.touch.prev_ev.slots[i].left = 0
+        ui::MainLoop::in.touch.event.slots[i].left = 0
+        ui::MainLoop::in.touch.event.slot = 0
+        ui::MainLoop::in.touch.prev_ev.slot = 0
+
+      for auto g : ui::MainLoop::gestures:
+        g->reset()
+
     // we save the touch input until the finger lifts up
     // so we can analyze whether its a gesture or not
     static void handle_gestures():
