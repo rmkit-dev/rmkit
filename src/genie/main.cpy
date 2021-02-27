@@ -20,6 +20,9 @@ class App:
     pass
 
   def run():
+    // don't listen for stylus events, saves CPU
+    ui::MainLoop::in.unmonitor(ui::MainLoop::in.wacom.fd)
+
     ui::MainLoop::key_event += PLS_DELEGATE(self.handle_key_event)
     // ui::MainLoop::motion_event += PLS_DELEGATE(self.handle_motion_event)
 
