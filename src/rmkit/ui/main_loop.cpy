@@ -133,9 +133,8 @@ namespace ui:
       debug "RESETTING MT GESTURES"
       for i := 0; i < input::TouchEvent::MAX_SLOTS; i++:
         ui::MainLoop::in.touch.prev_ev.slots[i].left = 0
-        ui::MainLoop::in.touch.event.slots[i].left = 0
-        ui::MainLoop::in.touch.event.slot = 0
-        ui::MainLoop::in.touch.prev_ev.slot = 0
+
+      ui::MainLoop::in.touch.prev_ev.slot = 0
 
       for auto g : ui::MainLoop::gestures:
         g->reset()
