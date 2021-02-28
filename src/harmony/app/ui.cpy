@@ -185,6 +185,22 @@ namespace app_ui:
 
       self.text = "..."
 
+  class HistoryButton: public ui::Button:
+    public:
+    Canvas *canvas
+    HistoryButton(int x, y, w, h, Canvas *c): ui::Button(x,y,w,h,"history"):
+      self.canvas = c
+      self.text = "history"
+
+    void on_mouse_click(input::SynMotionEvent &ev):
+      self.dirty = 1
+      STATE.disable_history = !STATE.disable_history
+
+    void render():
+      ui::Button::render()
+      if STATE.disable_history:
+        self.fb->draw_line(self.x, self.y, self.w+self.x, self.h+self.y, 4, BLACK)
+
   class UndoButton: public ui::Button:
     public:
     Canvas *canvas

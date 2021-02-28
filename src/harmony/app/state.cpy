@@ -11,6 +11,7 @@ namespace app_ui:
     static AppState instance
 
     Observable<bool> reject_touch
+    Observable<bool> disable_history
 
     Observable<remarkable_color> color
     Observable<app_ui::Brush*> brush

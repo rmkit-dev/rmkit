@@ -163,6 +163,9 @@ namespace app_ui:
         self.redo_stack.pop_front()
 
     void push_undo():
+      if STATE.disable_history:
+        return
+
       dirty_rect = self.vfb->dirty_area
       debug "ADDING TO UNDO STACK, DIRTY AREA IS", \
         dirty_rect.x0, dirty_rect.y0, dirty_rect.x1, dirty_rect.y1
