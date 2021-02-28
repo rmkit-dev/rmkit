@@ -74,6 +74,7 @@ namespace framebuffer:
     int byte_size = 0, dirty = 0
     int update_marker = 1
     int waveform_mode = WAVEFORM_MODE_DU
+    int update_mode = UPDATE_MODE_PARTIAL
     DITHER::MODE dither = DITHER::NONE
 
     RESIZE_EVENT resize
@@ -659,11 +660,12 @@ namespace framebuffer:
       update_data.update_marker = 0
       update_data.update_region = update_rect
       update_data.waveform_mode = self.waveform_mode
-      update_data.update_mode = UPDATE_MODE_PARTIAL
+      update_data.update_mode = self.update_mode
       update_data.dither_mode = EPDC_FLAG_EXP1
       update_data.temp = TEMP_USE_REMARKABLE_DRAW
       update_data.flags = 0
       self.waveform_mode = WAVEFORM_MODE_DU
+      self.update_mode = UPDATE_MODE_PARTIAL
 
       if update_rect.height == 0 || update_rect.width == 0:
         return um
