@@ -10,6 +10,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <unordered_set>
+#include <thread>
 #define PID 1
 #define PGROUP 4
 
@@ -119,7 +120,7 @@ namespace proc:
 
     return found
 
-  vector<Proc> ls(vector<string> &args):
+  vector<Proc> list_procs(vector<string> &args):
     vector<Proc> ret;
 
     needle := string("")
@@ -152,7 +153,7 @@ namespace proc:
     return ret
 
   void groupkill(int signal, vector<string> &args):
-    procs := ls(args)
+    procs := list_procs(args)
     unordered_set<string> tokill
     for auto proc : procs:
       tokill.insert(proc.stat[PGROUP])
@@ -164,7 +165,7 @@ namespace proc:
 
   bool is_running(string bin):
     vector<string> bins = { bin }
-    procs := ls(bins)
+    procs := list_procs(bins)
     if procs.size() == 0:
       return false
 
@@ -188,7 +189,7 @@ namespace proc:
     return ret
 
   map<string, bool> is_running(vector<string> bins):
-    procs := ls(bins)
+    procs := list_procs(bins)
     return is_running(bins, procs)
 
   MemInfo read_mem_total():
@@ -319,7 +320,7 @@ namespace proc:
 
   bool check_process(string name):
     args := vector<string>{name}
-    procs := ls(args)
+    procs := list_procs(args)
     debug "CHECKING PROCESS", name, procs.size()
     return procs.size() > 0
 
@@ -335,8 +336,11 @@ namespace proc:
 
     proc := name
     if background:
-      proc = "setsid " + proc + " &"
+      proc = "setsid " + proc
 
-    if system(proc.c_str()) != 0:
-      pass
+    auto *th = new thread([=]() {
+      c_str := proc.c_str()
+      _ := system(c_str)
 
+      debug "PROGRAM EXITED"
+    })

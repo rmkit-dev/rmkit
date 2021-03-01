@@ -148,7 +148,7 @@ class AppReader:
       app.is_running = false
       bins.push_back(app.bin)
 
-    procs := proc::ls(bins)
+    procs := proc::list_procs(bins)
     is_running := proc::is_running(bins, procs)
 
     for auto &app : self.apps:

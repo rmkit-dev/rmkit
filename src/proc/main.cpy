@@ -13,7 +13,7 @@ int main(int argc, char* argv[]):
     args.push_back(argv[i])
 
   if subcmd == "ls":
-    procs := proc::ls(args)
+    procs := proc::list_procs(args)
     mem_usage := proc::collect_mem(procs)
     for auto p : procs:
       print p.pid, p.cmdline, mem_usage[p.pid]
