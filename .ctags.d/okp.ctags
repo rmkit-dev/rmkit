@@ -1,9 +1,10 @@
 --langdef=okp
 --langmap=okp:.cpy.okp
---regex-okp=/^\s*(virtual|inline|public|private|static| )+\s+[a-zA-Z0-9_]+\s+([a-zA-Z0-9_]+)\(/\2/d,definition/{scope=ref}
---regex-okp=/^\s*\/\//exclusive}
+--regex-okp=/^\s*\/\///exclusive}
 --regex-okp=/^\s*return\W//exclusive}
 --regex-okp=/^\s*if\W//exclusive}
+--regex-okp=/^\s*while\W//exclusive}
+--regex-okp=/^\s*(virtual|inline|public|private|static| )+\s+[a-zA-Z0-9_:\*<>]+\s+([a-zA-Z0-9_]+)\(.*\):/\2/d,definition/{scope=ref}
 
 --regex-okp=/^\s*class\s*([a-zA-Z0-9_]+)/\1/c,class/{scope=set}
 --regex-okp=/^\s*struct\s*([a-zA-Z0-9_]+)/\1/s,struct/
