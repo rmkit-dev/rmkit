@@ -669,52 +669,6 @@ class App: public IApp:
 
     ui::MainLoop::hide_overlay()
 
-  // we save the touch input until the finger lifts up
-  // so we can analyze whether its a gesture or not
-  def save_touch_events():
-    for auto ev: ui::MainLoop::in.touch.events:
-      if ev.slots[0].left == 0:
-        self.check_gesture()
-        self.touch_events.clear()
-      else:
-        // we only track 200 events or so for now
-        // simple swipes are about 40 - 50 events
-        if self.touch_events.size() < 200:
-          self.touch_events.push_back(ev)
-
-
-  void check_gesture():
-    fb := framebuffer::get()
-    fw, fh := fb->get_display_size()
-    left := -1
-    max_y := self.touch_events[0].slots[0].y
-    min_y := self.touch_events[0].slots[0].y
-    for auto ev: self.touch_events:
-      if ev.slots[0].y != -1:
-        min_y = min(min_y, ev.slots[0].y)
-
-      if ev.slots[0].x != -1:
-
-        if left == -1:
-          if ev.slots[0].x < 100:
-            left = true
-          else if ev.slots[0].x > fw - 100:
-            left = false
-          else:
-            return
-
-        if left && ev.slots[0].x > 100:
-          return
-        if !left && ev.slots[0].x < fw - 100:
-          return
-
-    if min_y == -1 or max_y == -1:
-      return
-
-    y_delta := max_y - min_y
-    if y_delta >= 800:
-      self.show_launcher()
-      return
 
   string get_xochitl_cmd():
     ifstream f("/lib/systemd/system/xochitl.service")
@@ -735,10 +689,6 @@ class App: public IApp:
     return default_cmd
 
   void setup_gestures():
-    // TODO: read gesture config from remux.conf file
-    // since we want it to be backward compatible, what shall we do?
-    // launch_gesture=
-    // launch_gesture=
     // launch_gesture=
     // last_app_gesture=
 
@@ -795,7 +745,6 @@ class App: public IApp:
 
     ui::MainLoop::key_event += PLS_DELEGATE(self.handle_key_event)
     ui::MainLoop::motion_event += PLS_DELEGATE(self.handle_motion_event)
-    // ui::MainLoop::gesture_event += PLS_DELEGATE(self.handle_gesture_event)
 
     ui::MainLoop::in.unmonitor(ui::MainLoop::in.wacom.fd)
 

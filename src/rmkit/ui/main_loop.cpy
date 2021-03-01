@@ -69,20 +69,6 @@ namespace ui:
     // ---
     static KEY_EVENT key_event
 
-
-    class GestureEvent:
-      GestureEvent():
-        pass
-
-    PLS_DEFINE_SIGNAL(GESTURE_EVENT, GestureEvent)
-    // variable: gesture_event
-    // gesture_event is used for subscribing to gesture_event
-    //
-    // ---Code
-    // // d is of type input::GestureEvent
-    // MainLoop::gesture_event += [=](auto &d) { };
-    static GESTURE_EVENT gesture_event
-
     // returns whether the supplied widget is visible
     static bool is_visible(Widget *w):
       if kbd_is_visible:
@@ -333,7 +319,6 @@ namespace ui:
       return hit_widget
   ;
 
-  typedef MainLoop::GestureEvent GestureEvent
   Scene MainLoop::scene = make_scene()
   Scene MainLoop::overlay = make_scene()
   Scene MainLoop::kbd = make_scene()
@@ -345,6 +330,5 @@ namespace ui:
 
   MOUSE_EVENT MainLoop::motion_event
   KEY_EVENT MainLoop::key_event
-  MainLoop::GESTURE_EVENT MainLoop::gesture_event
 
   shared_ptr<framebuffer::FB> MainLoop::fb = framebuffer::get()
