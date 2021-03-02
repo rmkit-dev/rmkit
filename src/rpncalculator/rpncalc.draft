@@ -1,0 +1,4 @@
+name=rpncalc
+desc=RPN Calculator
+call=/opt/bin/rpncalc
+imgFile=calculator
