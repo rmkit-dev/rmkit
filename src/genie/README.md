@@ -29,6 +29,7 @@ common config items:
 swipe specific config:
 
 * **direction** direction of swipe, can be **up**, **down**, **left** or **right**
+* **distance** activation distance for swipe in pixels. should be 100 - 800 or so
 
 tap specific config:
 

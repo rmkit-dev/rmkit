@@ -12,6 +12,7 @@ namespace genie:
     string direction = ""
     string duration = ""
     string min_events = ""
+    string distance = ""
   ;
 
   void run_command(string command):
@@ -54,6 +55,9 @@ namespace genie:
     if gcd.direction == "down":
       g->direction = {0, 1}
 
+    if gcd.distance != "":
+      g->distance = atof(gcd.distance.c_str())
+
     if gcd.min_events != "":
       g->min_events = atof(gcd.min_events.c_str())
 
@@ -72,6 +76,7 @@ namespace genie:
     debug "  min_events:", gcd.min_events
     debug "  zone:", g->zone.x1, g->zone.y1, g->zone.x2, g->zone.y2
     debug "  direction:", gcd.direction
+    debug "  distance:", gcd.distance
     return g
 
   input::TapGesture* build_tap_gesture(GestureConfigData gcd):
@@ -152,6 +157,8 @@ namespace genie:
           gcd.fingers = tokens[1]
         if tokens[0] == "zone":
           gcd.zone = tokens[1]
+        if tokens[0] == "distance":
+          gcd.distance = tokens[1]
         if tokens[0] == "duration":
           gcd.duration = tokens[1]
         if tokens[0] == "direction":

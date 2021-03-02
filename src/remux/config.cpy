@@ -52,8 +52,12 @@ class RemuxConfig:
 
 def read_remux_config():
   string line
+  #ifndef DEV
   _ := system("mkdir -p /home/root/.config/remux/ 2> /dev/null")
   config_file := "/home/root/.config/remux/remux.conf"
+  #else
+  config_file := "remux.conf"
+  #endif
   debug "READING CONFIG FROM", config_file
   ifstream f(config_file)
 
