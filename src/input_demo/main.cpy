@@ -92,6 +92,22 @@ class App:
     h_layout2.pack_center(new ui::Text(0, 0, 200, 50, "Hello world"))
     h_layout3.pack_end(new ui::Text(0, 0, 200, 50, "Hello world"))
 
+    // Couple of demo menus
+    menu2 := new ui::DropdownMenu(0, 0, 200, 50, "Menu 2")
+    menu2->add_section("Hello world")
+    menu2->add_options({"Option D", "Option E", "Option F", "Very very very very long option"})
+    h_layout1.pack_end(menu2)
+    menu2->events.selected += PLS_LAMBDA(int idx):
+      debug "MENU 2 SELECTED", idx, menu2->options[idx]->name
+    ;
+
+    menu1 := new ui::DropdownMenu(0, 0, 200, 50, "Menu 1")
+    menu1->add_options({"Option A", "Option B", "Option C"})
+    h_layout1.pack_end(menu1)
+    menu1->events.selected += PLS_LAMBDA(int idx):
+      debug "MENU 1 SELECTED", idx, menu1->options[idx]->name
+    ;
+
     h_layout := ui::HorizontalLayout(0, 0, w, h, demo_scene)
 
     v_layout.pack_start(h_layout)
