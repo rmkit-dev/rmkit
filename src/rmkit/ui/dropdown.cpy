@@ -1,6 +1,7 @@
 #include "button.h"
 #include "layouts.h"
 #include "../input/events.h"
+#include "../fb/stb_text.h"
 
 namespace ui:
   class OptionSection: public ui::Button:
@@ -26,7 +27,6 @@ namespace ui:
 
     OptionButton(int x, y, w, h, IOptionButton* tb, string text, int idx): \
                  tb(tb), text(text), idx(idx), ui::Button(x,y,w,h,text):
-      self.x_padding = 10
       self.set_style(DEFAULT_STYLE)
 
     void on_mouse_click(input::SynMotionEvent &ev):
@@ -76,6 +76,8 @@ namespace ui:
     public:
     int selected
     int option_width, option_height, option_x, option_y
+    int option_x_padding = 10
+    int option_y_padding = 10
     enum DIRECTION { UP, DOWN }
     DIRECTION dir = DIRECTION::UP
     vector<shared_ptr<IOption>> options
@@ -111,6 +113,10 @@ namespace ui:
       self.option_width = width
       self.option_height = height
 
+    void set_option_padding(int x_padding, y_padding):
+      self.option_x_padding = x_padding
+      self.option_y_padding = y_padding
+
     void show_options():
       if self.scene == NULL:
         width, height = self.fb->get_display_size()
@@ -136,6 +142,8 @@ namespace ui:
 
           for auto option: opts:
             option_btn := new OptionButton(0, 0, ow, oh, self, option->name, i)
+            option_btn->x_padding = self.option_x_padding
+            option_btn->y_padding = self.option_y_padding
             if option->icon.data != NULL:
               option_btn->icon = option->icon
 
@@ -198,5 +206,23 @@ namespace ui:
         ds := make_shared<DropdownSection>(t)
         self.sections.push_back(ds)
         return ds
+
+    void autosize_options(int min_w = 0, int min_h = 0):
+      max_w := std::max(self.w, min_w)
+      max_h := std::max(self.h, min_h)
+      style := OptionButton::DEFAULT_STYLE.build()
+      font_size := style.font_size
+      // y_padding is only used on buttons if they are VALIGN::TOP
+      y_padding := style.valign == Style::VALIGN::TOP ? self.option_y_padding : 0
+      for auto section: self.sections:
+        if section->name != "":
+          image := stbtext::get_text_size(section->name, font_size)
+          max_w = std::max(max_w, image.w + 2 * self.option_x_padding)
+          max_h = std::max(max_h, image.h + y_padding)
+        for auto option: section->options:
+          image := stbtext::get_text_size(option->name, font_size)
+          max_w = std::max(max_w, image.w + 2 * self.option_x_padding)
+          max_h = std::max(max_h, image.h + y_padding)
+      self.set_option_size(max_w, max_h)
 
   Stylesheet OptionButton::DEFAULT_STYLE = Stylesheet().justify_left()
