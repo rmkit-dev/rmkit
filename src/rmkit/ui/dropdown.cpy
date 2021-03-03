@@ -127,7 +127,7 @@ namespace ui:
         self.scene = ui::make_scene()
         y_off := self.option_y
         if dir == DIRECTION::DOWN:
-          y_off = y - self.option_y
+          y_off = y + self.option_y
         layout := VerticalLayout(x + self.option_x, y_off, ow, height, self.scene)
 
         i := 0
