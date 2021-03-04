@@ -52,6 +52,7 @@ CONFIG := read_remux_config()
 class IApp:
   public:
   virtual void launch(string) = 0;
+  virtual void kill(string) = 0;
   virtual void on_suspend() = 0;
   virtual void get_more() = 0;
   virtual void show_launcher() = 0;
@@ -110,6 +111,9 @@ class AppBackground: public ui::Widget:
       app_buffers[CURRENT_APP]->clear_screen()
 
     return app_buffers[CURRENT_APP]
+
+  void remove_vfb(string name):
+    app_buffers.erase(name)
 
   void render():
     if not snapped:
@@ -184,9 +188,11 @@ class AppDialog: public ui::Pager:
     void render_row(ui::HorizontalLayout *row, string option):
       status := string("")
       bin := string("")
+      app_name := string("")
       for auto app : self.reader.apps:
         if app.name == option or app.bin == option:
           bin = app.bin
+          app_name = app.name
           if app.is_running:
             used := app.mem_usage / 1024
             if used == 0:
@@ -198,11 +204,8 @@ class AppDialog: public ui::Pager:
 
       if bin != "":
         c->mouse.click += PLS_LAMBDA(auto &ev) {
-          if bin == "xochitl":
-            return
 
-          vector<string> bins = { bin }
-          proc::groupkill(SIGKILL, bins)
+          app->kill(app_name)
 
           if status != "":
             c->text = "killed"
@@ -624,14 +627,24 @@ class App: public IApp:
     bytes := write(fd, button_flood, 512 * 8 * 2 * sizeof(input_event))
 
 
+  void kill(string name):
+    bin := string("")
+    for auto app : app_dialog->get_apps():
+      if app.name == name:
+        bin = app.bin
+
+    if bin == "":
+      return
+
+    vector<string> bins = { bin }
+    proc::groupkill(SIGKILL, bins)
+    app_bg->remove_vfb(name)
 
   void launch(string name):
     if name == "":
       return
 
     debug "LAUNCHING APP", name, CURRENT_APP
-    string bin
-    string which
 
     if name != "_" && _launched[0] != name:
       _launched.push_front(name)
@@ -650,10 +663,14 @@ class App: public IApp:
     flood_button_queue()
     // flood_button_queue()
 
+    bin := app.bin
+    if app.which == "xochitl":
+      bin = get_xochitl_cmd()
+
     if app.resume != "" and proc::check_process(app.which):
       proc::launch_process(app.resume)
     else:
-      proc::launch_process(app.bin, true /* check running */, true /* background */)
+      proc::launch_process(bin, true /* check running */, true /* background */)
 
     // TODO: remove KOReader special codings
     if USE_KOREADER_WORKAROUND and CURRENT_APP == "KOReader":
