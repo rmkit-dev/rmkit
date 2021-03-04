@@ -64,6 +64,16 @@ for injecting finger or stylus events.
 bufshot saves the framebuffer into a png file, works for rm1 or rm2 (using
 rm2fb)
 
+### [iago](src/iago)
+
+[iago](https://rmkit.dev/apps/iago) is an overlay for drawing shapes like
+lines, squares and circles.
+
+### [rpncalc](src/rpncalc)
+
+rpncalc is calculator app that uses reverse polish notation and a stack for
+evaluation.
+
 ## Demos
 
 ### [animation](src/animation_demo)
