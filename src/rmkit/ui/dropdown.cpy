@@ -78,6 +78,7 @@ namespace ui:
     int option_width, option_height, option_x, option_y
     int option_x_padding = 10
     int option_y_padding = 10
+    bool use_selection_text = true
     enum DIRECTION { UP, DOWN }
     DIRECTION dir = DIRECTION::UP
     vector<shared_ptr<IOption>> options
@@ -117,18 +118,23 @@ namespace ui:
       self.option_x_padding = x_padding
       self.option_y_padding = y_padding
 
+    virtual void prepare_options():
+      pass
+
     void show_options():
       if self.scene == NULL:
+        self.prepare_options()
         width, height = self.fb->get_display_size()
         ow := self.option_width
         oh := self.option_height
         self.options.clear()
 
         self.scene = ui::make_scene()
+        x_off := std::min(x + self.option_x, fb->width - ow)
         y_off := self.option_y
         if dir == DIRECTION::DOWN:
           y_off = y + self.option_y
-        layout := VerticalLayout(x + self.option_x, y_off, ow, height, self.scene)
+        layout := VerticalLayout(x_off, y_off, ow, height, self.scene)
 
         i := 0
         for auto section: self.sections:
@@ -166,10 +172,10 @@ namespace ui:
       self.selected = idx
       ui::MainLoop::hide_overlay()
       if idx < self.options.size():
-        option := self.options[idx]
-        self.icon = option->icon
-        self.text = option->name
-
+        if use_selection_text:
+          option := self.options[idx]
+          self.icon = option->icon
+          self.text = option->name
         self.events.selected(idx)
 
     virtual void on_select(int idx):
@@ -207,6 +213,11 @@ namespace ui:
         self.sections.push_back(ds)
         return ds
 
+    void add_options(vector<string> opts):
+      if self.sections.empty():
+        self.add_section("");
+      self.sections.back()->add_options(opts)
+
     void autosize_options(int min_w = 0, int min_h = 0):
       max_w := std::max(self.w, min_w)
       max_h := std::max(self.h, min_h)
@@ -224,5 +235,15 @@ namespace ui:
           max_w = std::max(max_w, image.w + 2 * self.option_x_padding)
           max_h = std::max(max_h, image.h + y_padding)
       self.set_option_size(max_w, max_h)
+
+  class DropdownMenu: public TextDropdown:
+    public:
+    DropdownMenu(int x, y, w, h, string t): TextDropdown(x, y, w, h, t):
+      self.use_selection_text = false
+      self.dir = DIRECTION::DOWN
+      self.set_option_offset(0, self.h);
+
+    void prepare_options():
+      self.autosize_options()
 
   Stylesheet OptionButton::DEFAULT_STYLE = Stylesheet().justify_left()
