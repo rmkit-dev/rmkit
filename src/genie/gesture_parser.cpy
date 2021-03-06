@@ -16,14 +16,13 @@ namespace genie:
   ;
 
   void run_command(string command):
+    debug "RUNNING COMMAND", command
+    string cmd = command + "&"
+    c_str := cmd.c_str()
+    _ := system(c_str)
+
     ui::TaskQueue::add_task([=]() {
       usleep(1e3 * 50)
-
-      debug "RUNNING COMMAND", command
-      string cmd = command
-      c_str := cmd.c_str()
-      _ := system(c_str)
-
       ui::MainLoop::reset_gestures()
     })
 
