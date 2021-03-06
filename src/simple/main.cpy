@@ -174,11 +174,11 @@ bool handle_widget(int line_no, ui::Scene scene, vector<string> &tokens):
     else if first == "paragraph":
       scene->add(give_id(id, new ui::MultiText(x,y,w,h,t)))
     else if first == "button":
+      EXPECTING_INPUT = true
       button := new ui::Button(x,y,w,h,t)
       widget := give_id(id, button)
       button->set_style(ui::Stylesheet().justify(ui::Style::DEFAULT).underline(true))
       scene->add(widget)
-      EXPECTING_INPUT = true
       string v = t
       button->mouse.click += [=](auto &ev):
         dump_widgets(scene)
@@ -190,6 +190,7 @@ bool handle_widget(int line_no, ui::Scene scene, vector<string> &tokens):
         exit(0)
       ;
     else if first == "textinput":
+      EXPECTING_INPUT = true
       textinput := new ui::TextInput(x,y,w,h,t)
       textinput->set_style(ui::Stylesheet().justify(ui::Style::DEFAULT))
       textinput->events.done += PLS_LAMBDA(string &s):
@@ -203,6 +204,7 @@ bool handle_widget(int line_no, ui::Scene scene, vector<string> &tokens):
       widget := give_id(id, textinput)
       scene->add(widget)
     else if first == "textarea":
+      EXPECTING_INPUT = true
       textinput := new ui::TextArea(x,y,w,h,t)
       textinput->events.done += PLS_LAMBDA(string &s):
         debug "PRINTING REF", t, textinput->ref,  s
