@@ -140,18 +140,18 @@ class Cell: public ui::Widget:
       self.textWidget->render()
 
     if opened && self.is_bomb && !self.flagged:
-      pixmap := ui::Pixmap(self.x+5, self.y+5, self.w-10, self.h-10, ICON(assets::bomb_solid_png))
+      ui::Pixmap pixmap(self.x+5, self.y+5, self.w-10, self.h-10, ICON(assets::bomb_solid_png))
       pixmap.render()
 
     if self.flagged && !opened:
-      pixmap := ui::Pixmap(self.x+5, self.y+5, self.w-20, self.h-20, ICON(assets::flag_solid_png))
+      ui::Pixmap pixmap(self.x+5, self.y+5, self.w-20, self.h-20, ICON(assets::flag_solid_png))
       pixmap.render()
 
     if self.flagged && opened && self.is_bomb:
-      pixmap := ui::Pixmap(self.x+5, self.y+5, self.w-10, self.h-10, ICON(assets::flag_bomb_solid_png))
+      ui::Pixmap pixmap(self.x+5, self.y+5, self.w-10, self.h-10, ICON(assets::flag_bomb_solid_png))
       pixmap.render()
     if self.question && !opened:
-      pixmap := ui::Pixmap(self.x+5, self.y+5, self.w-10, self.h-10, ICON(assets::question_solid_png))
+      ui::Pixmap pixmap(self.x+5, self.y+5, self.w-10, self.h-10, ICON(assets::question_solid_png))
       pixmap.render()
 
 
@@ -356,7 +356,7 @@ class HighScoreWidget: public ui::Widget:
     pass
 
   void render():
-    text := ui::Text(self.x, self.y, 800, 500, "under construction")
+    ui::Text text(self.x, self.y, 800, 500, "under construction")
     text.set_style(ui::Stylesheet().justify_center())
     text.render()
 
