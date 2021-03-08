@@ -149,6 +149,7 @@ auto parse_widget(int line_no, vector<string> tokens):
   string t
   for it := tokens.begin() + 5; it != tokens.end(); it++:
     t += *it + " "
+  str_utils::rtrim(t)
 
   return x, y, w, h, t
 
