@@ -59,7 +59,7 @@ namespace ui:
 
       fb->draw_text(self.text, draw_x, draw_y, image, font_size)
       if self.style.underline:
-        fb->draw_line(draw_x, draw_y+font_size, draw_x+image.w-font_size,
+        fb->draw_line(draw_x, draw_y+font_size, draw_x+image.w,
                       draw_y+font_size, 1, BLACK)
 
       free(image.buffer)

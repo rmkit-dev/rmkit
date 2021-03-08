@@ -88,9 +88,16 @@ class App:
     v_layout.pack_start(h_layout2)
     v_layout.pack_start(h_layout3)
 
-    h_layout1.pack_start(new ui::Text(0, 0, 200, 50, "Héllo world"))
-    h_layout2.pack_center(new ui::Text(0, 0, 200, 50, "Hello world"))
-    h_layout3.pack_end(new ui::Text(0, 0, 200, 50, "Hello world"))
+    underlined := ui::Stylesheet().underline(true)
+    txt := new ui::Text(0, 0, 200, 50, "Héllo world")
+    txt2 := new ui::Text(0, 0, 200, 50, "Hello world")
+    txt3 := new ui::Text(0, 0, 200, 50, "Hello world")
+    txt->set_style(underlined)
+    txt2->set_style(underlined)
+    txt3->set_style(underlined)
+    h_layout1.pack_start(txt)
+    h_layout2.pack_center(txt2)
+    h_layout3.pack_end(txt3)
 
     // Couple of demo menus
     menu2 := new ui::DropdownMenu(0, 0, 200, 50, "Menu 2")
