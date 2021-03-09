@@ -10,13 +10,16 @@ using app_ui::STATE
 
 class ToolBar : public ui::HorizontalLayout:
   public:
+  class Background: public ui::Widget:
+    public:
+    Background(int x, y, w, h): ui::Widget(x, y, w, h):
+      pass
+    void render():
+      self.fb->draw_rect(x, y, w, h, WHITE, true /* fill */)
+  ;
+
   ToolBar(int x, y, w, h, ui::Scene s): ui::HorizontalLayout(x, y, w, h, s):
-    s->add(self)
-
-  void render():
-    self.fb->draw_rect(x, y, w, h, WHITE, true /* fill */)
-
-
+    s->add(new Background(x, y, w, h))
 ;
 
 class App:

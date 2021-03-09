@@ -119,11 +119,11 @@ namespace ui:
       a_layout.pack_start(self.titleWidget)
       a_layout.pack_start(self.contentWidget)
 
-      button_bar := new HorizontalLayout(0, 0, self.w, 50, self.scene)
+      button_bar := HorizontalLayout(0, 0, self.w, 50, self.scene)
       a_layout.pack_end(button_bar)
-      button_bar->y -= 2
+      button_bar.y -= 2
 
-      self.add_buttons(button_bar)
+      self.add_buttons(&button_bar)
 
     virtual void add_buttons(HorizontalLayout *button_bar):
       default_fs := ui::Style::DEFAULT.font_size

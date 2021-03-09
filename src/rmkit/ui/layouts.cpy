@@ -4,13 +4,15 @@
 
 #define DEBUG_LAYOUT
 namespace ui:
-  class Layout: public Widget:
+  class Layout:
     public:
     Scene scene
     vector<shared_ptr<Widget>> children
     int padding = 0
+    int x, y, w, h
+    bool visible = true
 
-    Layout(int x, y, w, h, Scene s): Widget(x,y,w,h), scene(s):
+    Layout(int x, y, w, h, Scene s): x(x), y(y), w(w), h(h), scene(s):
       pass
 
     void add(Widget *w):
@@ -32,10 +34,6 @@ namespace ui:
       for auto ch : children:
         ch->dirty = 1
 
-    // Layouts generally don't receive events
-    bool ignore_event(input::SynMotionEvent &ev):
-      return true
-
   class AbsLayout: public Layout:
     public:
     AbsLayout(int x, y, w, h, Scene s): Layout(x,y,w,h,s):
@@ -49,8 +47,25 @@ namespace ui:
 
     virtual void pack_start(Widget *w, int padding=0):
       pass
+    virtual void pack_center(Widget *w):
+      pass
     virtual void pack_end(Widget *w, int padding=0):
       pass
+
+    virtual void pack_start(Layout &w, int padding=0):
+      pass
+    virtual void pack_center(Layout &l):
+      pass
+    virtual void pack_end(Layout &l, int padding=0):
+      pass
+
+    // Layout pointer overloads for backwards compatibility
+    void pack_start(Layout *l, int padding=0):
+      pack_start(*l, padding)
+    void pack_center(Layout *l):
+      pack_center(*l)
+    void pack_end(Layout *l, int padding=0):
+      pack_end(*l, padding)
 
   // class: ui::VerticalLayout
   // --- Prototype ---
@@ -62,6 +77,9 @@ namespace ui:
   // 
   class VerticalLayout: public AutoLayout:
     public:
+    using AutoLayout::pack_start
+    using AutoLayout::pack_center
+    using AutoLayout::pack_end
     // function: Constructor
     //
     // Parameters:
@@ -136,6 +154,9 @@ namespace ui:
   // pack_end and pack_center
   class HorizontalLayout: public AutoLayout:
     public:
+    using AutoLayout::pack_start
+    using AutoLayout::pack_center
+    using AutoLayout::pack_end
     // function: Constructor
     //
     // Parameters:
