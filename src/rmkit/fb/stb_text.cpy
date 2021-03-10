@@ -98,7 +98,16 @@ namespace stbtext:
     stbtt_GetFontVMetrics(&font, &ascent,0,0);
     baseline = (int) (ascent*scale);
 
-    unsigned char *text_buffer = (unsigned char*) calloc(image.h*font_size*image.w, 1);
+    const int static_buf_size = 1024*1024*128;
+    static unsigned char static_buffer[static_buf_size];
+    unsigned char *alt_buffer = NULL
+    unsigned char *text_buffer = NULL
+    if image.w * image.h * font_size >= static_buf_size:
+      alt_buffer = (unsigned char*) calloc(image.h*font_size*image.w, 0);
+      text_buffer = alt_buffer
+    else:
+      memset(static_buffer, 0, (image.w*image.h*font_size))
+      text_buffer = static_buffer
     std::u32string utf32 = std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t>{}.from_bytes(text);
 
     while utf32[ch]:
@@ -129,7 +138,8 @@ namespace stbtext:
     for i = 0; i < image.w; i++:
       image.buffer[i] = WHITE
 
-    free(text_buffer)
+    if alt_buffer != NULL:
+      free(alt_buffer)
     return 0;
 
   int render_text(const char *text, image_data &image, int font_size = FONT_SIZE):
