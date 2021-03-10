@@ -98,10 +98,7 @@ namespace stbtext:
     stbtt_GetFontVMetrics(&font, &ascent,0,0);
     baseline = (int) (ascent*scale);
 
-    // TODO: i don't understand this multiplication works. numbers > 12 are mostly good
-    // I know its to fit characters without writing over previous letters but
-    // there's something strange going on here. 
-    unsigned char text_buffer[image.h*font_size][image.w] = {0}
+    unsigned char *text_buffer = (unsigned char*) calloc(image.h*font_size*image.w, 1);
     std::u32string utf32 = std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t>{}.from_bytes(text);
 
     while utf32[ch]:
@@ -111,7 +108,8 @@ namespace stbtext:
        stbtt_GetCodepointBitmapBox(&font, utf32[ch], scale,scale,&x0,&y0,&x1,&y1);
 
        offset := (baseline+y0) * image.w + (int)xpos + x0
-       stbtt_MakeCodepointBitmapSubpixel(&font, &text_buffer[baseline + y0][(int) xpos + x0], x1-x0,y1-y0, image.w, scale,scale,x_shift,0, utf32[ch]);
+       text_pos := (baseline + y0)*image.w + ((int) xpos + x0)
+       stbtt_MakeCodepointBitmapSubpixel(&font, &text_buffer[text_pos], x1-x0,y1-y0, image.w, scale,scale,x_shift,0, utf32[ch]);
        // note that this stomps the old data, so where character boxes overlap (e.g. 'lj') it's wrong
        // because this API is really for baking character bitmaps into textures. if you want to render
        // a sequence of characters, you really need to render each bitmap to a temp font_buffer, then
@@ -123,7 +121,7 @@ namespace stbtext:
 
     for j = 0; j < image.h; j++:
       for i = 0; i < image.w; i++:
-        uint32_t val = text_buffer[j][i]
+        uint32_t val = text_buffer[j*image.w+i]
         image.buffer[j*image.w+i] = val == 0 ? WHITE: BLACK;
 
     // TODO: understand why we need to trim the top line
@@ -131,6 +129,7 @@ namespace stbtext:
     for i = 0; i < image.w; i++:
       image.buffer[i] = WHITE
 
+    free(text_buffer)
     return 0;
 
   int render_text(const char *text, image_data &image, int font_size = FONT_SIZE):
