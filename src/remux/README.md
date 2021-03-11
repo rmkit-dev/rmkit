@@ -43,6 +43,12 @@ start_service`
 
 ## Changelog
 
+### Custom start application (0.1.9)
+
+* added `start_app=` option to specify the app to launch. it can be blank or an
+  app name as seen in the list of apps. if the app isn't found or its blank, no app
+  will launch at startup and remux will require a gesture to be invoked.
+
 ### Disable Power Management (0.1.8)
 
 * added `manage_power=` boolean option to configuration. setting to `false` or `no` tells remux to not enter suspend mode automatically - this lets you use xochitl solely for power management. useful if remux is messing up drawing your suspend screen

@@ -646,16 +646,23 @@ class App: public IApp:
 
     debug "LAUNCHING APP", name, CURRENT_APP
 
-    if name != "_" && _launched[0] != name:
-      _launched.push_front(name)
-      if _launched.size() > 100:
-        _launched.pop_back()
-
     RMApp app
+    app.bin = ""
+    app.name = ""
+
     for auto a : app_dialog->get_apps():
       if a.name == name or a.bin == name:
         app = a
         CURRENT_APP = string(a.name)
+
+    if app.name == "" && app.bin == "":
+      debug "CANT LAUNCH APP", name
+      return
+
+    if name != "_" && _launched[0] != name:
+      _launched.push_front(name)
+      if _launched.size() > 100:
+        _launched.pop_back()
 
 
     ui::MainLoop::in.ungrab()
@@ -743,9 +750,9 @@ class App: public IApp:
 
     #ifdef REMARKABLE
     _ := system("systemctl stop xochitl")
-    // read the xochitl command line from the systemd file
-    xochitl_cmd := get_xochitl_cmd()
-    proc::launch_process(xochitl_cmd, true /* check running */, true /* background */)
+    self.term_apps()
+    startup_cmd := CONFIG.get_value("start_app", "xochitl")
+    launch(startup_cmd)
     #endif
 
     ui::Style::DEFAULT.font_size = 32
