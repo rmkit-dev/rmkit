@@ -98,7 +98,7 @@ namespace stbtext:
     stbtt_GetFontVMetrics(&font, &ascent,0,0);
     baseline = (int) (ascent*scale);
 
-    const int static_buf_size = 1024*1024*128;
+    const int static_buf_size = 1024*512; // 512kb
     static unsigned char static_buffer[static_buf_size];
     unsigned char *alt_buffer = NULL
     unsigned char *text_buffer = NULL
