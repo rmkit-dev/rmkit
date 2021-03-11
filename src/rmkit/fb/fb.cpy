@@ -329,7 +329,11 @@ namespace framebuffer:
             break
 
           if src[i] != alpha:
-            if image.channels >= 3:
+            if image.channels == 4:
+              // 4th bit is alpha -- if it's 0, skip drawing
+              if ((char*)src)[i*image.channels+3] != 0:
+                self._set_pixel(&ptr[i], i, j, to_rgb565((char *) src, i*image.channels))
+            else if image.channels >= 3:
               self._set_pixel(&ptr[i], i, j, to_rgb565((char *) src, i*image.channels))
             else if image.channels == 1:
               grayscale_to_rgb32(src[i], src_val)
