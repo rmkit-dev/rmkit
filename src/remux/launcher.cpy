@@ -695,7 +695,13 @@ class App: public IApp:
 
 
   string get_xochitl_cmd():
-    ifstream f("/lib/systemd/system/xochitl.service")
+    location := "/tmp/remux.xochitl_cmd"
+    if system("systemctl cat xochitl.service > /tmp/remux.xochitl_cmd") != 0:
+      // if we failed reading with systemctl, use hardcoded path
+      debug "COULDNT READ XOCHITL CMD FROM SYSTEMCTL, DEFAULTING TO /LIB"
+      location = "/lib/systemd/system/xochitl.service"
+
+    ifstream f(location)
     string line
     find := "ExecStart"
     default_cmd := "xochitl --system"
