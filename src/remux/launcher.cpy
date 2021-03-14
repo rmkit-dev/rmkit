@@ -704,19 +704,19 @@ class App: public IApp:
     ifstream f(location)
     string line
     find := "ExecStart"
-    default_cmd := "xochitl --system"
+    default_cmd := string("xochitl --system")
+    cmd := string(default_cmd)
     while getline(f, line):
       if line.find(find) != -1:
         tokens := str_utils::split(line, '=')
         if tokens.size() == 1:
-          return default_cmd
+          continue
         tokens.erase(tokens.begin())
 
-        cmd := str_utils::join(tokens, '=')
-        debug "XOCHITL CMD IS", cmd
-        return cmd
+        cmd = str_utils::join(tokens, '=')
 
-    return default_cmd
+    debug "XOCHITL CMD IS", cmd
+    return cmd
 
   void setup_gestures():
     // launch_gesture=
