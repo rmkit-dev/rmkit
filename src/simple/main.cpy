@@ -96,9 +96,20 @@ def handle_directive(int line_no, ui::Scene s, vector<string> &tokens):
     TIMEOUT = max(TIMEOUT, stoi(tokens[1]))
 
 
+auto parse_int_token(string value, int line_no, size):
+  tokens := str_utils::split(value, '+')
+  if tokens.size() == 2:
+    return tokens[0], parse_to_int(tokens[1], line_no, size)
+  tokens = str_utils::split(value, '-')
+  if tokens.size() == 2:
+    return tokens[0], -parse_to_int(tokens[1], line_no, size)
+
+  return value, 0
+
+
 auto parse_widget(int line_no, vector<string> tokens):
-  x_token := tokens[1]
-  y_token := tokens[2]
+  x_token, x_padding := parse_int_token(tokens[1], line_no, WIDTH)
+  y_token, y_padding := parse_int_token(tokens[2], line_no, HEIGHT)
   w_token := tokens[3]
   h_token := tokens[4]
   x := 0
@@ -143,15 +154,15 @@ auto parse_widget(int line_no, vector<string> tokens):
         y = LAST_WIDGET->y
   else:
     y = parse_to_int(y_token, line_no, HEIGHT) + PADDING_Y
-  if y > HEIGHT: 
+  if y > HEIGHT:
     y = HEIGHT
-      
+
   string t
   for it := tokens.begin() + 5; it != tokens.end(); it++:
     t += *it + " "
   str_utils::rtrim(t)
 
-  return x, y, w, h, t
+  return x+x_padding, y+y_padding, w, h, t
 
 
 bool handle_widget(int line_no, ui::Scene scene, vector<string> &tokens):
