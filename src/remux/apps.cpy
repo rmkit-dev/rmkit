@@ -74,7 +74,7 @@ class AppReader:
     else:
       perror ("")
 
-    vector<string> skip_list = { "remux", "remux.exe", "xochitl", "/usr/bin/xochitl" }
+    vector<string> skip_list = { "remux", "remux.exe", "xochitl", "/usr/bin/xochitl", "/opt/bin/xochitl" }
     for auto a : apps:
       dont_add := false
       for auto s : skip_list:
