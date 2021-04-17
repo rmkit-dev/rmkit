@@ -204,7 +204,7 @@ bool handle_widget(int line_no, ui::Scene scene, vector<string> &tokens):
     else if first == "textinput":
       EXPECTING_INPUT = true
       textinput := new ui::TextInput(x,y,w,h,t)
-      textinput->set_style(ui::Stylesheet().justify(ui::Style::DEFAULT))
+      textinput->set_style(ui::Stylesheet().justify(ui::Style::DEFAULT).valign(ui::Style::VALIGN::MIDDLE))
       textinput->events.done += PLS_LAMBDA(string &s):
         debug "PRINTING REF", t, textinput->ref,  s
         if ref:

@@ -49,8 +49,9 @@ function run_cmd() {
         errors=`cat "${errfile}" | tail -n50`
         MAKE_SCENE
         SET timeout 1
-        UI "[paragraph 50 50 $(($D_W - 100)) $((D_H - 500)) $output]"
-        UI "[paragraph 50 50 $(($D_W - 100)) $((D_H - 500)) $errors]"
+        UI "[paragraph 50 50 $(($D_W - 100)) $((D_H - 500)) running ${cmd}]"
+        UI "[paragraph 50 next $(($D_W - 100)) $((D_H - 500)) $output]"
+        UI "[paragraph 50 next $(($D_W - 100)) $((D_H - 500)) $errors]"
         DISPLAY
     done
 
