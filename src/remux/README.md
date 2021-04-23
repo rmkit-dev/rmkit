@@ -6,7 +6,7 @@ swipe up either side of the screen.
 
 ## Adding Apps
 
-usually, most people install [toltec](toltec-dev.org) and the apps in toltec
+usually, most people install [toltec](https://toltec-dev.org/) and the apps in toltec
 all use draft format and are installed into /opt/etc/draft.
 
 but if you are writing a new app or trying out an unpackaged app, there are a
