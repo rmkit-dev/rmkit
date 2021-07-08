@@ -1,3 +1,4 @@
+#include <cmath>
 #include "../build/rmkit.h"
 #include "../shared/string.h"
 
@@ -29,6 +30,10 @@ namespace shape:
     public:
     string name;
     DragHandle *handle_one, *handle_two
+
+    const double snapping = 44.6666666667 // 5mm
+    tuple<int, int> last_move_snap = tuple<int, int>(0, 0)
+
     Shape(int x, y, w, h, ui::Scene scene) : ui::Widget(x, y, w, h):
       scene->add(self)
       shape::to_draw.push_back(self)
@@ -37,10 +42,21 @@ namespace shape:
     Shape() : ui::Widget(x, y, w, h):
       return
 
+    int snap_position(int position):
+      return snapping * round(position / snapping)
+
+    void snap_handle(ui::Widget *handle):
+      if snapping != 0:
+        x, y := get_handle_coords(handle)
+        handle->x = snap_position(x) - handle->w/2
+        handle->y = snap_position(y) - handle->h/2
+
     void add_drag_handles(ui::Scene scene):
       sz := 25
       handle_one = new DragHandle(x, y, sz, sz)
       handle_two = new DragHandle(x+w, y+h, sz, sz)
+      snap_handle(handle_one)
+      snap_handle(handle_two)
       handle_two->set_shape(1)
 
       scene->add(handle_one)
@@ -64,7 +80,7 @@ namespace shape:
         handle_two->x += dx
         handle_two->y += dy
 
-        draw_pixel(handle_one)
+        draw_movement(handle_one)
       }
 
       handle_two->mouse.move += PLS_LAMBDA(auto &ev) {
@@ -75,11 +91,20 @@ namespace shape:
 
         handle_two->x = ev.x - handle_two->w/2
         handle_two->y = ev.y - handle_two->h/2
-        draw_pixel(handle_two)
+        draw_movement(handle_two)
       }
 
-      handle_one->mouse.up += PLS_DELEGATE(self.redraw)
-      handle_two->mouse.up += PLS_DELEGATE(self.redraw)
+      handle_one->mouse.up += PLS_LAMBDA(auto &ev) {
+        snap_handle(handle_one)
+        snap_handle(handle_two)
+        self->redraw(ev)
+      }
+
+      handle_two->mouse.up += PLS_LAMBDA(auto &ev) {
+        snap_handle(handle_two)
+        self->redraw(ev)
+      }
+
       handle_one->mouse.leave += PLS_DELEGATE(self.redraw)
       handle_two->mouse.leave += PLS_DELEGATE(self.redraw)
 
@@ -89,8 +114,22 @@ namespace shape:
     void redraw(bool skip_shape=false):
       ui::MainLoop::full_refresh()
 
+    void draw_movement(ui::Widget *w1):
+      if snapping == 0:
+        draw_pixel(w1)
+      else:
+        x, y := get_handle_coords(w1)
+        x = snap_position(x)
+        y = snap_position(y)
+        last_x, last_y := self->last_move_snap
+        if x != last_x || y != last_y:
+          fb->draw_line(x-1, y-1, x+1, y+1, 3, BLACK)
+          fb->draw_line(last_x-1, last_y-1, last_x+1, last_y+1, 3, WHITE)
+          self->last_move_snap = tuple<int, int>(x, y)
+
     void draw_pixel(ui::Widget *w1):
-      fb->draw_line(w1->x+w1->w/2-1, w1->y+w1->h/2-1, w1->x+w1->w/2+1, w1->y+w1->h/2+1, 3, color::GRAY_9)
+      x, y := get_handle_coords(w1)
+      fb->draw_line(x-1, y-1, x+1, y+1, 3, color::GRAY_9)
 
     tuple<int, int> get_handle_coords(ui::Widget *w1)
       return (w1->x + w1->w/2), (w1->y + w1->h/2)
