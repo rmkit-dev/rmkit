@@ -31,9 +31,48 @@ class AppBackground: public ui::Widget:
     fb->perform_redraw(true)
     fb->dirty = 1
 
+
+class SettingsDialog: public ui::ConfirmationDialog:
+  public:
+  ui::RangeInput* snap_range
+  SettingsDialog(int x, y, w, h): ui::ConfirmationDialog(x, y, w, h):
+    self.set_title(string("Settings"))
+    self.contentWidget = new ui::Text(0, 0, 20, 50, "")
+
+  void on_mouse_clicked(auto &ev):
+      ev.stop_propagation()
+
+  void on_button_selected(string text):
+    if text == "OK":
+      ui::MainLoop::hide_overlay()
+      snap_val := self.snap_range->get_value()
+      shape::Shape::snapping = snap_val
+      debug "SET SNAPPING TO", snap_val
+
+    if text == "CANCEL":
+      ui::MainLoop::hide_overlay()
+
+  // this function actually builds the dialog scene and necessary widgets /
+  // and packings for the modal overlay
+  void build_dialog():
+    ui::ConfirmationDialog::build_dialog()
+    style := ui::Stylesheet() \
+      .valign(ui::Style::VALIGN::MIDDLE) \
+      .justify(ui::Style::JUSTIFY::LEFT)
+
+    a_layout := ui::VerticalLayout(self.x, self.y+50, self.w, self.h-100, self.scene)
+
+    snap_label := new ui::Text(10, 10, self.w - 20, 50, "snap to grid")
+    self.snap_range = new ui::RangeInput(10, 0, self.w - 20, 50)
+    snap_range->set_range(0, 5)
+    a_layout.pack_start(snap_label)
+    a_layout.pack_start(snap_range)
+
+
 class App:
   public:
   AppBackground* app_bg
+  SettingsDialog *settings
 
   shared_ptr<framebuffer::FB> fb
   App():
@@ -48,6 +87,8 @@ class App:
     app_bg = new AppBackground(0, 0, w, h)
     scene->add(app_bg)
 
+    settings = new SettingsDialog(0, 0, 500, 500)
+
     style := ui::Stylesheet() \
       .valign(ui::Style::VALIGN::MIDDLE) \
       .justify(ui::Style::JUSTIFY::CENTER)
@@ -56,6 +97,9 @@ class App:
 
     no_button := new ui::Button(0, 0, 200, 50, "cancel")
     ok_button := new ui::Button(0, 0, 200, 50, "ok")
+    settings_btn := new ui::Button(0, 0, 200, 50, "settings")
+
+    h_layout.pack_start(settings_btn)
     h_layout.pack_end(ok_button)
     h_layout.pack_end(no_button)
 
@@ -78,6 +122,10 @@ class App:
     no_button->mouse.click += PLS_LAMBDA(auto &ev) {
       self.cleanup()
       exit(0)
+    }
+
+    settings_btn->mouse.click += PLS_LAMBDA(auto &ev) {
+      settings->show();
     }
 
     ok_button->mouse.click += PLS_LAMBDA(auto &ev) {

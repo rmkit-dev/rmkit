@@ -31,7 +31,7 @@ namespace shape:
     string name;
     DragHandle *handle_one, *handle_two
 
-    const double snapping = 44.6666666667 // 5mm
+    static double snapping
     tuple<int, int> last_move_snap = tuple<int, int>(0, 0)
 
     Shape(int x, y, w, h, ui::Scene scene) : ui::Widget(x, y, w, h):
@@ -139,6 +139,10 @@ namespace shape:
 
     virtual void render():
       return
+  // stupid static initializers
+  double Shape::snapping = 44.6666666667 // 5mm
+
+
 
   class Line : public Shape:
     public:
