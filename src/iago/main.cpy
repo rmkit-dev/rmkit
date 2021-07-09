@@ -35,12 +35,11 @@ class AppBackground: public ui::Widget:
 class SettingsDialog: public ui::ConfirmationDialog:
   public:
   ui::RangeInput* snap_range
+  ui::ToggleButton* misc_toggle
+
   SettingsDialog(int x, y, w, h): ui::ConfirmationDialog(x, y, w, h):
     self.set_title(string("Settings"))
     self.contentWidget = new ui::Text(0, 0, 20, 50, "")
-
-  void on_mouse_clicked(auto &ev):
-      ev.stop_propagation()
 
   void on_button_selected(string text):
     if text == "OK":
@@ -64,9 +63,14 @@ class SettingsDialog: public ui::ConfirmationDialog:
 
     snap_label := new ui::Text(10, 10, self.w - 20, 50, "snap to grid")
     self.snap_range = new ui::RangeInput(10, 0, self.w - 20, 50)
+    self.misc_toggle = new ui::ToggleButton(10, 10, self.w - 20, 50, "Toggled")
+    self.misc_toggle->set_style(style)
+
     snap_range->set_range(0, 5)
     a_layout.pack_start(snap_label)
     a_layout.pack_start(snap_range)
+    a_layout.pack_start(misc_toggle)
+
 
 
 class App:
