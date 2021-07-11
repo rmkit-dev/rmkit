@@ -34,8 +34,8 @@ class AppBackground: public ui::Widget:
 
 class SettingsDialog: public ui::ConfirmationDialog:
   public:
+  ui::ToggleButton* snap_enabled
   ui::RangeInput* snap_range
-  ui::ToggleButton* misc_toggle
 
   SettingsDialog(int x, y, w, h): ui::ConfirmationDialog(x, y, w, h):
     self.set_title(string("Settings"))
@@ -44,9 +44,8 @@ class SettingsDialog: public ui::ConfirmationDialog:
   void on_button_selected(string text):
     if text == "OK":
       ui::MainLoop::hide_overlay()
-      snap_val := self.snap_range->get_value()
-      shape::Shape::snapping = snap_val
-      debug "SET SNAPPING TO", snap_val
+      shape::Shape::set_snapping(self.snap_range->get_value())
+      shape::Shape::snap_enabled = self.snap_enabled->toggled
 
     if text == "CANCEL":
       ui::MainLoop::hide_overlay()
@@ -55,21 +54,31 @@ class SettingsDialog: public ui::ConfirmationDialog:
   // and packings for the modal overlay
   void build_dialog():
     ui::ConfirmationDialog::build_dialog()
-    style := ui::Stylesheet() \
-      .valign(ui::Style::VALIGN::MIDDLE) \
-      .justify(ui::Style::JUSTIFY::LEFT)
 
     a_layout := ui::VerticalLayout(self.x, self.y+50, self.w, self.h-100, self.scene)
 
-    snap_label := new ui::Text(10, 10, self.w - 20, 50, "snap to grid")
-    self.snap_range = new ui::RangeInput(10, 0, self.w - 20, 50)
-    self.misc_toggle = new ui::ToggleButton(10, 10, self.w - 20, 50, "Toggled")
-    self.misc_toggle->set_style(style)
+    snap_section_label := new ui::Text(10, 0, self.w - 20, 50, "Snapping")
+    snap_section_label->set_style(ui::Stylesheet()
+      .valign_bottom()
+      .justify_center()
+      .underline())
 
-    snap_range->set_range(0, 5)
-    a_layout.pack_start(snap_label)
+    self.snap_enabled = new ui::ToggleButton(10, 0, self.w - 20, 50, "Enabled")
+    self.snap_enabled->set_style(ui::Stylesheet()
+      .valign_middle()
+      .justify_left())
+
+    snap_range_label := new ui::Text(10, 0, self.w - 20, 50, "Snap grid (mm)")
+    snap_range_label->set_style(ui::Stylesheet()
+      .valign_bottom()
+      .justify_left())
+    self.snap_range = new ui::RangeInput(10, 0, self.w - 20, 50)
+    snap_range->set_range(1, 10)
+
+    a_layout.pack_start(snap_section_label)
+    a_layout.pack_start(snap_enabled)
+    a_layout.pack_start(snap_range_label)
     a_layout.pack_start(snap_range)
-    a_layout.pack_start(misc_toggle)
 
 
 

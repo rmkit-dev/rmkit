@@ -2,6 +2,8 @@
 #include "../build/rmkit.h"
 #include "../shared/string.h"
 
+const double MILLIMETER = 8.9333333333
+
 namespace shape:
   class DragHandle: public ui::Widget:
     public:
@@ -27,12 +29,19 @@ namespace shape:
   class Shape;
   static vector<Shape*> to_draw = {}
   class Shape: public ui::Widget:
+    private:
+    static double snapping
+    tuple<int, int> last_move_snap = tuple<int, int>(0, 0)
+
     public:
     string name;
     DragHandle *handle_one, *handle_two
+    static bool snap_enabled
 
-    static double snapping
-    tuple<int, int> last_move_snap = tuple<int, int>(0, 0)
+    static void set_snapping(int mm):
+      Shape::snapping = MILLIMETER * mm
+      debug "SET SNAPPING TO", Shape::snapping
+
 
     Shape(int x, y, w, h, ui::Scene scene) : ui::Widget(x, y, w, h):
       scene->add(self)
@@ -46,7 +55,7 @@ namespace shape:
       return snapping * round(position / snapping)
 
     void snap_handle(ui::Widget *handle):
-      if snapping != 0:
+      if snap_enabled:
         x, y := get_handle_coords(handle)
         handle->x = snap_position(x) - handle->w/2
         handle->y = snap_position(y) - handle->h/2
@@ -115,21 +124,24 @@ namespace shape:
       ui::MainLoop::full_refresh()
 
     void draw_movement(ui::Widget *w1):
-      if snapping == 0:
-        draw_pixel(w1)
-      else:
+      if snap_enabled:
         x, y := get_handle_coords(w1)
         x = snap_position(x)
         y = snap_position(y)
         last_x, last_y := self->last_move_snap
         if x != last_x || y != last_y:
-          fb->draw_line(x-1, y-1, x+1, y+1, 3, BLACK)
-          fb->draw_line(last_x-1, last_y-1, last_x+1, last_y+1, 3, WHITE)
-          self->last_move_snap = tuple<int, int>(x, y)
+          draw_pixel(last_x, last_y, WHITE)
+          draw_pixel(x, y, BLACK)
+          last_move_snap = tuple<int, int>(x, y)
+      else:
+        draw_pixel(w1)
 
     void draw_pixel(ui::Widget *w1):
       x, y := get_handle_coords(w1)
-      fb->draw_line(x-1, y-1, x+1, y+1, 3, color::GRAY_9)
+      draw_pixel(x, y, color::GRAY_9)
+
+    void draw_pixel(int x, int y, int color):
+      fb->draw_line(x-1, y-1, x+1, y+1, 3, color)
 
     tuple<int, int> get_handle_coords(ui::Widget *w1)
       return (w1->x + w1->w/2), (w1->y + w1->h/2)
@@ -139,10 +151,9 @@ namespace shape:
 
     virtual void render():
       return
-  // stupid static initializers
-  double Shape::snapping = 44.6666666667 // 5mm
 
-
+  double Shape::snapping = MILLIMETER * 5
+  bool Shape::snap_enabled = false
 
   class Line : public Shape:
     public:
