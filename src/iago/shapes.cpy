@@ -2,7 +2,9 @@
 #include "../build/rmkit.h"
 #include "../shared/string.h"
 
-const double MILLIMETER = 8.9333333333
+// display height from 261.62mm diagonal (10.3 inch) and 4:3 ratio,
+// seems to be quite accurate...
+const double MILLIMETER = 1872/209.296
 
 namespace shape:
   class DragHandle: public ui::Widget:
