@@ -336,11 +336,7 @@ namespace proc:
 
     proc := name
     if background:
-      proc = "setsid " + proc
+      proc = "setsid " + proc + " &"
 
-    auto *th = new thread([=]() {
-      c_str := proc.c_str()
-      _ := system(c_str)
+    _ := system(proc.c_str())
 
-      debug "PROGRAM EXITED"
-    })
