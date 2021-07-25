@@ -32,47 +32,54 @@ class AppBackground: public ui::Widget:
     fb->dirty = 1
 
 
-class SettingsDialog: public ui::ConfirmationDialog:
+class SettingsDialog: public ui::InfoDialog:
   public:
   ui::ToggleButton* snap_enabled
   ui::RangeInput* snap_range
 
-  SettingsDialog(int x, y, w, h): ui::ConfirmationDialog(x, y, w, h):
+  SettingsDialog(int x, y, w, h): ui::InfoDialog(x, y, w, h):
     self.set_title(string("Settings"))
-    self.contentWidget = new ui::Text(0, 0, 20, 50, "")
+    self.contentWidget = new ui::Text(0, 0, 20, 50, "") 
+
+  void save_settings():
+    debug "SAVING SETTINGS"
+    shape::Shape::set_snapping(self.snap_range->get_value())
+    shape::Shape::snap_enabled = self.snap_enabled->toggled
 
   void on_button_selected(string text):
-    if text == "OK":
-      ui::MainLoop::hide_overlay()
-      shape::Shape::set_snapping(self.snap_range->get_value())
-      shape::Shape::snap_enabled = self.snap_enabled->toggled
-
-    if text == "CANCEL":
-      ui::MainLoop::hide_overlay()
+    ui::MainLoop::hide_overlay()
+    self.save_settings()
 
   // this function actually builds the dialog scene and necessary widgets /
   // and packings for the modal overlay
   void build_dialog():
-    ui::ConfirmationDialog::build_dialog()
+    ui::InfoDialog::build_dialog()
+
+    self.on_hide = self.scene->on_hide
+    self.scene->on_hide += PLS_LAMBDA(auto &visible) {
+      ui::MainLoop::hide_overlay()
+      self.save_settings()
+    }
 
     a_layout := ui::VerticalLayout(self.x, self.y+50, self.w, self.h-100, self.scene)
+    left := 20
 
-    snap_section_label := new ui::Text(10, 0, self.w - 20, 50, "Snapping")
+    snap_section_label := new ui::Text(left, 0, self.w - 2*left, 50, "Snapping")
     snap_section_label->set_style(ui::Stylesheet()
       .valign_bottom()
       .justify_center()
       .underline())
 
-    self.snap_enabled = new ui::ToggleButton(10, 0, self.w - 20, 50, "Enabled")
+    self.snap_enabled = new ui::ToggleButton(left, 0, self.w - 2*left, 50, "Enabled")
     self.snap_enabled->set_style(ui::Stylesheet()
       .valign_middle()
       .justify_left())
 
-    snap_range_label := new ui::Text(10, 0, self.w - 20, 50, "Snap grid (mm)")
+    snap_range_label := new ui::Text(left, 0, self.w - 2*left, 50, "Snap grid (mm)")
     snap_range_label->set_style(ui::Stylesheet()
       .valign_bottom()
       .justify_left())
-    self.snap_range = new ui::RangeInput(10, 0, self.w - 20, 50)
+    self.snap_range = new ui::RangeInput(left, 0, self.w - 2*left, 50)
     snap_range->set_range(1, 10)
 
     a_layout.pack_start(snap_section_label)
