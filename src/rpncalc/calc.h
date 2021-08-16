@@ -42,8 +42,17 @@ class Calculator {
     void append(const char digit);
     void shuffleDown();
     void shuffleUp();
+    void maybePush();
+    void didOp();
+
+    void handleNumPad(int);
+    void handleUnaryOp(int);
+    void handleBinaryOp(int);
+    void handleConstants(int);
+    void handleStack(int);
 
     double history[5];
+    bool prevWasOp;
     std::vector<StackElement*> stack;
 };
 #endif
