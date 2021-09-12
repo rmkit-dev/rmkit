@@ -122,3 +122,31 @@ namespace ui:
 
   int Button::key_ctr = 16 // "q"
   Stylesheet Button::DEFAULT_STYLE = Stylesheet().justify_center()
+
+  class ToggleButton: public ui::Button:
+    public:
+    PLS_DEFINE_SIGNAL(TOGGLE_EVENT, int)
+    class TOGGLE_EVENTS:
+      public:
+      TOGGLE_EVENT toggled
+    ;
+    TOGGLE_EVENTS events
+
+    int toggled = false
+    ToggleButton(int x, y, w, h, string t): ui::Button(x,y,w,h,t):
+      pass
+
+    void before_render():
+      ui::Button::before_render()
+      if toggled:
+        self.textWidget->text = "[x] " + self.text 
+      else:
+        self.textWidget->text = "[ ] " + self.text 
+
+    void render():
+      ui::Button::render()
+
+    void on_mouse_click(input::SynMotionEvent &ev):
+      toggled = !toggled
+      self.events.toggled(toggled)
+      self.dirty = 1

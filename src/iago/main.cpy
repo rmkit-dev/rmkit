@@ -31,9 +31,68 @@ class AppBackground: public ui::Widget:
     fb->perform_redraw(true)
     fb->dirty = 1
 
+
+class SettingsDialog: public ui::InfoDialog:
+  public:
+  ui::ToggleButton* snap_enabled
+  ui::RangeInput* snap_range
+
+  SettingsDialog(int x, y, w, h): ui::InfoDialog(x, y, w, h):
+    self.set_title(string("Settings"))
+    self.contentWidget = new ui::Text(0, 0, 20, 50, "") 
+
+  void save_settings():
+    debug "SAVING SETTINGS"
+    shape::Shape::set_snapping(self.snap_range->get_value())
+    shape::Shape::snap_enabled = self.snap_enabled->toggled
+
+  void on_button_selected(string text):
+    ui::MainLoop::hide_overlay()
+    self.save_settings()
+
+  // this function actually builds the dialog scene and necessary widgets /
+  // and packings for the modal overlay
+  void build_dialog():
+    ui::InfoDialog::build_dialog()
+
+    self.on_hide = self.scene->on_hide
+    self.scene->on_hide += PLS_LAMBDA(auto &visible) {
+      ui::MainLoop::hide_overlay()
+      self.save_settings()
+    }
+
+    a_layout := ui::VerticalLayout(self.x, self.y+50, self.w, self.h-100, self.scene)
+    left := 20
+
+    snap_section_label := new ui::Text(left, 0, self.w - 2*left, 50, "Snapping")
+    snap_section_label->set_style(ui::Stylesheet()
+      .valign_bottom()
+      .justify_center()
+      .underline())
+
+    self.snap_enabled = new ui::ToggleButton(left, 0, self.w - 2*left, 50, "Enabled")
+    self.snap_enabled->set_style(ui::Stylesheet()
+      .valign_middle()
+      .justify_left())
+
+    snap_range_label := new ui::Text(left, 0, self.w - 2*left, 50, "Snap grid (mm)")
+    snap_range_label->set_style(ui::Stylesheet()
+      .valign_bottom()
+      .justify_left())
+    self.snap_range = new ui::RangeInput(left, 0, self.w - 2*left, 50)
+    snap_range->set_range(1, 10)
+
+    a_layout.pack_start(snap_section_label)
+    a_layout.pack_start(snap_enabled)
+    a_layout.pack_start(snap_range_label)
+    a_layout.pack_start(snap_range)
+
+
+
 class App:
   public:
   AppBackground* app_bg
+  SettingsDialog *settings
 
   shared_ptr<framebuffer::FB> fb
   App():
@@ -48,6 +107,8 @@ class App:
     app_bg = new AppBackground(0, 0, w, h)
     scene->add(app_bg)
 
+    settings = new SettingsDialog(0, 0, 500, 500)
+
     style := ui::Stylesheet() \
       .valign(ui::Style::VALIGN::MIDDLE) \
       .justify(ui::Style::JUSTIFY::CENTER)
@@ -56,6 +117,9 @@ class App:
 
     no_button := new ui::Button(0, 0, 200, 50, "cancel")
     ok_button := new ui::Button(0, 0, 200, 50, "ok")
+    settings_btn := new ui::Button(0, 0, 200, 50, "settings")
+
+    h_layout.pack_start(settings_btn)
     h_layout.pack_end(ok_button)
     h_layout.pack_end(no_button)
 
@@ -78,6 +142,10 @@ class App:
     no_button->mouse.click += PLS_LAMBDA(auto &ev) {
       self.cleanup()
       exit(0)
+    }
+
+    settings_btn->mouse.click += PLS_LAMBDA(auto &ev) {
+      settings->show();
     }
 
     ok_button->mouse.click += PLS_LAMBDA(auto &ev) {
