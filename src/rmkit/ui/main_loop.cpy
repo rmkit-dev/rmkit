@@ -174,8 +174,12 @@ namespace ui:
 
 
     /// blocking read for input
-    static void read_input():
-      in.listen_all(TimerList::get()->next_timeout_ms())
+    static void read_input(int timeout_ms=0):
+      next_timeout_ms := TimerList::get()->next_timeout_ms()
+      if timeout_ms > 0 && (next_timeout_ms == 0 || timeout_ms < next_timeout_ms):
+          next_timeout_ms = timeout_ms
+
+      in.listen_all(next_timeout_ms)
 
     /// queue a render for all the widgets on the visible scenes
     static void refresh():

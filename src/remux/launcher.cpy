@@ -784,7 +784,7 @@ class App: public IApp:
       if ui::MainLoop::overlay_is_visible:
         ui::MainLoop::redraw()
 
-      ui::MainLoop::read_input()
+      ui::MainLoop::read_input(1000)
       ui::MainLoop::handle_gestures()
 
 App app

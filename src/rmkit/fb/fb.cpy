@@ -71,6 +71,7 @@ namespace framebuffer:
   class FB:
     public:
     int width=0, height=0, fd=-1
+    int prev_width=-1, prev_height=-1
     int byte_size = 0, dirty = 0
     int update_marker = 1
     int waveform_mode = WAVEFORM_MODE_DU
@@ -190,11 +191,12 @@ namespace framebuffer:
 
     void check_resize():
       w,h := self.get_size()
-      if w != self.width || h != self.height:
-        ev := ResizeEvent{.w=w, .h=h,.bpp=-1}
-        self.resize(ev)
-      self.width = w
-      self.height = h
+      if self.prev_width != -1 && self.prev_height != -1:
+        if w != self.prev_width || h != self.prev_height:
+          ev := ResizeEvent{.w=w, .h=h,.bpp=-1}
+          self.resize(ev)
+      self.prev_width = w
+      self.prev_height = h
 
 
     // function: get_display_size
