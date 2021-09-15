@@ -18,6 +18,7 @@ USE_RESIM := true
 // #define DEBUG_INPUT_EVENT 1
 namespace input:
   static int ipc_fd[2] = { -1, -1 };
+  CRASH_ON_BAD_DEVICE := getenv("RMKIT_CRASH_ON_BAD_DEVICE") != NULL
 
   template<class T, class EV>
   class InputClass:
@@ -135,6 +136,8 @@ namespace input:
         default:
           debug fname, "IS UNKNOWN EVENT DEVICE"
           close(fd)
+          if CRASH_ON_BAD_DEVICE:
+            exit(1)
           return
 
       self.monitor(fd)
