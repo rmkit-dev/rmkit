@@ -47,6 +47,12 @@ DEFAULT_LAUNCH_GESTURES := vector<string> %{
   "gesture=swipe; direction=up; zone=0.9 0 1 1",
 }
 
+USB_CHARGER_PATHS := %{
+  "/sys/class/power_supply/max77818-charger/online",
+  "/sys/class/power_supply/imx_usb_charger/present",
+  "/sys/class/power_supply/bq27441-0/present"
+}
+
 
 CONFIG := read_remux_config()
 class IApp:
@@ -388,12 +394,15 @@ class App: public IApp:
 
         usb_in := false
         string usb_str
-        if version == util::RM_VERSION::RM2:
-          usb_str = string(exec("cat /sys/class/power_supply/max77818-charger/online"))
-        else:
-          usb_str = string(exec("cat /sys/class/power_supply/imx_usb_charger/present"))
-        str_utils::trim(usb_str)
-        usb_in = usb_str == string("1")
+
+        for auto fname : USB_CHARGER_PATHS:
+          usb_cmd := "cat " + string(fname) + " 2>/dev/null"
+
+          usb_str = string(exec(usb_cmd.c_str()))
+          str_utils::trim(usb_str)
+          usb_in = usb_str == string("1")
+          if usb_in:
+            break
 
         suspend_m.lock()
         if LAST_ACTION == 0 or usb_in:
