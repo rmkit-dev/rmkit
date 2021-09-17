@@ -391,7 +391,7 @@ class App: public IApp:
         if version == util::RM_VERSION::RM2:
           usb_str = string(exec("cat /sys/class/power_supply/max77818-charger/online"))
         else:
-          usb_str = string(exec("cat /sys/class/power_supply/imx_usb_charger/present"))
+          usb_str = string(exec("cat /sys/class/power_supply/imx_usb_charger/present 2>/dev/null"))
         str_utils::trim(usb_str)
         usb_in = usb_str == string("1")
 
