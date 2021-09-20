@@ -37,17 +37,17 @@ namespace ui:
   // other core work that happens on each iteration of the app.
   class MainLoop:
     public:
-    static shared_ptr<framebuffer::FB> fb
+    static shared_ptr<framebuffer::FB> fb = framebuffer::get()
 
-    static Scene scene
-    static Scene overlay
-    static bool overlay_is_visible
+    static Scene scene = make_scene()
+    static Scene overlay = make_scene()
+    static bool overlay_is_visible = false
 
-    static Scene kbd
-    static bool kbd_is_visible
+    static Scene kbd = make_scene()
+    static bool kbd_is_visible = false
 
-    static input::Input in
-    static vector<input::Gesture*> gestures
+    static input::Input in = {}
+    static vector<input::Gesture*> gestures = {}
 
     // variable: motion_event
     // motion_event is used for subscribing to motion_events
@@ -57,7 +57,7 @@ namespace ui:
     // // d is of type input::SynMotionEvent
     // MainLoop::motion_event += [=](auto &d) { };
     // ---
-    static MOUSE_EVENT motion_event
+    static MOUSE_EVENT motion_event = {}
 
     // variable: key_event
     // key_event is used for subscribing to key_events
@@ -67,7 +67,7 @@ namespace ui:
     // // d is of type input::SynKeyEvent
     // MainLoop::key_event += [=](auto &d) { };
     // ---
-    static KEY_EVENT key_event
+    static KEY_EVENT key_event = {}
 
     // returns whether the supplied widget is visible
     static bool is_visible(Widget *w):
@@ -142,7 +142,7 @@ namespace ui:
             ev.count_fingers()
             if g->filter(ev):
               if !g->initialized:
-                if DEBUG_GESTURES:
+                if input::DEBUG_GESTURES:
                   debug "INITIALIZING", ev.x, ev.y, ev.slot
                 g->init(ev)
                 g->setup(ev)
@@ -323,16 +323,4 @@ namespace ui:
       return hit_widget
   ;
 
-  Scene MainLoop::scene = make_scene()
-  Scene MainLoop::overlay = make_scene()
-  Scene MainLoop::kbd = make_scene()
-  bool MainLoop::overlay_is_visible = false
-  bool MainLoop::kbd_is_visible = false
 
-  input::Input MainLoop::in = {}
-  vector<input::Gesture*> MainLoop::gestures = {}
-
-  MOUSE_EVENT MainLoop::motion_event
-  KEY_EVENT MainLoop::key_event
-
-  shared_ptr<framebuffer::FB> MainLoop::fb = framebuffer::get()

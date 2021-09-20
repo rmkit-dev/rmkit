@@ -26,8 +26,8 @@
 
 using namespace std
 
-DEBUG_FB_INFO := getenv("DEBUG_FB_INFO") != NULL
 namespace framebuffer:
+  extern bool DEBUG_FB_INFO = (getenv("DEBUG_FB_INFO") != NULL)
 
   inline bool file_exists (const std::string& name):
     struct stat buffer;

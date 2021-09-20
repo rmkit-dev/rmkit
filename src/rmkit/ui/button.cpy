@@ -12,13 +12,13 @@ namespace ui:
   // an ICON for the start of the button.
   class Button: public Widget
     public:
-    static Stylesheet DEFAULT_STYLE
+    static Stylesheet DEFAULT_STYLE = {}
     string text
     int x_padding = 0
     int y_padding = 10
     shared_ptr<Text> textWidget
     int key
-    static int key_ctr
+    static int key_ctr = 16 // "q"
 
     // variable: icon
     icons::Icon icon = {NULL, 0}
@@ -120,9 +120,6 @@ namespace ui:
         fill = true
       fb->draw_rect(self.x, self.y, self.w, self.h, color, fill)
 
-  int Button::key_ctr = 16 // "q"
-  Stylesheet Button::DEFAULT_STYLE = Stylesheet().justify_center()
-
   class ToggleButton: public ui::Button:
     public:
     PLS_DEFINE_SIGNAL(TOGGLE_EVENT, int)
@@ -150,3 +147,4 @@ namespace ui:
       toggled = !toggled
       self.events.toggled(toggled)
       self.dirty = 1
+  ;

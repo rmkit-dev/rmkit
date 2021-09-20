@@ -228,7 +228,6 @@ class AppDialog: public ui::Pager:
       row->pack_end(c)
 
 class App: public IApp:
-  int lastpress
   int is_pressed = false
   AppDialog *app_dialog
   AppBackground *app_bg
@@ -240,6 +239,10 @@ class App: public IApp:
   input_event *touch_flood
   input_event *button_flood
   vector<input::TouchEvent> touch_events
+
+  static int lastpress = RAND_MAX
+  static int event_press_id = 0
+
 
   public:
   App():
@@ -467,9 +470,6 @@ class App: public IApp:
     ui::MainLoop::in.grab()
 
   def handle_key_event(input::SynKeyEvent ev):
-    static int lastpress = RAND_MAX
-    static int event_press_id = 0
-
     suspend_m.lock()
     LAST_ACTION = time(NULL)
     suspend_m.unlock()

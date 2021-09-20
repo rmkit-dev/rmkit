@@ -2,7 +2,7 @@
 #include <string.h>
 
 namespace util:
-  resize_image(image_data &im, int new_w, new_h, threshold=255):
+  static void resize_image(image_data &im, int new_w, new_h, threshold=255):
     num_channels := im.channels
     resize_len := new_w*new_h*sizeof(unsigned char)*num_channels
     resize_buffer := (unsigned char*)malloc(resize_len)
@@ -29,5 +29,3 @@ namespace util:
     im.w = new_w
     im.h = new_h
     im.buffer = (uint32_t*) rgba_buf
-
-    return true

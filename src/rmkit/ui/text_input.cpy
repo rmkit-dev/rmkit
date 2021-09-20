@@ -19,7 +19,8 @@ namespace ui:
     ;
     TEXTINPUT_EVENTS events
 
-    static Stylesheet DEFAULT_STYLE
+    static Stylesheet DEFAULT_STYLE = Stylesheet().justify_center()
+
 
     // function: TextInput
     // Parameters
@@ -122,4 +123,3 @@ namespace ui:
       ui::MultiText::render()
 
   ;
-  Stylesheet TextInput::DEFAULT_STYLE = Stylesheet().justify_center()

@@ -5,12 +5,12 @@
 // #define DEBUG_INPUT_EVENT 1
 
 namespace input:
+  extern int next_id = 1234
   class Event:
     public:
-    static int next_id
     unsigned int id
     Event():
-      self.id = Event::next_id++
+      self.id = next_id++
 
     def update(input_event data):
       pass
@@ -29,7 +29,7 @@ namespace input:
       pass
 
     virtual ~Event() = default
-  int Event::next_id = 0
+
 
   class SynEvent: public Event:
     public:
@@ -93,7 +93,7 @@ namespace input:
     int x=-1, y=-1
     int slot = 0, left = -1
     bool lifted=false
-    static int MAX_SLOTS
+    static int MAX_SLOTS = 10
     struct Point:
       int x=-1, y=-1, left=-1
     ;
@@ -174,7 +174,6 @@ namespace input:
       if fingers == 0:
         return false
 
-  int TouchEvent::MAX_SLOTS = 10
 
   class WacomEvent: public Event:
     public:

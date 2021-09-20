@@ -12,9 +12,9 @@ namespace ui:
   // wake up the main thread
   class TaskQueue:
     public:
-    static deque<std::function<void()>> tasks
-    static std::mutex task_m
-    static std::mutex task_q
+    static deque<std::function<void()>> tasks = {}
+    static std::mutex task_m = {}
+    static std::mutex task_q = {}
 
     static void wakeup():
       _ := write(input::ipc_fd[1], "WAKEUP", sizeof("WAKEUP"));
@@ -54,7 +54,3 @@ namespace ui:
       catch (const std::exception& e):
         debug "NEW THREAD EXC", e.what()
         TaskQueue::wakeup()
-
-  std::mutex TaskQueue::task_m = {}
-  std::mutex TaskQueue::task_q = {}
-  deque<std::function<void()>> TaskQueue::tasks = {}

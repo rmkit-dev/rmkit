@@ -86,13 +86,13 @@ template<int NCOLORS>
 remarkable_color quantize(float c) = delete;
 
 template<>
-remarkable_color quantize<2>(float c)
+inline remarkable_color quantize<2>(float c)
 {
     return c >= 0.5 ? WHITE : BLACK;
 }
 
 template<>
-remarkable_color quantize<4>(float c)
+inline remarkable_color quantize<4>(float c)
 {
     return c <  0.25 ? BLACK
          : c >= 0.75 ? WHITE
@@ -100,7 +100,7 @@ remarkable_color quantize<4>(float c)
 }
 
 template<>
-remarkable_color quantize<16>(float c)
+inline remarkable_color quantize<16>(float c)
 {
     // Optimize BLACK and WHITE
     return c <   (1/16.0) ? BLACK

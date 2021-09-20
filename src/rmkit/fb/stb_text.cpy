@@ -9,13 +9,13 @@
 #include "../assets.h"
 
 
+#define FONT_SIZE 24
 namespace stbtext:
-  FONT_SIZE := 24
-  unsigned char font_buffer[24<<20] = {0};
-  stbtt_fontinfo font;
-  bool did_setup = false
+  static unsigned char font_buffer[24<<20]
+  static stbtt_fontinfo font;
+  extern bool did_setup = false
 
-  void setup_font():
+  static void setup_font():
     if !did_setup:
       const char *filename = getenv("RMKIT_DEFAULT_FONT");
       if filename == NULL:
@@ -38,7 +38,7 @@ namespace stbtext:
       did_setup = true
 
 
-  void draw_bitmap(image_data bitmap, int x, int y, image_data image):
+  static void draw_bitmap(image_data bitmap, int x, int y, image_data image):
     int i, j, p, q;
     int x_max = x + bitmap.w;
     int y_max = y + bitmap.h;
@@ -51,14 +51,14 @@ namespace stbtext:
         uint32_t val = bitmap.buffer[q * bitmap.w + p];
         image.buffer[j*image.w+i] = val == 0 ? WHITE: BLACK;
 
-  int get_line_height(int font_size=FONT_SIZE):
+  static int get_line_height(int font_size=FONT_SIZE):
     setup_font()
     float scale = stbtt_ScaleForPixelHeight(&font, font_size)
     int ascent, descent, lineGap
     stbtt_GetFontVMetrics(&font, &ascent, &descent, &lineGap)
     return scale * (ascent - descent + lineGap) + 0.5;
 
-  image_data get_text_size(std::string &text, int font_size=FONT_SIZE):
+  static image_data get_text_size(std::string &text, int font_size=FONT_SIZE):
     int i,j,ascent,baseline;
     int ch=0;
     float scale=1, xpos=0; // leave a little padding in case the character extends left
@@ -84,11 +84,11 @@ namespace stbtext:
     image_data im = {.buffer=NULL, .w = int(xpos), .h=font_size+baseline}
     return im
 
-  image_data get_text_size(const char* text, int font_size=FONT_SIZE):
+  static image_data get_text_size(const char* text, int font_size=FONT_SIZE):
     std::string s(text)
     return get_text_size(s, font_size)
 
-  int render_text(std::string &text, image_data &image, int font_size = FONT_SIZE):
+  static int render_text(std::string &text, image_data &image, int font_size = FONT_SIZE):
     int i,j,ascent,baseline;
     int ch=0;
     float scale=1, xpos=0; // leave a little padding in case the character extends left
@@ -132,6 +132,6 @@ namespace stbtext:
     free(text_buffer)
     return 0;
 
-  int render_text(const char *text, image_data &image, int font_size = FONT_SIZE):
+  static int render_text(const char *text, image_data &image, int font_size = FONT_SIZE):
     std::string s(text)
     return render_text(s, image, font_size)

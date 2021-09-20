@@ -172,6 +172,7 @@ public:
     InheritedStylesheet alignment() { return _inherit(&Stylesheet::alignment); }
 };
 
+#ifdef RMKIT_IMPLEMENTATION
 InheritedStylesheet Style::inherit() const
 {
     return InheritedStylesheet(*this);
@@ -186,6 +187,7 @@ Style Style::DEFAULT = Stylesheet()
     .border_none()
     .build();
 
+#endif
 }
 
 #endif

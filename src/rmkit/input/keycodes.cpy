@@ -1,5 +1,5 @@
 namespace input:
-  const char* get_key_str(int key):
+  static const char* get_key_str(int key):
     switch key:
       case 0: return "KEY_RESERVED"; break;
       case 1: return "KEY_ESC"; break;

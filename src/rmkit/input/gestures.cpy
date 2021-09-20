@@ -2,9 +2,10 @@
 #include "../util/signals.h"
 #include "events.h"
 
-DEBUG_GESTURES := false
-DEBUG_GESTURE_FILTERS := false
 namespace input:
+  extern bool DEBUG_GESTURES = false
+  extern bool DEBUG_GESTURE_FILTERS = false
+
   class Gesture:
     public:
     struct Point:

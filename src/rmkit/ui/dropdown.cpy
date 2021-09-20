@@ -1,5 +1,6 @@
 #include "button.h"
 #include "layouts.h"
+#include "../ui/main_loop.h"
 #include "../input/events.h"
 #include "../fb/stb_text.h"
 
@@ -20,7 +21,8 @@ namespace ui:
 
   class OptionButton: public ui::Button:
     public:
-    static Stylesheet DEFAULT_STYLE
+    static Stylesheet DEFAULT_STYLE = Stylesheet().justify_left()
+
     IOptionButton* tb
     string text
     int idx
@@ -245,5 +247,3 @@ namespace ui:
 
     void prepare_options():
       self.autosize_options()
-
-  Stylesheet OptionButton::DEFAULT_STYLE = Stylesheet().justify_left()

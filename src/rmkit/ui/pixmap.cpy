@@ -9,7 +9,7 @@
 namespace ui:
   class ImageCache:
     public:
-    static map<string, image_data> CACHE
+    static map<string, image_data> CACHE = {}
     image_data image = { NULL, 0 }
     ImageCache():
       pass
@@ -28,9 +28,6 @@ namespace ui:
 
 
     virtual image_data fetch(string t) { return { NULL, 0 }; };
-
-  map<string, image_data> ImageCache::CACHE = {}
-
 
   class CachedIcon: public icons::Icon, public ImageCache:
     public:

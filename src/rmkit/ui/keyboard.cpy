@@ -60,8 +60,8 @@ namespace ui:
     string text = ""
     int btn_width
     int btn_height
-    static Stylesheet BTN_STYLE
-    static Stylesheet INPUT_STYLE
+    static Stylesheet BTN_STYLE = Stylesheet().font_size(48)
+    static Stylesheet INPUT_STYLE = Stylesheet().font_size(64)
 
     KEYBOARD_EVENTS events
 
@@ -244,5 +244,3 @@ namespace ui:
       pass
 
   ;
-  Stylesheet Keyboard::BTN_STYLE = Stylesheet().font_size(48)
-  Stylesheet Keyboard::INPUT_STYLE = Stylesheet().font_size(64)

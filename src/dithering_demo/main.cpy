@@ -1,3 +1,5 @@
+// @nosplit
+
 #include "../build/rmkit.h"
 
 #include <algorithm>
@@ -5,7 +7,7 @@
 #include <string>
 #include <vector>
 
-static const char * IMAGES_DIR = "/opt/etc/dithering_demo"
+extern const char* IMAGES_DIR = "/opt/etc/dithering_demo"
 
 vector<string> read_directory(const char * dirname):
   DIR *dir

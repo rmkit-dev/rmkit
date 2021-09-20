@@ -15,7 +15,7 @@ namespace ui:
     // variable: fb
     // every widget has access to fb through self.fb and therefore can (and
     // should) draw directly to the framebuffer
-    static framebuffer::FB *fb
+    static framebuffer::FB* fb = NULL
     vector<shared_ptr<Widget>> children
 
     MOUSE_EVENTS mouse
@@ -207,6 +207,3 @@ namespace ui:
     // supplied text
     virtual tuple<int, int> get_render_size():
       return self.w, self.h
-
-
-  framebuffer::FB* Widget::fb = NULL

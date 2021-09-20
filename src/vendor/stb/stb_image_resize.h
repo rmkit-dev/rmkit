@@ -1,5 +1,4 @@
 #include "../../rmkit/defines.h"
-#pragma once
 
 /* stb_image_resize - v0.96 - public domain image resizing
    by Jorge L Rodriguez (@VinoBS) - 2014

@@ -28,13 +28,13 @@
 // ev_key: home, left, right, power, wakeup
 namespace input:
   enum EV_TYPE { TOUCH, STYLUS, BUTTONS, UNKNOWN, INVALID }
-  def check_bit_set(int fd, type, i):
+  static bool check_bit_set(int fd, int type, int i):
     unsigned long bit[NBITS(KEY_MAX)]
     ioctl(fd, EVIOCGBIT(type, KEY_MAX), bit);
     return test_bit(i, bit)
 
 
-  EV_TYPE id_by_capabilities(int fd):
+  static EV_TYPE id_by_capabilities(int fd):
     int version
     // if we can't get version of the fd, its invalid
     if (ioctl(fd, EVIOCGVERSION, &version)):
@@ -54,7 +54,7 @@ namespace input:
 
     return UNKNOWN
 
-  EV_TYPE id_by_name(int fd):
+  static EV_TYPE id_by_name(int fd):
     char name[256];
     ioctl(fd, EVIOCGNAME(sizeof(name)), name);
     s := std::string(name)

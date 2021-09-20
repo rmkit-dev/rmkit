@@ -1,3 +1,5 @@
+// @nosplit
+
 #include "../assets.h"
 
 namespace app_ui:

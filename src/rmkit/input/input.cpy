@@ -13,12 +13,12 @@
 
 using namespace std
 
-USE_RESIM := true
+extern bool USE_RESIM = true
 
 // #define DEBUG_INPUT_EVENT 1
 namespace input:
-  static int ipc_fd[2] = { -1, -1 };
-  CRASH_ON_BAD_DEVICE := getenv("RMKIT_CRASH_ON_BAD_DEVICE") != NULL
+  extern int ipc_fd[2] = { -1, -1 };
+  extern bool CRASH_ON_BAD_DEVICE = (getenv("RMKIT_CRASH_ON_BAD_DEVICE") != NULL)
 
   template<class T, class EV>
   class InputClass:
