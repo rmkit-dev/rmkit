@@ -1,5 +1,6 @@
 genie is a config based gesture launcher. the point of genie is to setup your
-own gestures and configure them to do what you want.
+own gestures and configure them to do what you want. The config file is located
+at `/opt/etc/genie.conf`.
 
 ## config file format
 
