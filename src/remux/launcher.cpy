@@ -34,6 +34,8 @@ DIALOG_HEIGHT := 800
 LAST_ACTION := 0
 USE_KOREADER_WORKAROUND := false
 
+MIN_DISPLAY_TIME := 500
+
 string CURRENT_APP = "_"
 string NAO_BIN="/opt/bin/nao"
 
@@ -239,6 +241,7 @@ class App: public IApp:
   input_event *touch_flood
   input_event *button_flood
   vector<input::TouchEvent> touch_events
+  std::chrono::system_clock::time_point last_display_time
 
   static int lastpress = RAND_MAX
   static int event_press_id = 0
@@ -265,6 +268,14 @@ class App: public IApp:
     get_current_app()
 
     app_dialog->on_hide += PLS_LAMBDA(auto &d):
+      now := std::chrono::system_clock::now();
+      int_ms := std::chrono::duration_cast<std::chrono::milliseconds>(now - last_display_time);
+
+      debug "DISPLAYED LAUNCHER FOR", int_ms.count(), "MS"
+      if int_ms.count() < MIN_DISPLAY_TIME:
+        debug "NOT HIDING LAUNCHER BECAUSE INTERVAL < ", MIN_DISPLAY_TIME
+        return
+
       self.render_bg()
       launch(CURRENT_APP)
       // we put the unmonitor in a timeout to prevent
@@ -446,6 +457,8 @@ class App: public IApp:
   void show_launcher():
     if ui::MainLoop::overlay_is_visible:
       return
+
+    last_display_time = std::chrono::system_clock::now();
 
     ui::MainLoop::in.monitor(ui::MainLoop::in.wacom.fd)
     ClockWatch cz
