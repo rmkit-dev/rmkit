@@ -120,6 +120,9 @@ namespace input:
 
     void open_device(string fname):
       fd := open(fname.c_str(), O_RDWR)
+      if fd == -1:
+        debug "ERROR OPENING INPUT DEVICE", fname
+        exit(1)
 
       switch input::id_by_capabilities(fd):
         case STYLUS:
