@@ -31,6 +31,18 @@ bool can_exec(const char *file)
 }
 ```
 
+bool string_to_bool(string key, string s, bool default_value=false):
+  bool val = default_value
+  if s == "yes" or s == "true" or s == "1":
+    val = true
+  else if s == "no" or s == "false" or s == "" or s == "0":
+    val = false
+  else:
+    debug "* KEY", key, "HAS UNRECOGNIZED BOOLEAN VALUE:", s, "MUST BE 'yes' or 'no'"
+    debug "  DEFAULTING TO", default_value
+
+  return val
+
 class AppReader:
   public:
   vector<RMApp> apps
@@ -66,6 +78,8 @@ class AppReader:
               rmapp.name = val
             else if arg == "term":
               rmapp.term = val
+            else if arg == "manage_power":
+              rmapp.manage_power = string_to_bool(arg, val, true)
 
         if rmapp.bin != "":
           apps.push_back(rmapp)

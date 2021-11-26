@@ -8,6 +8,7 @@ struct RMApp:
   string resume = ""
 
   bool always_show = false
+  bool manage_power = true
 
   // this will contain a framebuffer snapshot if we have one
   char *snapshot = NULL
@@ -23,7 +24,9 @@ RMApp APP_XOCHITL = RMApp %{
   bin : "xochitl",
   which : "xochitl",
   name : "Remarkable",
-  always_show : true }
+  always_show : true,
+  manage_power : false,
+}
 
 RMApp APP_KOREADER = RMApp %{
   bin:"/home/root/koreader/koreader.sh",

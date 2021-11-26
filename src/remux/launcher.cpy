@@ -266,6 +266,7 @@ class App: public IApp:
     app_dialog = new AppDialog(0, 0, 600, 800, self)
     app_dialog->populate()
     get_current_app()
+    debug "CURRENT APP IS", CURRENT_APP
 
     app_dialog->on_hide += PLS_LAMBDA(auto &d):
       now := std::chrono::system_clock::now();
@@ -335,9 +336,24 @@ class App: public IApp:
     for auto a : app_dialog->get_apps():
       if proc::is_running(a.which):
         active = a
-        debug "CURRENT APP IS", active.name
         CURRENT_APP = active.name
         return
+
+
+  RMApp get_app_by_name(string name):
+    RMApp active
+
+    vector<string> binaries;
+    for auto a : app_dialog->get_apps():
+      if a.name == name:
+        active = a
+        return active
+
+    active.name = "<NO APP>"
+    active.bin = "/bin/false"
+    active.manage_power = true
+    return active
+
 
 
   def handle_api_line(string line):
@@ -409,6 +425,7 @@ class App: public IApp:
         usb_in := false
         string usb_str
 
+
         for auto fname : USB_CHARGER_PATHS:
           usb_cmd := "cat " + string(fname) + " 2>/dev/null"
 
@@ -418,8 +435,15 @@ class App: public IApp:
           if usb_in:
             break
 
+        app := get_app_by_name(CURRENT_APP)
+
         suspend_m.lock()
         if LAST_ACTION == 0 or usb_in:
+          LAST_ACTION = now
+
+        // check if we should manage this app's power
+        // an app can turn this off by using manage_power=false in its draft file
+        if !app.manage_power:
           LAST_ACTION = now
         last_action := LAST_ACTION
         suspend_m.unlock()
@@ -465,6 +489,7 @@ class App: public IApp:
 
     ClockWatch c0
     get_current_app()
+    debug "CURRENT APP IS", CURRENT_APP
     debug "current app", c0.elapsed()
 
     // this is really backgrounding apps, not terminating
@@ -560,7 +585,7 @@ class App: public IApp:
     if rm2fb::IN_RM2FB_SHIM:
       sleep(1)
       _ := system("systemctl suspend")
-      sleep(1)
+      sleep(3)
 
       if system("lsmod | grep brcmfmac") == 0:
         debug "RELOADING WIFI DRIVERS"
@@ -676,6 +701,7 @@ class App: public IApp:
       if a.name == name or a.bin == name:
         app = a
         CURRENT_APP = string(a.name)
+        debug "POWER MANAGEMENT:", a.manage_power
 
     if app.name == "" && app.bin == "":
       debug "CANT LAUNCH APP", name
