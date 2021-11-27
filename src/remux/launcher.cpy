@@ -585,7 +585,7 @@ class App: public IApp:
     if rm2fb::IN_RM2FB_SHIM:
       sleep(1)
       _ := system("systemctl suspend")
-      sleep(3)
+      sleep(1)
 
       if system("lsmod | grep brcmfmac") == 0:
         debug "RELOADING WIFI DRIVERS"
