@@ -358,6 +358,7 @@ class App: public IApp:
 
   def handle_api_line(string line):
     str_utils::trim(line)
+    debug "HANDLING API LINE", line
     if line == "":
       return
 
@@ -368,6 +369,12 @@ class App: public IApp:
     else if line == "back":
       ui::MainLoop::hide_overlay()
       self.show_last_app()
+    else if line.find("launch ") == 0:
+      tokens := str_utils::split(line, ' ')
+      if len(tokens) > 1:
+        name := tokens[1]
+        api_launch_app(name)
+
     else:
       debug "UNKNOWN API LINE:", line
 
@@ -477,6 +484,19 @@ class App: public IApp:
         self.launch(app)
         self.render_bg()
         break
+
+  void api_launch_app(string name):
+    app := find_app(name)
+    if app.bin != "":
+      debug "USING API TO LAUNCH", name
+      ui::MainLoop::hide_overlay()
+      self.term_apps()
+      self.app_bg->snapshot()
+      self.launch(name)
+      self.render_bg()
+    else:
+      debug "NO SUCH APP:", name
+
 
   void show_launcher():
     if ui::MainLoop::overlay_is_visible:
@@ -687,25 +707,29 @@ class App: public IApp:
     proc::groupkill(SIGKILL, bins)
     app_bg->remove_vfb(name)
 
+  RMApp find_app(string name):
+    RMApp app
+    app.bin = ""
+    app.name = ""
+    for auto a : app_dialog->get_apps():
+      if a.name == name or a.bin == name:
+        app = a
+
+    return app
+
+
   void launch(string name):
     if name == "":
       return
 
     debug "LAUNCHING APP", name, CURRENT_APP
 
-    RMApp app
-    app.bin = ""
-    app.name = ""
-
-    for auto a : app_dialog->get_apps():
-      if a.name == name or a.bin == name:
-        app = a
-        CURRENT_APP = string(a.name)
-        debug "POWER MANAGEMENT:", a.manage_power
-
+    app := find_app(name)
     if app.name == "" && app.bin == "":
       debug "CANT LAUNCH APP", name
       return
+    CURRENT_APP = string(app.name)
+    debug "POWER MANAGEMENT:", app.manage_power
 
     if name != "_" && _launched[0] != name:
       _launched.push_front(name)
