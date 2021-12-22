@@ -35,7 +35,7 @@ A [package manager](https://rmkit.dev/apps/nao) for opkg built in bash + simple 
 
 An [app switcher](https://rmkit.dev/apps/remux) for switching between apps on the remarkable that is compatible
 with [draft-remarkable](https://github.com/dixonary/draft-reMarkable/)
-configuration files. Hold the middle button or swipe up the side of the display to bring it up.
+configuration files. Hold the middle button or [swipe up the side of the display](https://imgur.com/a/rT94L8W) to bring it up.
 
 NOTE: if you have trouble with swiping, tap the screen with your finger once
 and then swipe, this should help a bit.
