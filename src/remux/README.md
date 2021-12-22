@@ -21,7 +21,7 @@ few ways to configure the list of apps that appear in remux:
 The built in ways of launching remux are:
 
 * holding home button
-* swiping up on either side of the display
+* swiping up on either side of the display ([demo](https://imgur.com/a/rT94L8W))
 
 if you want to adjust them, they can be changed - see the config section below.
 
@@ -42,6 +42,10 @@ Finally, if you want to make the installation permanent, change into the
 start_service`
 
 ## Changelog
+
+### `launch` API (0.2.0)
+
+* added ability to launch applications through the API: `echo 'launch xochitl' > /run/remux.api` will launch xochitl. the application name should be the name of the application as it shows up in the launch dialog
 
 ### Custom start application (0.1.9)
 
