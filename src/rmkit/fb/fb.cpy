@@ -306,7 +306,7 @@ namespace framebuffer:
     // o_x - the x offset
     // o_y - the y offset
     // alpha - the color to treat as an alpha blend (not painted into destination)
-    def draw_bitmap(image_data &image, int o_x, int o_y, int alpha=4160223223):
+    def draw_bitmap(image_data &image, int o_x, int o_y, int pseudo_alpha=4160223223, bool alpha=true):
       remarkable_color* ptr = self.fbmem
       ptr += (o_x + o_y * self.width)
       src := image.buffer
@@ -330,8 +330,8 @@ namespace framebuffer:
           if o_x + i >= self.width:
             break
 
-          if src[i] != alpha:
-            if image.channels == 4:
+          if src[i] != pseudo_alpha:
+            if image.channels == 4 && alpha:
               // 4th bit is alpha -- if it's 0, skip drawing
               if ((char*)src)[i*image.channels+3] != 0:
                 self._set_pixel(&ptr[i], i, j, to_rgb565((char *) src, i*image.channels))

@@ -98,4 +98,4 @@ namespace ui:
       if self.icon.data == NULL || self.icon.image.buffer == NULL:
         return
 
-      fb->draw_bitmap(self.icon.image, x, y, self.alpha)
+      fb->draw_bitmap(self.icon.image, x, y, self.alpha, false)
