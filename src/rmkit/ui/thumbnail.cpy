@@ -1,6 +1,7 @@
 #include "../../vendor/stb/stb_image.h"
 #include "../../vendor/stb/stb_image_resize.h"
 #include "../util/image.h"
+#include "../fb/fb.h"
 #include "pixmap.h"
 
 namespace ui:
@@ -24,7 +25,7 @@ namespace ui:
       self.undraw()
       if image.buffer != NULL:
           debug "RENDERING IMAGE", self.w, self.h, self.image.w, self.image.h
-          self.fb->draw_bitmap(self.image, self.x, self.y)
+          self.fb->draw_bitmap(self.image, self.x, self.y, ALPHA_BLEND, 0)
 
     image_data fetch(string t):
       if !MainLoop::is_visible(self):

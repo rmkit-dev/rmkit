@@ -24,6 +24,8 @@
 #define likely(x)      __builtin_expect(!!(x), 1)
 #define unlikely(x)      __builtin_expect(!!(x), 0)
 
+ALPHA_BLEND := 4160223223
+
 using namespace std
 
 namespace framebuffer:
@@ -306,7 +308,7 @@ namespace framebuffer:
     // o_x - the x offset
     // o_y - the y offset
     // alpha - the color to treat as an alpha blend (not painted into destination)
-    def draw_bitmap(image_data &image, int o_x, int o_y, int pseudo_alpha=4160223223, bool alpha=true):
+    def draw_bitmap(image_data &image, int o_x, int o_y, int pseudo_alpha=ALPHA_BLEND, bool alpha=true):
       remarkable_color* ptr = self.fbmem
       ptr += (o_x + o_y * self.width)
       src := image.buffer
@@ -424,7 +426,7 @@ namespace framebuffer:
       int channels // an output parameter
       decoded := stbi_load(full_path, &neww, &newh, &channels, 4);
       image := image_data{(uint32_t*) decoded, (int) neww, (int) newh, channels}
-      self->draw_bitmap(image,0,0,0)
+      self->draw_bitmap(image,0,0,ALPHA_BLEND)
       free(image.buffer)
 
       self.waveform_mode = WAVEFORM_MODE_GC16

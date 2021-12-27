@@ -14,12 +14,21 @@ class ToolBar : public ui::HorizontalLayout:
     public:
     Background(int x, y, w, h): ui::Widget(x, y, w, h):
       pass
+
     void render():
       self.fb->draw_rect(x, y, w, h, WHITE, true /* fill */)
   ;
 
+  Background *bg
   ToolBar(int x, y, w, h, ui::Scene s): ui::HorizontalLayout(x, y, w, h, s):
-    s->add(new Background(x, y, w, h))
+    bg = new Background(x, y, w, h)
+    s->add(bg)
+
+  void set_bg():
+    bg->x = self.x
+    bg->y = self.y
+    bg->w = self.w
+    bg->h = self.h
 ;
 
 class App:
@@ -53,6 +62,7 @@ class App:
     // aligns the toolbar to the bottom of the screen using pack_end
     // NOTE: this is an example of nesting layouts
     toolbar_area->pack_end(toolbar)
+    toolbar->set_bg()
 
 
     // we always have to pack layouts in order
