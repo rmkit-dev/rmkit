@@ -458,15 +458,12 @@ namespace framebuffer:
       i := 0
       for y o_y h:
         for x o_x w:
-          rgb8 := color::to_rgb8(self.fbmem[y*self.width + x])
-          buf[i++] = rgb8.r
-          buf[i++] = rgb8.g
-          buf[i++] = rgb8.b
+          buf[i++] = self.fbmem[y*self.width + x]
       buf[i] = 0
 
       debug "SAVING", filename
 
-      stbi_write_png(filename, w, h, 3, buf.data(), w*3)
+      stbi_write_png(filename, w, h, 1, buf.data(), w)
       return string(filename)
 
     // Barrera4
