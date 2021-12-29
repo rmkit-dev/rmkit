@@ -22,4 +22,4 @@ def main(int argc, char **argv):
     fname = argv[1]
   else:
     fname = "fb.png"
-  fb->save_lodepng(fname)
+  fb->save_colorpng(fname)

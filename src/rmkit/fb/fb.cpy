@@ -436,6 +436,39 @@ namespace framebuffer:
       sprintf(mkdir_cmd, "mkdir -p %s 2>/dev/null", SAVE_DIR)
       err := system(mkdir_cmd)
 
+    string save_colorpng(string fname="")
+      w, h := self.get_display_size()
+      return self.save_colorpng(fname, 0, 0, w, h)
+
+    string save_colorpng(string fname, int o_x,o_y,w,h):
+      self.make_save_dir()
+      char filename[100]
+      char full_filename[100]
+
+      datestr := self.get_date()
+      datecstr := datestr.c_str()
+
+      if fname == "":
+        sprintf(filename, "%s/%s%s", SAVE_DIR, datecstr, ".png")
+      else:
+        memcpy(filename, fname.c_str(), fname.size())
+        filename[fname.size()] = 0
+
+      buf := vector<unsigned char>(w * h * 4+1)
+      i := 0
+      for y o_y h:
+        for x o_x w:
+          rgb8 := color::to_rgb8(self.fbmem[y*self.width + x])
+          buf[i++] = rgb8.r
+          buf[i++] = rgb8.g
+          buf[i++] = rgb8.b
+      buf[i] = 0
+
+      debug "SAVING", filename
+
+      stbi_write_png(filename, w, h, 3, buf.data(), w*3)
+      return string(filename)
+
     string save_lodepng(string fname="")
       w, h := self.get_display_size()
       return self.save_lodepng(fname, 0, 0, w, h)
