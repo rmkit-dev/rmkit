@@ -43,7 +43,7 @@ namespace app_ui:
       memcpy(fbcopy.get(), self.fb->fbmem, self.byte_size)
 
       self.undo_stack.push_back(fbcopy)
-      reset_dirty(self.dirty_rect)
+      fb->reset_dirty(self.dirty_rect)
 
       self.eraser = brush::ERASER
       self.set_brush(brush::ERASER)
@@ -119,7 +119,7 @@ namespace app_ui:
 
       self.fb->dirty_area = vfb->dirty_area
       self.fb->dirty = 1
-      framebuffer::reset_dirty(vfb->dirty_area)
+      vfb->reset_dirty(vfb->dirty_area)
 
     // {{{ SAVING / LOADING
     string save():
@@ -177,7 +177,7 @@ namespace app_ui:
       self.redo_stack.clear()
 
       trim_stacks()
-      reset_dirty(self.dirty_rect)
+      fb->reset_dirty(self.dirty_rect)
 
     void undo():
       if self.undo_stack.size() > 1:

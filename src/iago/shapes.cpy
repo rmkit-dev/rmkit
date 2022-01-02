@@ -295,8 +295,8 @@ namespace shape:
           obj->is_attached = true
           is_attached = true
 
-      if x+w > DISPLAYWIDTH:
-        w = DISPLAYWIDTH-x-10
+      if x+w > fb->display_width:
+        w = fb->display_width-x-10
 
       sz := 25
       handle_one = new DragHandle(x, y, sz, sz)

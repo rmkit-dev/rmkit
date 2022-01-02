@@ -42,7 +42,7 @@ class Note: public ui::Widget:
         (dirty_rect.x1 - dirty_rect.x0) * sizeof(remarkable_color))
     self.fb->dirty_area = vfb->dirty_area
     self.fb->dirty = 1
-    framebuffer::reset_dirty(vfb->dirty_area)
+    vfb->reset_dirty(vfb->dirty_area)
 
 class App:
   public:

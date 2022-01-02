@@ -2,6 +2,7 @@
 #include "../defines.h"
 #include "../util/rm2fb.h"
 #include "../util/rotate.h"
+#include "../fb/fb_info.h"
 
 //#define DEBUG_INPUT_EVENT 1
 
@@ -118,7 +119,7 @@ namespace input:
           break
 
     handle_abs(input_event data):
-      rotation := util::get_rotation()
+      rotation := util::rotation::get()
       switch data.code:
         case ABS_MT_SLOT:
           slot = data.value;
@@ -132,10 +133,10 @@ namespace input:
           if self.first_used_slot() == slot:
             self.x = slots[slot].x
           #elif KOBO
-          if rotation == 0:
+          if rotation == util::rotation::ROT0:
             slots[slot].y = data.value
-          else if rotation == 2:
-            slots[slot].y = DISPLAYHEIGHT - data.value
+          else if rotation == util::rotation::ROT180:
+            slots[slot].y = framebuffer::fb_info::display_height - data.value
           if self.first_used_slot() == slot:
             self.y = slots[slot].y
           #endif
@@ -145,14 +146,13 @@ namespace input:
           if not rm2fb::IN_RM2FB_SHIM:
             slots[slot].y = (MTHEIGHT - data.value)*MT_Y_SCALAR
           else:
-            slots[slot].y = (DISPLAYHEIGHT - data.value)
+            slots[slot].y = (framebuffer::fb_info::display_height - data.value)
           if self.first_used_slot() == slot:
             self.y = slots[slot].y
           #elif KOBO
-
-          if rotation == 0:
-            slots[slot].x = DISPLAYWIDTH - data.value
-          else if rotation == 2:
+          if rotation == util::rotation::ROT0:
+            slots[slot].x = framebuffer::fb_info::display_width - data.value
+          else if rotation == util::rotation::ROT180:
             slots[slot].x = data.value
           if self.first_used_slot() == slot:
             self.x = slots[slot].x
@@ -243,6 +243,7 @@ namespace input:
           break
 
     handle_abs(input_event data):
+      #ifdef REMARKABLE
       switch data.code:
         case ABS_Y:
           self.x = data.value * WACOM_X_SCALAR
@@ -259,6 +260,8 @@ namespace input:
         case ABS_PRESSURE:
           self.pressure = data.value
           break
+      #endif
+      return
 
     update(input_event data):
       self.print_event(data)

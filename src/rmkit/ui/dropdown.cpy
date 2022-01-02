@@ -132,7 +132,7 @@ namespace ui:
         self.options.clear()
 
         self.scene = ui::make_scene()
-        x_off := std::min(x + self.option_x, fb->width - ow)
+        x_off := std::min(x + self.option_x, fb->display_width - ow)
         y_off := self.option_y
         if dir == DIRECTION::DOWN:
           y_off = y + self.option_y

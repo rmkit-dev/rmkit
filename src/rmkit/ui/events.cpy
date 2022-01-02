@@ -1,5 +1,6 @@
 #include <cmath>
 
+#include "../fb/fb_info.h"
 #include "../input/events.h"
 #include "../util/signals.h"
 #include "timer.h"

@@ -30,7 +30,8 @@ extern int ALPHA_BLEND = 4160223223
 using namespace std
 
 namespace framebuffer:
-  extern bool DEBUG_FB_INFO = (getenv("DEBUG_FB_INFO") != NULL)
+  extern bool DEBUG_FB_INFO = 1
+  // (getenv("DEBUG_FB_INFO") != NULL)
 
   inline bool file_exists (const std::string& name):
     struct stat buffer;
@@ -45,17 +46,18 @@ namespace framebuffer:
     int x, y, w, h
     remarkable_color *buffer
 
-  inline void reset_dirty(FBRect &dirty_rect):
-    dirty_rect.x0 = DISPLAYWIDTH
-    dirty_rect.y0 = DISPLAYHEIGHT
-    dirty_rect.x1 = 0
-    dirty_rect.y1 = 0
-
   struct ResizeEvent:
     int w
     int h
     int bpp
   ;
+
+  inline void reset_dirty(FBRect &dirty_rect):
+    dirty_rect.x0 = fb_info::display_width
+    dirty_rect.y0 = fb_info::display_height
+    dirty_rect.x1 = 0
+    dirty_rect.y1 = 0
+
 
   PLS_DEFINE_SIGNAL(RESIZE_EVENT, ResizeEvent)
 
@@ -73,7 +75,7 @@ namespace framebuffer:
   // - The RemarkableFB is like the HardwareFB but specific to remarkable hardware
   class FB:
     public:
-    int width=0, height=0, rotation=0, fd=-1
+    int width=0, display_width=0, height=0, rotation=0, fd=-1
     int prev_width=-1, prev_height=-1
     int byte_size = 0, dirty = 0
     int update_marker = 1
@@ -88,13 +90,19 @@ namespace framebuffer:
     FBRect dirty_area
 
     FB():
-      width, height = self.get_size()
-      self.width = width
-      self.height = height
+      pass
+
+    virtual void init():
+      w, h := self.get_virtual_size()
+      self.width = w
+
+      dw, dh := self.get_display_size()
+      self.display_width = dw
+      self.height = dh
 
       if DEBUG_FB_INFO:
-        fprintf(stderr, "W: %i H: %i\n", width, height)
-      size := width*height*sizeof(remarkable_color)
+        fprintf(stderr, "W: %i H: %i S: %i\n", display_width, height, width)
+      size := width*(height)*sizeof(remarkable_color)
       self.byte_size = size
       reset_dirty(dirty_area)
 
@@ -118,7 +126,7 @@ namespace framebuffer:
     // function: clear_screen
     // blanks the framebuffer with WHITE pixels
     void clear_screen():
-      self.draw_rect(0, 0, self.width, self.height, WHITE)
+      self.draw_rect(0, 0, self.display_width, self.height, WHITE)
 
     // function: redraw_screen
     // if the framebuffer is dirty, redraws the dirty area
@@ -139,6 +147,12 @@ namespace framebuffer:
       return 0
 
 
+    inline void reset_dirty(FBRect &dirty_rect):
+      dirty_rect.x0 = self.display_width
+      dirty_rect.y0 = self.height
+      dirty_rect.x1 = 0
+      dirty_rect.y1 = 0
+
     inline void update_dirty(FBRect &dirty_rect, int x, y):
       self.dirty = 1
       dirty_rect.x0 = min(x, dirty_rect.x0)
@@ -149,8 +163,8 @@ namespace framebuffer:
       dirty_rect.y1 = max(dirty_rect.y1, y)
 
       // TODO: dont use DISPLAY* here
-      dirty_rect.x1 = min(dirty_rect.x1, int(DISPLAYWIDTH)-1)
-      dirty_rect.y1 = min(dirty_rect.y1, int(DISPLAYHEIGHT)-1)
+      dirty_rect.x1 = min(dirty_rect.x1, int(self.display_width)-1)
+      dirty_rect.y1 = min(dirty_rect.y1, int(self.height)-1)
 
     def render_if_dirty():
       if self.dirty:
@@ -163,40 +177,17 @@ namespace framebuffer:
       *dst = self.dither(x, y, c);
 
     inline void _set_pixel(int x, int y, remarkable_color c):
-      self._set_pixel(&self.fbmem[y*width+x], x, y, c)
+      self._set_pixel(&self.fbmem[y*self.width+x], x, y, c)
 
-    tuple<int,int> get_size():
-      #ifdef DEV
-      width = DISPLAYWIDTH
-      height = DISPLAYHEIGHT
-      return width, height
-      #endif
-
-      if rm2fb::IN_RM2FB_SHIM:
-        width = DISPLAYWIDTH
-        height = DISPLAYHEIGHT
-        return width, height
-
-      size_f := ifstream("/sys/class/graphics/fb0/virtual_size")
-      string width_s, height_s
-      char delim = ',';
-      getline(size_f, width_s, delim)
-      getline(size_f, height_s, delim)
-
-      width = stoi(width_s)
-      height = stoi(height_s)
-
-      #ifdef REMARKABLE
-      height /= 2
-      #endif
-      return width, height
+    virtual tuple<int,int> get_virtual_size():
+      return DISPLAYWIDTH, DISPLAYHEIGHT
 
     // rotation can be: 0 (normal), 1 (90), 2 (180), 3 (270)
     int get_rotation():
-      return util::get_rotation()
+      return util::rotation::get()
 
     void check_resize():
-      w,h := self.get_size()
+      w,h := self.get_virtual_size()
       if self.prev_width != -1 && self.prev_height != -1:
         if w != self.prev_width || h != self.prev_height:
           ev := ResizeEvent{.w=w, .h=h,.bpp=-1}
@@ -208,7 +199,7 @@ namespace framebuffer:
     // function: get_display_size
     // get the size of the framebuffer's display
     virtual tuple<int, int> get_display_size():
-      return self.width, self.height
+      return self.display_width, self.height
 
     // this function actually colors in a pixel. if dithering is supplied, it
     // will try to dither the supplied color by only enabling some pixels
@@ -378,7 +369,7 @@ namespace framebuffer:
       fd = open("fb.pnm", O_CREAT|O_RDWR, 0755)
       lseek(fd, 0, 0)
       char c[100];
-      i := sprintf(c, "P6\n%d %d\n255\n", self.width, self.height)
+      i := sprintf(c, "P6\n%d %d\n255\n", self.display_width, self.height)
       wrote := write(fd, c, i)
       if wrote == -1:
         fprintf(stderr, "ERROR %i", errno)
@@ -386,7 +377,7 @@ namespace framebuffer:
       memset(buf, 0, sizeof(buf))
 
       for y 0 self.height:
-        for x 0 self.width:
+        for x 0 self.display_width:
           rgb8 := color::to_rgb8(self.fbmem[y*self.width + x])
           buf[i++] = rgb8.r
           buf[i++] = rgb8.g
@@ -663,6 +654,9 @@ namespace framebuffer:
     public:
     HardwareFB(): FB():
       self.fd = open("/dev/fb0", O_RDWR)
+
+    void init():
+      FB::init()
       self.fbmem = (remarkable_color*) mmap(NULL, self.byte_size, PROT_WRITE, MAP_SHARED, self.fd, 0)
 
       fb_var_screeninfo vinfo;
@@ -696,8 +690,8 @@ namespace framebuffer:
       else:
         update_rect.top = 0
         update_rect.left = 0
-        update_rect.width = DISPLAYWIDTH
-        update_rect.height = DISPLAYHEIGHT
+        update_rect.width = self.display_width
+        update_rect.height = self.height
 
       update_data.update_marker = 0
       update_data.update_region = update_rect
@@ -724,9 +718,10 @@ namespace framebuffer:
     FileFB(string fname="fb.raw", int w=0, h=0): FB():
       self.filename = fname
       if w != 0 and h != 0:
+        self.display_width = w
         self.width = w
         self.height = h
-      self.byte_size = self.width * self.height * sizeof(remarkable_color)
+      self.byte_size = self.display_width * self.height * sizeof(remarkable_color)
       // make an empty file of the right size
 
       exists := file_exists(filename)
@@ -755,6 +750,7 @@ namespace framebuffer:
   class VirtualFB: public FB:
     public:
     VirtualFB(int w, h): FB():
+      self.display_width = w
       self.width = w
       self.height = h
       self.byte_size = self.width * self.height * sizeof(remarkable_color)
@@ -785,6 +781,14 @@ namespace framebuffer:
       auto_update_mode := AUTO_UPDATE_MODE_AUTOMATIC_MODE
       ioctl(self.fd, MXCFB_SET_AUTO_UPDATE_MODE, (pointer_size) &auto_update_mode);
       #endif
+
+    tuple<int, int> get_virtual_size():
+      fb_var_screeninfo vinfo;
+      if (ioctl(self.fd, FBIOGET_VSCREENINFO, &vinfo)):
+        fprintf(stderr, "Could not get screen vinfo for %s\n", "/dev/fb0")
+        exit(0)
+
+      return vinfo.xres_virtual, vinfo.yres
 
     void set_screen_depth(int d):
       fb_var_screeninfo vinfo;
@@ -843,5 +847,11 @@ namespace framebuffer:
     #else
     _FB = make_shared<framebuffer::HardwareFB>()
     #endif
+
+    _FB->init()
+
+    fb_info::display_width = _FB->display_width
+    fb_info::display_height = _FB->height
+
 
     return _FB

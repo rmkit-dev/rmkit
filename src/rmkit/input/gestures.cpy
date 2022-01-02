@@ -113,7 +113,7 @@ namespace input:
         if DEBUG_GESTURE_FILTERS:
           debug "FILTERED -1", ev.x, ev.y, ev.slot
         return false
-      if ev.y > DISPLAYHEIGHT || ev.x > DISPLAYWIDTH:
+      if ev.y > framebuffer::fb_info::display_height || ev.x > framebuffer::fb_info::display_width:
         if DEBUG_GESTURE_FILTERS:
           debug "FILTERED MAX", ev.x, ev.y, ev.slot
         return false

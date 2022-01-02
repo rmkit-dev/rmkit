@@ -21,6 +21,8 @@ double denom = 360/(2*3.14)
 bool bsleep = false
 
 rm_version := util::get_remarkable_version()
+#define DISPLAYWIDTH 1404
+#define DISPLAYHEIGHT 1872.0
 
 int get_pen_x(int x):
   return x / WACOM_X_SCALAR
