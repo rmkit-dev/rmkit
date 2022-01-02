@@ -22,6 +22,8 @@ namespace stbtext:
         #ifdef REMARKABLE
         filename = "/usr/share/fonts/ttf/noto/NotoMono-Regular.ttf";
        // TODO: fix the max size read to prevent overflows (or just abort on really large files)
+        #elif KOBO
+        filename = "/usr/local/rmkit/NotoMono-Regular.ttf";
         #else
         filename = "src/vendor/NotoSansMono-Regular.ttf";
         #endif

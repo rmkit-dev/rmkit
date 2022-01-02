@@ -5,6 +5,9 @@
 #include "../build/rmkit.h"
 using namespace std
 
+#define RM1_DWIDTH 1408
+#define RM2_DWIDTH 1404
+
 rm_version := util::get_remarkable_version()
 def main(int argc, char **argv):
 

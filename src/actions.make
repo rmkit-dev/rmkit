@@ -7,6 +7,8 @@ APP?=$(EXE:.exe=)
 compile:
 ifeq ($(ARCH),x86)
 	make compile_x86
+else ifeq ($(ARCH),kobo)
+	make compile_kobo
 else ifeq ($(ARCH),arm)
 	make compile_arm
 else ifeq ($(ARCH),arm-dev)
@@ -20,6 +22,12 @@ endif
 
 clean-default:
 	rm ${SRC_DIR}/build/${EXE}
+
+compile_kobo: ../build/stb.arm.o
+compile_kobo: export CPP_FLAGS += -O2 -static -static-libstdc++ -static-libgcc
+compile_kobo: export OKP_FLAGS += ../build/stb.arm.o
+compile_kobo:
+	CXX=${CXX_BIN} okp ${OKP_FLAGS} -- -D"KOBO=1" -D${RMKIT_IMPL} ${CPP_FLAGS}
 
 compile_arm: ../build/stb.arm.o
 compile_arm: export CPP_FLAGS += -O2
@@ -68,7 +76,7 @@ resim:
 	ARCH=dev make && cd ../../ && resim ./src/build/${EXE}
 
 copy-default:
-	ARCH=arm $(MAKE) compile
+	ARCH=${ARCH} $(MAKE) compile
 	if [ -n "${DRAFT}" ]; then make install_draft; fi
 
 	ssh root@${HOST} killall -9 ${EXE} ${APP} || true

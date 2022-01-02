@@ -93,6 +93,9 @@ namespace input:
       self.open_device("/dev/input/event0")
       self.open_device("/dev/input/event1")
       self.open_device("/dev/input/event2")
+      #elif KOBO
+      self.open_device("/dev/input/event0")
+      self.open_device("/dev/input/event1")
       #else
       if USE_RESIM:
         debug "MONITORING RESIM"

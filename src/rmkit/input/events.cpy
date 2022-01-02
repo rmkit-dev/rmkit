@@ -1,11 +1,13 @@
 #include <linux/input.h>
 #include "../defines.h"
 #include "../util/rm2fb.h"
+#include "../util/rotate.h"
 
-// #define DEBUG_INPUT_EVENT 1
+//#define DEBUG_INPUT_EVENT 1
 
 namespace input:
   extern int next_id = 1234
+
   class Event:
     public:
     unsigned int id
@@ -105,26 +107,56 @@ namespace input:
     void initialize():
       self.lifted = false
 
+    handle_key(input_event data):
+      switch data.code:
+        case BTN_TOOL_FINGER:
+        case BTN_TOUCH:
+        case BTN_TOOL_PEN:
+          if data.value == 0:
+            self.lifted = true
+            self.left = 0
+          break
+
     handle_abs(input_event data):
+      rotation := util::get_rotation()
       switch data.code:
         case ABS_MT_SLOT:
           slot = data.value;
           break
         case ABS_MT_POSITION_X:
+          #ifdef REMARKABLE
           if not rm2fb::IN_RM2FB_SHIM:
             slots[slot].x = (MTWIDTH - data.value)*MT_X_SCALAR
           else:
             slots[slot].x = data.value
           if self.first_used_slot() == slot:
             self.x = slots[slot].x
+          #elif KOBO
+          if rotation == 0:
+            slots[slot].y = data.value
+          else if rotation == 2:
+            slots[slot].y = DISPLAYHEIGHT - data.value
+          if self.first_used_slot() == slot:
+            self.y = slots[slot].y
+          #endif
           break
         case ABS_MT_POSITION_Y:
+          #ifdef REMARKABLE
           if not rm2fb::IN_RM2FB_SHIM:
             slots[slot].y = (MTHEIGHT - data.value)*MT_Y_SCALAR
           else:
             slots[slot].y = (DISPLAYHEIGHT - data.value)
           if self.first_used_slot() == slot:
             self.y = slots[slot].y
+          #elif KOBO
+
+          if rotation == 0:
+            slots[slot].x = DISPLAYWIDTH - data.value
+          else if rotation == 2:
+            slots[slot].x = data.value
+          if self.first_used_slot() == slot:
+            self.x = slots[slot].x
+          #endif
           break
         case ABS_MT_TRACKING_ID:
           if slot >= 0:
@@ -148,6 +180,8 @@ namespace input:
     def update(input_event data):
       self.print_event(data)
       switch data.type:
+        case 1:
+          self.handle_key(data)
         case 3:
           self.handle_abs(data)
 

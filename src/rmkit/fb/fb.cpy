@@ -18,6 +18,7 @@
 #include "../util/signals.h"
 #include "../util/image.h"
 #include "../util/rm2fb.h"
+#include "../util/rotate.h"
 #include "../../vendor/stb/stb_image.h"
 #include "../../vendor/stb/stb_image_write.h"
 
@@ -72,7 +73,7 @@ namespace framebuffer:
   // - The RemarkableFB is like the HardwareFB but specific to remarkable hardware
   class FB:
     public:
-    int width=0, height=0, fd=-1
+    int width=0, height=0, rotation=0, fd=-1
     int prev_width=-1, prev_height=-1
     int byte_size = 0, dirty = 0
     int update_marker = 1
@@ -190,6 +191,9 @@ namespace framebuffer:
       #endif
       return width, height
 
+    // rotation can be: 0 (normal), 1 (90), 2 (180), 3 (270)
+    int get_rotation():
+      return util::get_rotation()
 
     void check_resize():
       w,h := self.get_size()
@@ -759,6 +763,8 @@ namespace framebuffer:
 
   class RemarkableFB: public HardwareFB:
     public:
+    int o_depth
+    int o_grayscale
     RemarkableFB():
       // if we are using remarkable, then we set it to grayscale
       fb_var_screeninfo vinfo;
@@ -766,15 +772,19 @@ namespace framebuffer:
         fprintf(stderr, "Could not get screen vinfo for %s\n", "/dev/fb0")
         exit(0)
 
+      o_depth = vinfo.bits_per_pixel
+      o_grayscale = vinfo.grayscale
+
       #ifdef USE_GRAYSCALE_8BIT
       set_screen_depth(8)
       #else
       set_screen_depth(16)
-      retval := ioctl(self.fd, FBIOPUT_VSCREENINFO, &vinfo);
       #endif
 
+      #ifdef REMARKABLE
       auto_update_mode := AUTO_UPDATE_MODE_AUTOMATIC_MODE
       ioctl(self.fd, MXCFB_SET_AUTO_UPDATE_MODE, (pointer_size) &auto_update_mode);
+      #endif
 
     void set_screen_depth(int d):
       fb_var_screeninfo vinfo;
@@ -798,14 +808,20 @@ namespace framebuffer:
 
     void cleanup():
       debug "CLEANING UP FB"
+
       fb_var_screeninfo vinfo;
       if (ioctl(self.fd, FBIOGET_VSCREENINFO, &vinfo)):
         fprintf(stderr, "Could not get screen vinfo for %s\n", "/dev/fb0")
         exit(0)
 
-      vinfo.bits_per_pixel = 16;
-      vinfo.grayscale = 0
+      vinfo.bits_per_pixel = o_depth;
+      vinfo.grayscale = o_grayscale
       retval := ioctl(self.fd, FBIOPUT_VSCREENINFO, &vinfo);
+
+  class KoboFB: public RemarkableFB:
+    public:
+    KoboFB(): RemarkableFB()
+      pass
 
 
   static shared_ptr<FB> _FB
@@ -820,6 +836,8 @@ namespace framebuffer:
 
     #ifdef REMARKABLE
     _FB = make_shared<framebuffer::RemarkableFB>()
+    #elif KOBO
+    _FB = make_shared<framebuffer::KoboFB>()
     #elif DEV
     _FB = make_shared<framebuffer::FileFB>()
     #else

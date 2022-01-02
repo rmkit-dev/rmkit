@@ -179,7 +179,13 @@ InheritedStylesheet Style::inherit() const
 }
 
 Style Style::DEFAULT = Stylesheet()
+#ifdef REMARKABLE
     .font_size(24)
+#elif KOBO
+    .font_size(32)
+#else
+    .font_size(24)
+#endif
     .line_height(1.2)
     .underline(false)
     .justify_center()
