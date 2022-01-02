@@ -18,6 +18,18 @@
 #include "../genie/gesture_parser.h"
 #include "config.h"
 
+#ifdef REMARKABLE
+#define TOUCH_FLOOD_EVENT ABS_DISTANCE
+#define DRAW_APP_BEHIND_MODAL
+#define READ_XOCHITL_DATA
+#elif KOBO
+#define TOUCH_FLOOD_EVENT ABS_MT_DISTANCE
+#define DYNAMIC_BPP
+#define HAS_ROTATION
+#else
+#define TOUCH_FLOOD_EVENT ABS_DISTANCE
+#endif
+
 TIMEOUT := 1
 // all time is in seconds
 MIN := 60
@@ -28,7 +40,7 @@ SHUTDOWN_THRESHOLD := HOURS * 10 // 10 hours
 
 #include "apps.h"
 
-DIALOG_WIDTH  := 400
+DIALOG_WIDTH  := 600
 DIALOG_HEIGHT := 800
 
 LAST_ACTION := 0
@@ -38,16 +50,26 @@ MIN_DISPLAY_TIME := 500
 
 string CURRENT_APP = "_"
 string NAO_BIN="/opt/bin/nao"
+vector<string> SICKEL = { "sickel" }
 
 // start with Remarkable preloaded in the launch list
 // so we can switch back to it quickly
 deque<string> _launched = { "Remarkable", "_" }
 
-
+#ifdef HAS_ROTATION
+DEFAULT_LAUNCH_GESTURES := vector<string> %{
+  "gesture=swipe; direction=up; zone=0 0 0.1 1",
+  "gesture=swipe; direction=up; zone=0.9 0 1 1",
+  "gesture=swipe; direction=down; zone=0 0 0.1 1",
+  "gesture=swipe; direction=down; zone=0.9 0 1 1",
+}
+#else
 DEFAULT_LAUNCH_GESTURES := vector<string> %{
   "gesture=swipe; direction=up; zone=0 0 0.1 1",
   "gesture=swipe; direction=up; zone=0.9 0 1 1",
 }
+#endif
+
 
 USB_CHARGER_PATHS := %{
   "/sys/class/power_supply/max77818-charger/online",
@@ -64,6 +86,30 @@ class IApp:
   virtual void get_more() = 0;
   virtual void show_launcher() = 0;
   virtual void show_last_app() = 0;
+
+
+class Snapshot:
+  public:
+  int byte_size
+  int bits_per_pixel
+  int rotation
+  int width, height
+  char *fbmem
+
+  Snapshot(int w, h):
+    fb := framebuffer::get()
+    bits_per_pixel = fb->get_screen_depth()
+    self.byte_size = w * h * bits_per_pixel / 8
+    fbmem = (char*) malloc(w * h * bits_per_pixel / 8)
+    memset(fbmem, WHITE, self.byte_size)
+
+  ~Snapshot():
+    if fbmem != NULL:
+      free(fbmem)
+      fbmem = NULL
+
+  void allocate():
+    pass
 
 
 class NaoButton: public ui::Button:
@@ -95,12 +141,11 @@ class StatusBar: public ui::Button:
 
 class AppBackground: public ui::Widget:
   public:
-  int byte_size
   bool snapped = false
-  map<string, framebuffer::VirtualFB*> app_buffers;
+  map<string, Snapshot*> app_buffers;
 
   AppBackground(int x, y, w, h): ui::Widget(x, y, w, h):
-    self.byte_size = w*h*sizeof(remarkable_color)
+    pass
 
   def snapshot():
     fb := framebuffer::get()
@@ -109,13 +154,13 @@ class AppBackground: public ui::Widget:
     vfb := self.get_vfb()
     debug "SNAPSHOTTING", CURRENT_APP
 
-    vfb->fbmem = (remarkable_color*) memcpy(vfb->fbmem, fb->fbmem, self.byte_size)
+    vfb->fbmem = (char*) memcpy(vfb->fbmem, fb->fbmem, vfb->byte_size)
+    vfb->rotation = util::rotation::get()
 
-  framebuffer::VirtualFB* get_vfb():
+  Snapshot* get_vfb():
     if app_buffers.find(CURRENT_APP) == app_buffers.end():
-      fw, fh := fb->get_display_size()
-      app_buffers[CURRENT_APP] = new framebuffer::VirtualFB(fw, fh)
-      app_buffers[CURRENT_APP]->clear_screen()
+      vw, vh := fb->get_virtual_size()
+      app_buffers[CURRENT_APP] = new Snapshot(vw, vh)
 
     return app_buffers[CURRENT_APP]
 
@@ -132,7 +177,19 @@ class AppBackground: public ui::Widget:
       fb->waveform_mode = WAVEFORM_MODE_GC16
     else:
       fb->waveform_mode = WAVEFORM_MODE_AUTO
-    memcpy(fb->fbmem, vfb->fbmem, self.byte_size)
+    memcpy(fb->fbmem, vfb->fbmem, vfb->byte_size)
+
+    #ifdef DYNAMIC_BPP
+    if CURRENT_APP == APP_MAIN.name:
+      fb->set_screen_depth(APP_MAIN.bpp)
+    else:
+      fb->set_screen_depth(vfb->bits_per_pixel)
+    #endif
+
+    #ifdef HAS_ROTATION
+    fb->set_rotation(vfb->rotation)
+    #endif
+
     fb->perform_redraw(true)
     fb->dirty = 1
 
@@ -176,6 +233,9 @@ class AppDialog: public ui::Pager:
 
 
     void render():
+      #ifndef DRAW_APP_BEHIND_MODAL
+      fb->clear_screen()
+      #endif
       ui::Pager::render()
       self.fb->draw_line(self.x+self.w, self.y, self.x+self.w, self.y+self.h, 2, BLACK)
 
@@ -211,6 +271,8 @@ class AppDialog: public ui::Pager:
 
       if bin != "":
         c->mouse.click += PLS_LAMBDA(auto &ev) {
+          if app_name == APP_NICKEL.name:
+            return
 
           app->kill(app_name)
 
@@ -262,7 +324,7 @@ class App: public IApp:
     if app_bg != NULL:
       delete app_bg
 
-    app_dialog = new AppDialog(0, 0, 600, 800, self)
+    app_dialog = new AppDialog(0, 0, DIALOG_WIDTH, DIALOG_HEIGHT, self)
     app_dialog->populate()
     get_current_app()
     debug "CURRENT APP IS", CURRENT_APP
@@ -293,10 +355,12 @@ class App: public IApp:
     button_flood = build_button_flood()
 
     notebook := ui::make_scene()
+    #ifdef DRAW_APP_BEHIND_MODAL
     notebook->add(app_bg)
+    #endif
     ui::MainLoop::set_scene(notebook)
 
-    #ifdef REMARKABLE
+    #ifdef READ_XOCHITL_DATA
     self.update_thresholds()
     #endif
     return
@@ -378,7 +442,7 @@ class App: public IApp:
       debug "UNKNOWN API LINE:", line
 
   def open_input_fifo():
-    #ifndef REMARKABLE
+    #if !defined(REMARKABLE) && !defined(KOBO)
     return
     #endif
 
@@ -501,6 +565,11 @@ class App: public IApp:
     if ui::MainLoop::overlay_is_visible:
       return
 
+    #ifdef HAS_ROTATION
+    util::rotation::reset()
+    input::TouchEvent::set_rotation()
+    #endif
+
     last_display_time = std::chrono::system_clock::now();
 
     ui::MainLoop::in.monitor(ui::MainLoop::in.wacom.fd)
@@ -525,6 +594,10 @@ class App: public IApp:
     app_dialog->scene->on_hide += app_dialog->on_hide
 
     ui::MainLoop::in.grab()
+
+    #ifdef DYNAMIC_BPP
+    fb->set_screen_depth(sizeof(remarkable_color)*8)
+    #endif
 
   def handle_key_event(input::SynKeyEvent ev):
     suspend_m.lock()
@@ -557,6 +630,10 @@ class App: public IApp:
     last_ev := &ev
 
   void term_apps(string name=""):
+    #ifdef KOBO
+    proc::groupkill(SIGSTOP, SICKEL)
+    #endif
+
     vector<string> term
     for auto a : app_dialog->get_apps():
       tokens := str_utils::split(a.bin, ' ')
@@ -574,6 +651,7 @@ class App: public IApp:
 
   // TODO: power button will cause suspend screen, why not?
   void on_suspend():
+    // suspend only works on REMARKABLE
     #ifndef REMARKABLE
     return
     #endif
@@ -583,24 +661,15 @@ class App: public IApp:
 
     _w, _h := fb->get_display_size()
 
-    #ifdef REMARKABLE
     if file_exists("/usr/share/remarkable/sleeping.png"):
       fb->load_from_png("/usr/share/remarkable/sleeping.png")
     else:
       fb->load_from_png("/usr/share/remarkable/suspended.png")
-    #else
-    text := ui::Text(0, _h-64, _w, 100, "Press any button to wake")
-    text.set_style(ui::Stylesheet().font_size(64).justify_center())
-
-    text.undraw()
-    text.render()
-    #endif
 
 
     fb->redraw_screen()
     ui::MainLoop::in.grab()
 
-    #ifdef REMARKABLE
     if rm2fb::IN_RM2FB_SHIM:
       sleep(1)
       _ := system("systemctl suspend")
@@ -630,7 +699,6 @@ class App: public IApp:
       LAST_ACTION = time(NULL)
 
       _ = system("echo 0 > /sys/class/rtc/rtc0/wakealarm")
-    #endif
 
     debug "RESUMING FROM SUSPEND"
     ui::MainLoop::in.ungrab()
@@ -659,9 +727,9 @@ class App: public IApp:
 
     i := 0
     while i < n:
-      ev[i++] = input_event{ type:EV_ABS, code:ABS_DISTANCE, value:1 }
+      ev[i++] = input_event{ type:EV_ABS, code:TOUCH_FLOOD_EVENT, value:1 }
       ev[i++] = input_event{ type:EV_SYN, code:0, value:0 }
-      ev[i++] = input_event{ type:EV_ABS, code:ABS_DISTANCE, value:2 }
+      ev[i++] = input_event{ type:EV_ABS, code:TOUCH_FLOOD_EVENT, value:2 }
       ev[i++] = input_event{ type:EV_SYN, code:0, value:0 }
 
     return ev
@@ -742,8 +810,11 @@ class App: public IApp:
     // flood_button_queue()
 
     bin := app.bin
-    if app.which == "xochitl":
+    if app.which == APP_XOCHITL.which:
       bin = get_xochitl_cmd()
+
+    if app.which == APP_NICKEL.which:
+      proc::groupkill(SIGCONT, SICKEL)
 
     if app.resume != "" and proc::check_process(app.which):
       proc::launch_process(app.resume)
@@ -825,7 +896,7 @@ class App: public IApp:
     putenv((char*) "KO_DONT_GRAB_INPUT=1")
 
 
-    #ifdef REMARKABLE
+    #if defined(REMARKABLE)
     _ := system("systemctl stop xochitl")
     self.term_apps()
     startup_cmd := CONFIG.get_value("start_app", "xochitl")

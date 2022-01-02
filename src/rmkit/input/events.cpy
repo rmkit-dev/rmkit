@@ -104,7 +104,9 @@ namespace input:
 
     static float scale_x=1.0
     static float scale_y=1.0
-    int swap_xy=false, invert_x=false, invert_y=false
+    static int swap_xy=false
+    static int invert_x=false
+    static int invert_y=false
     static void set_extents(int w, h, dw, dh):
       #ifdef DEV
       scale_x = MT_X_SCALAR
@@ -127,7 +129,9 @@ namespace input:
     vector<Point> slots;
     TouchEvent():
       slots.resize(MAX_SLOTS)
+      set_rotation()
 
+    static void set_rotation():
       #if defined(REMARKABLE) | defined(DEV)
       // rM1
       invert_y = true

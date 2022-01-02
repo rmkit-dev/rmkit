@@ -9,6 +9,7 @@ struct RMApp:
 
   bool always_show = false
   bool manage_power = true
+  int bpp = 16
 
   // this will contain a framebuffer snapshot if we have one
   char *snapshot = NULL
@@ -26,7 +27,34 @@ RMApp APP_XOCHITL = RMApp %{
   name : "Remarkable",
   always_show : true,
   manage_power : false,
+  bpp: 16
 }
+
+RMApp APP_NICKEL = RMApp %{
+  bin : "nickel",
+  which : "nickel",
+  name : "Nickel",
+  always_show : true,
+  manage_power : false,
+  bpp: 32
+}
+
+RMApp APP_NONE = RMApp %{
+  bin : "/usr/bin/false",
+  which : "false",
+  name : "",
+  always_show : false,
+  manage_power : false,
+}
+
+#ifdef REMARKABLE
+RMApp APP_MAIN = APP_XOCHITL
+#elif KOBO
+RMApp APP_MAIN = APP_NICKEL
+#else
+RMApp APP_MAIN = APP_NONE
+#endif
+
 
 RMApp APP_KOREADER = RMApp %{
   bin:"/home/root/koreader/koreader.sh",
@@ -55,7 +83,7 @@ RMApp APP_EDIT = RMApp %{
 
 
 vector<RMApp> APPS = %{
-   APP_XOCHITL
+   APP_MAIN
   ,APP_KOREADER
   ,APP_FINGERTERM
   ,APP_KEYWRITER

@@ -1,8 +1,8 @@
 #include "config.launcher.h"
 
-#ifdef REMARKABLE
+#ifndef DEV
 #define BIN_DIR  "/home/root/apps/"
-#define DOT_BIN_DIR  "/home/root/.apps/"
+#define DOT_BIN_DIR  "/opt/bin/apps/"
 #define DRAFT_DIR "/etc/draft/"
 #define OPT_DRAFT_DIR "/opt/etc/draft/"
 #define CACHE_DIR "/home/root/.cache/remux"
@@ -134,6 +134,7 @@ class AppReader:
           dont_add = true
       if dont_add:
         continue
+
 
       base_str := string(base_s)
       name_str := base_str

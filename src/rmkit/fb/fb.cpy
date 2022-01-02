@@ -170,7 +170,13 @@ namespace framebuffer:
       if self.dirty:
         self.redraw_screen()
 
+    virtual int get_screen_depth():
+      return sizeof(remarkable_color)
+
     virtual void set_screen_depth(int d):
+      return
+
+    virtual void set_rotation(int d):
       return
 
     inline void _set_pixel(remarkable_color *dst, int x, int y, remarkable_color c):
@@ -797,6 +803,23 @@ namespace framebuffer:
 
       return vinfo.xres_virtual, vinfo.yres
 
+    int get_screen_depth():
+      fb_var_screeninfo vinfo;
+      if (ioctl(self.fd, FBIOGET_VSCREENINFO, &vinfo)):
+        fprintf(stderr, "Could not get screen vinfo for %s\n", "/dev/fb0")
+        exit(0)
+
+      return vinfo.bits_per_pixel
+
+    void set_rotation(int r):
+      fb_var_screeninfo vinfo;
+      if (ioctl(self.fd, FBIOGET_VSCREENINFO, &vinfo)):
+        fprintf(stderr, "Could not get screen vinfo for %s\n", "/dev/fb0")
+        exit(0)
+
+      vinfo.rotate = r
+      retval := ioctl(self.fd, FBIOPUT_VSCREENINFO, &vinfo);
+
     void set_screen_depth(int d):
       fb_var_screeninfo vinfo;
       if (ioctl(self.fd, FBIOGET_VSCREENINFO, &vinfo)):
@@ -810,9 +833,15 @@ namespace framebuffer:
           break
 
         case 16:
-        default:
           vinfo.bits_per_pixel = 16;
           vinfo.grayscale = 0;
+          break
+        case 32:
+          vinfo.bits_per_pixel = 32;
+          vinfo.grayscale = 0;
+          break
+        default:
+          debug "UNKNOWN BIT DEPTH", d
           break
 
       retval := ioctl(self.fd, FBIOPUT_VSCREENINFO, &vinfo);

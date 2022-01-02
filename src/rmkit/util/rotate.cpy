@@ -7,6 +7,9 @@ namespace util:
     static int rotation = -1
     enum ROTATION { ROT0 = 0, ROT90 = 1, ROT180 = 2, ROT270 = 3, ROT_UNKNOWN = 4 }
 
+    static void reset():
+      rotation = -1
+
     static int get():
       if rotation != -1:
         return rotation
