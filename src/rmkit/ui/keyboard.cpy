@@ -82,7 +82,7 @@ namespace ui:
       self.numbers = false
       self.shifted = false
       self.set_layout(
-        "qwertyuoip",
+        "qwertyuiop",
         "asdfghjkl",
         "zxcvbnm"
       )
