@@ -860,6 +860,8 @@ namespace framebuffer:
 
     fb_info::display_width = _FB->display_width
     fb_info::display_height = _FB->height
+    fb_info::width = _FB->width
+    fb_info::height = _FB->height
 
 
     return _FB
