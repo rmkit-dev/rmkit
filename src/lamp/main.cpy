@@ -11,6 +11,7 @@
 
 #include "../rmkit/input/device_id.h"
 #include "../rmkit/util/machine_id.h"
+#include "../rmkit/util/rotate.h"
 #include "../rmkit/defines.h"
 #include "../shared/string.h"
 using namespace std
@@ -24,6 +25,17 @@ rm_version := util::get_remarkable_version()
 #define DISPLAYWIDTH 1404
 #define DISPLAYHEIGHT 1872.0
 
+#ifdef KOBO
+#define MTWIDTH DISPLAYWIDTH
+#define MTHEIGHT DISPLAYHEIGHT
+#define MT_X_SCALAR 1
+#define MT_Y_SCALAR 1
+#define WACOMWIDTH DISPLAYWIDTH
+#define WACOMHEIGHT DISPLAYHEIGHT
+#define WACOM_X_SCALAR 1
+#define WACOM_Y_SCALAR 1
+#endif
+
 int get_pen_x(int x):
   return x / WACOM_X_SCALAR
 
@@ -35,10 +47,12 @@ int get_touch_x(int x):
     return x
   return (MTWIDTH - x) / MT_X_SCALAR
 
+
 int get_touch_y(int y):
   if rm_version == util::RM_VERSION::RM2:
     return DISPLAYHEIGHT - y
   return (MTHEIGHT - y) / MT_Y_SCALAR
+
 
 vector<input_event> finger_clear():
   vector<input_event> ev
@@ -411,6 +425,10 @@ void act_on_line(string line):
 
 
 def main(int argc, char **argv):
+  #ifndef REMARKABLE
+  debug "lamp is not supported on this platform"
+  exit(1)
+  #endif
   fd0 := open("/dev/input/event0", O_RDWR)
   fd1 := open("/dev/input/event1", O_RDWR)
   fd2 := open("/dev/input/event2", O_RDWR)
