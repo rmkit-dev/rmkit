@@ -180,7 +180,8 @@ namespace framebuffer:
       self._set_pixel(&self.fbmem[y*self.width+x], x, y, c)
 
     virtual tuple<int,int> get_virtual_size():
-      return DISPLAYWIDTH, DISPLAYHEIGHT
+      debug "GET VIRTUAL SIZE NOT IMPLEMENTED"
+      exit(1)
 
     // rotation can be: 0 (normal), 1 (90), 2 (180), 3 (270)
     int get_rotation():
@@ -740,6 +741,9 @@ namespace framebuffer:
     virtual ~FileFB():
       msync(self.fbmem, self.byte_size, MS_ASYNC)
 
+    virtual tuple<int,int> get_virtual_size():
+      return self.width, self.height
+
     int perform_redraw(bool):
       #ifndef PERF_BUILD
       msync(self.fbmem, self.byte_size, MS_SYNC)
@@ -756,6 +760,9 @@ namespace framebuffer:
       self.byte_size = self.width * self.height * sizeof(remarkable_color)
       self.fbmem = (remarkable_color*) malloc(self.byte_size)
       self.fd = -1
+
+    virtual tuple<int,int> get_virtual_size():
+      return self.width, self.height
 
   class RemarkableFB: public HardwareFB:
     public:
@@ -843,10 +850,11 @@ namespace framebuffer:
     #elif KOBO
     _FB = make_shared<framebuffer::KoboFB>()
     #elif DEV
-    _FB = make_shared<framebuffer::FileFB>()
+    _FB = make_shared<framebuffer::FileFB>("fb.raw", DISPLAYWIDTH, DISPLAYHEIGHT)
     #else
     _FB = make_shared<framebuffer::HardwareFB>()
     #endif
+
 
     _FB->init()
 

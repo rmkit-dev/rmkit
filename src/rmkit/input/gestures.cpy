@@ -1,5 +1,6 @@
 #include "../../shared/clockwatch.h"
 #include "../util/signals.h"
+#include "../fb/fb_info.h"
 #include "events.h"
 
 namespace input:

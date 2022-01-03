@@ -56,7 +56,7 @@
 // {{{ DISPLAY RELATED DEFINES
 // TODO: move these into individual files for each device type
 // TODO: this should happen alongside refactoring the wacom stylus handling
-#ifdef REMARKABLE
+#if defined(REMARKABLE) | defined(DEV)
 #define MTWIDTH 767
 #define MTHEIGHT 1023
 #define WACOMWIDTH 15725.0
@@ -67,9 +67,7 @@
 #define MT_Y_SCALAR (float(DISPLAYHEIGHT) / float(MTHEIGHT))
 #define WACOM_X_SCALAR (float(DISPLAYWIDTH) / float(WACOMWIDTH))
 #define WACOM_Y_SCALAR (float(DISPLAYHEIGHT) / float(WACOMHEIGHT))
-#endif
-
-#ifdef KOBO
+#elif KOBO
 #undef DISPLAYWIDTH
 #undef DISPLAYHEIGHT
 #define DISPLAYWIDTH 1264

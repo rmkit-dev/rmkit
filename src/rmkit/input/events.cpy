@@ -125,7 +125,7 @@ namespace input:
           slot = data.value;
           break
         case ABS_MT_POSITION_X:
-          #ifdef REMARKABLE
+          #if defined(REMARKABLE) | defined(DEV)
           if not rm2fb::IN_RM2FB_SHIM:
             slots[slot].x = (MTWIDTH - data.value)*MT_X_SCALAR
           else:
@@ -142,7 +142,7 @@ namespace input:
           #endif
           break
         case ABS_MT_POSITION_Y:
-          #ifdef REMARKABLE
+          #if defined(REMARKABLE) | defined(DEV)
           if not rm2fb::IN_RM2FB_SHIM:
             slots[slot].y = (MTHEIGHT - data.value)*MT_Y_SCALAR
           else:
@@ -243,7 +243,7 @@ namespace input:
           break
 
     handle_abs(input_event data):
-      #ifdef REMARKABLE
+      #if defined(REMARKABLE) | defined(DEV)
       switch data.code:
         case ABS_Y:
           self.x = data.value * WACOM_X_SCALAR
