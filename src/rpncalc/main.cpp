@@ -62,8 +62,8 @@ bool StackElement::isBlank() {
 
 class CalcButton: public ui::Button {
   public:
-    CalcButton(Calculator& c, Key key)
-      : calculator(c), key(key), Button(0, 0, 150, 90, key.text) {
+    CalcButton(Calculator& c, Key key, int key_width)
+      : calculator(c), key(key), Button(0, 0, key_width, 90, key.text) {
       this->set_style(ui::Stylesheet()
           .font_size(58)
           .line_height(1.2)
@@ -92,7 +92,7 @@ std::vector<StackElement*> buildCalculatorLayout(ui::Scene scene, Calculator &ca
   // +-----------------------------------------+
   // | Keyboard                                |  5 rows
   // +-----------------------------------------+
-  // 
+  //
   std::vector<StackElement*> stack;
   double lineHeight = height / 14.0;
 
@@ -111,12 +111,13 @@ std::vector<StackElement*> buildCalculatorLayout(ui::Scene scene, Calculator &ca
               {"1", kone}, {"2", ktwo}, {"3", kthree}, {"-", kminus}, {"π", kpi}, {"e", ke}, {"√", ksqrt}, {"log", klog}, {"ln", kln}, {EOL, keol},
               {"4", kfour}, {"5", kfive}, {"6", ksix}, {"*", ktimes}, {"x²", ksquare}, {"1/x", kreciprocal}, {"x!", kfact}, {"|x|", kabs}, {"x^y", kpower}, {EOL, keol},
               {"7", kseven}, {"8", keight}, {"9", knine}, {"/", kdiv}, {"push", kpush}, {"swap", kswap}, {"cosh", kcosh}, {"sinh", ksinh}, {"tanh", ktanh}, {EOL, keol},
-              {"exit", kexit}, {"drop", kdrop}, {"cos", kcos}, {"sin", ksin}, {"tan", ktan}, {EOL, keol}, 
+              {"exit", kexit}, {"drop", kdrop}, {"cos", kcos}, {"sin", ksin}, {"tan", ktan}, {EOL, keol},
       };
 
   size_t numberOfElements = sizeof(keyboard)/sizeof(keyboard[0]);
   auto kbd = new ui::HorizontalLayout(0, 0, width, lineHeight, scene);
   v->pack_end(kbd);
+  int key_width = width / 9.5;
   for (int i = 0; i < numberOfElements; i++) {
     auto key = keyboard[i];
     cout << "creating " << key.text << endl;
@@ -124,7 +125,7 @@ std::vector<StackElement*> buildCalculatorLayout(ui::Scene scene, Calculator &ca
       kbd = new ui::HorizontalLayout(0, 0, width, lineHeight, scene);
       v->pack_end(kbd);
     } else {
-      kbd->pack_start(new CalcButton(calculator, key), 1);
+      kbd->pack_start(new CalcButton(calculator, key, key_width), 1);
     }
   }
   return stack;

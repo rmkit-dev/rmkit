@@ -166,16 +166,23 @@ class App : public IApp:
     ;
     demo_scene->add(refresh_btn)
 
+    offset_h := 200
+    img_h := 700
+    text_h := 36
+
     // undithered
-    undithered_label = new ui::Text(0, 200, w, 36, "Original")
+    undithered_label = new ui::Text(0, offset_h, w, text_h, "Original")
+    offset_h += text_h
     demo_scene->add(undithered_label)
-    undithered_bmp = new DitheredBitmap(0, 236, w, 800)
+    undithered_bmp = new DitheredBitmap(0, offset_h, w, img_h)
+    offset_h += img_h
     demo_scene->add(undithered_bmp)
 
     // dithered
-    dithered_label = new ui::Text(0, 1036, w, 36, "Dithering: NONE")
+    dithered_label = new ui::Text(0, offset_h, w, text_h, "Dithering: NONE")
     demo_scene->add(dithered_label)
-    dithered_bmp = new DitheredBitmap(0, 1072, w, 800)
+    offset_h += text_h
+    dithered_bmp = new DitheredBitmap(0, offset_h, w, img_h)
     demo_scene->add(dithered_bmp)
 
   void update():
