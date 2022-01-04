@@ -7,6 +7,7 @@
 #include <sys/ioctl.h>
 
 #include "../defines.h"
+#include "../fb/fb_info.h"
 #include "events.h"
 #include "gestures.h"
 #include "device_id.h"
@@ -27,7 +28,6 @@ namespace input:
     input_event ev_data[64]
     T prev_ev, event
     vector<T> events
-
 
     InputClass():
       pass
@@ -113,6 +113,7 @@ namespace input:
         socketpair(AF_UNIX, SOCK_STREAM, 0, ipc_fd)
 
       self.monitor(input::ipc_fd[0])
+      self.set_scaling(framebuffer::fb_info::display_width, framebuffer::fb_info::display_height)
       return
 
 
@@ -147,6 +148,36 @@ namespace input:
           return
 
       self.monitor(fd)
+
+    // adapted from https://www.linuxjournal.com/files/linuxjournal.com/linuxjournal/articles/064/6429/6429l17.html
+    // NOTE: we assume that we only need max value from here and its anchored at 0,
+    // this may not be true in the future
+    tuple<struct input_absinfo, struct input_absinfo> read_extents(int fd, x_id, y_id):
+      uint8_t abs_b[ABS_MAX/8 + 1]
+      struct input_absinfo abs_feat
+      abs_bit := EVIOCGBIT(EV_ABS, sizeof(abs_b))
+      ioctl(fd, abs_bit, abs_b)
+
+      struct input_absinfo x_feat, y_feat
+      if (ioctl(fd, EVIOCGABS(x_id), &x_feat)):
+        perror("evdev EVIOCGABS ioctl");
+      if (ioctl(fd, EVIOCGABS(y_id), &y_feat)):
+        perror("evdev EVIOCGABS ioctl");
+
+      if x_feat.maximum < y_feat.maximum:
+        return x_feat, y_feat
+      return y_feat, x_feat
+
+    void set_scaling(int display_width, int display_height):
+      if self.wacom.fd > 0:
+        xf, yf := self.read_extents(self.wacom.fd, ABS_X, ABS_Y)
+        WacomEvent::set_extents(xf.maximum, yf.maximum, display_width, display_height)
+
+      if self.touch.fd > 0:
+        xf, yf := self.read_extents(self.touch.fd, ABS_MT_POSITION_X, ABS_MT_POSITION_Y)
+        TouchEvent::set_extents(xf.maximum, yf.maximum, display_width, display_height)
+      return
+
 
     void reset_events():
       self.wacom.clear()

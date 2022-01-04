@@ -25,7 +25,18 @@ rm_version := util::get_remarkable_version()
 #define DISPLAYWIDTH 1404
 #define DISPLAYHEIGHT 1872.0
 
-#ifdef KOBO
+#if defined(REMARKABLE) | defined(DEV)
+#define MTWIDTH 767
+#define MTHEIGHT 1023
+#define WACOMWIDTH 15725.0
+#define WACOMHEIGHT 20967.0
+#define DISPLAYWIDTH 1404
+#define DISPLAYHEIGHT 1872.0
+#define MT_X_SCALAR (float(DISPLAYWIDTH) / float(MTWIDTH))
+#define MT_Y_SCALAR (float(DISPLAYHEIGHT) / float(MTHEIGHT))
+#define WACOM_X_SCALAR (float(DISPLAYWIDTH) / float(WACOMWIDTH))
+#define WACOM_Y_SCALAR (float(DISPLAYHEIGHT) / float(WACOMHEIGHT))
+#elif KOBO
 #define MTWIDTH DISPLAYWIDTH
 #define MTHEIGHT DISPLAYHEIGHT
 #define MT_X_SCALAR 1

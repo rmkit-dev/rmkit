@@ -5,7 +5,7 @@
 #include "../fb/fb_info.h"
 
 //#define DEBUG_INPUT_EVENT 1
-
+//#define DEBUG_INPUT_INIT 1
 namespace input:
   extern int next_id = 1234
 
@@ -97,12 +97,28 @@ namespace input:
     int slot = 0, left = -1
     bool lifted=false
 
-    float scale_y=1.0, scale_x=1.0
-    int swap_xy=false, invert_x=false, invert_y=false
     static int MAX_SLOTS = 10
     struct Point:
       int x=-1, y=-1, left=-1
     ;
+
+    static float scale_x=1.0
+    static float scale_y=1.0
+    int swap_xy=false, invert_x=false, invert_y=false
+    static void set_extents(int w, h, dw, dh):
+      #ifdef DEV
+      scale_x = MT_X_SCALAR
+      scale_y = MT_Y_SCALAR
+      return
+      #endif
+
+      scale_x = float(dw) / float(w)
+      scale_y = float(dh) / float(h)
+      #ifdef DEBUG_INPUT_INIT
+      debug "TW, TH:", w, h
+      debug "SET SCALING TO", scale_x, scale_y
+      #endif
+
 
     // kobo libra rot0: swap_xy, invert_x
     // kobo libra rot180: swap_xy, invert_y
@@ -116,8 +132,6 @@ namespace input:
       // rM1
       invert_y = true
       if not rm2fb::IN_RM2FB_SHIM:
-        scale_x = MT_X_SCALAR
-        scale_y = MT_Y_SCALAR
         invert_x = true
       #elif KOBO
       rotation := util::rotation::get()
@@ -228,6 +242,29 @@ namespace input:
     int btn_touch = -1
     int eraser = -1
 
+    // rM has swapped axis and inverted y by default
+    static float scale_x=1.0
+    static float scale_y=1.0
+    int swap_xy=false, invert_x=false, invert_y=false
+    static void set_extents(int w, h, dw, dh):
+      #ifdef DEV
+      scale_x = WACOM_X_SCALAR
+      scale_y = WACOM_Y_SCALAR
+      return
+      #endif
+      scale_x = float(dw) / float(w)
+      scale_y = float(dh) / float(h)
+      #ifdef DEBUG_INPUT_INIT
+      debug "WW, WH:", w, h
+      debug "SET SCALING TO", scale_x, scale_y
+      #endif
+
+    WacomEvent():
+      #if defined(REMARKABLE) | defined(DEV)
+      swap_xy = true
+      invert_y = true
+      #endif
+
     def marshal():
       SynMotionEvent syn_ev;
       syn_ev.x = self.x
@@ -256,12 +293,24 @@ namespace input:
 
     handle_abs(input_event data):
       #if defined(REMARKABLE) | defined(DEV)
+      if swap_xy:
+        if data.code == ABS_X:
+          data.code = ABS_Y
+        else if data.code == ABS_Y:
+          data.code = ABS_X
+
       switch data.code:
         case ABS_Y:
-          self.x = data.value * WACOM_X_SCALAR
+          if invert_y:
+            self.y = framebuffer::fb_info::display_height - data.value * scale_y
+          else:
+            self.y = data.value * scale_y
           break
         case ABS_X:
-          self.y = (WACOMHEIGHT - data.value) * WACOM_Y_SCALAR
+          if invert_x:
+            self.x = framebuffer::fb_info::display_width - data.value * scale_x
+          else:
+            self.x = data.value * scale_x
           break
         case ABS_TILT_X:
           self.tilt_x = data.value
