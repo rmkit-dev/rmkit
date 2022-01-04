@@ -96,14 +96,39 @@ namespace input:
     int x=-1, y=-1
     int slot = 0, left = -1
     bool lifted=false
+
+    float scale_y=1.0, scale_x=1.0
+    int swap_xy=false, invert_x=false, invert_y=false
     static int MAX_SLOTS = 10
     struct Point:
       int x=-1, y=-1, left=-1
     ;
 
+    // kobo libra rot0: swap_xy, invert_x
+    // kobo libra rot180: swap_xy, invert_y
+    // rm1: scale_x, scale_y, invert_x, invert_y
+    // rm2: invert_y
     vector<Point> slots;
     TouchEvent():
       slots.resize(MAX_SLOTS)
+
+      #if defined(REMARKABLE) | defined(DEV)
+      // rM1
+      invert_y = true
+      if not rm2fb::IN_RM2FB_SHIM:
+        scale_x = MT_X_SCALAR
+        scale_y = MT_Y_SCALAR
+        invert_x = true
+      #elif KOBO
+      rotation := util::rotation::get()
+      swap_xy = true
+      if rotation == util::rotation::ROT0:
+        invert_x = true
+        invert_y = false
+      else if rotation == util::rotation::ROT180:
+        invert_x = false
+        invert_y = true
+      #endif
 
     void initialize():
       self.lifted = false
@@ -119,44 +144,31 @@ namespace input:
           break
 
     handle_abs(input_event data):
-      rotation := util::rotation::get()
+      if swap_xy:
+        if data.code == ABS_MT_POSITION_X:
+          data.code = ABS_MT_POSITION_Y
+        else if data.code == ABS_MT_POSITION_Y:
+          data.code = ABS_MT_POSITION_X
+
       switch data.code:
         case ABS_MT_SLOT:
           slot = data.value;
           break
         case ABS_MT_POSITION_X:
-          #if defined(REMARKABLE) | defined(DEV)
-          if not rm2fb::IN_RM2FB_SHIM:
-            slots[slot].x = (MTWIDTH - data.value)*MT_X_SCALAR
+          if invert_x:
+            slots[slot].x = framebuffer::fb_info::display_width - data.value*scale_x
           else:
-            slots[slot].x = data.value
+            slots[slot].x = data.value * scale_x
           if self.first_used_slot() == slot:
             self.x = slots[slot].x
-          #elif KOBO
-          if rotation == util::rotation::ROT0:
-            slots[slot].y = data.value
-          else if rotation == util::rotation::ROT180:
-            slots[slot].y = framebuffer::fb_info::display_height - data.value
-          if self.first_used_slot() == slot:
-            self.y = slots[slot].y
-          #endif
           break
         case ABS_MT_POSITION_Y:
-          #if defined(REMARKABLE) | defined(DEV)
-          if not rm2fb::IN_RM2FB_SHIM:
-            slots[slot].y = (MTHEIGHT - data.value)*MT_Y_SCALAR
+          if invert_y:
+            slots[slot].y = framebuffer::fb_info::display_height - data.value*scale_y
           else:
-            slots[slot].y = (framebuffer::fb_info::display_height - data.value)
+            slots[slot].y = data.value * scale_y
           if self.first_used_slot() == slot:
             self.y = slots[slot].y
-          #elif KOBO
-          if rotation == util::rotation::ROT0:
-            slots[slot].x = framebuffer::fb_info::display_width - data.value
-          else if rotation == util::rotation::ROT180:
-            slots[slot].x = data.value
-          if self.first_used_slot() == slot:
-            self.x = slots[slot].x
-          #endif
           break
         case ABS_MT_TRACKING_ID:
           if slot >= 0:
