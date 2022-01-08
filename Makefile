@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 default: build
 include src/common.make
 
@@ -76,8 +77,13 @@ docker_test:
 docker_install: docker
 	echo "Not implemented yet"
 
+# STRIP_BIN is always arm-linux-gnueabihf-strip for now
+strip: SHELL:=/bin/bash
+strip:
+	cd ${BUILD_DIR}; export GLOBIGNORE="*.o:*.h:*.sh"; ${STRIP_BIN} *
+
 ZIP_DEST="apps"
-bundle: $(APPS)
+bundle:
 	#BUILDING V: ${VERSION} ARCH: ${ARCH}
 	mkdir -p ${BUILD_DIR}/.${ZIP_DEST} 2>/dev/null || true
 	cp ${BUILD_DIR}/* ${BUILD_DIR}/.${ZIP_DEST}/

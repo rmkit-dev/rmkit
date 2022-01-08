@@ -2,6 +2,7 @@ HOST?=10.11.99.1
 ARCH?=arm
 CXX_BIN?=arm-linux-gnueabihf-g++
 CC_BIN?=arm-linux-gnueabihf-gcc
+STRIP_BIN?=arm-linux-gnueabihf-strip
 CPP_FLAGS=-pthread -lpthread -fdata-sections -ffunction-sections -Wl,--gc-sections
 
 # BUILD STUFF
@@ -16,6 +17,6 @@ RMKIT_IMPL="RMKIT_IMPLEMENTATION"
 OKP_FLAGS=-ig ${RMKIT_IMPL} -ns -ni -for -d ../.${APP}_cpp/ -o ../build/${EXE} ${FILES}
 
 # installation directory on remarkable
-DEST=/opt/bin/
+DEST?=/opt/bin/
 
 # vim: syntax=make

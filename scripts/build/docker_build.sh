@@ -1,11 +1,12 @@
 OUTDIR=artifacts
 PACKAGE="${1}"
+ARCH=${ARCH:-arm}
 mkdir ${OUTDIR}
 docker run -i --rm -v "${PWD}/${OUTDIR}:/mnt/artifacts" rmkit /bin/bash << COMMANDS
 mkdir -p src/build
-make ${PACKAGE}
-mkdir -p /mnt/artifacts/files/
-cp -r src/build/* /mnt/artifacts/files/
+ARCH=${ARCH} make ${PACKAGE}
+mkdir -p /mnt/artifacts/${ARCH}/
+cp -r src/build/* /mnt/artifacts/${ARCH}/
 chown -R $(id -u):$(id -u) /mnt/artifacts
 COMMANDS
 

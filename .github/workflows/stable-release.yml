@@ -7,6 +7,7 @@ on:
       - build
       - stable
       - master
+      - kobo
 
 jobs:
   pre-release:
@@ -19,7 +20,9 @@ jobs:
 
 
       - name: "Build artifacts"
-        run: make docker
+        run: |
+          ARCH=arm make docker
+          ARCH=kobo make docker
 
       - name: "Declare vars"
         id: vars

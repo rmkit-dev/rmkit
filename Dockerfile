@@ -1,6 +1,6 @@
 FROM ghcr.io/toltec-dev/python:v1.1
 
-RUN echo ""
+RUN echo "1"
 RUN pip3 install okp
 
 WORKDIR /rmkit
