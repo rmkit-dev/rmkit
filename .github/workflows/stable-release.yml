@@ -21,7 +21,7 @@ jobs:
 
       - name: "Build artifacts"
         run: |
-          ARCH=arm make docker
+          ARCH=rm make docker
           ARCH=kobo make docker
 
       - name: "Declare vars"

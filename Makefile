@@ -56,8 +56,8 @@ lint: $(LINT_APPS)
 dev: export ARCH=dev
 dev: default
 
-arm: export ARCH=arm
-arm: default
+rm: export ARCH=rm
+rm: default
 
 x86: export ARCH=x86
 x86: default

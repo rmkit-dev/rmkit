@@ -9,10 +9,10 @@ ifeq ($(ARCH),x86)
 	make compile_x86
 else ifeq ($(ARCH),kobo)
 	make compile_kobo
-else ifeq ($(ARCH),arm)
-	make compile_arm
-else ifeq ($(ARCH),arm-dev)
-	make compile_arm_fast
+else ifeq ($(ARCH),rm)
+	make compile_remarkable
+else ifeq ($(ARCH),rm-dev)
+	make compile_remarkable_fast
 else ifeq ($(ARCH),dev)
 	make compile_dev
 else
@@ -29,16 +29,16 @@ compile_kobo: export OKP_FLAGS += ../build/stb.arm.o
 compile_kobo:
 	CXX=${CXX_BIN} okp ${OKP_FLAGS} -- -D"KOBO=1" -D${RMKIT_IMPL} ${CPP_FLAGS}
 
-compile_arm: ../build/stb.arm.o
-compile_arm: export CPP_FLAGS += -O2
-compile_arm: export OKP_FLAGS += ../build/stb.arm.o
-compile_arm:
+compile_remarkable: ../build/stb.arm.o
+compile_remarkable: export CPP_FLAGS += -O2
+compile_remarkable: export OKP_FLAGS += ../build/stb.arm.o
+compile_remarkable:
 	CXX=${CXX_BIN} okp ${OKP_FLAGS} -- -D"REMARKABLE=1" -D${RMKIT_IMPL} ${CPP_FLAGS}
 
-compile_arm_fast: ../build/stb.arm.o
-compile_arm_fast: export CPP_FLAGS += -O0 -g
-compile_arm_fast: export OKP_FLAGS += ../build/stb.arm.o
-compile_arm_fast:
+compile_remarkable_fast: ../build/stb.arm.o
+compile_remarkable_fast: export CPP_FLAGS += -O0 -g
+compile_remarkable_fast: export OKP_FLAGS += ../build/stb.arm.o
+compile_remarkable_fast:
 	CXX=${CXX_BIN} okp ${OKP_FLAGS} -- -D"REMARKABLE=1" -D${RMKIT_IMPL} ${CPP_FLAGS}
 
 compile_dev: ../build/stb.x86.o
@@ -91,7 +91,7 @@ run: compile copy
 	ssh root@${HOST} systemctl stop xochitl
 	ssh root@${HOST} ${DEST}/${EXE}
 
-test: export ARCH=arm
+test: export ARCH=rm
 test: copy
 	HOST=${HOST} bash scripts/run_app_arm.sh ${EXE} || true
 
