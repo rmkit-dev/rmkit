@@ -52,7 +52,6 @@ DEFAULT_LAUNCH_GESTURES := vector<string> %{
 USB_CHARGER_PATHS := %{
   "/sys/class/power_supply/max77818-charger/online",
   "/sys/class/power_supply/imx_usb_charger/present",
-  "/sys/class/power_supply/bq27441-0/present"
 }
 
 
