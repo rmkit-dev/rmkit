@@ -1,4 +1,3 @@
-#include "../assets.h"
 #include "widget.h"
 #include "scene.h"
 #include "main_loop.h"

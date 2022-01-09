@@ -6,36 +6,47 @@
 
 #include "../defines.h"
 #include "../../vendor/stb/stb_truetype.h"
-#include "../assets.h"
+
+#if !defined(REMARKABLE) | defined(FONT_EMBED_H)
+#ifndef FONT_EMBED_H
+#define FONT_EMBED_H "../rmkit/font_embed.h"
+#endif
+
+#include FONT_EMBED_H
+#endif
 
 
 #define FONT_SIZE 24
+#define FONT_BUFFER_SIZE 24<<20
 namespace stbtext:
-  static unsigned char font_buffer[24<<20]
+  // TODO: fix the max size read to prevent overflows (or just abort on really large files)
+  static unsigned char font_buffer[FONT_BUFFER_SIZE]
   static stbtt_fontinfo font;
   extern bool did_setup = false
 
   static void setup_font():
     if !did_setup:
       const char *filename = getenv("RMKIT_DEFAULT_FONT");
+      bool embedded_font = false
       if filename == NULL:
         #ifdef REMARKABLE
         filename = "/usr/share/fonts/ttf/noto/NotoMono-Regular.ttf";
-       // TODO: fix the max size read to prevent overflows (or just abort on really large files)
-        #elif KOBO
-        filename = "/usr/local/rmkit/NotoMono-Regular.ttf";
         #else
-        filename = "src/vendor/NotoSansMono-Regular.ttf";
+        memcpy(font_buffer, FONT_EMBED_NAME, FONT_EMBED_LEN)
+        font_buffer[FONT_EMBED_LEN] = 0
+        embedded_font = true
         #endif
-        pass
 
-      FILE * file = fopen(filename, "rb");
-      if file == NULL:
-        debug "Unable to read font file: ", filename
-        return;
-      _ := fread(font_buffer, 1, 24<<20, file);
-      fclose(file);
-
+      if filename:
+        FILE * file = fopen(filename, "rb");
+        if file == NULL:
+          debug "Unable to read font file: ", filename
+          return;
+        _ := fread(font_buffer, 1, FONT_BUFFER_SIZE, file);
+        fclose(file);
+      else if !embedded_font:
+        debug "No font specified and no embedded font available!"
+        return
       stbtt_InitFont(&font, font_buffer, 0);
       did_setup = true
 
