@@ -24,7 +24,7 @@
 #define likely(x)      __builtin_expect(!!(x), 1)
 #define unlikely(x)      __builtin_expect(!!(x), 0)
 
-ALPHA_BLEND := 4160223223
+extern int ALPHA_BLEND = 4160223223
 
 using namespace std
 
