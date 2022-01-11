@@ -14,10 +14,11 @@ jobs:
 
       - name: "Build artifacts"
         run: |
-          make docker
+          ARCH=rm make docker
+          ARCH=kobo make docker
 
       - uses: actions/upload-artifact@v2
         with:
-          name: test output
+          name: artifacts
           path: artifacts/
 
