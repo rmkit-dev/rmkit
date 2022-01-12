@@ -74,6 +74,10 @@ lines, squares and circles.
 rpncalc is calculator app that uses reverse polish notation and a stack for
 evaluation.
 
+### [wordlet](src/wordlet)
+
+Wordlet is a clone of the popular [wordle](https://www.powerlanguage.co.uk/wordle/) game
+
 ## Demos
 
 ### [animation](src/animation_demo)

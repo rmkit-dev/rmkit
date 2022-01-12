@@ -1,0 +1,3 @@
+name=wordlet
+desc=Wordlet
+call=/opt/bin/wordlet
