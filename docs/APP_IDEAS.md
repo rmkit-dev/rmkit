@@ -4,9 +4,10 @@ This document has ideas for apps that might work well on the remarkable.
 
 ### Productivity
 
-* calculator / graphing calculator
+* graphing calculator
 * networked canvas / whiteboard
 * simple browser - readify any page and then display it as terminal text (https://github.com/mozilla/readability)
+  * [netsurf](https://github.com/alex0809/netsurf-reMarkable) is a simplified browser from alex0809
 * calendar / agenda
 * dynamic suspend screens
 * dictionary with fast word word lookup
@@ -17,7 +18,6 @@ This document has ideas for apps that might work well on the remarkable.
 ### Drawing
 
 * picture inbox & messaging
-* procedural sketching
 * diagramming / modeling
 
 ### Internet
@@ -29,7 +29,6 @@ This document has ideas for apps that might work well on the remarkable.
 
 ### Games
 
-* minesweeper
 * snake
 * sudoku
 * chess board (with variants)
