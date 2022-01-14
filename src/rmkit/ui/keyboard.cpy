@@ -59,7 +59,7 @@ namespace ui:
     string text = ""
     int btn_width
     int btn_height
-    static Stylesheet BTN_STYLE = Stylesheet().font_size(48)
+    static Stylesheet BTN_STYLE = Stylesheet().font_size(48).valign_middle().justify_center()
     static Stylesheet INPUT_STYLE = Stylesheet().font_size(64)
 
     KEYBOARD_EVENTS events
