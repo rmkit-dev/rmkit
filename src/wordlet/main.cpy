@@ -8,6 +8,12 @@
 
 using namespace std
 
+#ifdef DEV
+#define SAVE_FILE "wordlet.txt"
+#else
+#define SAVE_FILE "/opt/etc/wordlet.txt"
+#endif
+
 ui::Stylesheet TEXT_STYLE = ui::Stylesheet().justify_center().valign_middle().font_size(90)
 ui::Stylesheet LETTER_STYLE = ui::Stylesheet().border_all().justify_center().valign_middle().font_size(90)
 ui::Stylesheet BTN_STYLE = ui::Button::DEFAULT_STYLE.valign_middle().border_all().font_size(64)
@@ -120,6 +126,7 @@ class App:
   App():
     srand(time(NULL))
     prepare_words()
+    read_stats()
 
     self.build_scene()
 
@@ -145,7 +152,7 @@ class App:
     menu_container := ui::VerticalLayout(0, 0, 800, 200*5, menu_scene)
     button_height := 200
 
-    random_btn := new ui::Button(w/2-400, 500, 800, button_height, "Random Word")
+    random_btn := new ui::Button(w/2-400, 400, 800, button_height, "Random Word")
     *random_btn += BTN_STYLE
     menu_container.pack_start(random_btn)
     random_btn->mouse.click += PLS_LAMBDA(auto ev)
@@ -153,20 +160,27 @@ class App:
     ;
 
 
-    today_btn := new ui::Button(w/2-400, 500, 800, button_height, "Today's Word")
+    today_btn := new ui::Button(w/2-400, 400, 800, button_height, "Today's Word")
     *today_btn += BTN_STYLE
     menu_container.pack_start(today_btn)
     today_btn->mouse.click += PLS_LAMBDA(auto ev)
       self.start_today_game(0)
     ;
-    yesterday_btn := new ui::Button(w/2-400, 500, 800, button_height, "Yesterday's Word")
+    yesterday_btn := new ui::Button(w/2-400, 400, 800, button_height, "Yesterday's Word")
     *yesterday_btn += BTN_STYLE
     menu_container.pack_start(yesterday_btn)
     yesterday_btn->mouse.click += PLS_LAMBDA(auto ev)
       self.start_today_game(-1)
     ;
 
-    exit_game_btn := new ui::Button(w/2-400, 500, 800, button_height, "Exit")
+    reset_btn := new ui::Button(w/2-400, 400, 800, button_height, "Reset Stats")
+    *reset_btn += BTN_STYLE
+    menu_container.pack_start(reset_btn)
+    reset_btn->mouse.click += PLS_LAMBDA(auto ev)
+      self.reset_stats()
+    ;
+
+    exit_game_btn := new ui::Button(w/2-400, 400, 800, button_height, "Exit")
     *exit_game_btn += BTN_STYLE
     menu_container.pack_start(exit_game_btn)
     exit_game_btn->mouse.click += PLS_LAMBDA(auto ev)
@@ -261,6 +275,37 @@ class App:
       + "\nLost: " + to_string(stats.loss) \
       + "\nStreak: " + to_string(stats.streak);
 
+  void read_stats():
+    ifstream f(SAVE_FILE)
+    string token
+    int value
+    while (f >> token)
+      if token == "wins":
+        f >> value
+        stats.wins = value
+      if token == "loss":
+        f >> value
+        stats.loss = value
+      if token == "streak":
+        f >> value
+        stats.streak = value
+
+  void save_stats():
+    ofstream f(SAVE_FILE)
+    f << "wins " << stats.wins << endl
+    f << "loss " << stats.loss << endl
+    f << "streak " << stats.streak << endl
+    f.close()
+
+  void reset_stats():
+    ofstream f(SAVE_FILE)
+    f << "wins 0" << endl
+    f << "loss 0" << endl
+    f << "streak 0" << endl
+    f.close()
+
+    read_stats()
+
   void set_feedback(string text):
     self.feedback_text->undraw()
     self.feedback_text->text = text
@@ -327,6 +372,7 @@ class App:
     self.streak_text->dirty = 1
     self.hide_buttons()
     set_streak(get_stats())
+    save_stats()
     ui::MainLoop::set_scene(game_scene)
     ui::MainLoop::refresh()
 
@@ -359,6 +405,7 @@ class App:
     stats.loss++
     set_feedback("You Lost :-[ Word was '" + self.to_guess + "'")
     set_streak(get_stats())
+    save_stats()
     self.show_buttons()
 
   void game_won():
@@ -367,6 +414,7 @@ class App:
     stats.wins++
     set_feedback("You Win!")
     set_streak(get_stats())
+    save_stats()
     self.show_buttons()
 
   def run():
