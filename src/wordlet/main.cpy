@@ -103,14 +103,20 @@ vector<int> mark_correct(string word, string guess):
 class App:
   public:
   wordle::keyboard::Keyboard *kbd
-  ui::Text* feedback_text
+  ui::Text *feedback_text, *streak_text
+
+  struct %{
+    int wins = 0;
+    int loss = 0;
+    int streak = 0;
+  } stats
 
   vector<Line*> lines
   int line_no = 0
   bool game_over = false
   string to_guess = "WORDS"
   ui::Scene menu_scene, game_scene
-  ui::Button* new_game_btn
+  ui::Button *new_game_btn, *infinite_btn
   App():
     srand(time(NULL))
     prepare_words()
@@ -175,34 +181,7 @@ class App:
     kbd = new wordle::keyboard::Keyboard(game_scene)
     kbd->clear_colors(BLANK)
     kbd->events.done += PLS_LAMBDA(auto kev) {
-
-      if !is_legal(kev.text):
-        self.feedback_text->undraw()
-        self.feedback_text->text = "Unrecognized Word!"
-        self.feedback_text->dirty = 1
-        return
-
-      if kev.text.length() == 5:
-        colors := mark_correct(self.to_guess, kev.text)
-        line := lines[line_no]
-
-        for i := 0; i < kev.text.length(); i++:
-          kbd->mark_color(kev.text[i], colors[i])
-          line->letters[i]->color = colors[i]
-
-        line->dirty = 1
-
-        line_no++
-        kbd->text = ""
-      else:
-        self.feedback_text->undraw()
-        self.feedback_text->text = "Word must be 5 letters"
-        self.feedback_text->dirty = 1
-
-      if self.to_guess == kev.text:
-        self.game_won()
-      else if line_no > 5:
-        self.game_lost()
+      self.guess_word(kev.text)
 
 
     };
@@ -210,18 +189,8 @@ class App:
     kbd->events.changed += PLS_LAMBDA(auto kev) {
       if self.game_over:
         return
-      line := lines[line_no]
-      for i := 0; i < line->letters.size(); i++:
-        line->letters[i]->undraw()
-        line->letters[i]->set_text("")
 
-      for i := 0; i < kev.text.length(); i++:
-        line->letters[i]->set_text(string(1, kev.text[i]))
-
-      self.feedback_text->undraw()
-      self.feedback_text->text = ""
-      self.feedback_text->dirty = 1
-      line->dirty = 1
+      self.enter_word(kev.text)
 
     }
     game_scene->add(kbd)
@@ -263,15 +232,81 @@ class App:
     self.feedback_text->set_style(TEXT_STYLE)
     game_scene->add(self.feedback_text)
 
-    new_game_btn = new ui::Button((fb->display_width - 400)/2, oy+250, 400, h, "New Game")
+    oy += h + 100
+
+    streak_text = new ui::MultiText(fb->display_width-200, 25, 200, 500, get_stats())
+    streak_text->set_style(TEXT_STYLE.font_size(32))
+    game_scene->add(streak_text)
+
+    btn_area := ui::HorizontalLayout((fb->display_width - 900)/2, oy, 900, h, game_scene)
+
+    new_game_btn = new ui::Button(0, 0, 400, h, "New Game")
     *new_game_btn += BTN_STYLE
     new_game_btn->mouse.click += PLS_LAMBDA(auto)
       self.start_new_game()
     ;
-    new_game_btn->hide()
-    game_scene->add(new_game_btn)
+    btn_area.pack_start(new_game_btn)
 
+    infinite_btn = new ui::Button(0, 0, 400, h, "Infinite")
+    *infinite_btn += BTN_STYLE
+    infinite_btn->mouse.click += PLS_LAMBDA(auto)
+      self.start_infinite()
+    ;
+    btn_area.pack_end(infinite_btn)
 
+    self.hide_buttons()
+
+  string get_stats():
+    return "Won: " + to_string(stats.wins)  \
+      + "\nLost: " + to_string(stats.loss) \
+      + "\nStreak: " + to_string(stats.streak);
+
+  void set_feedback(string text):
+    self.feedback_text->undraw()
+    self.feedback_text->text = text
+    self.feedback_text->dirty = 1
+
+  void set_streak(string text):
+    self.streak_text->undraw()
+    self.streak_text->text = text
+    self.streak_text->dirty = 1
+
+  void enter_word(string text):
+    line := lines[line_no]
+    for i := 0; i < line->letters.size(); i++:
+      line->letters[i]->undraw()
+      line->letters[i]->set_text("")
+
+    for i := 0; i < text.length(); i++:
+      line->letters[i]->set_text(string(1, text[i]))
+
+    set_feedback("")
+    line->dirty = 1
+
+  void guess_word(string text):
+    if !is_legal(text):
+      set_feedback("Unrecognized Word!")
+      return
+
+    if text.length() == 5:
+      colors := mark_correct(self.to_guess, text)
+      line := lines[line_no]
+
+      for i := 0; i < text.length(); i++:
+        kbd->mark_color(text[i], colors[i])
+        line->letters[i]->color = colors[i]
+
+      line->dirty = 1
+
+      line_no++
+      kbd->text = ""
+    else:
+      set_feedback("Word must be 5 letters")
+
+    if self.to_guess == text:
+      self.game_won()
+    else if line_no > 5:
+      self.game_lost()
 
 
   void start_new_game():
@@ -287,12 +322,19 @@ class App:
 
     int idx = rand() % CANDIDATES.size()
     self.to_guess = CANDIDATES[idx]
-    self.feedback_text->text = "Good Luck!"
-    self.feedback_text->dirty = 1
+    set_feedback("Good Luck!")
     upcase(self.to_guess)
-    self.new_game_btn->hide()
+    self.streak_text->dirty = 1
+    self.hide_buttons()
+    set_streak(get_stats())
     ui::MainLoop::set_scene(game_scene)
     ui::MainLoop::refresh()
+
+  void start_infinite():
+    last_word := self.to_guess
+    self.start_new_game()
+    self.enter_word(last_word)
+    self.guess_word(last_word)
 
   void start_today_game(int offset):
     self.start_new_game()
@@ -303,19 +345,29 @@ class App:
     diff := (now - day_one) / secs_in_day + offset
     self.to_guess = CANDIDATES[diff % CANDIDATES.size()]
 
+  void hide_buttons():
+    self.new_game_btn->hide()
+    self.infinite_btn->hide()
+
+  void show_buttons():
+    self.new_game_btn->show()
+    self.infinite_btn->show()
+
   void game_lost():
     self.game_over = true
-    self.feedback_text->undraw()
-    self.feedback_text->text = "You Lost :-[ Word was '" + self.to_guess + "'";
-    self.feedback_text->dirty = 1
-    self.new_game_btn->show()
+    stats.streak = 0
+    stats.loss++
+    set_feedback("You Lost :-[ Word was '" + self.to_guess + "'")
+    set_streak(get_stats())
+    self.show_buttons()
 
   void game_won():
     self.game_over = true
-    self.feedback_text->undraw()
-    self.feedback_text->text = "You Win!"
-    self.feedback_text->dirty = 1
-    self.new_game_btn->show()
+    stats.streak++
+    stats.wins++
+    set_feedback("You Win!")
+    set_streak(get_stats())
+    self.show_buttons()
 
   def run():
     ui::MainLoop::refresh()
