@@ -339,8 +339,8 @@ class App: public IApp:
         debug "NOT HIDING LAUNCHER BECAUSE INTERVAL < ", MIN_DISPLAY_TIME
         return
 
-      self.render_bg()
       launch(CURRENT_APP)
+      self.render_bg()
       // we put the unmonitor in a timeout to prevent
       // pen events from interrupting remux from displaying
       ui::set_timeout([=]() {
@@ -593,7 +593,6 @@ class App: public IApp:
     app_dialog->setup_for_render()
     app_dialog->add_shortcuts()
     app_dialog->show()
-    app_dialog->scene->on_hide += app_dialog->on_hide
 
     // TODO: do we really need to grab?
     #ifdef GRAB_INPUT
