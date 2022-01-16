@@ -170,13 +170,15 @@ class AppReader:
       if is_running.find(app.bin) != is_running.end():
         app.is_running = true
 
-    mem_usage := proc::collect_mem(procs)
+    ClockWatch cm
+    mem_usage := proc::collect_group_mem(procs)
     for auto &app : self.apps:
       app.mem_usage = 0
       for auto proc : procs:
         bs := vector<string> { app.bin }
         if proc::check_args(proc.cmdline, bs)
-          app.mem_usage += mem_usage[proc.pid]
+          app.mem_usage += mem_usage[proc.pgrp]
+    debug "memory stats took", cm.elapsed()
 
   def get_binaries():
     vector<string> binaries

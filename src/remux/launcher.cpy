@@ -263,7 +263,7 @@ class AppDialog: public ui::Pager:
           app_name = app.name
           if app.is_running:
             used := app.mem_usage / 1024
-            if used == 0:
+            if app.mem_usage == 0:
               status = "?MB"
             else:
               status = to_string(app.mem_usage / 1024) + string("MB")
@@ -580,12 +580,12 @@ class App: public IApp:
     ClockWatch c0
     get_current_app()
     debug "CURRENT APP IS", CURRENT_APP
-    debug "current app", c0.elapsed()
+    debug "current app took", c0.elapsed()
 
     // this is really backgrounding apps, not terminating
     ClockWatch c1
     term_apps()
-    debug "term apps", c1.elapsed()
+    debug "stopping apps took", c1.elapsed()
 
     app_bg->snapshot()
 
@@ -708,6 +708,7 @@ class App: public IApp:
       _ = system("echo 0 > /sys/class/rtc/rtc0/wakealarm")
 
     debug "RESUMING FROM SUSPEND"
+
     ui::MainLoop::in.ungrab()
 
     fb->clear_screen()

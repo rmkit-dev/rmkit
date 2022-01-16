@@ -14,7 +14,6 @@
 #define PID 1
 #define PGROUP 4
 
-
 // {{{ from https://stackoverflow.com/questions/478898/how-do-i-execute-a-command-and-get-the-output-of-the-command-within-c-using-po
 ```
 #include <cstdio>
@@ -24,6 +23,7 @@
 #include <string>
 #include <array>
 #include <fstream>
+
 
 std::string exec(const char* cmd) {
     std::array<char, 128> buffer;
@@ -45,7 +45,7 @@ namespace proc:
   struct Proc:
     int pid
     string cmdline
-    vector<string> stat
+    int pgrp
   ;
 
   struct MemInfo:
@@ -120,7 +120,7 @@ namespace proc:
 
     return found
 
-  vector<Proc> list_procs(vector<string> &args):
+  vector<Proc> list_procs(vector<string> &args, bool include_all=false):
     vector<Proc> ret;
 
     needle := string("")
@@ -141,14 +141,19 @@ namespace proc:
       if cmdline == "":
         continue
 
-      if not check_args(cmdline, args):
+      if not check_args(cmdline, args) and not include_all:
         continue
 
       f = ifstream(join_path({"/proc", p, "stat"}))
       getline(f, stat)
-      fields := str_utils::split(stat, ' ')
+      split_idx := stat.find_last_of(')')
 
-      ret.push_back(Proc{std::stoi(p), cmdline, fields})
+      // PID (COMM) STATE PPID PGRP
+      stat = stat.substr(split_idx+1)
+      tokens := str_utils::split(stat, ' ')
+      if len(tokens) > 2:
+        pgrp := atoi(tokens[2].c_str())
+        ret.push_back(Proc{std::stoi(p), cmdline, pgrp})
 
     return ret
 
@@ -156,7 +161,7 @@ namespace proc:
     procs := list_procs(args)
     unordered_set<string> tokill
     for auto proc : procs:
-      tokill.insert(proc.stat[PGROUP])
+      tokill.insert(to_string(proc.pgrp))
 
     for auto p: tokill:
       pid := std::stoi(p)
@@ -228,6 +233,17 @@ namespace proc:
 
     return val
 
+  int read_priv_mem_from_smaps(string fname):
+    priv := 0
+    ifstream f(fname)
+    string line
+    while getline(f, line):
+      if line.find("Private") == 0:
+        val_tokens := str_utils::split(line, ' ')
+        priv += stoi(val_tokens[1])
+
+    return priv
+
   int read_mem_from_smaps(string fname):
     shared := 0
     priv := 0
@@ -262,26 +278,54 @@ namespace proc:
 
     return priv
 
-  // collect per process memory usage
-  map<int, int> collect_mem(vector<Proc> pids):
-    int val
-    map<int, int> mem_usage;
-    for auto p: pids:
-      fname := join_path({"/proc/", to_string(p.pid), "/smaps_rollup"})
+  int read_mem_for_pid(int pid):
+    int val = 0
+    fname := join_path({"/proc/", to_string(pid), "/smaps_rollup"})
+    try:
+      val = read_priv_mem_from_smaps(fname)
+    catch(...):
+      pass
+
+    if val == 0:
+      fname = join_path({"/proc/", to_string(pid), "/smaps"})
       try:
-        val = mem_usage[p.pid] = read_mem_from_smaps(fname)
+        val = read_priv_mem_from_smaps(fname)
       catch(...):
         pass
 
-      if val == 0:
-        fname = join_path({"/proc/", to_string(p.pid), "/smaps"})
-        try:
-          val = mem_usage[p.pid] = read_mem_from_smaps(fname)
-        catch(...):
-          pass
+    if val == 0:
+      val = read_mem_from_status(pid)
+    return val
 
-      if val == 0:
-        mem_usage[p.pid] = read_mem_from_status(p.pid)
+  // collect per process memory usage
+  map<int, int> collect_mem(vector<Proc> pids):
+    map<int, int> mem_usage;
+    for auto p: pids:
+      fname := join_path({"/proc/", to_string(p.pid), "/smaps_rollup"})
+      val := read_mem_for_pid(p.pid)
+
+    return mem_usage
+
+  // collect per group memory usage
+  map<int, int> collect_group_mem(vector<Proc> pids):
+    int val
+    map<int, int> mem_usage;
+    map<int, int> is_pgroup
+    for auto p : pids:
+      is_pgroup[p.pgrp] = p.pid
+
+    args := vector<string> {}
+    all_pids := list_procs(args, true /* include_all */)
+    for auto p: all_pids:
+      if is_pgroup.find(p.pgrp) == is_pgroup.end():
+        continue
+
+      val := read_mem_for_pid(p.pid)
+
+      if mem_usage.find(p.pgrp) != mem_usage.end():
+        mem_usage[p.pgrp] += val
+      else:
+        mem_usage[p.pgrp] = val
 
     return mem_usage
 
