@@ -22,6 +22,7 @@
 #define TOUCH_FLOOD_EVENT ABS_DISTANCE
 #define DRAW_APP_BEHIND_MODAL
 #define READ_XOCHITL_DATA
+#define GRAB_INPUT
 #elif KOBO
 #define TOUCH_FLOOD_EVENT ABS_MT_DISTANCE
 #define DYNAMIC_BPP
@@ -448,7 +449,8 @@ class App: public IApp:
 
     debug "STARTING FIFO THREAD"
 
-    _ := system("/usr/bin/mkfifo /run/remux.api 2>/dev/null")
+    _ := system("mkdir /run/ 2> /dev/null")
+    _ = system("/usr/bin/mkfifo /run/remux.api 2>/dev/null")
     self.ipc_thread = new thread([=]() {
       fd := open("/run/remux.api", O_RDONLY)
 
@@ -593,7 +595,10 @@ class App: public IApp:
     app_dialog->show()
     app_dialog->scene->on_hide += app_dialog->on_hide
 
+    // TODO: do we really need to grab?
+    #ifdef GRAB_INPUT
     ui::MainLoop::in.grab()
+    #endif
 
     #ifdef DYNAMIC_BPP
     fb->set_screen_depth(sizeof(remarkable_color)*8)
@@ -668,7 +673,9 @@ class App: public IApp:
 
 
     fb->redraw_screen()
+    #ifdef GRAB_INPUT
     ui::MainLoop::in.grab()
+    #endif
 
     if rm2fb::IN_RM2FB_SHIM:
       sleep(1)
