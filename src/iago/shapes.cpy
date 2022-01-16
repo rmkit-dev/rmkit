@@ -30,7 +30,7 @@ namespace shape:
 
 
   class Shape;
-  extern vector<Shape*> to_draw = {}
+  vector<Shape*> to_draw = {}
 
   class Shape: public ui::Widget:
     private:
