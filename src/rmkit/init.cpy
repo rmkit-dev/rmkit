@@ -37,7 +37,7 @@ static void _rmkit_init():
   in_shim := getenv("RM2FB_SHIM")
   if in_shim != NULL and strlen(in_shim) != 0:
     rm2fb::IN_RM2FB_SHIM = true
-  else if rm_version == util::RM_VERSION::RM2:
+  else if rm_version == util::RM_DEVICE_ID_E::RM2:
     #ifndef RMKIT_NOWARN_RM2
     debug "*********************************************"
     debug "*** WARNING: running on rM2 without rm2fb ***"

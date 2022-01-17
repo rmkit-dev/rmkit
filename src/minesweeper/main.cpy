@@ -380,7 +380,7 @@ class App:
     h_layout := ui::HorizontalLayout(0, 0, w, h, title_menu)
 
     image := stbtext::get_text_size("MineSweeper", 64)
-    text := new ui::Text(0, 0, image.w, 50, "MineSweeper")
+    text := new ui::Text(0, 50, image.w, 50, "MineSweeper")
     text->set_style(LARGE_TEXT)
     h_layout.pack_center(text)
 
@@ -389,7 +389,7 @@ class App:
     vector<pair<int, string>> sizes{ {8, "8x8" }, {12, "12x12"}, {16, "16x16"}, {20, "20x20"}};
     button_height := 200
     for auto p : sizes:
-      btn := new SizeButton(w/2-400, 500, 800, button_height, p.first, p.second)
+      btn := new SizeButton(w/2-400, 400, 800, button_height, p.first, p.second)
       *btn += ui::Button::DEFAULT_STYLE.valign_middle().border_all();
       size_button_container.pack_start(btn)
       debug "BTN", btn->x, btn->y
@@ -399,7 +399,7 @@ class App:
 //    size_button_container.pack_start(new SizeButton(w/2-400, 50, 800, 200, 16, "16x16"))
 //    size_button_container.pack_start(new SizeButton(w/2-400, 50, 800, 200, 20, "20x20"))
 
-    scores := new ScoresButton(w/2-400, 500, 800, button_height)
+    scores := new ScoresButton(w/2-400, 400, 800, button_height)
     *scores += ui::Button::DEFAULT_STYLE.valign_middle().border_all();
     size_button_container.pack_start(scores)
 

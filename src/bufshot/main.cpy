@@ -10,9 +10,9 @@ def main(int argc, char **argv):
   framebuffer::FileFB *fb
 
   #ifdef REMARKABLE
-  if rm_version == util::RM_VERSION::RM2:
+  if rm_version == util::RM_DEVICE_ID_E::RM2:
     fb = new framebuffer::FileFB("/dev/shm/swtfb.01", framebuffer::fb_info::width, framebuffer::fb_info::height)
-  else if rm_version == util::RM_VERSION::RM1:
+  else if rm_version == util::RM_DEVICE_ID_E::RM1:
     fb = new framebuffer::FileFB("/dev/fb0", framebuffer::fb_info::width, framebuffer::fb_info::height)
   else:
     debug "UNKNOWN REMARKABLE TABLET"

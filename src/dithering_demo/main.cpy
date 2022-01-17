@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-extern const char* IMAGES_DIR = "/opt/etc/dithering_demo"
+const char* IMAGES_DIR = "/opt/etc/dithering_demo"
 
 vector<string> read_directory(const char * dirname):
   DIR *dir

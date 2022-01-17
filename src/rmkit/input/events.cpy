@@ -138,14 +138,32 @@ namespace input:
       if not rm2fb::IN_RM2FB_SHIM:
         invert_x = true
       #elif KOBO
+
+      version := util::get_kobo_version()
       rotation := util::rotation::get()
-      swap_xy = true
-      if rotation == util::rotation::ROT0:
-        invert_x = true
-        invert_y = false
-      else if rotation == util::rotation::ROT180:
-        invert_x = false
-        invert_y = true
+      invert_y = false
+      invert_x = false
+      swap_xy = false
+      switch version:
+        case util::KOBO_DEVICE_ID_E::DEVICE_KOBO_CLARA_HD:
+          rotation++
+          rotation %= 4
+          debug "RUNNING ON CLARA HD"
+          invert_x = true
+          swap_xy = true
+          break
+        case util::KOBO_DEVICE_ID_E::DEVICE_KOBO_LIBRA_H2O:
+          debug "RUNNING ON LIBRA H2O"
+          invert_x = true
+          swap_xy = true
+          break
+        default:
+          debug "UNRECOGNIZED KOBO DEVICE, TOUCH MAY NOT WORK"
+          break
+
+      if rotation == util::rotation::ROT180:
+        invert_x = !invert_x
+        invert_y = !invert_x
       #endif
 
     void initialize():

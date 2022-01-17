@@ -54,13 +54,13 @@ int get_pen_y(int y):
   return WACOMHEIGHT - (y / WACOM_Y_SCALAR)
 
 int get_touch_x(int x):
-  if rm_version == util::RM_VERSION::RM2:
+  if rm_version == util::RM_DEVICE_ID_E::RM2:
     return x
   return (MTWIDTH - x) / MT_X_SCALAR
 
 
 int get_touch_y(int y):
-  if rm_version == util::RM_VERSION::RM2:
+  if rm_version == util::RM_DEVICE_ID_E::RM2:
     return DISPLAYHEIGHT - y
   return (MTHEIGHT - y) / MT_Y_SCALAR
 

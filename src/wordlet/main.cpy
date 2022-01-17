@@ -209,7 +209,7 @@ class App:
     }
     game_scene->add(kbd)
 
-    w := 800
+    w := 600
     h := 100
     oy := 200
 
@@ -234,6 +234,7 @@ class App:
     game_scene->add(back_btn)
 
 
+    w = 800
 
     for i := 0; i < 6; i++:
       line := new Line((fb->display_width - w - 50)/2, oy, w, h)
@@ -248,7 +249,7 @@ class App:
 
     oy += h + 100
 
-    streak_text = new ui::MultiText(fb->display_width-200, 25, 200, 500, get_stats())
+    streak_text = new ui::MultiText(fb->display_width-200, 25, 200, 150, get_stats())
     streak_text->set_style(TEXT_STYLE.font_size(32))
     game_scene->add(streak_text)
 

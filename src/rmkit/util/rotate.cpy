@@ -15,9 +15,10 @@ namespace util:
         return rotation
 
       #ifdef REMARKABLE
-      if CUR_VERSION == RM1:
+      version := get_remarkable_version()
+      if version == RM1:
         return ROT180
-      else if CUR_VERSION == RM2:
+      else if version == RM2:
         return ROT270
       #endif
 
