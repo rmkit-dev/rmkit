@@ -340,14 +340,14 @@ class QuestionButton: public RadioButton:
   void on_button_selected(string t):
     MODE = 2
 
-class NumFlagsButton: public ui::Button:
+class NumFlagsButton: public ui::Text:
   public:
-  NumFlagsButton(int x, y, w, h): ui::Button(x,y,w,h,""):
+  NumFlagsButton(int x, y, w, h): ui::Text(x,y,w,h,""):
     pass
 
   void before_render():
-    self.textWidget->text = to_string(NB_BOMBS - USED)
-    self.textWidget->undraw()
+    self.text = to_string(NB_BOMBS - USED)
+    self.undraw()
     self.dirty = 1
 
 class HighScoreWidget: public ui::Widget:
@@ -449,16 +449,18 @@ class App:
     // generate a bomb field
     // opening a bomb
 
-    num_flags := new NumFlagsButton(w/2, 160, 200, 50)
+    h_layout = ui::HorizontalLayout(0, 0, w, h, field_scene)
+    num_flags := new NumFlagsButton(0, 10, 200, 50)
     smiley_face := new ui::Pixmap(0, 0, 50, 50, ICON(assets::bomb_solid_png)) // TODO replace with face
-    face_area := new ui::HorizontalLayout(0, 150, 250, 50, field_scene)
+    face_area := new ui::HorizontalLayout(w/2-250, 100, 250, 50, field_scene)
     h_layout.pack_center(face_area)
     face_area->pack_start(smiley_face)
     face_area->pack_start(num_flags)
 
-    a := new BombButton((w - 200) / 2 - 300, 1450, 200, 50)
-    b := new FlagButton((w - 200) / 2, 1450, 200, 50)
-    c := new QuestionButton((w - 200) / 2 + 300, 1450, 200, 50)
+    oy := 200
+    a := new BombButton((w - 200) / 2 - 300, oy, 200, 50)
+    b := new FlagButton((w - 200) / 2, oy, 200, 50)
+    c := new QuestionButton((w - 200) / 2 + 300, oy, 200, 50)
 
     static string s
     a->set_group(&s)
