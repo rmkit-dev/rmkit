@@ -143,7 +143,7 @@ class StatusBar: public ui::Button:
 class AppBackground: public ui::Widget:
   public:
   bool snapped = false
-  map<string, Snapshot*> app_buffers;
+  map<string, shared_ptr<Snapshot>> app_buffers;
 
   AppBackground(int x, y, w, h): ui::Widget(x, y, w, h):
     pass
@@ -158,15 +158,16 @@ class AppBackground: public ui::Widget:
     vfb->fbmem = (char*) memcpy(vfb->fbmem, fb->fbmem, vfb->byte_size)
     vfb->rotation = util::rotation::get()
 
-  Snapshot* get_vfb():
+  shared_ptr<Snapshot> get_vfb():
     if app_buffers.find(CURRENT_APP) == app_buffers.end():
       vw, vh := fb->get_virtual_size()
-      app_buffers[CURRENT_APP] = new Snapshot(vw, vh)
+      app_buffers[CURRENT_APP] = make_shared<Snapshot>(vw, vh)
 
     return app_buffers[CURRENT_APP]
 
   void remove_vfb(string name):
-    app_buffers.erase(name)
+    if app_buffers.find(name) != app_buffers.end():
+      app_buffers.erase(name)
 
   void render():
     if not snapped:
