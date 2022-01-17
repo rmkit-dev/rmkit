@@ -13,4 +13,3 @@ rm /mnt/artifacts/${ARCH}/release.*
 cp -r src/build/release.* /mnt/artifacts/${ARCH}/
 chown -R $(id -u):$(id -u) /mnt/artifacts
 COMMANDS
-

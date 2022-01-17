@@ -69,6 +69,9 @@ rmkit.h:
 docker:
 	docker build --tag rmkit:latest .
 	bash scripts/build/docker_release.sh
+ifeq ($(ARCH),kobo)
+	bash scripts/build/build_kobo_root.sh
+endif
 
 docker_test:
 	docker build --tag rmkit:latest .
