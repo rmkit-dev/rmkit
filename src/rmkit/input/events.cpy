@@ -148,17 +148,14 @@ namespace input:
         case util::KOBO_DEVICE_ID_E::DEVICE_KOBO_CLARA_HD:
           rotation++
           rotation %= 4
-          debug "RUNNING ON CLARA HD"
           invert_x = true
           swap_xy = true
           break
         case util::KOBO_DEVICE_ID_E::DEVICE_KOBO_LIBRA_H2O:
-          debug "RUNNING ON LIBRA H2O"
           invert_x = true
           swap_xy = true
           break
         default:
-          debug "UNRECOGNIZED KOBO DEVICE, TOUCH MAY NOT WORK"
           break
 
       if rotation == util::rotation::ROT180:

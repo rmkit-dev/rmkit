@@ -64,6 +64,17 @@ namespace util:
 
         last_three := version_str.substr(version_str.size() - 3)
         KOBO_CUR_VERSION = atoi(last_three.c_str())
+
+        switch KOBO_CUR_VERSION:
+          case util::KOBO_DEVICE_ID_E::DEVICE_KOBO_CLARA_HD:
+            debug "RUNNING ON CLARA HD"
+            break
+          case util::KOBO_DEVICE_ID_E::DEVICE_KOBO_LIBRA_H2O:
+            debug "RUNNING ON LIBRA H2O"
+            break
+          default:
+            debug "UNRECOGNIZED KOBO DEVICE, TOUCH MAY NOT WORK"
+            break
       } while (false);
 
     return KOBO_CUR_VERSION
