@@ -155,7 +155,7 @@ class AppBackground: public ui::Widget:
     vfb := self.get_vfb()
     debug "SNAPSHOTTING", CURRENT_APP
 
-    vfb->fbmem = (char*) memcpy(vfb->fbmem, fb->fbmem, vfb->byte_size)
+    vfb->fbmem = (char*) memcpy(vfb->fbmem, fb->fbmem, std::min(vfb->byte_size, fb->byte_size))
     vfb->rotation = util::rotation::get()
 
   shared_ptr<Snapshot> get_vfb():
@@ -179,7 +179,7 @@ class AppBackground: public ui::Widget:
       fb->waveform_mode = WAVEFORM_MODE_GC16
     else:
       fb->waveform_mode = WAVEFORM_MODE_AUTO
-    memcpy(fb->fbmem, vfb->fbmem, vfb->byte_size)
+    memcpy(fb->fbmem, vfb->fbmem, std::min(vfb->byte_size, fb->byte_size))
 
     #ifdef DYNAMIC_BPP
     if CURRENT_APP == APP_MAIN.name:
@@ -902,6 +902,7 @@ class App: public IApp:
     // for koreader
     putenv((char*) "KO_DONT_SET_DEPTH=1")
     putenv((char*) "KO_DONT_GRAB_INPUT=1")
+
 
 
     #if defined(REMARKABLE)
