@@ -784,10 +784,12 @@ namespace framebuffer:
       o_depth = vinfo.bits_per_pixel
       o_grayscale = vinfo.grayscale
 
+      #ifndef FB_NO_INIT_BPP
       #ifdef USE_GRAYSCALE_8BIT
       set_screen_depth(8)
       #else
       set_screen_depth(16)
+      #endif
       #endif
 
       #ifdef REMARKABLE

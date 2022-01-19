@@ -13,6 +13,8 @@
 #include <linux/input.h>
 #include <chrono>
 
+#define FB_NO_INIT_BPP
+
 #include "../shared/proc.h"
 #include "../build/rmkit.h"
 #include "../genie/gesture_parser.h"
@@ -316,6 +318,7 @@ class App: public IApp:
 
     // on resize, we exit and trust our service to restart us
     fb->resize += [=](auto &e):
+      debug "EXITING BECAUSE OF RESOLUTION CHANGE"
       exit(1)
     ;
 
@@ -911,6 +914,14 @@ class App: public IApp:
     startup_cmd := CONFIG.get_value("start_app", "xochitl")
     launch(startup_cmd)
     #endif
+
+    #ifdef DYNAMIC_BPP
+    get_current_app()
+    if APP_MAIN.name == CURRENT_APP:
+      debug "RESETTING BPP TO", APP_MAIN.bpp
+    fb->set_screen_depth(APP_MAIN.bpp)
+    #endif
+
 
     ui::Style::DEFAULT.font_size = 32
 
