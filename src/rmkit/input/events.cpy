@@ -158,9 +158,18 @@ namespace input:
         default:
           break
 
+      if rotation == util::rotation::ROT90:
+        swap_xy = !swap_xy
+        invert_x = !invert_x
+
       if rotation == util::rotation::ROT180:
         invert_x = !invert_x
         invert_y = !invert_x
+
+      if rotation == util::rotation::ROT270:
+        swap_xy = !swap_xy
+        invert_y = !invert_y
+
       #endif
 
     void initialize():

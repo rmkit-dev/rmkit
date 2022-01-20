@@ -171,11 +171,17 @@ namespace input:
     void set_scaling(int display_width, int display_height):
       if self.wacom.fd > 0:
         xf, yf := self.read_extents(self.wacom.fd, ABS_X, ABS_Y)
-        WacomEvent::set_extents(xf.maximum, yf.maximum, display_width, display_height)
+        if display_width < display_height:
+          WacomEvent::set_extents(xf.maximum, yf.maximum, display_width, display_height)
+        else:
+          WacomEvent::set_extents(xf.maximum, yf.maximum, display_height, display_width)
 
       if self.touch.fd > 0:
         xf, yf := self.read_extents(self.touch.fd, ABS_MT_POSITION_X, ABS_MT_POSITION_Y)
-        TouchEvent::set_extents(xf.maximum, yf.maximum, display_width, display_height)
+        if display_width < display_height:
+          TouchEvent::set_extents(xf.maximum, yf.maximum, display_width, display_height)
+        else:
+          TouchEvent::set_extents(xf.maximum, yf.maximum, display_height, display_width)
       return
 
 
