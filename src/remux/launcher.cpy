@@ -29,6 +29,7 @@
 #define TOUCH_FLOOD_EVENT ABS_MT_DISTANCE
 #define DYNAMIC_BPP
 #define HAS_ROTATION
+#define PORTRAIT_ONLY
 #else
 #define TOUCH_FLOOD_EVENT ABS_DISTANCE
 #endif
@@ -570,6 +571,12 @@ class App: public IApp:
   void show_launcher():
     if ui::MainLoop::overlay_is_visible:
       return
+
+    #ifdef PORTRAIT_ONLY
+    debug "NOT SHOWING LAUNCHER IN LANDSCAPE"
+    if fb->width > fb->height:
+      return
+    #endif
 
     #ifdef HAS_ROTATION
     util::rotation::reset()
