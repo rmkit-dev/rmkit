@@ -2,7 +2,8 @@
 
 [![rm1](https://img.shields.io/badge/rM1-supported-green)](https://remarkable.com/store/remarkable)
 [![rm2](https://img.shields.io/badge/rM2-supported-green)](https://remarkable.com/store/remarkable-2)
-
+[![Kobo Clara HD](https://img.shields.io/badge/Kobo_Clara_HD-supported-green)](https://us.kobobooks.com/products/kobo-clara-hd)
+[![Kobo Libra H20](https://img.shields.io/badge/Kobo_Libra_H2O-supported-green)](https://us.kobobooks.com/products/kobo-libra-h2o)
 
 
 [![opkg](https://img.shields.io/badge/OPKG-harmony-blue)](https://github.com/toltec-dev/toltec)
@@ -10,12 +11,16 @@
 [![opkg](https://img.shields.io/badge/OPKG-nao-blue)](https://github.com/toltec-dev/toltec)
 [![opkg](https://img.shields.io/badge/OPKG-remux-blue)](https://github.com/toltec-dev/toltec)
 [![opkg](https://img.shields.io/badge/OPKG-simple-blue)](https://github.com/toltec-dev/toltec)
+[![opkg](https://img.shields.io/badge/OPKG-bufshot-blue)](https://github.com/toltec-dev/toltec)
+[![opkg](https://img.shields.io/badge/OPKG-iago-blue)](https://github.com/toltec-dev/toltec)
+[![opkg](https://img.shields.io/badge/OPKG-genie-blue)](https://github.com/toltec-dev/toltec)
 
-This repo contains applications for the remarkable tablet. See the README in
-each application's directory to learn more about it. The general purpose of
-rmkit is to make it easy to write and deploy new apps to the remarkable tablet.
+This repo contains applications for the remarkable tablet and kobo ereaders.
+See the README in each application's directory to learn more about it. The
+general purpose of rmkit is to make it easy to write and deploy new apps to eink devices.
 
 NOTE: for remarkable2 support, [rm2fb](https://github.com/ddvk/remarkable2-framebuffer) is required
+
 
 ## Apps & Libaries
 
@@ -94,7 +99,7 @@ An app with a keyboard input and range slider
 
 ## Installation
 
-#### Via Toltec
+#### rM via Toltec
 
 The recommended way of installing the software in this repository is to use
 [toltec](https://github.com/toltec-dev/toltec) - a free software repository for
@@ -104,6 +109,12 @@ remux` to get remux, for example.
 If you are feeling adventurous, you can try out the bootstrap script from
 linusCDE that installs opkg, toltec and the rmkit packages in one line: `wget -qO-
 https://rmkit.dev/bs | sh -C harmony minesweeper remux nao`
+
+#### Kobo
+
+**NOTE: Only Kobo Clara HD and Libra H2O are supported**
+
+To install on Kobo devices, download [KoboRoot.tgz](https://build.rmkit.dev/master/latest/kobo/KoboRoot.tgz) and place it in `KOBOReader/.kobo/` after mounting your Kobo reader. This will install remux and a few demo applications. To disable remux, remove `KOBOReader/.adds/rmkit/enable_remux`
 
 #### Build Server
 
