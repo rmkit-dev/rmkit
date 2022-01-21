@@ -73,7 +73,13 @@ namespace util:
             debug "RUNNING ON LIBRA H2O"
             break
           default:
-            debug "UNRECOGNIZED KOBO DEVICE, TOUCH MAY NOT WORK"
+            if getenv("RMKIT_KOBO_ANY") != NULL:
+              debug "*** UNRECOGNIZED KOBO DEVICE, TOUCH MAY NOT WORK ***"
+              break
+
+            debug "*** UNRECOGNIZED KOBO DEVICE, EXITING ***"
+            debug "SET 'RMKIT_KOBO_ANY=1' TO RUN ON UNSUPPORTED KOBOS"
+            exit(1)
             break
       } while (false);
 
