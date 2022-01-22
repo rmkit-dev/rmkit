@@ -66,6 +66,8 @@ class GestureWidget : public ui::Widget:
 class App:
   public:
   ui::Scene demo_scene
+  ui::Text *palm_area;
+  static string last_text = ""
 
 
   App():
@@ -125,6 +127,13 @@ class App:
     range->set_range(0, 100)
     h_layout.pack_center(range)
 
+    palm_area = new ui::Text(50, 150, 150, 50, "Palm Width:")
+    palm_area->set_style(
+      ui::Stylesheet()
+        .valign(ui::Style::VALIGN::MIDDLE)
+        .justify(ui::Style::JUSTIFY::LEFT))
+    h_layout.pack_start(palm_area)
+
 
     pager := new ui::Pager(0, 0, 500, 500, NULL)
     pager->options = { "foo", "bar", "baz" }
@@ -160,7 +169,21 @@ class App:
     debug "KEY PRESSED", key_ev.key
 
   def handle_motion_event(input::SynMotionEvent &syn_ev):
-    pass
+    touch := input::is_touch_event(syn_ev)
+    if touch:
+      is_palm := touch->is_palm()
+      if syn_ev.left == 0
+        palm_area->text = ""
+      else if is_palm:
+        palm_area->text = "Palm Down"
+      else:
+        palm_area->text = "Finger Down"
+      if palm_area->text != last_text:
+        palm_area->undraw()
+        palm_area->dirty = 1
+        fb := framebuffer::get()
+        fb->waveform_mode = WAVEFORM_MODE_AUTO
+      last_text = palm_area->text
 
   def run():
 
