@@ -20,6 +20,20 @@ class App:
     pass
 
   def run():
+    // disable palm touches
+    palm_str := getenv("RMKIT_PALM_SIZE")
+    if palm_str != NULL:
+      try {
+        input::TouchEvent::MIN_PALM_SIZE = stoi(palm_str)
+        debug "SET MIN PALM SIZE TO", input::TouchEvent::MIN_PALM_SIZE
+      } catch(...) {};
+
+    if getenv("RMKIT_PALM_DEBUG") != NULL:
+      input::TouchEvent::DEBUG_PALM_SIZE = true
+
+    ui::MainLoop::filter_palm_events = true
+
+
     // don't listen for stylus events, saves CPU
     ui::MainLoop::in.unmonitor(ui::MainLoop::in.wacom.fd)
 

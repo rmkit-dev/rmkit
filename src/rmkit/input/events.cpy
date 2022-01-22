@@ -98,8 +98,11 @@ namespace input:
     bool lifted=false
 
     static int MAX_SLOTS = 10
-    struct Point:
+    static int MIN_PALM_SIZE = 10
+    static bool DEBUG_PALM_SIZE = false
+    struct TouchPoint:
       int x=-1, y=-1, left=-1
+      int size_major=1, size_minor=1
     ;
 
     static float scale_x=1.0
@@ -126,7 +129,7 @@ namespace input:
     // kobo libra rot180: swap_xy, invert_y
     // rm1: scale_x, scale_y, invert_x, invert_y
     // rm2: invert_y
-    vector<Point> slots;
+    vector<TouchPoint> slots;
     TouchEvent():
       slots.resize(MAX_SLOTS)
       set_rotation()
@@ -219,6 +222,38 @@ namespace input:
               self.lifted = true
 
           break
+        case ABS_MT_TOUCH_MAJOR:
+          slots[slot].size_major = data.value
+          break
+        case ABS_MT_TOUCH_MINOR:
+          slots[slot].size_minor = data.value
+          break
+
+    int max_touch_area():
+      size := 0
+      for i := 0; i <= MAX_SLOTS; i++:
+        if slots[i].left == 1:
+          if slots[i].size_minor == 1:
+            size = max(slots[i].size_major, size)
+          else:
+            size = max(slots[i].size_minor, size)
+      return size
+
+    bool is_palm():
+      #ifndef REMARKABLE
+      return false
+      #endif
+
+
+      size := max_touch_area()
+      version := util::get_remarkable_version()
+
+      if version == util::RM_DEVICE_ID_E::RM2:
+        size /= 2
+
+      if DEBUG_PALM_SIZE:
+        debug "TOUCH AREA", size, (size > MIN_PALM_SIZE ? "palm" : "finger")
+      return size > MIN_PALM_SIZE
 
     def marshal():
       SynMotionEvent syn_ev;

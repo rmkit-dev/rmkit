@@ -46,6 +46,8 @@ namespace ui:
     static Scene kbd = make_scene()
     static bool kbd_is_visible = false
 
+    static bool filter_palm_events = false
+
     static input::Input in = {}
     static vector<input::Gesture*> gestures = {}
 
@@ -132,7 +134,12 @@ namespace ui:
         for auto g : gestures:
           g->reset()
 
-      for auto ev: ui::MainLoop::in.touch.events:
+      for auto &ev: ui::MainLoop::in.touch.events:
+        if filter_palm_events:
+          if ev.is_palm():
+            for auto g : gestures:
+              g->valid = false
+
         for auto g : gestures:
           if ev.lifted:
             if g->valid:
