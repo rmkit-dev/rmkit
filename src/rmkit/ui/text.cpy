@@ -27,6 +27,10 @@ namespace ui:
       image := stbtext::get_text_size(self.text, self.style.font_size)
       return image.w, image.h
 
+    void set_text(string t):
+      self.text = t
+      self.dirty = 1
+
     // TODO: cache the image buffer
     void render():
       font_size := self.style.font_size
