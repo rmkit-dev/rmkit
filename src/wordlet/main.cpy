@@ -53,7 +53,7 @@ class Letter: public ui::Widget
   Letter(int x, y, w, h): ui::Widget(x, y, w, h)
     self.text = new Text(x, y, w, h, "")
     self.text->set_style(LETTER_STYLE)
-    self.text->text = ""
+    self.text->set_text("")
 
   void render():
     self.undraw()
@@ -66,7 +66,7 @@ class Letter: public ui::Widget
     self.text->render()
 
   void set_text(string v):
-    self.text->text = v
+    self.text->set_text(v)
 
 
 class Line: public ui::Widget
@@ -84,7 +84,7 @@ class Line: public ui::Widget
 
   void clear():
     for auto l : letters:
-      l->text->text = ""
+      l->text->set_text("")
       l->color = BLANK
 
 
@@ -309,13 +309,11 @@ class App:
 
   void set_feedback(string text):
     self.feedback_text->undraw()
-    self.feedback_text->text = text
-    self.feedback_text->dirty = 1
+    self.feedback_text->set_text(text)
 
   void set_streak(string text):
     self.streak_text->undraw()
-    self.streak_text->text = text
-    self.streak_text->dirty = 1
+    self.streak_text->set_text(text)
 
   void enter_word(string text):
     line := lines[line_no]
@@ -370,7 +368,6 @@ class App:
     self.to_guess = CANDIDATES[idx]
     set_feedback("Good Luck!")
     upcase(self.to_guess)
-    self.streak_text->dirty = 1
     self.hide_buttons()
     set_streak(get_stats())
     save_stats()
