@@ -330,6 +330,15 @@ class App: public IApp:
     if app_bg != NULL:
       delete app_bg
 
+    dh := CONFIG.get_value("dialog_height", to_string(DIALOG_HEIGHT))
+    dw := CONFIG.get_value("dialog_width", to_string(DIALOG_WIDTH))
+    try {
+      DIALOG_HEIGHT = stoi(dh.c_str())
+    } catch(...) {};
+
+    try {
+      DIALOG_WIDTH = stoi(dw.c_str());
+    } catch(...) {};
     app_dialog = new AppDialog(0, 0, DIALOG_WIDTH, DIALOG_HEIGHT, self)
     app_dialog->populate()
     get_current_app()
@@ -883,7 +892,6 @@ class App: public IApp:
     // last_app_gesture=
 
     debug "SETTING UP GESTURES"
-    config := read_remux_config()
     launch_gestures := CONFIG.get_array("launch_gesture")
     if launch_gestures.size() == 0:
       debug "SETTING LAUNCH GESTURES TO DEFAULT"

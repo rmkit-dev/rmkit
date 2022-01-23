@@ -43,6 +43,12 @@ start_service`
 
 ## Changelog
 
+### Custom dialog size (0.2.1)
+
+* add `dialog_height` and `dialog_width` option to remux.conf for specifying
+  the dialog width and heigght. Default is 600x800. The rM width is 1404,
+  height is 1872.
+
 ### `launch` API (0.2.0)
 
 * added ability to launch applications through the API: `echo 'launch xochitl' > /run/remux.api` will launch xochitl. the application name should be the name of the application as it shows up in the launch dialog
