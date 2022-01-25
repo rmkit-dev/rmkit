@@ -83,6 +83,12 @@ evaluation.
 
 Wordlet is a clone of the popular [wordle](https://www.powerlanguage.co.uk/wordle/) game
 
+### [dumbskull](src/dumbskull)
+
+Dumbskull is a port of the games [donsol](https://100r.co/site/donsol.html) and
+[scoundrel](stfj.net/index2.php?project=art/2011/Scoundrel.pdf). It's a dungeon
+crawl themed solitaire that uses a standard playing card deck.
+
 ## Demos
 
 ### [animation](src/animation_demo)
