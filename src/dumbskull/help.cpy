@@ -5,14 +5,14 @@ This is the help for *Scoundrel*\n\n
 Each room you go to has 4 cards. You must use 3 of the cards to move to the
 next room, leaving the last card for the next room. \n\n
 
-There are 3 types of cards: Health Potions, Shields and Monsters. \n\n
+There are 3 types of cards: Health Potions, Swords and Monsters. \n\n
 
 *Health Potions* heal you up to a maximum of 21 Health. You can only drink
 one health potion per room. Subsequent potions will have no effect. \n\n
 
-*Shields* will reduce the damage of a monster. You can only use a shield on a
-lesser monster than the last, otherwise the shield will break and you will take
-full damage. \n\n
+*Swords* will reduce the damage of a monster. You can only use a sword on a
+lesser monster than the last, otherwise you will use your bare hands and take
+full damage. Unlike Shields, Swords don't break. \n\n
 
 *Monsters* do their indicated damage to you, minus any shield reduction. \n\n
 

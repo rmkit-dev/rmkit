@@ -17,6 +17,8 @@ int MAX_HP = 21
 MODE_SCOUNDREL := false
 MODE_DONSOL := true
 
+enum GAME_MODE { DONSOL, SCOUNDREL }
+
 static string downcase(std::string &s):
   for (int i = 0; i < s.length(); i++):
     s[i] = std::tolower(s[i]);
@@ -28,6 +30,7 @@ class Card: public ui::Widget:
   public:
   bool active = true
   int value = 0
+  int game_mode
   ui::Text *upper_left, *bottom_right
   ui::Text *action
 
@@ -150,9 +153,14 @@ class Card: public ui::Widget:
         render_pixmap(ICON(assets::fa_flask_solid_png))
         break
       case 'D':
-        action->set_text("Equip Shield")
-        text = to_string(get_shield())
-        render_pixmap(ICON(assets::fa_shield_alt_solid_png))
+        if game_mode == GAME_MODE::DONSOL:
+          action->set_text("Equip Shield")
+          text = to_string(get_shield())
+          render_pixmap(ICON(assets::fa_shield_alt_solid_png))
+        if game_mode == GAME_MODE::SCOUNDREL::
+          action->set_text("Equip Sword")
+          text = to_string(get_shield())
+          render_pixmap(ICON(assets::fa_sword_png))
         break
       case 'C':
       case 'S':
@@ -185,7 +193,6 @@ class App:
   ui::Text *score_text
   ui::Button *run_box
 
-  enum GAME_MODE { DONSOL, SCOUNDREL }
   string get_game_mode(int d):
     switch d:
       case GAME_MODE::DONSOL:
@@ -471,6 +478,7 @@ class App:
         cards[i]->active = false
 
       cards[i]->dirty = 1
+      cards[i]->game_mode = state.game_mode
 
     state.escaped = false
     state.drank_potion = false
@@ -501,7 +509,10 @@ class App:
       case 'D':
         state.shield = card->get_shield()
         state.shield_monster = 0
-        set_feedback("You equipped the shield (" + to_string(card->get_shield()) + ")")
+        if state.game_mode == GAME_MODE::DONSOL:
+          set_feedback("You equipped the shield (" + to_string(card->get_shield()) + ")")
+        if state.game_mode == GAME_MODE::SCOUNDREL:
+          set_feedback("You equipped the sword (" + to_string(card->get_shield()) + ")")
         if state.game_mode == GAME_MODE::DONSOL:
           state.drank_potion = false
         break
@@ -513,13 +524,20 @@ class App:
           state.drank_potion = false
 
         if state.shield:
-          if state.shield_monster and card->get_damage() >= state.shield_monster:
-            broke_shield = true
-            state.shield = 0
-            state.shield_monster = 0
-          else:
-            damage -= state.shield
-            state.shield_monster = card->get_damage()
+          if state.game_mode == GAME_MODE::DONSOL:
+            if state.shield_monster and card->get_damage() >= state.shield_monster:
+              broke_shield = true
+              state.shield = 0
+              state.shield_monster = 0
+            else:
+              damage -= state.shield
+              state.shield_monster = card->get_damage()
+          if state.game_mode == GAME_MODE::SCOUNDREL:
+            if state.shield_monster and card->get_damage() >= state.shield_monster:
+              pass
+            else:
+              damage -= state.shield
+              state.shield_monster = card->get_damage()
 
         damage = max(damage, 0)
         if damage > 0:
@@ -611,7 +629,8 @@ class App:
     diff_box->set_text(get_game_mode(state.game_mode))
 
     hp_box->set_text(to_string(state.health) + "HP")
-    sp_box->set_text(to_string(state.shield) + "SH")
+    shield_suffix := state.game_mode == GAME_MODE::SCOUNDREL ? "SW" : "SH"
+    sp_box->set_text(to_string(state.shield) + shield_suffix)
     if state.shield_monster:
       sp_box->text += " " + to_string(state.shield_monster)
 
@@ -628,10 +647,10 @@ class App:
     fb := framebuffer::get()
     fb->clear_screen()
     ui::MainLoop::set_scene(game_scene)
+    state.game_mode = game_mode
     reset_deck()
     reset_status()
     deal_cards()
-    state.game_mode = game_mode
     update_status()
     ui::MainLoop::refresh()
 
