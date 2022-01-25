@@ -40,7 +40,8 @@ class DitheredBitmap: public ui::Widget:
     if self.image.buffer != NULL
       fb->draw_bitmap(self.image,
                       self.x + (self.w - self.image.w) / 2,
-                      self.y + (self.h - self.image.h) / 2)
+                      self.y + (self.h - self.image.h) / 2,
+                      framebuffer::ALPHA_BLEND, false)
     fb->dither = old_dither_mode
 
 class IApp:

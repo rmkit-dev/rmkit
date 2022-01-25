@@ -25,11 +25,11 @@
 #define likely(x)      __builtin_expect(!!(x), 1)
 #define unlikely(x)      __builtin_expect(!!(x), 0)
 
-extern int ALPHA_BLEND = 4160223223
 
 using namespace std
 
 namespace framebuffer:
+  extern int ALPHA_BLEND = 4160223223
   extern bool DEBUG_FB_INFO = 1
   // (getenv("DEBUG_FB_INFO") != NULL)
 
@@ -292,7 +292,11 @@ namespace framebuffer:
         r := src[offset]
         g := src[offset+1]
         b := src[offset+2]
-        return (remarkable_color) ((r & 0b11111000) << 8) | ((g & 0b11111100) << 3) | (b >> 3);
+        return (remarkable_color) (
+          ((r & 0b11111000) << 8) |
+          ((g & 0b11111100) << 3) |
+          ((b & 0b11111000) >> 3)
+        );
 
     inline void grayscale_to_rgb32(uint8_t src, char *dst):
         uint32_t color = (src * 0x00010101);
@@ -428,7 +432,7 @@ namespace framebuffer:
       int channels // an output parameter
       decoded := stbi_load(full_path, &neww, &newh, &channels, 4);
       image := image_data{(uint32_t*) decoded, (int) neww, (int) newh, channels}
-      self->draw_bitmap(image,0,0,ALPHA_BLEND)
+      self->draw_bitmap(image,0,0,framebuffer::ALPHA_BLEND)
       free(image.buffer)
 
       self.waveform_mode = WAVEFORM_MODE_GC16
