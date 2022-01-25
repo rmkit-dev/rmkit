@@ -259,6 +259,7 @@ namespace ui:
 
     // TODO: refactor this into cleaner code
     // dispatch mouse / touch events to their widgets
+    static int first_mouse_down = true
     static bool handle_motion_event(input::SynMotionEvent &ev):
       display_scene := scene
       if overlay_is_visible:
@@ -289,7 +290,9 @@ namespace ui:
         prev_mouse_x := widget->mouse_x
         prev_mouse_y := widget->mouse_y
 
-        widget->mouse_down = mouse_down && is_hit
+
+        widget->mouse_down_first = (first_mouse_down && mouse_down && is_hit) || widget->mouse_down_first
+        widget->mouse_down = widget->mouse_down_first && mouse_down && is_hit
         widget->mouse_inside = is_hit
 
         if is_hit:
@@ -311,7 +314,9 @@ namespace ui:
           // mouse up / click events
           if prev_mouse_down && !mouse_down:
             widget->mouse.up(ev)
-            widget->mouse.click(ev)
+
+            if widget->mouse_down_first:
+              widget->mouse.click(ev)
 
           // mouse enter event
           if !prev_mouse_inside:
@@ -322,6 +327,32 @@ namespace ui:
           // mouse leave event
           if prev_mouse_inside:
             widget->mouse.leave(ev)
+
+      // iterate over all widgets and register exit events even if we stop
+      // propagation. also reset mouse_down_first if mouse_down is false
+      for auto it = widgets.rbegin(); it != widgets.rend(); it++:
+        widget := *it
+        if widget->ignore_event(ev) || !widget->visible:
+          continue
+
+        prev_mouse_inside := widget->mouse_inside
+
+        is_hit = widget->is_hit(ev.x, ev.y)
+        widget->mouse_down = widget->mouse_down_first && mouse_down && is_hit
+        widget->mouse_inside = is_hit
+
+        if !is_hit:
+          if prev_mouse_inside:
+            widget->mouse.leave(ev)
+
+        if !mouse_down:
+          widget->mouse_down_first = false
+
+      if mouse_down:
+        first_mouse_down = false
+      else:
+        first_mouse_down = true
+
 
       if !kbd_is_visible && overlay_is_visible && mouse_down && !hit_widget:
         if !overlay->pinned:

@@ -30,7 +30,7 @@ namespace ui:
     // h - the height of the widget
     int x, y, w, h
     int _x, _y, _w, _h // the original values the widget was instantiated with
-    int mouse_down = false, mouse_inside = false, mouse_x, mouse_y
+    int mouse_down = false, mouse_inside = false, mouse_down_first = false, mouse_x, mouse_y
     int dirty = 1
     bool visible = true
     string ref // a name to call the widget by
