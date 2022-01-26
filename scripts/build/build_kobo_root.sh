@@ -17,7 +17,7 @@ build_dirs() {
 copy_files() {
   echo "COPYING FILES TO KOBO ROOT"
   pushd artifacts/${ARCH}
-  cp -v animation_demo input_demo mines remux rpncalc wordlet ${PLUGIN_DIR}/bin/apps/
+  cp -v animation_demo input_demo mines remux rpncalc wordlet dumbskull ${PLUGIN_DIR}/bin/apps/
   popd
   pushd ${PLUGIN_DIR}/bin/apps/
   arm-linux-gnueabihf-strip *
