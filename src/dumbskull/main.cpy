@@ -191,7 +191,7 @@ class App:
   ui::Text *hp_box, *xp_box, *sp_box, *diff_box
   ui::MultiText *help_text
   ui::Text *score_text
-  ui::Button *run_box
+  ui::Button *run_box, *replay_box
 
   string get_game_mode(int d):
     switch d:
@@ -424,6 +424,16 @@ class App:
 
       debug "CARD POSITIONED", card->x, card->y, card->w, card->h
 
+    replay_bar := ui::HorizontalLayout(0, (h-200)/2, fb->display_width, 200, game_scene)
+    replay_box = new ui::Button(0, 0, 800, 200, "Restart")
+    *replay_box += BTN_STYLE
+    replay_box->mouse.click += PLS_LAMBDA(auto):
+      self.start_new_game(state.game_mode)
+    ;
+    replay_box->hide()
+    replay_bar.pack_center(replay_box)
+
+
     oy += h/3 + 50
     self.feedback_text = new ui::MultiText(50, oy, fb->display_width - 50,
       fb->height - oy, "Good Luck!")
@@ -589,6 +599,8 @@ class App:
   void check_game_over():
     if state.health <= 0:
       self.game_lost()
+      replay_box->show()
+      replay_box->mark_redraw()
     else if deck.size() == 0 and !count_active():
       self.game_won()
 
@@ -652,6 +664,7 @@ class App:
     reset_status()
     deal_cards()
     update_status()
+    replay_box->hide()
     ui::MainLoop::refresh()
 
     set_feedback("Welcome to the dungeon... of FUN!")
