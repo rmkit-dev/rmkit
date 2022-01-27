@@ -1,4 +1,5 @@
 #include "../build/rmkit.h"
+#include "../shared/string.h"
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -9,6 +10,10 @@ class CalcDisplay: public ui::Text {
   public:
    CalcDisplay(int width, int height)
     : Text(0, 0, width, height, "") {}
+   void padText() {
+    str_utils::trim(this->text);
+    this->text += " ";
+   }
 };
 
 StackElement::StackElement(int width, int height) {
@@ -20,11 +25,12 @@ StackElement::StackElement(int width, int height) {
         .underline(false)
         .justify_right()
         .valign_middle()
-        .border_all());
+        .border_bottom());
 }
 
 void StackElement::setText(const char* text) {
   display->text = text;
+  display->padText();
   display->undraw();
   display->mark_redraw();
 }
@@ -40,7 +46,9 @@ void StackElement::append(const char digit) {
       return;
     }
   }
+  str_utils::trim(display->text);
   display->text += digit;
+  display->padText();
   display->undraw();
   display->mark_redraw();
 }
@@ -52,12 +60,13 @@ double StackElement::getValue() {
 void StackElement::setValue(double val) {
   display->text = std::to_string(val);
   display->text.erase(display->text.find_last_not_of('0') + 1, std::string::npos);
+  display->padText();
   display->undraw();
   display->mark_redraw();
 }
 
 bool StackElement::isBlank() {
-  return display->text == "";
+  return str_utils::trim_copy(display->text) == "";
 }
 
 class CalcButton: public ui::Button {
@@ -115,15 +124,15 @@ std::vector<StackElement*> buildCalculatorLayout(ui::Scene scene, Calculator &ca
       };
 
   size_t numberOfElements = sizeof(keyboard)/sizeof(keyboard[0]);
-  auto kbd = new ui::HorizontalLayout(0, 0, width, lineHeight, scene);
+  auto kbd = new ui::HorizontalLayout(20, 0, width, lineHeight, scene);
   v->pack_end(kbd);
   int key_width = width / 9.5;
   for (int i = 0; i < numberOfElements; i++) {
     auto key = keyboard[i];
     cout << "creating " << key.text << endl;
     if (EOL == key.text) {
-      kbd = new ui::HorizontalLayout(0, 0, width, lineHeight, scene);
-      v->pack_end(kbd);
+      kbd = new ui::HorizontalLayout(20, 0, width, lineHeight, scene);
+      v->pack_end(kbd, -5);
     } else {
       kbd->pack_start(new CalcButton(calculator, key, key_width), 1);
     }
