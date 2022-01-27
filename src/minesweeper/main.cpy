@@ -172,7 +172,7 @@ class Grid: public ui::Widget, public IGrid:
   shared_ptr<GameOverDialog> gd
   int n
   Grid(int x, y, w, h, n): n(n), Widget(x, y, w, h):
-    pass
+    self.gd = make_shared<GameOverDialog>(0, 0, 800, 800)
 
   void flood(int i, int j):
     queue<pair<int,int>> qe
@@ -269,7 +269,6 @@ class Grid: public ui::Widget, public IGrid:
     WON = win
     debug WON
     OVER = 1
-    self.gd = make_shared<GameOverDialog>(0, 0, 800, 800)
     // show := new ShowButton(0, 1500, 10, 200)
     if !win:
       for int i = 0; i < n; i++:
