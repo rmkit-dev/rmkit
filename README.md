@@ -112,10 +112,6 @@ The recommended way of installing the software in this repository is to use
 remarkable. Once opkg and the toltec repository are setup, use `opkg install
 remux` to get remux, for example.
 
-If you are feeling adventurous, you can try out the bootstrap script from
-linusCDE that installs opkg, toltec and the rmkit packages in one line: `wget -qO-
-https://rmkit.dev/bs | sh -C harmony minesweeper remux nao`
-
 #### Kobo
 
 **NOTE: Only Kobo Clara HD and Libra H2O are supported**
