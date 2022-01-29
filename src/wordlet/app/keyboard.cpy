@@ -85,7 +85,7 @@ namespace wordle:
 
       void upper_layout():
         self.set_layout(
-          "QWERTYUOIP",
+          "QWERTYUIOP",
           "ASDFGHJKL",
           "ZXCVBNM"
         )
