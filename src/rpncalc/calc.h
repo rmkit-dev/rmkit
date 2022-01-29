@@ -7,7 +7,7 @@ enum keycodes {
     kminus, kpi, kround, ksqrt, klog, kln,
     ktimes, ksquare, kreciprocal, kfact, kabs, kpower,
     kdiv, kpush, kswap, kcosh, ksinh, ktanh,
-    kexit, kdrop, kcos, ksin, ktan, kspare, keol
+    kexit, kdrop, kcos, ksin, ktan, kspare, keol, knop, kback
 };
 
 typedef struct key {
@@ -26,6 +26,7 @@ class StackElement {
     void append(const char digit);
     double getValue();
     void setValue(double val);
+    void dropLastDigit();
     bool isBlank();
 
   private:
@@ -44,6 +45,7 @@ class Calculator {
     void shuffleUp();
     void maybePush();
     void didOp();
+    void undidOp();
 
     void handleNumPad(int);
     void handleUnaryOp(int);

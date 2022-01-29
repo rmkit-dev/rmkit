@@ -71,11 +71,14 @@ void Calculator::handleUnaryOp(int keyid) {
   double res;
   switch (keyid) {
       case keycodes::kdrop:
-          if (!stack[0]->isBlank()) {
-              stack[0]->setText("");
-              break;
-          }
           shuffleDown();
+          didOp();
+          break;
+      case keycodes::kback:
+          if (!stack[0]->isBlank()) {
+            stack[0]->dropLastDigit();
+          }
+          undidOp();
           break;
       case keycodes::kpercent:
           if (stack[0]->isBlank()) {
@@ -293,6 +296,11 @@ void Calculator::didOp()
   prevWasOp = true;
 }
 
+void Calculator::undidOp()
+{
+  prevWasOp = false;
+}
+
 void Calculator::maybePush()
 {
   if (prevWasOp) {
@@ -319,7 +327,6 @@ void Calculator::shuffleDown() {
         stack[i-1]->setText(stack[i]->getText());
     }
     stack[stack.size()-1]->setText("");
-    stack[0]->setText("");
 }
 
 void Calculator::shuffleUp() {

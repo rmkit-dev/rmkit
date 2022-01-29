@@ -39,6 +39,19 @@ const char* StackElement::getText() {
   return display->text.c_str();
 }
 
+void StackElement::dropLastDigit() {
+  std::string sval = this->display->text;
+  int length = sval.length() - 1;
+
+  while (length && sval[length] == ' ') { length--; }
+
+  sval = sval.substr(0, length);
+  this->display->text = sval;
+  display->padText();
+  display->undraw();
+  display->mark_redraw();
+}
+
 void StackElement::append(const char digit) {
   if (digit == '.' || digit == 'E') {
     auto pos = display->text.find(digit);
@@ -87,6 +100,18 @@ class CalcButton: public ui::Button {
       this->calculator.buttonPressed(this->key);
     }
 
+    void render_border() {
+      if (key.text != "") {
+        ui::Button::render_border();
+      }
+    }
+
+    void render() {
+      if (key.text != "") {
+        ui::Button::render();
+      }
+    }
+
     private:
       Calculator& calculator;
       Key key;
@@ -120,7 +145,7 @@ std::vector<StackElement*> buildCalculatorLayout(ui::Scene scene, Calculator &ca
               {"1", kone}, {"2", ktwo}, {"3", kthree}, {"-", kminus}, {"π", kpi}, {"e", ke}, {"√", ksqrt}, {"log", klog}, {"ln", kln}, {EOL, keol},
               {"4", kfour}, {"5", kfive}, {"6", ksix}, {"*", ktimes}, {"x²", ksquare}, {"1/x", kreciprocal}, {"x!", kfact}, {"|x|", kabs}, {"x^y", kpower}, {EOL, keol},
               {"7", kseven}, {"8", keight}, {"9", knine}, {"/", kdiv}, {"push", kpush}, {"swap", kswap}, {"cosh", kcosh}, {"sinh", ksinh}, {"tanh", ktanh}, {EOL, keol},
-              {"exit", kexit}, {"drop", kdrop}, {"cos", kcos}, {"sin", ksin}, {"tan", ktan}, {EOL, keol},
+              {"exit", kexit}, {"", knop}, {"", knop}, {"", knop}, {"drop", kdrop}, {"back", kback}, {"cos", kcos}, {"sin", ksin}, {"tan", ktan}, {EOL, keol},
       };
 
   size_t numberOfElements = sizeof(keyboard)/sizeof(keyboard[0]);
