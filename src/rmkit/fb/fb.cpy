@@ -797,7 +797,7 @@ namespace framebuffer:
       #endif
 
       #ifdef REMARKABLE
-      auto_update_mode := AUTO_UPDATE_MODE_AUTOMATIC_MODE
+      uint32_t auto_update_mode = AUTO_UPDATE_MODE_AUTOMATIC_MODE
       ioctl(self.fd, MXCFB_SET_AUTO_UPDATE_MODE, (pointer_size) &auto_update_mode);
       #endif
 
