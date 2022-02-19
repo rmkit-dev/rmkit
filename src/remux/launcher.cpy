@@ -93,24 +93,77 @@ class IApp:
 
 
 class Snapshot:
+  typedef uint64_t chunk_t;
+
+  struct PixelLine:
+    uint32_t count
+    chunk_t value
+
+    known PixelLine(uint32_t c, chunk_t v):
+      count = c
+      value = v
+  ;
+
+  vector<PixelLine> encoded
+
   public:
-  int byte_size
-  int bits_per_pixel
   int rotation
-  int width, height
-  char *fbmem
+  int bits_per_pixel
 
   Snapshot(int w, h):
     fb := framebuffer::get()
     bits_per_pixel = fb->get_screen_depth()
-    self.byte_size = w * h * bits_per_pixel / 8
-    fbmem = (char*) malloc(w * h * bits_per_pixel / 8)
-    memset(fbmem, WHITE, self.byte_size)
+    bytes_per_pixel := bits_per_pixel / 8
+    bytes := (uint32_t) w * h * bytes_per_pixel / sizeof(chunk_t)
+
+    chunk_t white_pixel = -1;
+    encode_values(encoded, bytes, white_pixel)
 
   ~Snapshot():
-    if fbmem != NULL:
-      free(fbmem)
-      fbmem = NULL
+    pass
+
+  inline void encode_values(vector<PixelLine> &encoded, uint32_t count, chunk_t value):
+    encoded.emplace_back(count, value)
+
+  void compress(remarkable_color *in, int bytes):
+    ClockWatch cz
+    uint32_t count
+
+    encoded.clear()
+    encoded.reserve(100000)
+
+    chunk_t *src = (chunk_t*) in
+    chunk_t cur
+    chunk_t prev = src[0]
+
+
+    count = 0
+    int size = 0
+    int n = bytes/sizeof(chunk_t)
+    for i := 0; i < n; i++:
+      if unlikely(src[i] != prev):
+        encode_values(encoded, count, prev)
+        count = 1
+        prev = src[i]
+      else:
+        count++
+
+    encode_values(encoded, count, prev)
+
+    size = sizeof(encoded[0]) * encoded.size()
+    debug "COMP TOOK", cz.elapsed(), "TOTAL SIZE", (size/1024), "KBYTES,", encoded.size(), "ELEMENTS"
+
+  decompress(remarkable_color *out):
+    ClockWatch cz
+    chunk_t *src = (chunk_t*) out
+    int offset = 0
+    for auto &block : encoded:
+      for i := 0; i < block.count; i++:
+        src[i+offset] = block.value
+
+      offset += block.count
+    debug "DECOMP TOOK", cz.elapsed()
+
 
   void allocate():
     pass
@@ -158,7 +211,7 @@ class AppBackground: public ui::Widget:
     vfb := self.get_vfb()
     debug "SNAPSHOTTING", CURRENT_APP
 
-    vfb->fbmem = (char*) memcpy(vfb->fbmem, fb->fbmem, std::min(vfb->byte_size, fb->byte_size))
+    vfb->compress(fb->fbmem, fb->byte_size)
     vfb->rotation = util::rotation::get()
 
   shared_ptr<Snapshot> get_vfb():
@@ -182,7 +235,8 @@ class AppBackground: public ui::Widget:
       fb->waveform_mode = WAVEFORM_MODE_GC16
     else:
       fb->waveform_mode = WAVEFORM_MODE_AUTO
-    memcpy(fb->fbmem, vfb->fbmem, std::min(vfb->byte_size, fb->byte_size))
+
+    vfb->decompress(fb->fbmem)
 
     #ifdef DYNAMIC_BPP
     if CURRENT_APP == APP_MAIN.name:

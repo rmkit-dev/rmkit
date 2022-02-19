@@ -2,6 +2,9 @@ include ../actions.make
 
 EXE=remux
 FILES=launcher.cpy
+
+# disable parameter warning from GCC 6 -> 7
+CPP_FLAGS+=-Wno-psabi
 install:
 	make copy
 	make install_service
