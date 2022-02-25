@@ -95,16 +95,16 @@ class IApp:
 class Snapshot:
   typedef uint64_t chunk_t;
 
-  struct PixelLine:
+  struct RLEBlock:
     uint32_t count
     chunk_t value
 
-    known PixelLine(uint32_t c, chunk_t v):
+    known RLEBlock(uint32_t c, chunk_t v):
       count = c
       value = v
   ;
 
-  vector<PixelLine> encoded
+  vector<RLEBlock> encoded
 
   public:
   int rotation
@@ -122,8 +122,12 @@ class Snapshot:
   ~Snapshot():
     pass
 
-  inline void encode_values(vector<PixelLine> &encoded, uint32_t count, chunk_t value):
+  inline void encode_values(vector<RLEBlock> &encoded, uint32_t count, chunk_t value):
     encoded.emplace_back(count, value)
+
+  void save_bpp():
+    fb := framebuffer::get()
+    bits_per_pixel = fb->get_screen_depth()
 
   void compress(remarkable_color *in, int bytes):
     ClockWatch cz
@@ -211,6 +215,7 @@ class AppBackground: public ui::Widget:
     vfb := self.get_vfb()
     debug "SNAPSHOTTING", CURRENT_APP
 
+    vfb->save_bpp()
     vfb->compress(fb->fbmem, fb->byte_size)
     vfb->rotation = util::rotation::get()
 
