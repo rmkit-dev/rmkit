@@ -1,5 +1,6 @@
 #include "state.h"
 #include "brush.h"
+#include "../../shared/snapshot.h"
 
 #ifdef REMARKABLE
 #define UNDO_STACK_SIZE 10
@@ -13,8 +14,8 @@ namespace app_ui:
   class Canvas: public ui::Widget:
     public:
     remarkable_color *mem
-    deque<shared_ptr<remarkable_color>> undo_stack;
-    deque<shared_ptr<remarkable_color>> redo_stack;
+    deque<shared_ptr<framebuffer::Snapshot>> undo_stack;
+    deque<shared_ptr<framebuffer::Snapshot>> redo_stack;
     int byte_size
     int stroke_width = 1
     remarkable_color stroke_color = BLACK
@@ -40,9 +41,10 @@ namespace app_ui:
       fb->dither = framebuffer::DITHER::BAYER_2
       self.load_vfb()
       fbcopy := shared_ptr<remarkable_color>((remarkable_color*) malloc(self.byte_size))
-      memcpy(fbcopy.get(), self.fb->fbmem, self.byte_size)
+      snapshot := make_shared<framebuffer::Snapshot>(w, h)
+      snapshot->compress(self.fb->fbmem, self.fb->byte_size)
 
-      self.undo_stack.push_back(fbcopy)
+      self.undo_stack.push_back(snapshot)
       fb->reset_dirty(self.dirty_rect)
 
       self.eraser = brush::ERASER
@@ -171,13 +173,22 @@ namespace app_ui:
       dirty_rect = self.vfb->dirty_area
       debug "ADDING TO UNDO STACK, DIRTY AREA IS", \
         dirty_rect.x0, dirty_rect.y0, dirty_rect.x1, dirty_rect.y1
-      fbcopy := shared_ptr<remarkable_color>((remarkable_color*) malloc(self.byte_size))
-      memcpy(fbcopy.get(), vfb->fbmem, self.byte_size)
-      self.undo_stack.push_back(fbcopy)
-      self.redo_stack.clear()
-
-      trim_stacks()
+      remarkable_color* fbcopy = (remarkable_color*) malloc(self.byte_size)
+      memcpy(fbcopy, vfb->fbmem, self.byte_size)
       fb->reset_dirty(self.dirty_rect)
+
+      ui::TaskQueue::add_task([=]() {
+        snapshot := make_shared<framebuffer::Snapshot>(w, h)
+        snapshot->compress(fbcopy, self.byte_size)
+        free(fbcopy)
+
+
+        self.undo_stack.push_back(snapshot)
+        self.redo_stack.clear()
+
+        trim_stacks()
+      })
+
 
     void undo():
       if self.undo_stack.size() > 1:
@@ -185,16 +196,16 @@ namespace app_ui:
         self.redo_stack.push_back(self.undo_stack.back())
         self.undo_stack.pop_back()
         undofb := self.undo_stack.back()
-        memcpy(self.fb->fbmem, undofb.get(), self.byte_size)
-        memcpy(vfb->fbmem, undofb.get(), self.byte_size)
+        undofb.get()->decompress(self.fb->fbmem)
+        undofb.get()->decompress(vfb->fbmem)
         ui::MainLoop::full_refresh()
 
     void redo():
       if self.redo_stack.size() > 0:
         redofb := self.redo_stack.back()
         self.redo_stack.pop_back()
-        memcpy(self.fb->fbmem, redofb.get(), self.byte_size)
-        memcpy(vfb->fbmem, redofb.get(), self.byte_size)
+        redofb.get()->decompress(self.fb->fbmem)
+        redofb.get()->decompress(vfb->fbmem)
         self.undo_stack.push_back(redofb)
         ui::MainLoop::full_refresh()
     // }}}
