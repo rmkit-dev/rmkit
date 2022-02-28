@@ -929,6 +929,7 @@ class App: public IApp:
     self.open_input_fifo()
     self.setup_gestures()
 
+    ui::MainLoop::filter_palm_events = true
 
     ui::MainLoop::key_event += PLS_DELEGATE(self.handle_key_event)
     ui::MainLoop::motion_event += PLS_DELEGATE(self.handle_motion_event)
