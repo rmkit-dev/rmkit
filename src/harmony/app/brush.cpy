@@ -246,7 +246,7 @@ namespace app_ui:
       for auto point: self.points:
         if last_p.x != -1:
           self.fb->draw_line(last_p.x, last_p.y, point.x, point.y, \
-          self.stroke_width, WHITE)
+          self.stroke_width, TRANSPARENT)
         last_p = point
       self.points.clear()
 
@@ -282,8 +282,7 @@ namespace app_ui:
           s_mod := (abs(tilt_x) + abs(tilt_y)) / 512
           sw := int(self.stroke_width * fpressure) + (s_mod * fpressure)
           if sw >= 1:
-            self.fb->draw_line(last_p.x, last_p.y, point.x, point.y, \
-          sw, WHITE)
+            self.fb->draw_line(last_p.x, last_p.y, point.x, point.y, sw, TRANSPARENT)
         last_p = point
       self.points.clear()
 // }}}

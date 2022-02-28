@@ -7,6 +7,7 @@
 #include "input/input.h"
 #include "util/rm2fb.h"
 #include "util/machine_id.h"
+#include "util/lsdir.h"
 
 static void _rmkit_exit() __attribute__((destructor))
 static void _rmkit_exit(int signum):

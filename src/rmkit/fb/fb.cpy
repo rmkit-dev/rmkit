@@ -185,6 +185,9 @@ namespace framebuffer:
     inline void _set_pixel(int x, int y, remarkable_color c):
       self._set_pixel(&self.fbmem[y*self.width+x], x, y, c)
 
+    inline remarkable_color _get_pixel(int x, int y):
+      return self.fbmem[y*self.width+x]
+
     virtual tuple<int,int> get_virtual_size():
       debug "GET VIRTUAL SIZE NOT IMPLEMENTED"
       exit(1)
@@ -750,6 +753,7 @@ namespace framebuffer:
 
     virtual ~FileFB():
       msync(self.fbmem, self.byte_size, MS_ASYNC)
+      munmap(self.fbmem, self.byte_size)
 
     virtual tuple<int,int> get_virtual_size():
       return self.width, self.height
@@ -773,6 +777,11 @@ namespace framebuffer:
 
     virtual tuple<int,int> get_virtual_size():
       return self.width, self.height
+
+    ~VirtualFB():
+      if self.fbmem != NULL:
+        free(self.fbmem)
+      self.fbmem = NULL
 
   class RemarkableFB: public HardwareFB:
     public:

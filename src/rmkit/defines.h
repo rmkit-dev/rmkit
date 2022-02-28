@@ -24,6 +24,7 @@
 // {{{ CANVAS RELATED DEFINES
 #define ERASER_STYLUS -10
 #define ERASER_RUBBER -11
+#define TRANSPARENT -12
 #define MAX_PRESSURE 4096.0
 
 // }}}

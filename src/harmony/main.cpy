@@ -75,6 +75,7 @@ class App:
     brush_config_button->set_option_size(200, TOOLBAR_HEIGHT)
     brush_config_button->set_option_offset(0, -TOOLBAR_HEIGHT)
     toolbar->pack_start(brush_config_button)
+    toolbar->pack_start(new app_ui::LayerButton(0, 0, 150, TOOLBAR_HEIGHT, canvas), 10)
 
     toolbar->pack_center(new app_ui::LiftBrushButton(0, 0, 114, 100, canvas))
 
@@ -92,14 +93,6 @@ class App:
   def handle_key_event(input::SynKeyEvent &key_ev):
     if key_ev.is_pressed:
       switch key_ev.key:
-        #if REMARKABLE
-        case KEY_LEFT:
-          canvas->prev_page()
-          break
-        case KEY_RIGHT:
-          canvas->next_page()
-          break
-        #endif
         case KEY_POWER:
           manage_button->select_exit()
           break

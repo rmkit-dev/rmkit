@@ -1,4 +1,3 @@
-#include <dirent.h>
 #include <algorithm>
 
 string ABOUT_TEXT = "\
@@ -25,16 +24,43 @@ namespace app_ui:
         if t == "CANCEL":
           ui::MainLoop::hide_overlay()
 
-  class SaveDialog: public ui::InfoDialog:
+  class ExportDialog: public ui::InfoDialog:
     public:
-      SaveDialog(int x, y, w, h): ui::InfoDialog(x, y, w, h):
+      ExportDialog(int x, y, w, h): ui::InfoDialog(x, y, w, h):
         pass
 
-  class LoadDialog: public ui::Pager:
+  class SaveProjectDialog: public ui::ConfirmationDialog:
+    public:
+      Canvas *canvas
+      ui::TextInput *projectInput
+      SaveProjectDialog(int x, y, w, h, Canvas *c): ui::ConfirmationDialog(x, y, w, h):
+        canvas = c
+        self.set_title("Save project as")
+        style := ui::Stylesheet().justify_left().valign_middle()
+        self.projectInput = \
+          new ui::TextInput(20, 20, self.w - 40, 50, "")
+        self.projectInput->set_style(style)
+        self.contentWidget = self.projectInput
+        self.projectInput->events.done += PLS_LAMBDA(string text):
+          self.mark_redraw()
+          canvas->set_project_name(text)
+        ;
+
+      void before_render():
+        self.projectInput->text = canvas->project_name
+        ui::ConfirmationDialog::before_render()
+
+      void on_button_selected(string t):
+        if t == "OK":
+          canvas->save_project()
+
+        ui::MainLoop::hide_overlay()
+
+  class ImportDialog: public ui::Pager:
     public:
       Canvas *canvas
 
-      LoadDialog(int x, y, w, h, Canvas *c): ui::Pager(x, y, w, h, self):
+      ImportDialog(int x, y, w, h, Canvas *c): ui::Pager(x, y, w, h, self):
         self.set_title("Select a png file...")
 
         self.canvas = c
@@ -42,18 +68,7 @@ namespace app_ui:
         self.page_size = self.h / self.opt_h - 1
 
       void populate():
-        DIR *dir
-        struct dirent *ent
-
-        vector<string> filenames
-        if ((dir = opendir (SAVE_DIR)) != NULL):
-          while ((ent = readdir (dir)) != NULL):
-            str_d_name := string(ent->d_name)
-            if str_d_name != "." and str_d_name != ".." and ends_with(str_d_name, "png"):
-              filenames.push_back(str_d_name)
-          closedir (dir)
-        else:
-          perror ("")
+        filenames := util::lsdir(SAVE_DIR, ".png")
         sort(filenames.begin(),filenames.end())
         self.options = filenames
 
@@ -70,4 +85,21 @@ namespace app_ui:
         layout->pack_start(row)
         row->pack_start(tn)
         row->pack_start(d)
+
+  class LoadProjectDialog: public ui::Pager:
+    public:
+      Canvas *canvas
+      LoadProjectDialog(int x, y, w, h, Canvas *c): ui::Pager(x, y, w, h, self):
+        canvas = c
+        self.set_title("Load Project")
+
+      void on_row_selected(string name):
+        debug "LOADING PROJECT", name
+        canvas->load_project(string(SAVE_DIR) + "/" + name)
+        ui::MainLoop::hide_overlay()
+
+      void populate():
+        vector<string> filenames = util::lsdir(SAVE_DIR, ".hrm")
+        sort(filenames.begin(),filenames.end())
+        self.options = filenames
 
