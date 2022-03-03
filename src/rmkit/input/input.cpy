@@ -101,6 +101,8 @@ namespace input:
       self.open_device("/dev/input/event0")
       self.open_device("/dev/input/event1")
       self.open_device("/dev/input/event2")
+      self.open_device("/dev/input/event3")
+      self.open_device("/dev/input/event4")
       #elif KOBO
       self.open_device("/dev/input/event0")
       self.open_device("/dev/input/event1")
@@ -134,7 +136,7 @@ namespace input:
       fd := open(fname.c_str(), O_RDWR)
       if fd == -1:
         debug "ERROR OPENING INPUT DEVICE", fname
-        exit(1)
+        return
 
       switch input::id_by_capabilities(fd):
         case STYLUS:

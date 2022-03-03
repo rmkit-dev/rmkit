@@ -48,11 +48,11 @@ namespace input:
         return STYLUS
       if check_bit_set(fd, EV_KEY, KEY_POWER):
         return BUTTONS
-    if test_bit(EV_REL, bit):
-      if check_bit_set(fd, EV_ABS, ABS_MT_SLOT):
-        return TOUCH
-      if check_bit_set(fd, EV_KEY, BTN_TOOL_PEN):
-        return TOUCH
+
+    if check_bit_set(fd, EV_ABS, ABS_MT_SLOT):
+      return TOUCH
+    if check_bit_set(fd, EV_KEY, BTN_TOOL_PEN):
+      return TOUCH
 
     return UNKNOWN
 
