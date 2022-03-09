@@ -18,6 +18,9 @@ namespace input:
     def update(input_event data):
       pass
 
+    void handle_drop(int fd):
+      pass
+
     def print_event(input_event &data):
       #ifdef DEBUG_INPUT_EVENT
       fprintf(stderr, "Event: time %ld, type: %x, code :%x, value %d\n", \
@@ -394,3 +397,16 @@ namespace input:
           self.handle_key(data)
         case 3:
           self.handle_abs(data)
+
+    // based on https://www.linuxjournal.com/files/linuxjournal.com/linuxjournal/articles/064/6429/6429l10.html
+    handle_drop(int fd):
+      x = -1
+      y = -1
+      uint8_t key_b[KEY_MAX/8 + 1];
+      ioctl(fd, EVIOCGKEY(sizeof(key_b)), key_b)
+      input_event data
+      data.type = 1
+      for yalv := 0; yalv < KEY_MAX; yalv++
+        data.code = yalv
+        data.value = test_bit(yalv, key_b)
+        handle_key(data)

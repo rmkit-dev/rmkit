@@ -28,6 +28,7 @@ namespace input:
     input_event ev_data[64]
     T prev_ev, event
     vector<T> events
+    bool syn_dropped = false
 
     InputClass():
       pass
@@ -46,7 +47,7 @@ namespace input:
 
     void handle_event_fd():
       int bytes = read(fd, ev_data, sizeof(input_event) * 64);
-      if bytes < sizeof(struct input_event) || bytes == -1:
+      if bytes < sizeof(input_event) || bytes == -1:
         return
 
       #ifndef DEV
@@ -57,9 +58,15 @@ namespace input:
       #endif
       event.initialize()
 
-      for int i = 0; i < bytes / sizeof(struct input_event); i++:
+      for int i = 0; i < bytes / sizeof(input_event); i++:
 //        debug fd, "READ EVENT", ev_data[i].type, ev_data[i].code, ev_data[i].value
         if ev_data[i].type == EV_SYN:
+          if ev_data[i].code == SYN_DROPPED:
+            syn_dropped = true
+            event.handle_drop(fd)
+            continue
+
+          syn_dropped = false
           event.finalize()
           events.push_back(event)
           #ifdef DEBUG_INPUT_EVENT
@@ -68,7 +75,8 @@ namespace input:
           prev_ev = event
           event.initialize()
         else:
-          event.update(ev_data[i])
+          if !syn_dropped:
+            event.update(ev_data[i])
 
   class Input:
     private:
@@ -258,7 +266,7 @@ namespace input:
       for auto ev : self.button.events:
         self.all_key_events.push_back(self.button.marshal(ev))
 
-      #ifdef DEBUG_INPUT_EVENT
+      #ifdef DEBUG_MOUSE_EVENT
       for auto syn_ev : self.all_motion_events:
         debug "SYN MOUSE", syn_ev.x, syn_ev.y, syn_ev.pressure, syn_ev.left, syn_ev.eraser
       #endif
