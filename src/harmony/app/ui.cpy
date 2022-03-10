@@ -179,8 +179,7 @@ namespace app_ui:
         self.exd->set_title(title)
         self.exd->show()
       if option == LOAD:
-        if self.ld == NULL:
-          self.ld = new LoadProjectDialog(0, 0, DIALOG_WIDTH, LOAD_DIALOG_HEIGHT, self.canvas)
+        self.ld = new LoadProjectDialog(0, 0, DIALOG_WIDTH, LOAD_DIALOG_HEIGHT, self.canvas)
         self.ld->populate()
         self.ld->setup_for_render()
         self.ld->show()
@@ -317,11 +316,10 @@ namespace app_ui:
         self.sd->show()
         return
       else if name == "Import":
-        if self.id == NULL:
-          self.id = new ImportDialog(0, 0, DIALOG_WIDTH, LOAD_DIALOG_HEIGHT, canvas)
-          self.id->on_hide += PLS_LAMBDA(auto ev):
-            self.populate_and_show()
-          ;
+        self.id = new ImportDialog(0, 0, DIALOG_WIDTH, LOAD_DIALOG_HEIGHT, canvas)
+        self.id->on_hide += PLS_LAMBDA(auto ev):
+          self.populate_and_show()
+        ;
 
         self.id->populate()
         self.id->setup_for_render()
