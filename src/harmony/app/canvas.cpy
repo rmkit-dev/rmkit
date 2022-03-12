@@ -196,7 +196,7 @@ namespace app_ui:
         layers[cur_layer].fb->dirty_area = {0, 0, px_width, px_height}
 
     void render():
-      render_layers()
+      render_layers(self.vfb)
 
       dirty_rect := self.vfb->dirty_area
       for int i = dirty_rect.y0; i < dirty_rect.y1; i++:
@@ -222,7 +222,15 @@ namespace app_ui:
       datecstr := datestr.c_str()
       sprintf(filename, "%s/%s-%s%s", SAVE_DIR,
         self.project_name.c_str(), datecstr, ".png")
-      return self.vfb->save_lodepng(filename, 0, 0, w, h)
+
+      // render layers
+      sfb := make_shared<framebuffer::VirtualFB>(self.fb->width, self.fb->height)
+      sfb->draw_rect(0, 0, self.vfb->width, self.vfb->height, WHITE)
+
+      self.render_layers(sfb)
+
+
+      return sfb->save_lodepng(filename, 0, 0, w, h)
 
     string save_layer():
       sfb := framebuffer::VirtualFB(self.w, self.h)
@@ -604,15 +612,18 @@ namespace app_ui:
       clear_layer(src)
       mark_redraw()
 
-    void render_layers():
-      dr := self.layers[cur_layer].fb->dirty_area
-      vfb->update_dirty(vfb->dirty_area, dr.x0, dr.y0)
-      vfb->update_dirty(vfb->dirty_area, dr.x1, dr.y1)
+    void render_layers(shared_ptr<framebuffer::VirtualFB> src = nullptr):
+      if src == nullptr:
+        src = self.vfb
 
-      // set base of vfb to white
+      dr := self.layers[cur_layer].fb->dirty_area
+      src->update_dirty(src->dirty_area, dr.x0, dr.y0)
+      src->update_dirty(src->dirty_area, dr.x1, dr.y1)
+
+      // set base of src to white
       for int i = dr.y0; i < dr.y1; i++:
         for int j = dr.x0; j < dr.x1; j++:
-            vfb->_set_pixel(j, i, WHITE)
+            src->_set_pixel(j, i, WHITE)
 
       remarkable_color c
       remarkable_color tr = TRANSPARENT
@@ -625,6 +636,6 @@ namespace app_ui:
           for int j = dr.x0; j < dr.x1; j++:
             c = layer->_get_pixel(j, i)
             if c != tr:
-              vfb->_set_pixel(j, i, c)
+              src->_set_pixel(j, i, c)
     // }}}
 
