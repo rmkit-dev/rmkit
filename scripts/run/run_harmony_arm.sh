@@ -11,7 +11,7 @@ function cleanup() {
 trap cleanup EXIT
 trap cleanup SIGINT
 
-ARCH=arm make harmony
+TARGET=arm make harmony
 scp src/build/harmony.exe root@${HOST}:harmony/harmony.exe
 kill_remote_harmony
 echo "RUNNING HARMONY"

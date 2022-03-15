@@ -1,5 +1,5 @@
 HOST?=10.11.99.1
-ARCH?=rm
+TARGET?=rm
 CXX_BIN?=arm-linux-gnueabihf-g++
 CC_BIN?=arm-linux-gnueabihf-gcc
 STRIP_BIN?=arm-linux-gnueabihf-strip

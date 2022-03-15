@@ -5,18 +5,18 @@ APP?=$(EXE:.exe=)
 
 
 compile:
-ifeq ($(ARCH),x86)
+ifeq ($(TARGET),x86)
 	make compile_x86
-else ifeq ($(ARCH),kobo)
+else ifeq ($(TARGET),kobo)
 	make compile_kobo
-else ifeq ($(ARCH),rm)
+else ifeq ($(TARGET),rm)
 	make compile_remarkable
-else ifeq ($(ARCH),rm-dev)
+else ifeq ($(TARGET),rm-dev)
 	make compile_remarkable_fast
-else ifeq ($(ARCH),dev)
+else ifeq ($(TARGET),dev)
 	make compile_dev
 else
-	# Unsupported arch: ${ARCH}
+	# Unsupported arch: ${TARGET}
 	exit 1
 endif
 
@@ -73,10 +73,10 @@ install_draft-default:
 	scp -C ${DRAFT} root@${HOST}:/opt/etc/draft/
 
 resim:
-	ARCH=dev make && cd ../../ && resim ./src/build/${EXE}
+	TARGET=dev make && cd ../../ && resim ./src/build/${EXE}
 
 copy-default:
-	ARCH=${ARCH} $(MAKE) compile
+	TARGET=${TARGET} $(MAKE) compile
 	if [ -n "${DRAFT}" ]; then make install_draft; fi
 
 	ssh root@${HOST} killall -9 ${EXE} ${APP} || true
@@ -91,7 +91,7 @@ run: compile copy
 	ssh root@${HOST} systemctl stop xochitl
 	ssh root@${HOST} ${DEST}/${EXE}
 
-test: export ARCH=rm
+test: export TARGET=rm
 test: copy
 	HOST=${HOST} bash scripts/run_app_arm.sh ${EXE} || true
 

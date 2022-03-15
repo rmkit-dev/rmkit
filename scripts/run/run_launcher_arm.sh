@@ -11,7 +11,7 @@ function cleanup() {
 trap cleanup EXIT 
 trap cleanup SIGINT 
 
-ARCH=arm make remux
+TARGET=arm make remux
 scp src/build/remux.exe root@${HOST}:harmony/remux.exe
 kill_remote_remux
 echo "RUNNING LAUNCHER"

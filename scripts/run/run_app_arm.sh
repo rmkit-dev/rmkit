@@ -14,7 +14,7 @@ function cleanup() {
 trap cleanup EXIT
 trap cleanup SIGINT
 
-ARCH=arm make ${APP}
+TARGET=arm make ${APP}
 scp src/build/${APP} root@${HOST}:${BASE_DIR}/${APP}
 kill_remote_app
 echo "RUNNING ${APP}"

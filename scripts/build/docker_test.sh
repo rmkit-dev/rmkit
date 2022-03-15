@@ -2,7 +2,7 @@ OUTDIR=artifacts
 mkdir ${OUTDIR}
 docker run -i --rm -v "${PWD}/${OUTDIR}:/mnt/artifacts" rmkit /bin/bash << COMMANDS
 mkdir -p src/build
-ARCH=dev make
+TARGET=dev make
 echo "FINISHED BUILDING"
 ./scripts/test/gen_app_screenshots.sh
 echo "FINISHED TESTING"

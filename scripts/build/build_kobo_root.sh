@@ -1,6 +1,6 @@
 ROOT=${PWD}
-ARCH=kobo
-KOBO_ROOT=${ROOT}/${ARCH}
+TARGET=kobo
+KOBO_ROOT=${ROOT}/${TARGET}
 PLUGIN_DIR=${KOBO_ROOT}/mnt/onboard/.adds/rmkit
 
 build_dirs() {
@@ -16,7 +16,7 @@ build_dirs() {
 
 copy_files() {
   echo "COPYING FILES TO KOBO ROOT"
-  pushd artifacts/${ARCH}
+  pushd artifacts/${TARGET}
   cp -v animation_demo input_demo mines remux rpncalc wordlet dumbskull ${PLUGIN_DIR}/bin/apps/
   popd
   pushd ${PLUGIN_DIR}/bin/apps/
@@ -27,7 +27,7 @@ copy_files() {
 tar_files() {
   echo "TARRING KOBO ROOT"
   pushd kobo
-  tar -cvzf ${ROOT}/artifacts/${ARCH}/KoboRoot.tgz .
+  tar -cvzf ${ROOT}/artifacts/${TARGET}/KoboRoot.tgz .
   popd
 }
 
