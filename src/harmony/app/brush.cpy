@@ -2,6 +2,8 @@
 
 #include "../assets.h"
 
+#define EFFECT_MODIFIER 32
+
 namespace app_ui:
   typedef int BrushSize
 
@@ -33,7 +35,7 @@ namespace app_ui:
   struct Point
     int x = 0
     int y = 0
-    int tilt_x, tilt_y, pressure;
+    float tilt_x, tilt_y, pressure;
   ;
 
   class Brush:
@@ -73,27 +75,27 @@ namespace app_ui:
     virtual void destroy():
       pass
 
-    void stroke(int x, y, tilt_x, tilt_y, pressure):
-      self._stroke(x,y,tilt_x, tilt_y, pressure)
+    void stroke(int x, y, float tilt_x, tilt_y, pressure):
+      self._stroke(x,y, tilt_x, tilt_y, pressure)
       self.update_last_pos(x, y, tilt_x, tilt_y, pressure)
-    void stroke_start(int x, y, tilt_x, tilt_y, pressure):
+    void stroke_start(int x, y, float tilt_x, tilt_y, pressure):
       self._stroke_start(x,y,tilt_x, tilt_y, pressure)
       self.update_last_pos(x, y, tilt_x, tilt_y, pressure)
     void stroke_end():
       self._stroke_end()
       self.update_last_pos(-1, -1, -1, -1, -1)
 
-    virtual void _stroke_start(int x, y, tilt_x, tilt_y, pressure):
+    virtual void _stroke_start(int x, y, float tilt_x, tilt_y, pressure):
       pass
 
-    virtual void _stroke(int x, y, tilt_x, tilt_y, pressure):
+    virtual void _stroke(int x, y, float tilt_x, tilt_y, pressure):
       pass
 
     virtual void _stroke_end():
       // TODO return dirty_rect
       pass
 
-    void update_last_pos(int x, int y, tilt_x, tilt_y, pressure):
+    void update_last_pos(int x, int y, float tilt_x, tilt_y, pressure):
       self.last_x = x
       self.last_y = y
       p := Point{x,y,tilt_x,tilt_y,pressure}
@@ -117,11 +119,11 @@ namespace app_ui:
     ~Charcoal():
       pass
 
-    void _stroke(int x, y, tilt_x, tilt_y, pressure):
+    void _stroke(int x, y, float tilt_x, tilt_y, pressure):
       if self.last_x != -1:
-        s_mod := (abs(tilt_x) + abs(tilt_y)) / 512
+        s_mod := (abs(tilt_x) + abs(tilt_y)) * EFFECT_MODIFIER
         sw := self.stroke_width + s_mod
-        dither := pressure / (float(MAX_PRESSURE) * s_mod)
+        dither := pressure / 12.0
         self.fb->draw_line(self.last_x, self.last_y, x, y, sw, self.color, dither)
 
     void _stroke_end():
@@ -137,11 +139,11 @@ namespace app_ui:
     ~Pencil():
       pass
 
-    void _stroke(int x, y, tilt_x, tilt_y, pressure):
+    void _stroke(int x, y, float tilt_x, tilt_y, pressure):
       if self.last_x != -1:
-        s_mod := (abs(tilt_x) + abs(tilt_y)) / 512
+        s_mod := (abs(tilt_x) + abs(tilt_y)) * EFFECT_MODIFIER
         sw := self.stroke_width
-        dither := pressure / (float(MAX_PRESSURE/1.5) * s_mod)
+        dither := pressure / (s_mod/1.5)
         self.fb->draw_line(self.last_x, self.last_y, x, y, sw, self.color, dither)
 
     void _stroke_end():
@@ -157,9 +159,9 @@ namespace app_ui:
     ~Marker():
       pass
 
-    void _stroke(int x, y, tilt_x, tilt_y, pressure):
+    void _stroke(int x, y, float tilt_x, tilt_y, pressure):
       if self.last_x != -1:
-        sw := self.stroke_width + (abs(tilt_x) + abs(tilt_y)) / 512
+        sw := self.stroke_width + (abs(tilt_x) + abs(tilt_y)) * EFFECT_MODIFIER
         self.fb->draw_line(self.last_x, self.last_y, x, y, sw, self.color)
 
     void _stroke_end():
@@ -175,11 +177,11 @@ namespace app_ui:
     ~BallpointPen():
       pass
 
-    void _stroke(int x, y, tilt_x, tilt_y, pressure):
+    void _stroke(int x, y, float tilt_x, tilt_y, pressure):
       if self.last_x != -1:
         s_mod := 4
         sw := self.stroke_width
-        dither := pressure / (float(MAX_PRESSURE) * 1.2 * s_mod)
+        dither := pressure * s_mod
         self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width, self.color, dither)
 
   class FineLiner: public Brush:
@@ -192,7 +194,7 @@ namespace app_ui:
     ~FineLiner():
       pass
 
-    void _stroke(int x, y, tilt_x, tilt_y, pressure):
+    void _stroke(int x, y, float tilt_x, tilt_y, pressure):
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width, self.color)
 
@@ -210,10 +212,9 @@ namespace app_ui:
     ~PaintBrush():
       pass
 
-    void _stroke(int x, y, tilt_x, tilt_y, pressure):
-      fpressure := float(max(128, pressure))
-      fpressure /= float(MAX_PRESSURE)
-      s_mod := (abs(tilt_x) + abs(tilt_y)) / 512
+    void _stroke(int x, y, float tilt_x, tilt_y, pressure):
+      fpressure := float(max((float) 0.03, pressure))
+      s_mod := (abs(tilt_x) + abs(tilt_y)) * EFFECT_MODIFIER
       sw := int(self.stroke_width * fpressure) + (s_mod * fpressure)
       if sw < 1:
         return
@@ -236,7 +237,7 @@ namespace app_ui:
     ~Eraser():
       pass
 
-    void _stroke(int x, y, tilt_x, tilt_y, pressure):
+    void _stroke(int x, y, float tilt_x, tilt_y, pressure):
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, self.stroke_width,\
         ERASER_STYLUS)
@@ -260,11 +261,10 @@ namespace app_ui:
     ~RubberEraser():
       pass
 
-    void _stroke(int x, y, tilt_x, tilt_y, pressure):
+    void _stroke(int x, y, float tilt_x, tilt_y, pressure):
       if self.last_x != -1:
-        fpressure := float(max(128, pressure))
-        fpressure /= float(MAX_PRESSURE)
-        s_mod := (abs(tilt_x) + abs(tilt_y)) / 512
+        fpressure := float(max((float) 0.03, pressure))
+        s_mod := (abs(tilt_x) + abs(tilt_y)) * EFFECT_MODIFIER
         sw := int(self.stroke_width * fpressure) + (s_mod * fpressure)
         if sw >= 1:
           self.fb->draw_line(self.last_x, self.last_y, x, y, sw, ERASER_RUBBER)
@@ -277,9 +277,8 @@ namespace app_ui:
           tilt_y := point.tilt_y
           pressure := point.pressure
 
-          fpressure := float(max(128, pressure))
-          fpressure /= float(MAX_PRESSURE)
-          s_mod := (abs(tilt_x) + abs(tilt_y)) / 512
+          fpressure := float(max((float) 0.03, pressure))
+          s_mod := (abs(tilt_x) + abs(tilt_y)) * EFFECT_MODIFIER
           sw := int(self.stroke_width * fpressure) + (s_mod * fpressure)
           if sw >= 1:
             self.fb->draw_line(last_p.x, last_p.y, point.x, point.y, sw, TRANSPARENT)
@@ -298,7 +297,7 @@ namespace app_ui:
     ~Shaded():
       pass
 
-    void _stroke(int x, y, tilt_x, tilt_y, pressure):
+    void _stroke(int x, y, float tilt_x, tilt_y, pressure):
       dist := 1000 * MULTIPLIER
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, self.color)
@@ -319,8 +318,8 @@ namespace app_ui:
     ~Sketchy():
       pass
 
-    void _stroke(int x, y, tilt_x, tilt_y, pressure):
-      effect_strength := pressure / (float(MAX_PRESSURE))
+    void _stroke(int x, y, float tilt_x, tilt_y, pressure):
+      effect_strength := pressure
       dist := 4000 * MULTIPLIER * effect_strength
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, self.color)
@@ -347,9 +346,9 @@ namespace app_ui:
     ~Web():
       pass
 
-    void _stroke(int x, y, tilt_x, tilt_y, pressure):
-      s_mod := (abs(tilt_x) + abs(tilt_y)) / 512
-      effect_strength := pressure / float(MAX_PRESSURE)
+    void _stroke(int x, y, float tilt_x, tilt_y, pressure):
+      s_mod := (abs(tilt_x) + abs(tilt_y)) * EFFECT_MODIFIER
+      effect_strength := pressure
       dist := 5500 * MULTIPLIER * effect_strength
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, self.color)
@@ -371,8 +370,8 @@ namespace app_ui:
     ~Chrome():
       pass
 
-    void _stroke(int x, y, tilt_x, tilt_y, pressure):
-      effect_strength  := pressure / (float(MAX_PRESSURE))
+    void _stroke(int x, y, float tilt_x, tilt_y, pressure):
+      effect_strength  := pressure
       dist := 2000 * MULTIPLIER * effect_strength
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, self.color)
@@ -400,8 +399,8 @@ namespace app_ui:
     ~Fur():
       pass
 
-    void _stroke(int x, y, tilt_x, tilt_y, pressure):
-      effect_strength := pressure / (float(MAX_PRESSURE))
+    void _stroke(int x, y, float tilt_x, tilt_y, pressure):
+      effect_strength := pressure
       dist := 4000 * MULTIPLIER * effect_strength
 
       if self.last_x != -1:
@@ -425,8 +424,8 @@ namespace app_ui:
     ~LongFur():
       pass
 
-    void _stroke(int x, y, tilt_x, tilt_y, pressure):
-      effect_strength := pressure / (float(MAX_PRESSURE))
+    void _stroke(int x, y, float tilt_x, tilt_y, pressure):
+      effect_strength := pressure
       dist := 4000 * MULTIPLIER * effect_strength
       if self.last_x != -1:
         self.fb->draw_line(self.last_x, self.last_y, x, y, stroke_width, self.color)

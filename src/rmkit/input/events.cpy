@@ -15,6 +15,9 @@ namespace input:
     Event():
       self.id = next_id++
 
+    static void set_fd(int fd):
+      pass
+
     def update(input_event data):
       pass
 
@@ -63,7 +66,7 @@ namespace input:
     // tilt_y - what's the tilt y of the stylus? can be up to 4096
     int left = 0, right = 0, middle = 0
     int eraser = 0
-    int pressure = -1, tilt_x = 0xFFFF, tilt_y = 0xFFFF
+    float pressure = -1, tilt_x = 0xFFFF, tilt_y = 0xFFFF
 
 
   // class: input::SynKeyEvent
@@ -303,10 +306,17 @@ namespace input:
 
   class WacomEvent: public Event:
     public:
-    int x = -1, y = -1, pressure = -1
-    int tilt_x = 0xFFFF, tilt_y = 0xFFFF
+    float x = -1, y = -1, pressure = -1
+    float tilt_x = 0xFFFF, tilt_y = 0xFFFF
     int btn_touch = -1
     int eraser = -1
+
+    static int min_tilt_x = 0
+    static int max_tilt_x = 1.0
+    static int min_tilt_y = 0
+    static int max_tilt_y = 1.0
+    static int min_pressure = 0
+    static int max_pressure = 1.0
 
     // rM has swapped axis and inverted y by default
     static float scale_x=1.0
@@ -330,6 +340,28 @@ namespace input:
       swap_xy = true
       invert_y = true
       #endif
+
+    static void read_abs_extents(int fd, int abs_key, int &min_value, int &max_value):
+      struct input_absinfo abs_feat;
+      if ioctl(fd, EVIOCGABS(abs_key), &abs_feat)
+        debug "ERROR READING EXTENTS FOR", abs_key
+      else:
+        min_value = abs_feat.minimum;
+        max_value = abs_feat.maximum;
+
+    static void set_fd(int fd):
+      // check the axes
+      read_abs_extents(fd, ABS_TILT_X, min_tilt_x, max_tilt_x);
+      read_abs_extents(fd, ABS_TILT_Y, min_tilt_y, max_tilt_y);
+      read_abs_extents(fd, ABS_PRESSURE, min_pressure, max_pressure);
+
+      debug "TILT_X RANGE:", min_tilt_x, max_tilt_x
+      debug "TILT_Y RANGE:", min_tilt_y, max_tilt_y
+      debug "PRESSURE RANGE:", min_pressure, max_pressure
+
+    static inline float normalize(int value, _min, _max, float _dmin=-1, _dmax=1):
+      value = min(max(value, _min), _max)
+      return ((value - _min) / float(_max - _min)) * (_dmax - _dmin) + _dmin
 
     def marshal():
       SynMotionEvent syn_ev;
@@ -379,13 +411,13 @@ namespace input:
             self.x = data.value * scale_x
           break
         case ABS_TILT_X:
-          self.tilt_x = data.value
+          self.tilt_x = normalize(data.value, min_tilt_x, max_tilt_x, -1, 1)
           break
         case ABS_TILT_Y:
-          self.tilt_y = data.value
+          self.tilt_y = normalize(data.value, min_tilt_y, max_tilt_y, -1, 1)
           break
         case ABS_PRESSURE:
-          self.pressure = data.value
+          self.pressure = normalize(data.value, min_pressure, max_pressure)
           break
       #endif
       return

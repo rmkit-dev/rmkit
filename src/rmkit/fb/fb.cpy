@@ -234,7 +234,7 @@ namespace framebuffer:
           break
         default:
           if unlikely(dither != 1.0):
-            if fast_rand() / float(2 << 15) < dither:
+            if fast_rand() / float(1<<16) < dither:
               self._set_pixel(i, j, color)
           else:
               self._set_pixel(i, j, color)
