@@ -153,6 +153,12 @@ namespace app_ui:
       if cur_layer < self.layers.size():
         brush->set_framebuffer(self.layers[cur_layer].fb.get())
 
+    void update_eraser():
+      eraser->reset()
+
+      if cur_layer < self.layers.size():
+        eraser->set_framebuffer(self.layers[cur_layer].fb.get())
+
     bool ignore_event(input::SynMotionEvent &ev):
       return input::is_touch_event(ev) != NULL
 
@@ -182,6 +188,8 @@ namespace app_ui:
     void on_mouse_down(input::SynMotionEvent &ev):
       self.erasing = ev.eraser && ev.eraser != -1
       brush := self.erasing ? self.eraser : self.curr_brush
+      if self.erasing:
+        self.update_eraser()
       brush->stroke_start(ev.x, ev.y,ev.tilt_x, ev.tilt_y, ev.pressure)
 
     void mark_redraw():
