@@ -60,7 +60,7 @@ namespace ui:
     int btn_width
     int btn_height
     static Stylesheet BTN_STYLE = Stylesheet().font_size(48).valign_middle().justify_center()
-    static Stylesheet INPUT_STYLE = Stylesheet().font_size(64)
+    static Stylesheet INPUT_STYLE = Stylesheet().font_size(64).underline()
 
     KEYBOARD_EVENTS events
 
@@ -128,7 +128,7 @@ namespace ui:
       fw, fh = self.fb->get_display_size()
       v_layout := ui::VerticalLayout(0, 0, fw, fh, self.scene)
 
-      self.input_box = new MultiText(0,0,w,50,self.text)
+      self.input_box = new MultiText(50,50,w-50,50,self.text)
       self.input_box->set_style(INPUT_STYLE)
       v_layout.pack_start(input_box)
 
