@@ -327,8 +327,8 @@ namespace app_ui:
       self.project_name = file_tokens[0]
 
     void load_project_from_dir(string dir):
-      vector<string> filenames = util::lsdir(dir, ".raw")
-      sort(filenames.begin(), filenames.end())
+      filenames := util::lsdir(dir, ".raw")
+      sort(filenames.begin(), filenames.end()) // do we really need to sort?
 
       for auto f : filenames:
         tokens := str_utils::split(f, '.')

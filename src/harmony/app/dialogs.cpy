@@ -1,7 +1,3 @@
-#include <algorithm>
-#include <dirent.h>
-#include <sys/stat.h>
-
 string ABOUT_TEXT = "\
 rmHarmony is a sketching app based on libremarkable and mr. doob's harmony. \
 brought to you by the letters N and O. icons are from fontawesome \n\n\
@@ -70,25 +66,7 @@ namespace app_ui:
         self.page_size = self.h / self.opt_h - 1
 
       void populate():
-
-        vector<tuple<int, string>> entries; 
-
-        filenames := util::lsdir(SAVE_DIR, ".png")
-        char full_path[PATH_MAX]
-        struct stat buf
-        for (auto filename : filenames)
-          sprintf(full_path, "%s/%s", SAVE_DIR, filename.c_str())
-          if(stat(full_path, &buf))
-            debug "Failed stat() on ", full_path
-            continue
-          entries.push_back({buf.st_mtime, filename}) 
-        filenames.clear()
-        sort(entries.begin(), entries.end())
-
-        for (auto e : entries)
-          filenames.push_back(std::get<1>(e))
-        reverse(filenames.begin(),filenames.end())
-      
+        filenames := util::lsdir(SAVE_DIR, ".png", util::MODIFIED_DATE_DESC)
         self.options = filenames
 
       void on_row_selected(string name):
@@ -118,7 +96,6 @@ namespace app_ui:
         ui::MainLoop::hide_overlay()
 
       void populate():
-        vector<string> filenames = util::lsdir(SAVE_DIR, ".hrm")
-        sort(filenames.begin(),filenames.end())
+        filenames := util::lsdir(SAVE_DIR, ".hrm", util::MODIFIED_DATE_DESC)
         self.options = filenames
 
