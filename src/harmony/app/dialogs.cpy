@@ -66,7 +66,8 @@ namespace app_ui:
         self.page_size = self.h / self.opt_h - 1
 
       void populate():
-        filenames := util::lsdir(SAVE_DIR, ".png", util::MODIFIED_DATE_DESC)
+        filenames := util::lsdir(SAVE_DIR, ".png")
+        util::sort_by_modified_date(filenames, SAVE_DIR)
         self.options = filenames
 
       void on_row_selected(string name):
@@ -96,6 +97,7 @@ namespace app_ui:
         ui::MainLoop::hide_overlay()
 
       void populate():
-        filenames := util::lsdir(SAVE_DIR, ".hrm", util::MODIFIED_DATE_DESC)
+        filenames := util::lsdir(SAVE_DIR, ".hrm")
+        util::sort_by_modified_date(filenames, SAVE_DIR)
         self.options = filenames
 

@@ -5,8 +5,6 @@
 
 namespace util:
 
-  enum SORTING { DEFAULT, MODIFIED_DATE_DESC }
-
   void sort_by_modified_date(vector<string> &filenames, string dirname):
     struct stat buf
     vector<tuple<int, string>> entries
@@ -25,7 +23,7 @@ namespace util:
     
     reverse(filenames.begin(), filenames.end())
 
-  vector<string> lsdir(string dirname, string ext="", SORTING sort=DEFAULT):
+  vector<string> lsdir(string dirname, string ext=""):
     DIR *dir
     struct dirent *ent
 
@@ -38,8 +36,5 @@ namespace util:
       closedir (dir)
     else:
       perror ("")
-
-    if (sort == MODIFIED_DATE_DESC)
-      sort_by_modified_date(filenames, dirname)
 
     return filenames
