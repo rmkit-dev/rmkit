@@ -1,5 +1,3 @@
-#include <algorithm>
-
 string ABOUT_TEXT = "\
 rmHarmony is a sketching app based on libremarkable and mr. doob's harmony. \
 brought to you by the letters N and O. icons are from fontawesome \n\n\
@@ -69,7 +67,7 @@ namespace app_ui:
 
       void populate():
         filenames := util::lsdir(SAVE_DIR, ".png")
-        sort(filenames.begin(),filenames.end())
+        util::sort_by_modified_date(filenames, SAVE_DIR)
         self.options = filenames
 
       void on_row_selected(string name):
@@ -99,7 +97,7 @@ namespace app_ui:
         ui::MainLoop::hide_overlay()
 
       void populate():
-        vector<string> filenames = util::lsdir(SAVE_DIR, ".hrm")
-        sort(filenames.begin(),filenames.end())
+        filenames := util::lsdir(SAVE_DIR, ".hrm")
+        util::sort_by_modified_date(filenames, SAVE_DIR)
         self.options = filenames
 

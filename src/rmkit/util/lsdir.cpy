@@ -1,7 +1,28 @@
+#include <algorithm>
 #include <dirent.h>
+#include <sys/stat.h>
 #include "../shared/string.h"
 
 namespace util:
+
+  void sort_by_modified_date(vector<string> &filenames, string dirname):
+    struct stat buf
+    vector<tuple<int, string>> entries
+    for (auto filename : filenames)
+      string full_path = ""
+      full_path.append(dirname).append("/").append(filename)
+      if(stat(full_path.c_str(), &buf))
+        debug "Failed stat() on ", full_path
+        continue
+      entries.push_back({buf.st_mtime, filename}) 
+
+    sort(entries.begin(), entries.end())
+    filenames.clear()
+    for (auto e : entries)
+      filenames.push_back(std::get<1>(e))
+    
+    reverse(filenames.begin(), filenames.end())
+
   vector<string> lsdir(string dirname, string ext=""):
     DIR *dir
     struct dirent *ent
