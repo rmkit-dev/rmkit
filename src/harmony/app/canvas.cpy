@@ -523,7 +523,7 @@ namespace app_ui:
       int layer_id = layers.size()
       char filename[PATH_MAX]
       layer_name := unique_name("Layer")
-      sprintf(filename, "%s/layer.%i.%s.raw", LAYER_DIR, layer_id, layer_name.c_str())
+      sprintf(filename, "%s/layer.%03i.%s.raw", LAYER_DIR, layer_id, layer_name.c_str())
       Layer layer(
         w, h,
         make_shared<framebuffer::FileFB>(filename, self.fb->width, self.fb->height),
@@ -562,7 +562,7 @@ namespace app_ui:
       &layer := self.layers[layer_id]
 
       char filename[PATH_MAX]
-      sprintf(filename, "%s/layer.%i.%s.raw", LAYER_DIR, layer_id, layer_name.c_str())
+      sprintf(filename, "%s/layer.%03i.%s.raw", LAYER_DIR, layer_id, layer_name.c_str())
       run_command("mv", { layer.fb->filename, filename})
       layer.fb->filename = filename
       layer.name = layer_name
