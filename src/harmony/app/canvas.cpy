@@ -2,9 +2,13 @@
 #include "brush.h"
 #include "../../shared/snapshot.h"
 
+#include <iomanip>
+#include <ios>
+#include <sstream>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+
 
 #ifdef REMARKABLE
 #define UNDO_STACK_SIZE 10
@@ -519,11 +523,18 @@ namespace app_ui:
 
       return name
 
+    string leading_zeros(int layer_id) {
+      stringstream ss
+      ss << setw(3) << setfill('0') << layer_id
+      return ss.str()
+    }
+
     int new_layer(bool undoable=true):
       int layer_id = layers.size()
+      leading_zeros_layer_id := leading_zeros(layer_id)
       char filename[PATH_MAX]
       layer_name := unique_name("Layer")
-      sprintf(filename, "%s/layer.%i.%s.raw", LAYER_DIR, layer_id, layer_name.c_str())
+      sprintf(filename, "%s/layer.%s.%s.raw", LAYER_DIR, leading_zeros_layer_id.c_str(), layer_name.c_str())
       Layer layer(
         w, h,
         make_shared<framebuffer::FileFB>(filename, self.fb->width, self.fb->height),
@@ -561,8 +572,10 @@ namespace app_ui:
       sanitize_filename(layer_name)
       &layer := self.layers[layer_id]
 
+      leading_zeros_layer_id := leading_zeros(layer_id)
+
       char filename[PATH_MAX]
-      sprintf(filename, "%s/layer.%i.%s.raw", LAYER_DIR, layer_id, layer_name.c_str())
+      sprintf(filename, "%s/layer.%s.%s.raw", LAYER_DIR, leading_zeros_layer_id.c_str(), layer_name.c_str())
       run_command("mv", { layer.fb->filename, filename})
       layer.fb->filename = filename
       layer.name = layer_name
