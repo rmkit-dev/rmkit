@@ -631,7 +631,20 @@ namespace app_ui:
             dstfb->_set_pixel(j, i, c)
 
       clear_layer(src)
+      delete_layer(src)
       mark_redraw()
+
+    void clone_layer(int src):
+      new_layer := self.new_layer()
+      dstfb := layers[new_layer].fb
+      srcfb := layers[src].fb
+      remarkable_color c
+      remarkable_color tr = TRANSPARENT
+      for int i = 0; i < srcfb->height; i++:
+        for int j = 0; j < srcfb->width; j++:
+          c = srcfb->_get_pixel(j, i)
+          if c != tr:
+            dstfb->_set_pixel(j, i, c)
 
     void render_layers(shared_ptr<framebuffer::VirtualFB> src = nullptr):
       if src == nullptr:

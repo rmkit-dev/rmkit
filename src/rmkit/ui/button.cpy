@@ -84,9 +84,19 @@ namespace ui:
       if style.valign != Style::VALIGN::TOP:
         y_padding = 0
 
+      draw_y := 0
+      if has_icon:
+        switch self.style.valign:
+          case Style::VALIGN::MIDDLE:
+            draw_y += (self.h - iconWidget->h) / 2
+            break
+          case Style::VALIGN::BOTTOM:
+            draw_y += self.h - iconWidget->h
+            break
+
       if has_icon && has_text:
         self.iconWidget->x = self.x + x_padding
-        self.iconWidget->y = self.y + y_padding + 5
+        self.iconWidget->y = self.y + y_padding + 5 + draw_y
         self.textWidget->x = self.x + self.iconWidget->w + 20
         self.textWidget->y = self.y + y_padding
       else if has_icon:
@@ -97,7 +107,7 @@ namespace ui:
         else:
           padding = 0
         self.iconWidget->x = self.x + x_padding + padding
-        self.iconWidget->y = self.y + y_padding
+        self.iconWidget->y = self.y + y_padding + draw_y
       else if has_text:
         self.textWidget->x = self.x + x_padding
         self.textWidget->y = self.y + y_padding

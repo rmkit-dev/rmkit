@@ -45,6 +45,10 @@ namespace input:
     void lock():
       ioctl(fd, EVIOCGRAB, true)
 
+    void set_fd(int _fd):
+      fd = _fd
+      T::set_fd(fd)
+
     void handle_event_fd():
       int bytes = read(fd, ev_data, sizeof(input_event) * 64);
       if bytes < sizeof(input_event) || bytes == -1:
@@ -140,13 +144,13 @@ namespace input:
 
       switch input::id_by_capabilities(fd):
         case STYLUS:
-          self.wacom.fd = fd
+          self.wacom.set_fd(fd)
           break
         case BUTTONS:
-          self.button.fd = fd
+          self.button.set_fd(fd)
           break
         case TOUCH:
-          self.touch.fd = fd
+          self.touch.set_fd(fd)
           break
         case INVALID:
         case UNKNOWN:
