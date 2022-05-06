@@ -43,6 +43,12 @@ start_service`
 
 ## Changelog
 
+### Filter Palm Events (0.2.3)
+
+* add `filter_palm_events` option to remux.conf to prevent spurious palm
+  touches. Enable this is you have a custom gesture (like 3 or 4 finger) and
+  keep accidentally launching remux.
+
 ### Custom dialog size (0.2.1)
 
 * add `dialog_height` and `dialog_width` option to remux.conf for specifying
