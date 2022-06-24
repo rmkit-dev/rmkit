@@ -110,7 +110,7 @@ namespace app_ui:
   class LayerDialog: public ui::Pager:
     public:
     Canvas *canvas
-    ExportDialog *sd
+    ExportDialog *sd = NULL
     ImportDialog *id = NULL
     bool on_top = false
     ui::HorizontalLayout *button_bar
