@@ -92,7 +92,7 @@ namespace ui:
       self.set_layout(
         "QWERTYUOIP",
         "ASDFGHJKL",
-        "ZXCVBnm"
+        "ZXCVBNM"
       )
 
     void number_layout():
