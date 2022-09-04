@@ -355,10 +355,6 @@ namespace input:
       read_abs_extents(fd, ABS_TILT_Y, min_tilt_y, max_tilt_y);
       read_abs_extents(fd, ABS_PRESSURE, min_pressure, max_pressure);
 
-      debug "TILT_X RANGE:", min_tilt_x, max_tilt_x
-      debug "TILT_Y RANGE:", min_tilt_y, max_tilt_y
-      debug "PRESSURE RANGE:", min_pressure, max_pressure
-
     static inline float normalize(int value, _min, _max, float _dmin=-1, _dmax=1):
       value = min(max(value, _min), _max)
       return ((value - _min) / float(_max - _min)) * (_dmax - _dmin) + _dmin
