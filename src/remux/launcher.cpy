@@ -427,6 +427,10 @@ class App: public IApp:
     else if line == "back":
       ui::MainLoop::hide_overlay()
       self.show_last_app()
+    else if line == "suspend":
+      if not ui::MainLoop::overlay_is_visible:
+        app_bg->snapshot()
+      on_suspend()
     else if line.find("launch ") == 0:
       tokens := str_utils::split(line, ' ')
       if len(tokens) > 1:
