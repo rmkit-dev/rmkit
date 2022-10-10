@@ -24,8 +24,9 @@ namespace ui:
     void render():
       self.undraw()
       if image.buffer != NULL:
-          debug "RENDERING IMAGE", self.w, self.h, self.image.w, self.image.h
+          debug "RENDERING IMAGE", self.x, self.y, self.w, self.h
           self.fb->draw_bitmap(self.image, self.x, self.y, framebuffer::ALPHA_BLEND, 0)
+          self.fb->waveform_mode = WAVEFORM_MODE_AUTO
 
     image_data fetch(string t):
       if !MainLoop::is_visible(self):
