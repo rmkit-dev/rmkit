@@ -13,6 +13,7 @@ namespace ui:
     class RANGEINPUT_EVENTS:
       public:
       RANGEINPUT_EVENT change
+      RANGEINPUT_EVENT done
     ;
     RANGEINPUT_EVENTS events
 
@@ -30,6 +31,7 @@ namespace ui:
       pass
 
     void on_mouse_up(input::SynMotionEvent &ev):
+      self.events.done(self.percent)
       pass
 
     void on_mouse_move(input::SynMotionEvent &ev):
@@ -49,6 +51,9 @@ namespace ui:
     void set_range(int l, h):
       self.low = l
       self.high = h
+
+    void set_value(int value):
+       self.percent = (value - self.low) / float(self.high - self.low)
 
     int get_value():
       return self.percent * (self.high - self.low) + self.low

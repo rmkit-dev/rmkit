@@ -228,6 +228,32 @@ bool handle_widget(int line_no, ui::Scene scene, vector<string> &tokens):
       ;
       widget := give_id(id, textinput)
       scene->add(widget)
+    else if first == "range"
+      EXPECTING_INPUT = true
+      range := new ui::RangeInput(x,y,w,h)
+      toks := str_utils::split(t, ' ')
+      if len(toks) != 3:
+        debug "ERROR: range format is x y w h low high value"
+      else:
+        int l, h, v
+        try
+          l = stoi(toks[0])
+          h = stoi(toks[1])
+          v = stoi(toks[2])
+        catch (const std::invalid_argument& ia):
+          debug "ERROR: range format is x y w h low high value"
+          return true
+
+        range->set_range(l, h)
+        range->set_value(v)
+        range->set_style(ui::Stylesheet().justify(ui::Style::DEFAULT).valign(ui::Style::VALIGN::MIDDLE))
+        widget := give_id(id, range)
+        range->events.done += PLS_LAMBDA(auto &s):
+          debug "PRINTING REF", t, range->ref,  range->get_value()
+          print "range:", range->ref, ":", range->get_value()
+          exit(0)
+        ;
+        scene->add(widget)
     else if first == "image":
       image := give_id(id, new ui::Thumbnail(x,y,w,h,tokens[5]))
       scene->add(image)
