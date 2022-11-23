@@ -1,6 +1,7 @@
 #include <cstddef>
 #include "../build/rmkit.h"
 #include "../shared/string.h"
+#include "canvas.h"
 using namespace std
 
 WIDTH := 0
@@ -8,6 +9,19 @@ HEIGHT := 0
 EXPECTING_INPUT := false
 CLEAR_SCREEN := true
 TIMEOUT := 0
+
+
+map<string, SimpleCanvas*> canvases
+void on_exit(int s):
+  for auto it : canvases:
+    name := it.first
+    canvas := it.second
+    canvas->vfb->save_lodepng(name, 0, 0, canvas->w, canvas->h)
+
+def do_exit(int s):
+  on_exit(s)
+  exit(s)
+
 class App:
   public:
 
@@ -199,7 +213,7 @@ bool handle_widget(int line_no, ui::Scene scene, vector<string> &tokens):
           print "selected:", button->ref
         else:
           print "selected:", v
-        exit(0)
+        do_exit(0)
       ;
     else if first == "textinput":
       EXPECTING_INPUT = true
@@ -211,7 +225,7 @@ bool handle_widget(int line_no, ui::Scene scene, vector<string> &tokens):
           print "input:", textinput->ref, ":", s
         else:
           print "input:", t, ":", s
-        exit(0)
+        do_exit(0)
       ;
       widget := give_id(id, textinput)
       scene->add(widget)
@@ -224,7 +238,7 @@ bool handle_widget(int line_no, ui::Scene scene, vector<string> &tokens):
           print "input:", textinput->ref, ":", s
         else:
           print "input:", t, ":", s
-        exit(0)
+        do_exit(0)
       ;
       widget := give_id(id, textinput)
       scene->add(widget)
@@ -251,12 +265,22 @@ bool handle_widget(int line_no, ui::Scene scene, vector<string> &tokens):
         range->events.done += PLS_LAMBDA(auto &s):
           debug "PRINTING REF", t, range->ref,  range->get_value()
           print "range:", range->ref, ":", range->get_value()
-          exit(0)
+          do_exit(0)
         ;
         scene->add(widget)
     else if first == "image":
       image := give_id(id, new ui::Thumbnail(x,y,w,h,tokens[5]))
       scene->add(image)
+    else if first == "canvas":
+      if len(tokens) < 6 || len(tokens) > 7:
+        debug "Invalid format for canvas, expected: canvas x y w h rawfile [pngfile]"
+      else:
+        c := new SimpleCanvas(x,y,w,h,tokens[5])
+        if len(tokens) > 6:
+          save_as := tokens[6]
+          canvases[save_as] = c
+        canvas := give_id(id, c)
+        scene->add(canvas)
     else:
       return false
 
@@ -289,6 +313,9 @@ string until_closing_bracket(string line):
 def main():
   ui::Scene scene = ui::make_scene()
   ui::MainLoop::set_scene(scene)
+  ui::MainLoop::exit += [=](int s) {
+    on_exit(s)
+  };
 
   fb := framebuffer::get()
   WIDTH, HEIGHT = fb->get_display_size()
@@ -321,7 +348,7 @@ def main():
     ui::TaskQueue::add_task([=]() {
       sleep(TIMEOUT)
       print "timeout:", TIMEOUT
-      exit(0)
+      do_exit(0)
     });
 
   if CLEAR_SCREEN:
