@@ -28,6 +28,8 @@ static void _rmkit_exit(int signum):
     case SIGABRT:
       cerr << "received SIGABRT, exiting" << endl;
       break
+
+  ui::MainLoop::exit(signum)
   exit(signum)
 
 static void _rmkit_init() __attribute__((constructor))

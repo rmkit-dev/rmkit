@@ -35,6 +35,7 @@ namespace ui:
   // class: ui::MainLoop
   // The MainLoop is responsible for rendering widgets, dispatching events, and
   // other core work that happens on each iteration of the app.
+  PLS_DEFINE_SIGNAL(EXIT_EVENT, int)
   class MainLoop:
     public:
     static shared_ptr<framebuffer::FB> fb = framebuffer::get()
@@ -50,6 +51,7 @@ namespace ui:
 
     static input::Input in = {}
     static vector<input::Gesture*> gestures = {}
+    static EXIT_EVENT exit = {}
 
     // variable: motion_event
     // motion_event is used for subscribing to motion_events
