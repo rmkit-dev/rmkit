@@ -5,6 +5,6 @@ def main():
 
   fb->clear_screen()
 
-  fb->waveform_mode = WAVEFORM_MODE_GC16
+  fb->waveform_mode = WAVEFORM_MODE_INIT
   fb->redraw_screen(true)
 
