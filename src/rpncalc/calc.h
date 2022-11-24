@@ -6,8 +6,9 @@ enum keycodes {
     kdot, kexp, kplus, kmod, ke, kpercent,
     kminus, kpi, kround, ksqrt, klog, kln,
     ktimes, ksquare, kreciprocal, kfact, kabs, kpower,
-    kdiv, kpush, kswap, kcosh, ksinh, ktanh,
-    kexit, kdrop, kcos, ksin, ktan, kspare, keol, knop, kback
+    kdiv, kpush, kswap, kcosh, ksinh, ktanh, 
+    kacos, kasin, katan, kxsqrty, kex, kangmode, ktorad, ktodeg, ktenx,
+    kexit, kdrop, kcos, ksin, ktan, kspare, keol, knop, kback, kneg
 };
 
 typedef struct key {
@@ -38,6 +39,7 @@ class Calculator {
   public:
     void buttonPressed(Key key);
     void setOutputs(std::vector<StackElement*> outputs);
+    int angmode;
 
   private:
     void append(const char digit);
@@ -52,8 +54,10 @@ class Calculator {
     void handleBinaryOp(int);
     void handleConstants(int);
     void handleStack(int);
+    
+    double torad(double);
+    double todeg(double);
 
-    double history[5];
     bool prevWasOp;
     std::vector<StackElement*> stack;
 };

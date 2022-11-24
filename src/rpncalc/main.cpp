@@ -4,6 +4,10 @@
 #include <vector>
 #include <algorithm>
 #include <iostream>
+#include <float.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "calc.h"
 
 class CalcDisplay: public ui::Text {
@@ -71,8 +75,10 @@ double StackElement::getValue() {
 }
 
 void StackElement::setValue(double val) {
-  display->text = std::to_string(val);
-  display->text.erase(display->text.find_last_not_of('0') + 1, std::string::npos);
+  char *str;
+  asprintf(&str, "%.*G", DBL_DIG, val);
+  display->text = str;
+  free(str);
   display->padText();
   display->undraw();
   display->mark_redraw();
@@ -82,8 +88,10 @@ bool StackElement::isBlank() {
   return str_utils::trim_copy(display->text) == "";
 }
 
+
 class CalcButton: public ui::Button {
   public:
+    int angmodebtn;
     CalcButton(Calculator& c, Key key, int key_width)
       : calculator(c), key(key), Button(0, 0, key_width, 90, key.text) {
       this->set_style(ui::Stylesheet()
@@ -93,11 +101,27 @@ class CalcButton: public ui::Button {
           .justify_center()
           .valign_top()
           .border_all());
+      
+      if(strcmp(key.text,"RAD")==0) {
+         angmodebtn=1;
+      }else{
+         angmodebtn=0;
+      }
     }
 
     virtual void on_mouse_click(input::SynMotionEvent &ev) {
       dirty = 1;
-      this->calculator.buttonPressed(this->key);
+      if(!angmodebtn) {
+         this->calculator.buttonPressed(this->key);
+      }else{
+         if(this->calculator.angmode==0) {
+            this->calculator.angmode=1;
+            text="DEG";
+        }else{
+            this->calculator.angmode=0;
+            text="RAD";
+        }
+      }
     }
 
     void render_border() {
@@ -141,11 +165,11 @@ std::vector<StackElement*> buildCalculatorLayout(ui::Scene scene, Calculator &ca
   cout << "Stack created" << endl;
   // Keyboard - upsidedown so pack_end works properly
   Key keyboard[] = {
-              {".", kdot}, {"0", kzero}, {"E", kexp}, {"+", kplus}, {"mod", kmod}, {"round", kround}, {"%", kpercent}, {"", kspare}, {"", kspare}, {EOL, keol},
-              {"1", kone}, {"2", ktwo}, {"3", kthree}, {"-", kminus}, {"π", kpi}, {"e", ke}, {"√", ksqrt}, {"log", klog}, {"ln", kln}, {EOL, keol},
-              {"4", kfour}, {"5", kfive}, {"6", ksix}, {"*", ktimes}, {"x²", ksquare}, {"1/x", kreciprocal}, {"x!", kfact}, {"|x|", kabs}, {"x^y", kpower}, {EOL, keol},
-              {"7", kseven}, {"8", keight}, {"9", knine}, {"/", kdiv}, {"push", kpush}, {"swap", kswap}, {"cosh", kcosh}, {"sinh", ksinh}, {"tanh", ktanh}, {EOL, keol},
-              {"exit", kexit}, {"", knop}, {"", knop}, {"", knop}, {"drop", kdrop}, {"back", kback}, {"cos", kcos}, {"sin", ksin}, {"tan", ktan}, {EOL, keol},
+              {"0", kzero}, {".", kdot}, {"π", kpi}, {"+", kplus}, {"", kspare}, {"toDEG", ktodeg}, {"toRAD", ktorad}, {"x!", kfact}, {"RAD", kangmode}, {EOL, keol},
+              {"1", kone}, {"2", ktwo}, {"3", kthree}, {"-", kminus}, {"", knop}, {"√x", ksqrt}, {"x√y", kxsqrty}, {"LOG", klog}, {"LN", kln}, {EOL, keol},
+              {"4", kfour}, {"5", kfive}, {"6", ksix}, {"×", ktimes}, {"", knop}, {"x²", ksquare}, {"y^x", kpower}, {"10^x", ktenx}, {"e^x", kex}, {EOL, keol},
+              {"7", kseven}, {"8", keight}, {"9", knine}, {"÷", kdiv}, {"", knop}, {"1/x", kreciprocal}, {"SIN", ksin}, {"COS", kcos}, {"TAN", ktan}, {EOL, keol},
+              {"ENTER", kpush}, {"+/-", kneg}, {"EEX", kexp}, {"<=", kback}, {"DROP", kdrop}, {"SWAP", kswap}, {"ASIN", kasin}, {"ACOS", kacos}, {"ATAN", katan}, {EOL, keol},
       };
 
   size_t numberOfElements = sizeof(keyboard)/sizeof(keyboard[0]);
@@ -184,6 +208,7 @@ int main() {
   cout << "Building Layout" << endl;
   auto stack = buildCalculatorLayout(scene, calculator, width, height);
   calculator.setOutputs(stack);
+  calculator.angmode=0;
   cout << "Starting main loop" << endl;
   while (true) {
     ui::MainLoop::main();

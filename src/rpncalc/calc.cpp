@@ -115,6 +115,30 @@ void Calculator::handleUnaryOp(int keyid) {
           stack[0]->setValue(std::log(stack[0]->getValue()));
           didOp();
           break;
+      case keycodes::kneg:
+          if (stack[0]->isBlank()) {
+              return;
+          }
+          res = stack[0]->getValue();
+          stack[0]->setValue(-res);
+          didOp();
+          break;
+      case keycodes::ktorad:
+          if (stack[0]->isBlank()) {
+              return;
+          }
+          res = stack[0]->getValue();
+          stack[0]->setValue(torad(res));
+          didOp();
+          break;
+      case keycodes::ktodeg:
+          if (stack[0]->isBlank()) {
+              return;
+          }
+          res = stack[0]->getValue();
+          stack[0]->setValue(todeg(res));
+          didOp();
+          break;
       case keycodes::ksquare:
           if (stack[0]->isBlank()) {
               return;
@@ -131,11 +155,11 @@ void Calculator::handleUnaryOp(int keyid) {
           didOp();
           break;
       case keycodes::kfact:
-          if (stack[0]->isBlank()) {
+          if ((stack[0]->isBlank())||(stack[0]->getValue()<1.0)) {
               return;
           }
-          res = 1.0;
-          for(auto i = 1.0; i <= stack[0]->getValue(); ++i) {
+          res=1.0;
+          for(double i = 1.0; i <= stack[0]->getValue(); i++) {
               res *= i;
           }
           stack[0]->setValue(res);
@@ -150,6 +174,22 @@ void Calculator::handleUnaryOp(int keyid) {
       case keycodes::kpower:
           res = std::pow(stack[1]->getValue(), stack[0]->getValue());
           shuffleDown();
+          stack[0]->setValue(res);
+          didOp();
+          break;
+      case keycodes::kxsqrty:
+          res = std::pow(stack[1]->getValue(), 1.0/stack[0]->getValue());
+          shuffleDown();
+          stack[0]->setValue(res);
+          didOp();
+          break;
+      case keycodes::ktenx:
+          res = std::pow(10.0, stack[0]->getValue());
+          stack[0]->setValue(res);
+          didOp();
+          break;
+      case keycodes::kex:
+          res = std::pow(2.718281828459045, stack[0]->getValue());
           stack[0]->setValue(res);
           didOp();
           break;
@@ -178,7 +218,11 @@ void Calculator::handleUnaryOp(int keyid) {
           didOp();
           break;
       case keycodes::kcos:
-          res = std::cos(stack[0]->getValue());
+          res = stack[0]->getValue();
+          if(angmode==1) {
+             res=torad(res);
+          }
+          res = std::cos(res);
           if (stack[0]->isBlank()) {
               return;
           }
@@ -186,7 +230,11 @@ void Calculator::handleUnaryOp(int keyid) {
           didOp();
           break;
       case keycodes::ksin:
-          res = std::sin(stack[0]->getValue());
+          res = stack[0]->getValue();
+          if(angmode==1) {
+             res=torad(res);
+          }
+          res = std::sin(res);
           if (stack[0]->isBlank()) {
               return;
           }
@@ -194,9 +242,46 @@ void Calculator::handleUnaryOp(int keyid) {
           didOp();
           break;
       case keycodes::ktan:
-          res = std::tan(stack[0]->getValue());
+          res = stack[0]->getValue();
+          if(angmode==1) {
+             res=torad(res);
+          }
+          res = std::tan(res);
           if (stack[0]->isBlank()) {
               return;
+          }
+          stack[0]->setValue(res);
+          didOp();
+          break;
+      case keycodes::kacos:
+          if (stack[0]->isBlank()) {
+              return;
+          }
+          res = std::acos(stack[0]->getValue());
+          if(angmode==1) {
+             res=todeg(res);
+          }
+          stack[0]->setValue(res);
+          didOp();
+          break;
+      case keycodes::kasin:
+          if (stack[0]->isBlank()) {
+              return;
+          }
+          res = std::asin(stack[0]->getValue());
+          if(angmode==1) {
+             res=todeg(res);
+          }
+          stack[0]->setValue(res);
+          didOp();
+          break;
+      case keycodes::katan:
+          if (stack[0]->isBlank()) {
+              return;
+          }
+          res = std::atan(stack[0]->getValue());
+          if(angmode==1) {
+             res=todeg(res);
           }
           stack[0]->setValue(res);
           didOp();
@@ -250,6 +335,8 @@ void Calculator::handleConstants(int keyid) {
           shuffleUp();
           stack[0]->setValue(3.141592653589793);
           break;
+      case keycodes::kangmode:
+          break;
   }
 
 }
@@ -259,10 +346,9 @@ void Calculator::handleStack(int keyid) {
   switch(keyid) {
       case keycodes::kpush:
           if (stack[0]->isBlank()) {
-              break;
+              stack[0]->setText(stack[1]->getText());
           }
           shuffleUp();
-          stack[0]->setText("");
           break;
       case keycodes::kswap:
           if (stack[0]->isBlank()) {
@@ -290,6 +376,17 @@ void Calculator::buttonPressed(Key key) {
         file.close();
     }
 }
+
+
+double Calculator::torad(double v) {
+    return v*M_PI/180.0;
+}
+
+
+double Calculator::todeg(double v) {
+    return v*180.0/M_PI;
+}
+
 
 void Calculator::didOp()
 {
