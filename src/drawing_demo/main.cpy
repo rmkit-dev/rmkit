@@ -7,7 +7,7 @@ class Note: public ui::Widget:
   framebuffer::FileFB *vfb
   bool full_redraw
   Note(int x, y, w, h): Widget(x, y, w, h):
-    vfb = new framebuffer::FileFB("note.raw", self.fb->width, self.fb->height)
+    vfb = new framebuffer::FileFB("note.raw", self.fb->display_width, self.fb->height)
     self.full_redraw = true
 
   void on_mouse_up(input::SynMotionEvent &ev):
@@ -35,7 +35,7 @@ class Note: public ui::Widget:
 
     dirty_rect := self.vfb->dirty_area
     for int i = dirty_rect.y0; i < dirty_rect.y1; i++:
-      memcpy(&fb->fbmem[i*fb->width + dirty_rect.x0], &vfb->fbmem[i*fb->width + dirty_rect.x0],
+      memcpy(&fb->fbmem[i*fb->display_width + dirty_rect.x0], &vfb->fbmem[i*vfb->width + dirty_rect.x0],
         (dirty_rect.x1 - dirty_rect.x0) * sizeof(remarkable_color))
     self.fb->dirty_area = vfb->dirty_area
     self.fb->dirty = 1
