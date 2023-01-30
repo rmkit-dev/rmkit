@@ -192,7 +192,7 @@ namespace ui:
       enter_key->mouse.click += PLS_LAMBDA(auto &ev):
         self.hide()
         ui::MainLoop::refresh()
-        kev := KeyboardEvent {text:self.text}
+        kev := KeyboardEvent {self.text}
         self.events.changed(kev)
 
         self.events.done(kev)
