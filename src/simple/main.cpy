@@ -337,6 +337,9 @@ def main():
 
     str_utils::trim(line)
 
+    if line == "":
+      continue
+
     if line[0] == '[':
       line = until_closing_bracket(line)
     tokens := str_utils::split(line, ' ')
