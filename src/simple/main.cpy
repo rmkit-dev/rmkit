@@ -355,11 +355,12 @@ def main():
       continue
 
   if TIMEOUT > 0:
-    ui::TaskQueue::add_task([=]() {
+    thread *th = new thread([=]() {
       sleep(TIMEOUT)
       print "timeout:", TIMEOUT
       do_exit(0)
-    });
+    })
+    th->detach()
 
   if CLEAR_SCREEN:
     fb->clear_screen()
