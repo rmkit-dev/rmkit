@@ -7,7 +7,7 @@ label 500 500 200 50 you pressed: ${option}
 "
   echo "APP IS"
   echo "${app}"
-  option=`echo "${app}" | apps/simple.exe | grep 'selected:' | sed 's/selected: //'`
+  option=`echo "${app}" | src/build/simple | grep 'selected:' | sed 's/selected: //'`
   output=`cat /etc/os-release`
 
   sleep 0.1

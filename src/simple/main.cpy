@@ -10,6 +10,7 @@ EXPECTING_INPUT := false
 CLEAR_SCREEN := true
 TIMEOUT := 0
 
+extern bool DEBUG_OUTPUT = (getenv("DEBUG") != NULL)
 
 map<string, SimpleCanvas*> canvases
 void on_exit(int s):
@@ -77,16 +78,13 @@ int parse_to_int(string s, int line_no, max_val):
     cerr << "line " <<  line_no << " : " << s << " cannot be parsed to int"
   return i
 
-def dump_widgets(ui::Scene s):
-  for auto widget : s->widgets:
-    pass
-
 // directives
 ui::Style OLD_DEFAULT_STYLE = ui::Style::DEFAULT
 int PADDING_X = 0
 int PADDING_Y = 0
 def handle_directive(int line_no, ui::Scene s, vector<string> &tokens):
-  debug "HANDLING DIRECTIVE", tokens[0], tokens[1]
+  if DEBUG_OUTPUT:
+    debug "HANDLING DIRECTIVE", tokens[0], tokens[1]
   if tokens[0] == "@fontsize":
     ui::Style::DEFAULT.font_size = stoi(tokens[1])
 
@@ -190,7 +188,8 @@ bool handle_widget(int line_no, ui::Scene scene, vector<string> &tokens):
     if first_tokens.size() == 2:
       first = first_tokens[0]
       id = first_tokens[1]
-      debug "SETTING ID TO", id
+      if DEBUG_OUTPUT:
+        debug "SETTING ID TO", id
       ref = true
     else:
       id = next_id()
@@ -207,8 +206,6 @@ bool handle_widget(int line_no, ui::Scene scene, vector<string> &tokens):
       scene->add(widget)
       string v = t
       button->mouse.click += [=](auto &ev):
-        dump_widgets(scene)
-
         if ref:
           print "selected:", button->ref
         else:
@@ -220,7 +217,8 @@ bool handle_widget(int line_no, ui::Scene scene, vector<string> &tokens):
       textinput := new ui::TextInput(x,y,w,h,t)
       textinput->set_style(ui::Stylesheet().justify(ui::Style::DEFAULT).valign(ui::Style::VALIGN::MIDDLE))
       textinput->events.done += PLS_LAMBDA(string &s):
-        debug "PRINTING REF", t, textinput->ref,  s
+        if DEBUG_OUTPUT:
+          debug "PRINTING REF", t, textinput->ref,  s
         if ref:
           print "input:", textinput->ref, ":", s
         else:
@@ -233,7 +231,8 @@ bool handle_widget(int line_no, ui::Scene scene, vector<string> &tokens):
       EXPECTING_INPUT = true
       textinput := new ui::TextArea(x,y,w,h,t)
       textinput->events.done += PLS_LAMBDA(string &s):
-        debug "PRINTING REF", t, textinput->ref,  s
+        if DEBUG_OUTPUT:
+          debug "PRINTING REF", t, textinput->ref,  s
         if ref:
           print "input:", textinput->ref, ":", s
         else:
@@ -263,7 +262,8 @@ bool handle_widget(int line_no, ui::Scene scene, vector<string> &tokens):
         range->set_style(ui::Stylesheet().justify(ui::Style::DEFAULT).valign(ui::Style::VALIGN::MIDDLE))
         widget := give_id(id, range)
         range->events.done += PLS_LAMBDA(auto &s):
-          debug "PRINTING REF", t, range->ref,  range->get_value()
+          if DEBUG_OUTPUT:
+            debug "PRINTING REF", t, range->ref,  range->get_value()
           print "range:", range->ref, ":", range->get_value()
           do_exit(0)
         ;
@@ -271,6 +271,16 @@ bool handle_widget(int line_no, ui::Scene scene, vector<string> &tokens):
     else if first == "image":
       image := give_id(id, new ui::Thumbnail(x,y,w,h,tokens[5]))
       scene->add(image)
+      string v = t
+
+      if ref:
+        EXPECTING_INPUT = true
+
+      image->mouse.click += [=](auto &ev):
+        if ref:
+          print "selected:", image->ref
+          do_exit(0)
+      ;
     else if first == "canvas":
       if len(tokens) < 6 || len(tokens) > 7:
         debug "Invalid format for canvas, expected: canvas x y w h rawfile [pngfile]"

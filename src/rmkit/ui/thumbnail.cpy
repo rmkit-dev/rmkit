@@ -24,7 +24,6 @@ namespace ui:
     void render():
       self.undraw()
       if image.buffer != NULL:
-          debug "RENDERING IMAGE", self.x, self.y, self.w, self.h
           self.fb->draw_bitmap(self.image, self.x, self.y, framebuffer::ALPHA_BLEND, 0)
           self.fb->waveform_mode = WAVEFORM_MODE_AUTO
 
