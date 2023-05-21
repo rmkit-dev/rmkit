@@ -29,5 +29,7 @@ and used like `lamp < example.in`
 * finger down x1 y1
 * finger move x1 y1
 * finger up
+* swipe up
+* swipe down
 * swipe left
 * swipe right

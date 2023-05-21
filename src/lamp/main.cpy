@@ -317,6 +317,16 @@ void act_on_line(string line):
       write_events(touch_fd, finger_move(1000, 500, 200, 500, 20)) // swipe right
       write_events(touch_fd, finger_up())
       usleep(100 * 1000)
+    else if  action == "up":
+      write_events(touch_fd, finger_up())
+      write_events(touch_fd, finger_move(500, 800, 500, 200, 20)) // swipe up
+      write_events(touch_fd, finger_up())
+      usleep(100 * 1000)
+    else if  action == "down":
+      write_events(touch_fd, finger_up())
+      write_events(touch_fd, finger_move(500, 200, 500, 800, 20)) // swipe down
+      write_events(touch_fd, finger_up())
+      usleep(100 * 1000)
     else:
       debug "UNKNOWN SWIPE DIRECTION", action
     return
