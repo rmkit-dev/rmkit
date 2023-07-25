@@ -6,6 +6,8 @@ D_W=1408
 SIMPLE=/opt/bin/simple
 OPKG=/opt/bin/opkg
 PROC_NAME=nao
+_PRELOAD=$LD_PRELOAD
+LD_PRELOAD=
 
 # {{{ FIELD SEPARATOR STUFF
 function use_newline_separator() {
@@ -40,7 +42,7 @@ function run_cmd() {
     outfile="/home/root/.cache/nao/output"
     errfile="/home/root/.cache/nao/errors"
     mkdir -p /home/root/.cache/nao/ 2>/dev/null
-    LD_PRELOAD= PATH="/opt/bin:$PATH" ${cmd} > "${outfile}" 2> "${errfile}" &
+    PATH="/opt/bin:$PATH" ${cmd} > "${outfile}" 2> "${errfile}" &
     pid="$!"
     output=`cat "${outfile}" | tail -n50`
     while   ps | grep -v grep | grep " $pid "
