@@ -12,4 +12,4 @@ APP=rmkit
 ASSET_DIR=assets/
 
 clean:
-	rm ${SRC_DIR}/build/${EXE}
+	rm -f ${SRC_DIR}/build/${EXE}
