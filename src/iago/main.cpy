@@ -35,7 +35,11 @@ class AppBackground: public ui::Widget:
 class SettingsDialog: public ui::InfoDialog:
   public:
   ui::ToggleButton* snap_enabled
+  ui::ToggleButton* rows_header_enabled
+  ui::ToggleButton* columns_header_enabled
   ui::RangeInput* snap_range
+  ui::RangeInput* rows_range
+  ui::RangeInput* columns_range
 
   SettingsDialog(int x, y, w, h): ui::InfoDialog(x, y, w, h):
     self.set_title(string("Settings"))
@@ -45,6 +49,10 @@ class SettingsDialog: public ui::InfoDialog:
     debug "SAVING SETTINGS"
     shape::Shape::set_snapping(self.snap_range->get_value())
     shape::Shape::snap_enabled = self.snap_enabled->toggled
+    shape::Shape::rows_header_enabled = self.rows_header_enabled->toggled
+    shape::Shape::columns_header_enabled = self.columns_header_enabled->toggled
+    shape::Shape::rows = self.rows_range->get_value()
+    shape::Shape::columns = self.columns_range->get_value()
 
   void on_button_selected(string text):
     ui::MainLoop::hide_overlay()
@@ -82,10 +90,47 @@ class SettingsDialog: public ui::InfoDialog:
     self.snap_range = new ui::RangeInput(left, 0, self.w - 2*left, 50)
     snap_range->set_range(1, 10)
 
+    table_label := new ui::Text(left, 0, self.w - 2*left, 50, "Table")
+    table_label->set_style(ui::Stylesheet()
+      .valign_bottom()
+      .justify_center()
+      .underline())
+
+    rows_label := new ui::Text(left, 0, self.w - 2*left, 50, "Rows")
+    rows_label->set_style(ui::Stylesheet()
+      .valign_bottom()
+      .justify_left())
+    self.rows_range = new ui::RangeInput(left, 0, self.w - 2*left, 50)
+    rows_range->set_range(1, 10)
+
+    self.rows_header_enabled = new ui::ToggleButton(left, 0, self.w - 2*left, 50, "Header Enabled")
+    self.rows_header_enabled->set_style(ui::Stylesheet()
+      .valign_middle()
+      .justify_left())
+
+    columns_label := new ui::Text(left, 0, self.w - 2*left, 50, "Columns")
+    columns_label->set_style(ui::Stylesheet()
+      .valign_bottom()
+      .justify_left())
+    self.columns_range = new ui::RangeInput(left, 0, self.w - 2*left, 50)
+    columns_range->set_range(1, 10)
+
+    self.columns_header_enabled = new ui::ToggleButton(left, 0, self.w - 2*left, 50, "Header Enabled")
+    self.columns_header_enabled->set_style(ui::Stylesheet()
+      .valign_middle()
+      .justify_left())
+
     a_layout.pack_start(snap_section_label)
     a_layout.pack_start(snap_enabled)
     a_layout.pack_start(snap_range_label)
     a_layout.pack_start(snap_range)
+    a_layout.pack_start(table_label)
+    a_layout.pack_start(rows_label)
+    a_layout.pack_start(rows_header_enabled)
+    a_layout.pack_start(rows_range)
+    a_layout.pack_start(columns_label)
+    a_layout.pack_start(columns_header_enabled)
+    a_layout.pack_start(columns_range)
 
 
 
@@ -107,7 +152,7 @@ class App:
     app_bg = new AppBackground(0, 0, w, h)
     scene->add(app_bg)
 
-    settings = new SettingsDialog(0, 0, 500, 500)
+    settings = new SettingsDialog(0, 0, 400,  650)
 
     style := ui::Stylesheet() \
       .valign(ui::Style::VALIGN::MIDDLE) \
@@ -133,7 +178,8 @@ class App:
       "h. line",
       "rect",
       "circle",
-      "bezier"})
+      "bezier",
+      "table"})
 
     h_layout.pack_center(shape_dropdown)
 
@@ -183,6 +229,8 @@ class App:
       if val == "bezier":
         r = 300
         s := new shape::Bezier(w/2-r/2, h/2-r/2, r, r, scene)
+      if val == "table":
+        s := new shape::Table(w/2-r/2, h/2-r/2, r, r, scene)
     }
 
   void redraw(bool skip_shape=false):
