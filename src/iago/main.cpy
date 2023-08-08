@@ -164,8 +164,6 @@ class App:
     ok_button := new ui::Button(0, 0, 200, 50, "ok")
     settings_btn := new ui::Button(0, 0, 200, 50, "settings")
 
-    table_button := new ui::Button(0, 0, 200, 50, "Table")
-
     h_layout.pack_start(settings_btn)
     h_layout.pack_end(ok_button)
     h_layout.pack_end(no_button)
