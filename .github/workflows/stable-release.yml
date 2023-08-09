@@ -13,10 +13,14 @@ jobs:
   pre-release:
     name: "release"
     runs-on: "ubuntu-latest"
+    env:
+      ssh_host: ${{ secrets.HOST }}
+      ssh_username: ${{ secrets.USERNAME }}
+      ssh_password: ${{ secrets.PASSWORD }}
 
     steps:
       - name: "Checkout source"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
 
       - name: "Build artifacts"
@@ -28,30 +32,40 @@ jobs:
         id: vars
         shell: bash
         run: |
-          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-          echo "::set-output name=sha::$(git rev-parse --short HEAD)"
-          echo "::set-output name=date::$(date -- +%Y%m%d_%H%M)"
+          echo "branch=$(echo ${GITHUB_REF#refs/heads/})" >> "$GITHUB_OUTPUT"
+          echo "sha=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+          echo "date=$(date -- +%Y%m%d_%H%M)" >> "$GITHUB_OUTPUT"
 
       - name: "Copy artifacts"
         run: cp artifacts/ ${{ steps.vars.outputs.date }}_${{ steps.vars.outputs.sha }} -R
 
       - name: copy artifacts to GITHUB_SHA
+        if: ${{ env.ssh_host != '' }}
         uses: appleboy/scp-action@master
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
+          host: ${{ env.ssh_host }}
+          username: ${{ env.ssh_username }}
+          password: ${{ env.ssh_password }}
           port: 22
           source: ${{ steps.vars.outputs.date }}_${{ steps.vars.outputs.sha }}
           target: build/${{ steps.vars.outputs.branch }}
 
       - name: copy artifacts to latest/
+        if: ${{ env.ssh_host != '' }}
         uses: appleboy/scp-action@master
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
+          host: ${{ env.ssh_host }}
+          username: ${{ env.ssh_username }}
+          password: ${{ env.ssh_password }}
           port: 22
           source: artifacts/*
           strip_components: 1
           target: build/${{ steps.vars.outputs.branch }}/latest
+
+      - name: Upload artifacts
+        if: ${{ env.ssh_host == "" }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: artifacts
+          path: artifacts/
+      
