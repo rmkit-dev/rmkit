@@ -350,7 +350,7 @@ def main():
       continue
 
     if tokens.size() < 5:
-      cerr << "line " << line_no << ": not enough tokens passed"
+      cerr << "line " << line_no << ": not enough tokens passed" << endl
       continue
 
     if !handle_widget(line_no, scene, tokens):

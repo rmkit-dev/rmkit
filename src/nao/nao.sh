@@ -116,8 +116,7 @@ function SET() {
 
 function DISPLAY() {
     use_newline_separator
-    OUTPUT=`for line in ${SCENE[@]}; do echo $line; done`
-    RETURN=`echo "$OUTPUT" | LD_PRELOAD=${_PRELOAD} ${SIMPLE}`
+    RETURN=`echo "${SCENE[*]}" | ${SIMPLE}`
     use_space_separator
     SAVED_RETURN=${RETURN}
 }

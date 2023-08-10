@@ -4,8 +4,8 @@ You can compile an individual project by running `make <project>` or `make
 <project>_docker` to build the project inside a docker container.
 
 You can change whether you are compiling for the remarkable or a PC by
-adjusting the `ARCH` environment variable. See `src/actions.make` for the list
-of architectures, which include (but is not limited to) `dev` and `arm`
+adjusting the `TARGET` environment variable. See `src/actions.make` for the list
+of targets, which include (but is not limited to) `dev` and `arm`
 
 ## Compilation
 
