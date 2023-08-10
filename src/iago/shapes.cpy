@@ -1,5 +1,4 @@
 // @nosplit
-
 #include <cmath>
 #include "../shared/string.h"
 
@@ -41,6 +40,10 @@ namespace shape:
     string name;
     DragHandle *handle_one, *handle_two
     static bool snap_enabled
+    static bool rows_header_enabled
+    static bool columns_header_enabled
+    static int rows 
+    static int columns
 
     static void set_snapping(int mm):
       Shape::snapping = MILLIMETER * mm
@@ -157,7 +160,11 @@ namespace shape:
       return
 
   double Shape::snapping = MILLIMETER * 5
+  int Shape::rows = 1
+  int Shape::columns = 1
   bool Shape::snap_enabled = false
+  bool Shape::rows_header_enabled = false
+  bool Shape::columns_header_enabled = false
 
   class Line : public Shape:
     public:
@@ -271,6 +278,101 @@ namespace shape:
         to_string(y1),
         to_string(x2),
         to_string(y2)}, ' ')
+
+  class Table : public Shape:
+    public:
+    std::string a
+
+    const string name = "Table"
+    Table(int x, y, w, h, ui::Scene scene) : Shape(x, y, w, h, scene):
+      return
+
+    void render():
+      handle_one->render()
+      handle_two->render()
+
+      x1, y1 := get_handle_coords(handle_one)
+      x2, y2 := get_handle_coords(handle_two)
+
+      w := x2 - x1
+      h := y2 - y1
+      r := rows
+      c := columns
+      rh := h/rows
+      cw := w/columns
+
+      rhw := 0
+      chh := 0
+      
+      a1 := min(x1, x2)
+      b1 := min(y1, y2)
+
+      for i := 0; i < 3; i++:
+        if rows_header_enabled:
+          rhw = cw/2          
+        if columns_header_enabled:
+          chh = rh/2
+        if columns_header_enabled:
+          fb->draw_line(x1-rhw, y1-rh/2, x2, y1-rh/2, 3, color::GRAY_8)
+        for n := 0; n <= rows; n++:
+          fb->draw_line(x1-rhw, y1+rh*n, x2, y1+rh*n, 3, color::GRAY_8)        
+        if rows_header_enabled:
+          fb->draw_line(x1-cw/2, y1-chh, x1-cw/2, y2, 3, color::GRAY_8)
+        for n := 0; n <= columns; n++:
+          fb->draw_line(x1+cw*n, y1-chh, x1+cw*n, y2, 3, color::GRAY_8)
+
+    string to_lamp():
+      x1, y1 := get_handle_coords(handle_one)
+      x2, y2 := get_handle_coords(handle_two)
+      r := rows
+      c := columns
+      w := x2 - x1
+      h := y2 - y1
+      rh := h/rows
+      cw := w/columns
+      
+      rhw := 0
+      chh := 0
+
+      if rows_header_enabled:
+        rhw = cw/2          
+      if columns_header_enabled:
+        chh = rh/2
+      if columns_header_enabled:
+      
+      if columns_header_enabled:
+        b := "pen line " + str_utils::join(%{
+        to_string(x1-rhw),
+        to_string(y1-rh/2),
+        to_string(x2),
+        to_string(y1-rh/2),
+        "\n"}, ' ')
+        a += b
+      for n :=0; n <= rows; n++:      
+        b := "pen line " + str_utils::join(%{
+        to_string(x1-rhw),
+        to_string(y1+rh*n),
+        to_string(x2),
+        to_string(y1+rh*n),
+        "\n"}, ' ')
+        a += b
+      if rows_header_enabled:
+        b := "pen line " + str_utils::join(%{
+        to_string(x1-cw/2),
+        to_string(y1-chh),
+        to_string(x1-cw/2),
+        to_string(y2),
+        "\n"}, ' ')
+        a += b
+      for n :=0; n <= columns; n++:
+        b := "pen line " + str_utils::join(%{
+        to_string(x1+cw*n),
+        to_string(y1-chh),
+        to_string(x1+cw*n),
+        to_string(y2),
+        "\n"}, ' ')
+        a += b
+      return a
 
   class Bezier : public Shape:
     public:
