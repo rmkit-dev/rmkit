@@ -63,7 +63,7 @@ jobs:
           target: build/${{ steps.vars.outputs.branch }}/latest
 
       - name: Upload artifacts
-        if: ${{ env.ssh_host == "" }}
+        if: ${{ env.ssh_host == '' }}
         uses: actions/upload-artifact@v3
         with:
           name: artifacts
