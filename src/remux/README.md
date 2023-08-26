@@ -4,6 +4,8 @@ remux is an app switcher for the remarkable tablet. once its running, hold the
 middle button down for several seconds until the remux launcher appears or
 swipe up either side of the screen.
 
+this is a small article about [how remux works](https://rmkit.dev/towards-multi-tasking/)
+
 ## Adding Apps
 
 usually, most people install [toltec](toltec-dev.org) and the apps in toltec
@@ -29,7 +31,6 @@ if you want to adjust them, they can be changed - see the config section below.
 
 * remux restarts xochitl at first launch, it is not crashing
 * remux does not show itself after an app exits, you must activate it
-* after dismissing remux UI, you need to tap the touch screen before swiping again to show remux
 * if you can not swipe in xochitl, try swiping with four fingers to reset xochitl's gesture engine
 
 ## Building
