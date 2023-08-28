@@ -3,6 +3,7 @@
 #include "../input/events.h"
 
 #define DEBUG_LAYOUT
+#define RANGE(X) X.begin(), X.end()
 namespace ui:
   class Layout:
     public:
@@ -15,10 +16,11 @@ namespace ui:
     Layout(int x, y, w, h, Scene s): x(x), y(y), w(w), h(h), scene(s):
       pass
 
-    void add(Widget *w):
+    shared_ptr<Widget> add(Widget *w):
       sp := shared_ptr<Widget>(w)
       children.push_back(sp)
       scene->add(sp)
+      return sp
 
     void hide():
       for auto w: children:
@@ -74,7 +76,7 @@ namespace ui:
   // the vertical layout is used for packing widgets
   // vertically (top to bottom). it implements only 3 functions: pack_start,
   // pack_end and pack_center
-  // 
+  //
   class VerticalLayout: public AutoLayout:
     public:
     using AutoLayout::pack_start
@@ -220,3 +222,4 @@ namespace ui:
         padding_x = leftover / 2
       w.x = self.x + padding_x
       w.y += self.y
+

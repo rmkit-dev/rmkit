@@ -4,6 +4,7 @@
 #include "dialog.h"
 #include "dropdown.h"
 #include "layouts.h"
+#include "reflow.h"
 #include "main_loop.h"
 #include "pager.h"
 #include "pixmap.h"
