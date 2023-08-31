@@ -7,11 +7,7 @@
 namespace app_ui:
   typedef int BrushSize
 
-  #ifdef REMARKABLE
   int MULTIPLIER = 1
-  #else
-  int MULTIPLIER = 4
-  #endif
 
   namespace stroke:
     class Size:

@@ -9,11 +9,13 @@
 // remarkable uses rgb565_le but is grayscale
 #ifdef USE_GRAYSCALE_8BIT
   #define remarkable_color std::uint8_t
+#elif KOBO
+  #define remarkable_color std::uint32_t
 #else
   #define remarkable_color std::uint16_t
 #endif
 
-#define WHITE remarkable_color(0x000FFFFF)
+#define WHITE remarkable_color(0xFFFFFFFF)
 #define GRAY remarkable_color(0x4444)
 #define BLACK remarkable_color(0)
 

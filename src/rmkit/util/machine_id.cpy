@@ -72,6 +72,9 @@ namespace util:
           case util::KOBO_DEVICE_ID_E::DEVICE_KOBO_LIBRA_H2O:
             debug "RUNNING ON LIBRA H2O"
             break
+          case util::KOBO_DEVICE_ID_E::DEVICE_KOBO_ELIPSA_2E:
+            debug "RUNNING ON ELIPSA 2E"
+            break
           default:
             if getenv("RMKIT_KOBO_ANY") != NULL:
               debug "*** UNRECOGNIZED KOBO DEVICE, TOUCH MAY NOT WORK ***"

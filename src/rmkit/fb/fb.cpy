@@ -12,6 +12,7 @@
 
 #include "../defines.h"
 #include "mxcfb.h"
+#include "mtk-kobo.h"
 #include "stb_text.h"
 #include "dither.h"
 #include "../input/input.h"
@@ -798,11 +799,7 @@ namespace framebuffer:
       o_grayscale = vinfo.grayscale
 
       #ifndef FB_NO_INIT_BPP
-      #ifdef USE_GRAYSCALE_8BIT
-      set_screen_depth(8)
-      #else
-      set_screen_depth(16)
-      #endif
+      set_screen_depth(sizeof(remarkable_color)*8)
       #endif
 
       #ifdef REMARKABLE
@@ -841,12 +838,13 @@ namespace framebuffer:
         fprintf(stderr, "Could not get screen vinfo for %s\n", "/dev/fb0")
         exit(0)
 
+      debug "SETTING SCREEN DEPTH", d
+
       switch d:
         case 8:
           vinfo.bits_per_pixel = 8;
           vinfo.grayscale = 1
           break
-
         case 16:
           vinfo.bits_per_pixel = 16;
           vinfo.grayscale = 0;
@@ -878,6 +876,65 @@ namespace framebuffer:
     KoboFB(): RemarkableFB()
       pass
 
+  class MtkFB: public RemarkableFB:
+    public:
+
+    void init():
+      FB::init()
+      self.fbmem = (remarkable_color*) mmap(NULL, self.byte_size, PROT_WRITE, MAP_SHARED, self.fd, 0)
+
+      fb_var_screeninfo vinfo;
+      if (ioctl(self.fd, FBIOGET_VSCREENINFO, &vinfo)):
+        fprintf(stderr, "Could not get screen vinfo for %s\n", "/dev/fb0")
+        return
+
+      if DEBUG_FB_INFO:
+        debug "XRES", vinfo.xres, "YRES", vinfo.yres, "BPP", vinfo.bits_per_pixel, "GRAYSCALE", vinfo.grayscale
+
+    void wait_for_redraw(uint32_t update_marker):
+      hwtcon_update_marker_data mdata = { update_marker, 0 }
+      ioctl(self.fd, HWTCON_WAIT_FOR_UPDATE_COMPLETE, &mdata)
+
+    tuple<int, int> get_display_size():
+      fb_var_screeninfo vinfo;
+      ioctl(self.fd, FBIOGET_VSCREENINFO, &vinfo)
+
+      return vinfo.xres, vinfo.yres
+
+    int perform_redraw(bool full_screen=false):
+      um := 0
+      hwtcon_update_data update_data
+      hwtcon_rect update_rect
+
+      if !full_screen:
+        update_rect.top = dirty_area.y0
+        update_rect.left = dirty_area.x0
+        update_rect.width = dirty_area.x1 - dirty_area.x0
+        update_rect.height = dirty_area.y1 - dirty_area.y0
+      else:
+        update_rect.top = 0
+        update_rect.left = 0
+        update_rect.width = self.display_width
+        update_rect.height = self.height
+
+      update_data.update_marker = 0
+      update_data.update_region = update_rect
+      update_data.waveform_mode = self.waveform_mode
+      update_data.update_mode = self.update_mode
+      update_data.dither_mode = 0
+      update_data.flags = 0
+      self.waveform_mode = WAVEFORM_MODE_DU
+      self.update_mode = UPDATE_MODE_PARTIAL
+
+      if update_rect.height == 0 || update_rect.width == 0:
+        return um
+
+      ioctl(self.fd, HWTCON_SEND_UPDATE, &update_data)
+      um = update_data.update_marker
+
+      reset_dirty(self.dirty_area)
+      return um
+
 
   static shared_ptr<FB> _FB
 
@@ -892,7 +949,11 @@ namespace framebuffer:
     #ifdef REMARKABLE
     _FB = make_shared<framebuffer::RemarkableFB>()
     #elif KOBO
-    _FB = make_shared<framebuffer::KoboFB>()
+    if util::get_kobo_version() == util::KOBO_DEVICE_ID_E::DEVICE_KOBO_ELIPSA_2E:
+      _FB = make_shared<framebuffer::MtkFB>()
+    else:
+      _FB = make_shared<framebuffer::KoboFB>()
+
     #elif DEV
     _FB = make_shared<framebuffer::FileFB>("fb.raw", DISPLAYWIDTH, DISPLAYHEIGHT)
     #else

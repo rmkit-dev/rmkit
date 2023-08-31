@@ -16,6 +16,7 @@ using namespace std
 
 extern bool USE_RESIM = true
 
+// #define DEBUG_MOUSE_EVENT
 // #define DEBUG_INPUT_EVENT 1
 namespace input:
   extern int ipc_fd[2] = { -1, -1 };
@@ -110,6 +111,9 @@ namespace input:
       #elif KOBO
       self.open_device("/dev/input/event0")
       self.open_device("/dev/input/event1")
+      self.open_device("/dev/input/event2")
+      self.open_device("/dev/input/event3")
+      self.open_device("/dev/input/event4")
       #else
       if USE_RESIM:
         debug "MONITORING RESIM"
@@ -142,20 +146,24 @@ namespace input:
         debug "ERROR OPENING INPUT DEVICE", fname
         return
 
+      debug "OPENING", fname,
       switch input::id_by_capabilities(fd):
         case STYLUS:
           self.wacom.set_fd(fd)
+          debug "AS WACOM"
           break
         case BUTTONS:
           self.button.set_fd(fd)
+          debug "AS BUTTONS"
           break
         case TOUCH:
           self.touch.set_fd(fd)
+          debug "AS TOUCH"
           break
         case INVALID:
         case UNKNOWN:
         default:
-          debug fname, "IS UNKNOWN EVENT DEVICE"
+          debug ": UNKNOWN EVENT DEVICE"
           close(fd)
           if CRASH_ON_BAD_DEVICE:
             exit(1)
@@ -283,4 +291,7 @@ namespace input:
   static WacomEvent* is_wacom_event(SynMotionEvent &syn_ev):
     return dynamic_cast<WacomEvent*>(syn_ev.original.get())
   static TouchEvent* is_touch_event(SynMotionEvent &syn_ev):
-    return dynamic_cast<TouchEvent*>(syn_ev.original.get())
+    evt := dynamic_cast<TouchEvent*>(syn_ev.original.get())
+    if evt != nullptr && evt->is_touch():
+      return evt
+    return nullptr

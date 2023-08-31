@@ -24,6 +24,7 @@ namespace util:
     DEVICE_KOBO_NIA           = 382U,
     DEVICE_KOBO_ELIPSA        = 387U,
     DEVICE_KOBO_LIBRA_2       = 388U,
+    DEVICE_KOBO_ELIPSA_2E     = 389U,
     DEVICE_KOBO_SAGE          = 383U,
     DEVICE_KOBO_MAX           = UINT16_MAX,    // uint16_t
   };

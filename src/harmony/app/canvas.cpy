@@ -410,6 +410,8 @@ namespace app_ui:
         return
 
       dirty_rect := self.fb->dirty_area
+      if dirty_rect.x0 > dirty_rect.x1 or dirty_rect.y0 > dirty_rect.y1:
+        return
       debug "ADDING TO UNDO STACK, DIRTY AREA IS", \
         dirty_rect.x0, dirty_rect.y0, dirty_rect.x1, dirty_rect.y1
 

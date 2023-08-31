@@ -26,11 +26,13 @@
 #define DRAW_APP_BEHIND_MODAL
 #define READ_XOCHITL_DATA
 #define GRAB_INPUT
+#define SUSPENDABLE
 #elif KOBO
 #define TOUCH_FLOOD_EVENT ABS_MT_DISTANCE
 #define DYNAMIC_BPP
 #define HAS_ROTATION
 #define PORTRAIT_ONLY
+#define USE_GRAYSCALE_32BIT
 #else
 #define TOUCH_FLOOD_EVENT ABS_DISTANCE
 #endif
@@ -144,6 +146,7 @@ class AppBackground: public ui::Widget:
     if app_buffers.find(CURRENT_APP) == app_buffers.end():
       vw, vh := fb->get_virtual_size()
       app_buffers[CURRENT_APP] = make_shared<framebuffer::Snapshot>(vw, vh)
+      app_buffers[CURRENT_APP]->rotation = util::rotation::get()
 
     return app_buffers[CURRENT_APP]
 
@@ -172,7 +175,8 @@ class AppBackground: public ui::Widget:
     #endif
 
     #ifdef HAS_ROTATION
-    fb->set_rotation(vfb->rotation)
+    if vfb->rotation != -1:
+      fb->set_rotation(vfb->rotation)
     #endif
 
     fb->perform_redraw(true)
@@ -194,11 +198,14 @@ class AppDialog: public ui::Pager:
     void add_shortcuts():
       // draw suspend button in bottom right
       _w, _h := fb->get_display_size()
+      #ifdef SUSPENDABLE
       h_layout := ui::HorizontalLayout(0, 0, _w, _h, self.scene)
       v_layout := ui::VerticalLayout(0, 0, _w, _h, self.scene)
+
       b1 := new SuspendButton(0, 0, 200, 50, self.app)
       h_layout.pack_end(b1)
       v_layout.pack_end(b1)
+      #endif
 
       // draw memory info
       mem_info := proc::read_mem_total()
@@ -660,7 +667,7 @@ class App: public IApp:
   // TODO: power button will cause suspend screen, why not?
   void on_suspend():
     // suspend only works on REMARKABLE
-    #ifndef REMARKABLE
+    #ifndef SUSPENDABLE
     return
     #endif
 
@@ -918,7 +925,7 @@ class App: public IApp:
     get_current_app()
     if APP_MAIN.name == CURRENT_APP:
       debug "RESETTING BPP TO", APP_MAIN.bpp
-    fb->set_screen_depth(APP_MAIN.bpp)
+      fb->set_screen_depth(APP_MAIN.bpp)
     #endif
 
 
