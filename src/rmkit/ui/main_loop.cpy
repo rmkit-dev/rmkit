@@ -91,6 +91,11 @@ namespace ui:
 
       return false
 
+    // function add_task
+    //   add a task to run during the main loop's next iteration
+    static void add_task(std::function<void()> t):
+      ui::IdleQueue::add_task(t)
+
     // function: render
     //   sync the framebuffer to the screen, required in order to update
     //   what the screen is showing after any draw calls
@@ -171,7 +176,8 @@ namespace ui:
       handle_events()
       TimerList::get()->trigger()
 
-      TaskQueue::run_task()
+      TaskQueue::run_tasks()
+      IdleQueue::run_tasks()
 
       if kbd_is_visible:
         kbd->redraw()

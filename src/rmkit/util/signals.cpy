@@ -52,6 +52,9 @@ namespace PLS:
     operator T():
       return value
 
+    void operator+=(std::function<void (T&)> f):
+      cbs.push_back(f)
+
     void operator()(std::function<void (T&)> f):
       cbs.push_back(f)
 
