@@ -31,9 +31,13 @@ HOST := getenv("HOST") ? getenv("HOST") : "rmkit.dev"
 PORT := getenv("PORT") ? getenv("PORT") : "65432"
 
 using PLS::Observable
+
+// WARNING: we should only set app state from the main thread
+// TODO: figure out how to deal with this better
 class AppState:
   public:
   Observable<bool> erase
+  Observable<bool> clear
   Observable<string> room
 AppState STATE
 
@@ -51,6 +55,8 @@ class JSONSocket:
   const char* port
   bool _connected = false
 
+  Observable<string> state
+
   JSONSocket(const char* host, port):
     sockfd = socket(AF_INET, SOCK_STREAM, 0)
     memset(&hints, 0, sizeof(struct addrinfo));
@@ -63,11 +69,17 @@ class JSONSocket:
     self.leftover = ""
 
     new thread([=]() {
-      s := getaddrinfo(host, port, &hints, &result)
-      if s != 0:
-        fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(s));
-        exit(EXIT_FAILURE);
+      while true:
+        s := getaddrinfo(host, port, &hints, &result)
+        if s != 0:
+          fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(s));
+          self.state = "Host lookup failed"
+        else:
+          break
 
+        sleep(3)
+
+      self.state = "Found host"
       self.listen()
     })
 
@@ -109,13 +121,26 @@ class JSONSocket:
         err := connect(self.sockfd, self.result->ai_addr, self.result->ai_addrlen)
         if err == 0 || errno == EISCONN:
             debug "(re)connected"
+            state = "Connected"
             self.lock.lock()
             self._connected = true
             self.lock.unlock()
+
+            ui::IdleQueue::add_task(PLS_LAMBDA() {
+              debug "TASK JOINING ROOM", string(STATE.room)
+              if string(STATE.room) == "":
+                debug "SETTING ROOM TO DEFAULT"
+                STATE.room = "default"
+              else:
+                debug "SETTING ROM TO", string(STATE.room)
+                STATE.room = string(STATE.room)
+            })
+
             break
         debug "(re)connecting...", err, errno
         self.lock.lock()
         close(self.sockfd)
+        self.sockfd = socket(AF_INET, SOCK_STREAM, 0)
         self._connected = false
         self.lock.unlock()
         sleep(1)
@@ -123,10 +148,16 @@ class JSONSocket:
       bytes_read = read(sockfd, buf, BUF_SIZE-1)
       if bytes_read <= 0:
         if bytes_read == -1 and errno == EAGAIN:
+            debug "errno EAGAIN"
+            state = "Disconnected"
+            sleep(1)
             continue
 
+          state = "Disconnected"
+          self.lock.lock()
           close(self.sockfd)
           self.sockfd = socket(AF_INET, SOCK_STREAM, 0)
+          self.lock.unlock()
           sleep(1)
           continue
       buf[bytes_read] = 0
@@ -134,6 +165,9 @@ class JSONSocket:
       memset(buf, 0, BUF_SIZE)
 
       msgs := str_utils::split(sbuf, '\n')
+      if sbuf.size() == 0:
+        continue
+
       if leftover != "" && msgs.size() > 0:
         msgs[0] = leftover + msgs[0]
         leftover = ""
@@ -206,39 +240,12 @@ class Note: public ui::Widget:
     self.fb->dirty = 1
     vfb->reset_dirty(vfb->dirty_area)
 
-
-class EraseButton: public ui::Button:
-  public:
-  EraseButton(int x, y, w, h): Button(x, y, w, h, "erase"):
-    pass
-
-  void on_mouse_down(input::SynMotionEvent &ev):
-    STATE.erase = !STATE.erase
-    debug "SETTING ERASER TO", STATE.erase
-    self.dirty = 1
-    if STATE.erase:
-      self.text = "pen"
-    else:
-      self.text = "eraser"
-
-class RoomInput: public ui::TextInput:
-  public:
-
-  RoomInput(int x, y, w, h, JSONSocket *sock): TextInput(x, y, w, h, "default"):
-    self->events.done += PLS_LAMBDA(string &s):
-      self.join(s)
-    ;
-
-  void join(string room):
-    debug "SETTING ROOM TO", room
-    STATE.room = room
-
-
 class App:
   public:
   Note *note
   JSONSocket *socket
   ui::HorizontalLayout *button_bar
+  ui::Text *socket_label;
 
   App():
     demo_scene := ui::make_scene()
@@ -257,44 +264,114 @@ class App:
     hbar := new ui::VerticalLayout(0, 0, w, h, demo_scene)
     hbar->pack_end(button_bar)
 
-    erase_button := new EraseButton(0, 0, 200, 50)
+    erase_button := new ui::Button(0, 0, 200, 50, "eraser")
+    erase_button->mouse.click += PLS_LAMBDA(auto ev):
+      STATE.erase = !STATE.erase
+      debug "SETTING ERASER TO", STATE.erase
+      erase_button->dirty = 1
+      if STATE.erase:
+        erase_button->text = "pen"
+      else:
+        erase_button->text = "eraser"
+    ;
+
+    clear_dialog := new ui::ConfirmationDialog(0, 0, 800, 800)
+    clear_dialog->set_title("Really clear the room?")
+    clear_dialog->events.close += PLS_LAMBDA(auto text):
+      if text == "OK":
+        STATE.clear = true
+
+      self.note->full_redraw = true
+      ui::MainLoop::hide_overlay()
+    ;
+
+    clear_dialog->on_hide += PLS_LAMBDA(auto ev):
+      self.note->full_redraw = true
+      ui::MainLoop::hide_overlay()
+    ;
+
+    clear_button := new ui::Button(0, 0, 200, 50, "clear")
+    clear_button->mouse.click += PLS_LAMBDA(auto ev):
+      clear_dialog->show()
+    ;
+
     room_label := new ui::Text(0, 0, 200, 50, "room: ")
     room_label->set_style(ui::Stylesheet().justify_right())
-    room_button := new RoomInput(0, 0, 200, 50, socket)
+    room_button := new ui::TextInput(0, 0, 200, 50)
+
+    room_button->events.done += PLS_LAMBDA(string &s):
+      STATE.room = s
+      ui::MainLoop::refresh()
+    ;
+
+    STATE.room += PLS_LAMBDA(string &s):
+      room_button->text = s;
+      room_button->dirty = 1
+    ;
+
+    socket_label = new ui::Text(0, 0, 400, 50, "Starting")
+    socket_label->set_style(ui::Stylesheet().justify_center())
+    socket->state += PLS_LAMBDA(string &state)
+      // wake the UI up for a sec
+      ui::IdleQueue::add_task(PLS_LAMBDA() {
+        socket_label->undraw()
+        socket_label->set_text(state)
+      })
+      ui::IdleQueue::wakeup()
+    ;
 
     button_bar->pack_start(erase_button)
+    button_bar->pack_start(clear_button)
     button_bar->pack_end(room_button)
     button_bar->pack_end(room_label)
+    button_bar->pack_center(socket_label)
 
     STATE.room(PLS_DELEGATE(self.join_room))
-    room_button->join("default")
+    STATE.clear(PLS_DELEGATE(self.clear_room))
 
+
+  void clear_room(bool clear):
+    if not clear:
+      return
+
+    STATE.clear = false
+    // we are not connected to socket just yet
+    json j
+    string room = STATE.room
+    j["type"] = TCLEAR
+    j["room"] = room
+    socket->write(j)
+    self.note->vfb->clear_screen()
+    debug "SENT CLEAR ROOM"
+    ui::MainLoop::full_refresh()
 
   void join_room(string room):
+    debug "JOINING ROOM", room
     // we are not connected to socket just yet
     json j
     j["type"] = TJOIN
     j["room"] = room
     socket->write(j)
-    // hit URL for downloading room image
-    url := "http://rmkit.dev:65431/room/" + room
-    room_file := "/tmp/room_" + room
-    curl_cmd := "curl " + url  + " > " + room_file
-    ret := system(curl_cmd.c_str())
-
-    if ret != 0:
-        debug "ERROR WITH CURL?"
-    else:
-        debug "DISPLAYING IMAGE"
-        self.note->vfb->load_from_png(room_file)
-        ui::MainLoop::full_refresh()
+    debug "SENT JOIN SOCKET MESSAGE", room
+    //    // hit URL for downloading room image
+    //    url := "http://rmkit.dev:65431/room/" + room
+    //    room_file := "/tmp/room_" + room
+    //    curl_cmd := "curl " + url  + " > " + room_file
+    //    ret := system(curl_cmd.c_str())
+    //
+    //    if ret != 0:
+    //        debug "ERROR WITH CURL?"
+    //    else:
+    //        debug "DISPLAYING IMAGE"
+    //        self.note->vfb->load_from_png(room_file)
+    //        self.note->full_redraw = true
+    //        ui::MainLoop::full_refresh()
 
   def handle_key_event(input::SynKeyEvent ev):
     // pressing any button will clear the screen
     if ev.key == KEY_LEFT:
-      debug "CLEARING SCREEN"
+      debug "SENDING CLEAR SCREEN"
       note->vfb->clear_screen()
-      ui::MainLoop::fb->clear_screen()
       button_bar->refresh()
 
   def handle_server_response():
@@ -305,9 +382,10 @@ class App:
         if j["type"] == TDRAW:
           note->vfb->draw_line(j["prevx"], j["prevy"], j["x"], j["y"], j["width"], j["color"])
           note->dirty = 1
-          button_bar->refresh()
         else if j["type"] == TCLEAR:
-          // TODO
+          note->vfb->clear_screen()
+          debug "RECEIVED CLEAR SCREEN"
+          ui::MainLoop::full_refresh()
           pass
         else:
           debug "unknown message type"

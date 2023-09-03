@@ -73,7 +73,7 @@ class Room:
         with self.lock:
             for client in self.clients:
                 try:
-                    client.conn.sendall(msg_str + b'\n')
+                    client.conn.sendall(msg_str + b'\n\n')
                 except:
                     pass
 
@@ -82,6 +82,7 @@ class Room:
             self.write_handle.flush()
 
     def clear(self):
+        print("Clearing room")
         with self.lock:
             self.image = Image.new("L", (WIDTH, HEIGHT), 255)
             self.clear_log()
@@ -185,11 +186,11 @@ def get_room_image(room):
             return "room not found"
         room = _rooms[room]
 
-    with room.lock:
-        im = room.image
-        im.save(room.image_file, format="png")
-        im.save(s, format="png")
-        room.clear_log()
+#    with room.lock:
+#        im = room.image
+#        im.save(room.image_file, format="png")
+#        im.save(s, format="png")
+#        room.clear_log()
     bytes = s.getvalue()
     return bytes
 
