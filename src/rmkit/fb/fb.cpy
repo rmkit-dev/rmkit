@@ -88,7 +88,7 @@ namespace framebuffer:
 
 
     remarkable_color* fbmem
-    FBRect dirty_area
+    FBRect dirty_area = {0}
 
     FB():
       pass

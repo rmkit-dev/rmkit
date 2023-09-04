@@ -175,7 +175,7 @@ namespace input:
     // NOTE: we assume that we only need max value from here and its anchored at 0,
     // this may not be true in the future
     tuple<struct input_absinfo, struct input_absinfo> read_extents(int fd, x_id, y_id):
-      uint8_t abs_b[ABS_MAX/8 + 1]
+      uint8_t abs_b[ABS_MAX/8 + 1] = {0}
       struct input_absinfo abs_feat
       abs_bit := EVIOCGBIT(EV_ABS, sizeof(abs_b))
       ioctl(fd, abs_bit, abs_b)
