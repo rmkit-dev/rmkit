@@ -63,6 +63,40 @@ class GestureWidget : public ui::Widget:
     fb->draw_rect(cx - (size/2),     cy - (size/2),     size,    size,    outline)
     fb->draw_rect(cx - (size/2) + 5, cy - (size/2) + 5, size-10, size-10, fill)
 
+class DropdownContent: public ui::Widget:
+  public:
+  ui::TextDropdown *text_dropdown = nullptr
+  DropdownContent(int x, int y, int w, int h): ui::Widget(x, y, w, h):
+    pass
+
+  void update(ui::Scene scene):
+    text_dropdown := new ui::TextDropdown(x+5, y+h-200, 200, 50, "Drop Down")
+    text_dropdown->dir = ui::TextDropdown::DIRECTION::DOWN
+    ds := text_dropdown->add_section("options")
+    ds->add_options({"foo", "bar", "baz"})
+    scene->add(text_dropdown)
+
+    text_dropup := new ui::TextDropdown(x+w-205, y+h-200, 200, 50, "Drop Up")
+    text_dropup->dir = ui::TextDropdown::DIRECTION::UP
+    ds = text_dropup->add_section("options")
+    ds->add_options({"foo", "bar", "baz"})
+    scene->add(text_dropup)
+
+class DropdownOverlay : public ui::ConfirmationDialog:
+  public:
+  DropdownContent* content
+  DropdownOverlay(int x, y, w, h): ui::ConfirmationDialog(x,y,w,h)
+    pass
+
+  void build_dialog():
+    contentWidget = content = new DropdownContent(x, y, w, h)
+    ui::ConfirmationDialog::build_dialog()
+    content->update(self.scene)
+
+  void on_button_selected(string t):
+    self.hide()
+
+
 class App:
   public:
   ui::Scene demo_scene
@@ -144,9 +178,19 @@ class App:
 
     ;
 
-    btn := new ui::Button(0, 250, 200, 50, "Show Pager")
+    dialog := new DropdownOverlay(0, 0, 600, 600)
+    dialog->set_title("Really, a dialog?")
+
+
+    btn := new ui::Button(0, 200, 200, 50, "Show Pager")
     btn->mouse.click += [=](input::SynMotionEvent &ev):
       pager->show()
+    ;
+    h_layout.pack_center(btn)
+
+    btn = new ui::Button(0, 250, 200, 50, "Show Overlay")
+    btn->mouse.click += [=](input::SynMotionEvent &ev):
+      dialog->show()
     ;
 
     h_layout.pack_center(btn)

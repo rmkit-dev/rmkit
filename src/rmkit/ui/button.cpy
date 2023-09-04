@@ -146,9 +146,12 @@ namespace ui:
     void before_render():
       ui::Button::before_render()
       if toggled:
-        self.textWidget->text = "[x] " + self.text 
+        self.textWidget->text = "[x] " + self.text
       else:
-        self.textWidget->text = "[ ] " + self.text 
+        self.textWidget->text = "[ ] " + self.text
+
+    bool get_value():
+      return toggled
 
     void render():
       ui::Button::render()

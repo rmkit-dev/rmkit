@@ -134,9 +134,13 @@ namespace ui:
         self.scene = ui::make_scene()
         x_off := std::min(x + self.option_x, fb->display_width - ow)
         y_off := self.option_y
+        dropdown_height := height
         if dir == DIRECTION::DOWN:
           y_off = y + self.option_y
-        layout := VerticalLayout(x_off, y_off, ow, height, self.scene)
+        else:
+          y_off = 0
+          dropdown_height = y - option_y
+        layout := VerticalLayout(x_off, y_off, ow, dropdown_height, self.scene)
 
         i := 0
         for auto section: self.sections:
