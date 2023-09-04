@@ -168,11 +168,11 @@ namespace ui:
 
 
 
-      ui::MainLoop::show_overlay(self.scene)
+      ui::MainLoop::show_overlay(self.scene, true) // we stack this overlay
 
     void select(int idx):
       self.selected = idx
-      ui::MainLoop::hide_overlay()
+      ui::MainLoop::hide_overlay(self.scene)
       if idx < self.options.size():
         if use_selection_text:
           option := self.options[idx]

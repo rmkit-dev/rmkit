@@ -31,6 +31,8 @@
 
 #include <unistd.h>
 
+#define CONTAINS(x, s) (std::find(x.begin(), x.end(), s) != x.end())
+
 namespace ui:
   // class: ui::MainLoop
   // The MainLoop is responsible for rendering widgets, dispatching events, and
@@ -38,20 +40,20 @@ namespace ui:
   PLS_DEFINE_SIGNAL(EXIT_EVENT, int)
   class MainLoop:
     public:
+
     static shared_ptr<framebuffer::FB> fb = framebuffer::get()
 
     static Scene scene = make_scene()
-    static Scene overlay = make_scene()
-    static bool overlay_is_visible = false
-
-    static Scene kbd = make_scene()
-    static bool kbd_is_visible = false
+    static vector<Scene> scene_stack = {}
 
     static bool filter_palm_events = false
 
     static input::Input in = {}
     static vector<input::Gesture*> gestures = {}
     static EXIT_EVENT exit = {}
+
+    static Scene overlay = nullptr
+
 
     // variable: motion_event
     // motion_event is used for subscribing to motion_events
@@ -73,21 +75,44 @@ namespace ui:
     // ---
     static KEY_EVENT key_event = {}
 
+    private:
+
+    static void add_overlay(Scene s):
+      if not CONTAINS(scene_stack, s):
+        scene_stack.push_back(s)
+
+    static Scene remove_overlay():
+      if scene_stack.size() > 0:
+        s := scene_stack.back()
+        scene_stack.pop_back()
+
+        return s
+      return nullptr
+
+    static Scene remove_overlay(Scene s):
+      if s == nullptr:
+        return remove_overlay()
+
+      vector<Scene> new_stack
+      Scene ret
+      for auto sc : scene_stack:
+        if sc.get() == s.get():
+          ret = sc
+        else:
+          new_stack.push_back(sc)
+
+      scene_stack = new_stack
+      return ret
+
+    public:
+
     // returns whether the supplied widget is visible
     static bool is_visible(Widget *w):
-      if kbd_is_visible:
-        for auto widget : overlay->widgets:
-          if widget.get() == w:
-            return true
-        return false
 
-      if overlay_is_visible:
-        for auto widget : overlay->widgets:
+      for auto scene : scene_stack:
+        for auto widget : scene->widgets:
           if widget.get() == w:
             return true
-      for auto widget : scene->widgets:
-        if widget.get() == w:
-          return true
 
       return false
 
@@ -165,6 +190,12 @@ namespace ui:
                 g->handle_event(ev)
                 g->count++
 
+    static bool has_clear_under():
+      for it := scene_stack.rbegin(); it != scene_stack.rend(); it++:
+        if (*it)->clear_under:
+          return true
+      return false
+
     // function: main
     //
     // this function does several thinsg:
@@ -179,13 +210,11 @@ namespace ui:
       TaskQueue::run_tasks()
       IdleQueue::run_tasks()
 
-      if kbd_is_visible:
-        kbd->redraw()
-        return
-
-      scene->redraw()
-      if overlay_is_visible:
-        overlay->redraw()
+      if not has_clear_under():
+        scene->redraw()
+      if overlay_is_visible():
+        for auto s : scene_stack:
+          s->redraw()
 
 
     /// blocking read for input
@@ -198,53 +227,76 @@ namespace ui:
 
     /// queue a render for all the widgets on the visible scenes
     static void refresh():
-      scene->refresh()
-      if overlay_is_visible:
-        overlay->refresh()
+      if not has_clear_under():
+        scene->refresh()
+
+      if overlay_is_visible():
+        for it := scene_stack.rbegin(); it != scene_stack.rend(); it++:
+          s := *it
+          s->refresh()
+          if s->clear_under:
+            break
 
     // function: set_scene
     // set the main scene for the app to display when drawing
     static void set_scene(Scene s):
       scene = s
 
+    static Scene get_overlay():
+      if overlay_is_visible()
+        return scene_stack.back()
+      return nullptr
+
     static void toggle_overlay(Scene s):
-      if !overlay_is_visible || s != overlay:
-        show_overlay(s)
+      if !overlay_is_visible() || s != get_overlay():
+        show_overlay(s, true)
       else:
-        hide_overlay()
+        hide_overlay(s)
+
+    static void replace_overlay(Scene s):
+      scene_stack.clear()
+      show_overlay(s)
+
+
+    static inline bool overlay_is_visible():
+      return (scene_stack.size() > 0)
+
+    static inline bool overlay_is_visible(Scene s):
+      for auto &sc : scene_stack:
+        if sc == s:
+          return true
+      return false
+
 
     // function: show_overlay
     // set the main scene for the app to display when drawing
-    static void show_overlay(Scene s):
-      overlay = s
-      overlay_is_visible = true
-      Widget::fb->clear_screen()
-      MainLoop::refresh()
-      overlay->on_show()
+    static void show_overlay(Scene s, bool stack=false):
+      if not stack:
+        while scene_stack.size():
+          hide_overlay(scene_stack.back())
 
-    // function: hide_overlay
-    // hide the overlay
-    static void hide_overlay():
-      if overlay_is_visible:
-        overlay_is_visible = false
-        Widget::fb->clear_screen()
-        MainLoop::refresh()
-        overlay->on_hide()
-
-    static void show_kbd(Scene s):
-      kbd = s
-      kbd_is_visible = true
-      debug "SET KEYBOARD SCENE"
+      add_overlay(s)
       Widget::fb->clear_screen()
       MainLoop::refresh()
       s->on_show()
+      overlay = s
 
-    static void hide_kbd():
-      if kbd_is_visible:
-        kbd_is_visible = false
-        Widget::fb->clear_screen()
-        MainLoop::refresh()
-        kbd->on_hide()
+    // function: hide_overlay
+    // hide the overlay
+    static Scene hide_overlay(Scene s):
+      Widget::fb->clear_screen()
+
+      ol := remove_overlay(s)
+      if ol != nullptr:
+        ol->on_hide()
+
+      if scene_stack.size():
+        ol = scene_stack.back()
+      else
+        ol = nullptr
+
+      MainLoop::refresh()
+      return ol
 
     // clear and refresh the widgets on screen
     // useful if changing scenes or otherwise
@@ -256,24 +308,17 @@ namespace ui:
     // dispatch button presses to their widgets
     static void handle_key_event(input::SynKeyEvent &ev):
       display_scene := scene
-      if overlay_is_visible:
-        display_scene = overlay
-
-      if kbd_is_visible:
-        display_scene = kbd
-
-      for auto widget: display_scene->widgets:
-        widget->kbd.pressed(ev)
+      if overlay_is_visible():
+        display_scene = get_overlay()
 
     // TODO: refactor this into cleaner code
     // dispatch mouse / touch events to their widgets
-    static int first_mouse_down = true
+    static int first_mouse_down = true;
+
     static bool handle_motion_event(input::SynMotionEvent &ev):
       display_scene := scene
-      if overlay_is_visible:
-        display_scene = overlay
-      if kbd_is_visible:
-        display_scene = kbd
+      if overlay_is_visible():
+        display_scene = get_overlay()
 
       bool is_hit = false
       bool hit_widget = false
@@ -362,9 +407,10 @@ namespace ui:
         first_mouse_down = true
 
 
-      if !kbd_is_visible && overlay_is_visible && mouse_down && !hit_widget:
-        if !overlay->pinned:
-          MainLoop::hide_overlay()
+      ol := get_overlay()
+      if ol != nullptr && mouse_down && !hit_widget:
+        if !ol->pinned:
+          MainLoop::hide_overlay(ol)
 
       return hit_widget
   ;

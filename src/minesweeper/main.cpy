@@ -75,15 +75,15 @@ class GameOverDialog: public ui::ConfirmationDialog:
     
   void on_button_selected(string text):
     if text == "TRY AGAIN":
-      ui::MainLoop::hide_overlay()
+      ui::MainLoop::hide_overlay(self.scene)
       GAME_STARTED = false
       new_game() // TEMPORARY
     if text == "MAIN MENU":
-      ui::MainLoop::hide_overlay()
+      ui::MainLoop::hide_overlay(self.scene)
       GAME_STARTED = false
       main_menu()
     if text == "HIDE DIALOG":
-      ui::MainLoop::hide_overlay()
+      ui::MainLoop::hide_overlay(self.scene)
       ui::MainLoop::refresh()
 
 

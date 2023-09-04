@@ -84,7 +84,11 @@ namespace ui:
       if self.scene == NULL:
          self.build_dialog()
       self.before_show()
-      MainLoop::show_overlay(self.scene)
+
+      MainLoop::replace_overlay(self.scene)
+
+    void hide():
+      ui::MainLoop::hide_overlay(self.scene)
 
   // class: ui::Dialog
   // --- Prototype ---
@@ -158,4 +162,4 @@ namespace ui:
       self.buttons = { "OK" }
 
     void on_button_selected(string t):
-      ui::MainLoop::hide_overlay()
+      hide()

@@ -33,6 +33,7 @@ namespace ui:
 
     Row(int x, y, w, h, Scene s): Widget(x,y,w,h):
       self.scene = s
+      self.scene->clear_under = true
 
     void add_key(KeyButton *key):
       if self.layout == NULL:
@@ -54,7 +55,6 @@ namespace ui:
     bool numbers = false
     vector<Row*> rows
     Scene scene
-    Scene prev_overlay
     MultiText *input_box = NULL
     string text = ""
     int btn_width
@@ -195,9 +195,11 @@ namespace ui:
         kev := KeyboardEvent {self.text}
         self.events.changed(kev)
 
+        if ui::MainLoop::hide_overlay(self.scene) == nullptr:
+          debug "No keyboard overlay to hide"
+
         self.events.done(kev)
 
-        ui::MainLoop::hide_kbd()
       ;
 
       row4->add_key(kbd)
@@ -235,7 +237,7 @@ namespace ui:
 
     void show():
       self.scene->pinned = true
-      ui::MainLoop::show_kbd(self.scene)
+      ui::MainLoop::show_overlay(self.scene)
 
     // switch between: lowercase alphabet, uppercase, nums, symbols
     void switch_mode(int mode):

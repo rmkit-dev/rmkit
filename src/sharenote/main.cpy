@@ -282,12 +282,12 @@ class App:
         STATE.clear = true
 
       self.note->full_redraw = true
-      ui::MainLoop::hide_overlay()
+      clear_dialog->hide()
     ;
 
     clear_dialog->on_hide += PLS_LAMBDA(auto ev):
       self.note->full_redraw = true
-      ui::MainLoop::hide_overlay()
+      clear_dialog->hide();
     ;
 
     clear_button := new ui::Button(0, 0, 200, 50, "clear")

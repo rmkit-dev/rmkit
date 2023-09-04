@@ -26,7 +26,7 @@ namespace app_ui:
         if t == "OK":
           exit(0)
         if t == "CANCEL":
-          ui::MainLoop::hide_overlay()
+          self.hide()
 
   class ExportDialog: public ui::InfoDialog:
     public:
@@ -58,7 +58,7 @@ namespace app_ui:
         if t == "OK":
           canvas->save_project()
 
-        ui::MainLoop::hide_overlay()
+        self.hide()
 
   class ImportDialog: public ui::Pager:
     public:
@@ -78,7 +78,7 @@ namespace app_ui:
 
       void on_row_selected(string name):
         self.canvas->load_from_png(name)
-        ui::MainLoop::hide_overlay()
+        self.hide()
 
       void render_row(ui::HorizontalLayout *row, string option):
         char full_path[PATH_MAX]
@@ -100,7 +100,7 @@ namespace app_ui:
       void on_row_selected(string name):
         debug "LOADING PROJECT", name
         canvas->load_project(string(SAVE_DIR) + "/" + name)
-        ui::MainLoop::hide_overlay()
+        self.hide()
 
       void populate():
         filenames := util::lsdir(SAVE_DIR, ".hrm")

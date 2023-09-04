@@ -22,6 +22,10 @@ namespace ui:
     /// whether scene is pinned (only for overlays)
     bool pinned = false
 
+    /// variable: clear_under
+    /// whether scene stops widgets below it from refresh
+    bool clear_under = false
+
     // function: add
     // adds a widget to the scene
     void add(Widget *w):

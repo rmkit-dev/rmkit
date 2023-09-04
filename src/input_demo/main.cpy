@@ -140,7 +140,7 @@ class App:
     pager->setup_for_render()
     pager->events.selected += [=](string t):
       debug "PAGER SELECTED", t
-      ui::MainLoop::hide_overlay()
+      pager->hide()
 
     ;
 

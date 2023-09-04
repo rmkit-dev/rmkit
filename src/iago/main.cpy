@@ -55,7 +55,7 @@ class SettingsDialog: public ui::InfoDialog:
     shape::Shape::columns = self.columns_range->get_value()
 
   void on_button_selected(string text):
-    ui::MainLoop::hide_overlay()
+    self.hide()
     self.save_settings()
 
   // this function actually builds the dialog scene and necessary widgets /
@@ -65,7 +65,7 @@ class SettingsDialog: public ui::InfoDialog:
 
     self.on_hide = self.scene->on_hide
     self.scene->on_hide += PLS_LAMBDA(auto &visible) {
-      ui::MainLoop::hide_overlay()
+      self.hide()
       self.save_settings()
     }
 

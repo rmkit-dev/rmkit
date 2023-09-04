@@ -242,7 +242,7 @@ class AppDialog: public ui::Pager:
 
     void on_row_selected(string name):
       CURRENT_APP = name
-      ui::MainLoop::hide_overlay()
+      self.hide()
 
     void render_row(ui::HorizontalLayout *row, string option):
       status := string("")
@@ -430,12 +430,12 @@ class App: public IApp:
     if line == "show":
       self.show_launcher()
     else if line == "hide":
-      ui::MainLoop::hide_overlay()
+      app_dialog->hide()
     else if line == "back":
-      ui::MainLoop::hide_overlay()
+      app_dialog->hide()
       self.show_last_app()
     else if line == "suspend":
-      if not ui::MainLoop::overlay_is_visible:
+      if not ui::MainLoop::overlay_is_visible():
         app_bg->snapshot()
       on_suspend()
     else if line.find("launch ") == 0:
@@ -527,7 +527,7 @@ class App: public IApp:
 
         if last_action > 0 and SUSPEND_THRESHOLD > 0:
           if now - last_action > SUSPEND_THRESHOLD and now - last_action < 2*SUSPEND_THRESHOLD:
-            if not ui::MainLoop::overlay_is_visible:
+            if not ui::MainLoop::overlay_is_visible():
               app_bg->snapshot()
             on_suspend()
 
@@ -559,7 +559,7 @@ class App: public IApp:
     app := find_app(name)
     if app.bin != "":
       debug "USING API TO LAUNCH", name
-      ui::MainLoop::hide_overlay()
+      app_dialog->hide()
       self.term_apps()
       self.app_bg->snapshot()
       self.launch(name)
@@ -569,7 +569,7 @@ class App: public IApp:
 
 
   void show_launcher():
-    if ui::MainLoop::overlay_is_visible:
+    if ui::MainLoop::overlay_is_visible():
       return
 
     #ifdef PORTRAIT_ONLY
@@ -672,7 +672,7 @@ class App: public IApp:
     #endif
 
     debug "SUSPENDING"
-    ui::MainLoop::hide_overlay()
+    app_dialog->hide()
 
     _w, _h := fb->get_display_size()
 
@@ -851,7 +851,7 @@ class App: public IApp:
     else:
       ioctl(ui::MainLoop::in.button.fd, EVIOCGRAB, false)
 
-    ui::MainLoop::hide_overlay()
+    app_dialog->hide()
 
 
   string get_xochitl_cmd():
@@ -953,7 +953,7 @@ class App: public IApp:
     while true:
       ui::MainLoop::main()
       ui::MainLoop::check_resize()
-      if ui::MainLoop::overlay_is_visible:
+      if ui::MainLoop::overlay_is_visible():
         ui::MainLoop::redraw()
 
       ui::MainLoop::read_input(1000)
