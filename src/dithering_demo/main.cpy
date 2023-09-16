@@ -205,7 +205,9 @@ class App : public IApp:
     if self.image.buffer != NULL:
       free(self.image.buffer)
     filename = string(IMAGES_DIR) + "/" + filename
-    self.image.buffer = (uint32_t*)stbi_load(filename.c_str(), &self.image.w, &self.image.h, &self.image.channels, 1);
+    int channels
+    self.image.buffer = (uint32_t*)stbi_load(filename.c_str(), &self.image.w, &self.image.h, &channels, 1);
+    self.image.channels = 1
     util::resize_image(image, self.image.w, self.image.h, 0)
     undithered_bmp->image = self.image
     dithered_bmp->image = self.image

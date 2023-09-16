@@ -435,7 +435,7 @@ namespace framebuffer:
 
       int channels // an output parameter
       decoded := stbi_load(full_path, &neww, &newh, &channels, 4);
-      image := image_data{(uint32_t*) decoded, (int) neww, (int) newh, channels}
+      image := image_data{(uint32_t*) decoded, (int) neww, (int) newh, 4}
       self->draw_bitmap(image,0,0,framebuffer::ALPHA_BLEND)
       free(image.buffer)
 

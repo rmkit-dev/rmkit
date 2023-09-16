@@ -39,8 +39,8 @@ namespace ui:
 
 
       int channels // an output parameter
-      decoded := stbi_load(self.filename.c_str(), &fw, &fh, &channels, 0);
-      img := image_data{(uint32_t*) decoded, (int) fw, (int) fh, channels}
+      decoded := stbi_load(self.filename.c_str(), &fw, &fh, &channels, 4);
+      img := image_data{(uint32_t*) decoded, (int) fw, (int) fh, 4}
       util::resize_image(img, self.w, self.h)
       self.image = img
 
