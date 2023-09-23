@@ -5,7 +5,7 @@ You can compile an individual project by running `make <project>` or `make
 
 You can change whether you are compiling for the remarkable or a PC by
 adjusting the `TARGET` environment variable. See `src/actions.make` for the list
-of targets, which include (but is not limited to) `dev` and `arm`
+of targets, which include (but is not limited to) `dev`, `kobo` and `rm`
 
 ## Compilation
 
@@ -21,7 +21,7 @@ This is the easiest way to compile for the tablet if you have docker installed.
 
 * install okp: `pip install okp`
 * install resim viewer: `pip install rmkit-sim`
-* compile with DEV mode: `ARCH=dev make harmony`
+* compile with DEV mode: `TARGET=dev make harmony`
 * run harmony with `resim ./src/build/harmony`
 
 ### Remarkable
