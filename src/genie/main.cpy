@@ -55,21 +55,33 @@ class App:
 // fingers=2
 // command="/home/root/swipes/swipeup.sh"
 
-def setup_gestures(App &app):
+HAS_GESTURES := false
+def setup_gestures(App &app, string filename):
   string line
-  ifstream infile(INFILE)
+  ifstream infile(filename)
   vector<string> lines
 
   while getline(infile, line):
     lines.push_back(line)
 
   gestures := parse_config(lines)
-  if gestures.size() == 0:
-    debug "NO GESTURES"
-    exit(0)
+  if gestures.size() > 0:
+    HAS_GESTURES = true
+  else:
+    debug "NO GESTURES IN", filename
+    return
 
   for auto g : gestures:
     ui::MainLoop::gestures.push_back(g)
+
+def read_genie_conf_d(App &app):
+  config_dir :=   "/opt/etc/genie.conf.d/"
+  filenames := util::lsdir(config_dir)
+  sort(filenames.begin(), filenames.end())
+  for auto f : filenames:
+    debug "READING CONFIG", f
+    setup_gestures(app, config_dir + f)
+
 
 def main(int argc, char **argv):
   App app
@@ -78,6 +90,10 @@ def main(int argc, char **argv):
     INFILE = argv[1]
     debug "USING", INFILE, "AS CONFIG FILE"
 
-  setup_gestures(app)
+  setup_gestures(app, INFILE)
+  read_genie_conf_d(app)
 
+  if not HAS_GESTURES:
+    debug "NO GESTURES FOUND, PLEASE SET SOME UP"
+    exit(0)
   app.run()
