@@ -35,8 +35,9 @@ namespace ui:
         return
 
 
+      thread *th = nullptr
       try:
-        thread th = thread([=]() {
+        th = new thread([=]() {
           count := 4
           while tasks.size() > 0 and count > 0:
             count--
@@ -50,10 +51,13 @@ namespace ui:
             task_m.unlock()
           TaskQueue::wakeup()
         })
-        th.detach()
+        th->detach()
+        if th != nullptr
+          delete th
       catch (const std::exception& e):
         debug "NEW THREAD EXC", e.what()
         TaskQueue::wakeup()
+
 
   // class: ui::TaskQueue
   // The task queue is a way of scheduling tasks from side threads to be run
