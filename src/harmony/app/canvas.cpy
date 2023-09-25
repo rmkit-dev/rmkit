@@ -160,7 +160,15 @@ namespace app_ui:
         eraser->set_framebuffer(self.layers[cur_layer].fb.get())
 
     bool ignore_event(input::SynMotionEvent &ev):
+      #ifdef KOBO
+      ev.pressure = 0.5
+      ev.tilt_x = 0.5
+      ev.tilt_y = 0.5
+      return false
+      #else
       return input::is_touch_event(ev) != NULL
+      #endif
+
 
     void on_mouse_move(input::SynMotionEvent &ev):
       if not self.layers[cur_layer].visible:
@@ -410,8 +418,6 @@ namespace app_ui:
         return
 
       dirty_rect := self.fb->dirty_area
-      if dirty_rect.x0 > dirty_rect.x1 or dirty_rect.y0 > dirty_rect.y1:
-        return
       debug "ADDING TO UNDO STACK, DIRTY AREA IS", \
         dirty_rect.x0, dirty_rect.y0, dirty_rect.x1, dirty_rect.y1
 

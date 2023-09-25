@@ -84,7 +84,9 @@ class App:
     toolbar->pack_end(new app_ui::RedoButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, canvas))
     toolbar->pack_end(new app_ui::UndoButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT, canvas))
     toolbar->pack_end(new app_ui::HistoryButton(0, 0, 100, TOOLBAR_HEIGHT, canvas))
+    #ifndef KOBO
     toolbar->pack_end(new app_ui::PalmButton(0, 0, ICON_WIDTH, TOOLBAR_HEIGHT))
+    #endif
 
     canvas->mouse.up += PLS_LAMBDA(auto):
       toolbar->refresh()
