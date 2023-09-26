@@ -160,14 +160,13 @@ namespace app_ui:
         eraser->set_framebuffer(self.layers[cur_layer].fb.get())
 
     bool ignore_event(input::SynMotionEvent &ev):
-      #ifdef KOBO
-      ev.pressure = 0.5
-      ev.tilt_x = 0.5
-      ev.tilt_y = 0.5
-      return false
-      #else
+      if not ui::MainLoop::in.has_stylus:
+        ev.pressure = 0.5
+        ev.tilt_x = 0.5
+        ev.tilt_y = 0.5
+        return false
+
       return input::is_touch_event(ev) != NULL
-      #endif
 
 
     void on_mouse_move(input::SynMotionEvent &ev):

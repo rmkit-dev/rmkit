@@ -57,6 +57,19 @@ namespace input:
 
     return UNKNOWN
 
+  static bool supports_stylus(int fd):
+    if fd <= 0:
+      return false
+
+    unsigned long bit[EV_MAX]
+    ioctl(fd, EVIOCGBIT(0, EV_MAX), bit)
+    if check_bit_set(fd, EV_KEY, BTN_TOOL_PEN):
+      return true
+    if check_bit_set(fd, EV_KEY, BTN_STYLUS) && test_bit(EV_ABS, bit):
+      return true
+
+    return false
+
   static EV_TYPE id_by_name(int fd):
     char name[256];
     ioctl(fd, EVIOCGNAME(sizeof(name)), name);

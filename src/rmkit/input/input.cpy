@@ -50,6 +50,11 @@ namespace input:
       fd = _fd
       T::set_fd(fd)
 
+    bool supports_stylus():
+      return input::supports_stylus(fd)
+
+
+
     void handle_event_fd():
       int bytes = read(fd, ev_data, sizeof(input_event) * 64);
       if bytes < sizeof(input_event) || bytes == -1:
@@ -89,6 +94,7 @@ namespace input:
     public:
     int max_fd
     fd_set rdfs
+    bool has_stylus
 
     InputClass<WacomEvent, SynMotionEvent> wacom
     InputClass<TouchEvent, SynMotionEvent> touch
@@ -132,6 +138,7 @@ namespace input:
 
       self.monitor(input::ipc_fd[0])
       self.set_scaling(framebuffer::fb_info::display_width, framebuffer::fb_info::display_height)
+      self.has_stylus = supports_stylus()
       return
 
 
@@ -286,6 +293,8 @@ namespace input:
       #endif
       return
 
+    bool supports_stylus():
+      return wacom.supports_stylus() || touch.supports_stylus()
 
   // TODO: should we just put this in the SynMotionEvent?
   static WacomEvent* is_wacom_event(SynMotionEvent &syn_ev):
@@ -295,3 +304,4 @@ namespace input:
     if evt != nullptr && evt->is_touch():
       return evt
     return nullptr
+
