@@ -443,6 +443,16 @@ class App: public IApp:
       if len(tokens) > 1:
         name := tokens[1]
         api_launch_app(name)
+    else if line.find("pause ") == 0:
+      tokens := str_utils::split(line, ' ')
+      if len(tokens) > 1:
+        name := tokens[1]
+        api_pause_app(name)
+    else if line.find("stop ") == 0:
+      tokens := str_utils::split(line, ' ')
+      if len(tokens) > 1:
+        name := tokens[1]
+        api_stop_app(name)
 
     else:
       debug "UNKNOWN API LINE:", line
@@ -567,6 +577,19 @@ class App: public IApp:
     else:
       debug "NO SUCH APP:", name
 
+
+  void api_pause_app(string name):
+    app := find_app(name)
+    get_current_app()
+    if app.name == CURRENT_APP:
+      debug "USING API TO PAUSE", name
+      self.show_launcher()
+
+  void api_stop_app(string name):
+    app := find_app(name)
+    if app.bin != "":
+      debug "USING API TO STOP", name
+      self.kill(name)
 
   void show_launcher():
     if ui::MainLoop::overlay_is_visible():
