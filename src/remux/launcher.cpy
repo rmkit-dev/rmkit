@@ -589,7 +589,18 @@ class App: public IApp:
     app := find_app(name)
     if app.bin != "":
       debug "USING API TO STOP", name
+      get_current_app()
       self.kill(name)
+      if name == CURRENT_APP:
+        self.show_launcher()
+      #ifdef REMARKABLE
+      else if name == "xochitl" and CURRENT_APP == APP_XOCHITL.name:
+        self.show_launcher()
+      #elif KOBO
+      else if name == "nickel" and CURRENT_APP == APP_NICKEL.name:
+        self.show_launcher()
+      #endif
+
 
   void show_launcher():
     if ui::MainLoop::overlay_is_visible():
@@ -807,6 +818,13 @@ class App: public IApp:
     for auto app : app_dialog->get_apps():
       if app.name == name:
         bin = app.bin
+      #ifdef REMARKABLE
+      else if name == "xochitl" and app.name == APP_XOCHITL.name:
+        bin = app.bin
+      #elif KOBO
+      else if name == "nickel" and app.name == APP_NICKEL.name:
+        bin = app.bin
+      #endif
 
     if bin == "":
       return
