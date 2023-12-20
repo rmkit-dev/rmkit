@@ -1,0 +1,66 @@
+#!/bin/bash
+
+help() {
+  echo "Usage: remux-api <command>"
+  echo ""
+  echo "  Commands:"
+  echo "    --help | help: Show this message and exit"
+  echo "    list-paused: List all paused apps"
+  echo "    list-apps: List all installed apps"
+  echo "    current-app: Output name of current app"
+  echo "    show: Show the remux UI"
+  echo "    hide: Hide the remux UI"
+  echo "    suspend: Suspend the device"
+  echo "    launch [name]: Launch an app"
+  echo "    pause [name]: Pause an app if it's the current app"
+  echo "    stop [name]: Stop an app"
+}
+
+case "$1" in
+  list-paused | list-apps | current-app | show | hide | suspend)
+    if [ $# -ne 1 ]; then
+      help
+      exit 1
+    fi
+    case "$1" in
+      list-paused)
+        remux --paused-apps 2>/dev/null
+        ;;
+      list-apps)
+        remux --all-apps 2>/dev/null
+        ;;
+      current-app)
+        remux --current-app 2>/dev/null
+        ;;
+      show)
+        echo "show" > /run/remux.api
+        ;;
+      hide)
+        echo "hide" > /run/remux.api
+        ;;
+      suspend)
+        echo "suspend" > /run/remux.api
+        ;;
+    esac
+    ;;
+  launch | pause | stop)
+    if [ $# -ne 2 ]; then
+      help
+      exit 1
+    fi
+    case "$1" in
+      launch)
+        echo "launch $2" > /run/remux.api
+        ;;
+      pause)
+        echo "pause $2" > /run/remux.api
+        ;;
+      stop)
+        echo "stop $2" > /run/remux.api
+        ;;
+    esac
+    ;;
+  * | help | --help)
+    help
+    ;;
+esac

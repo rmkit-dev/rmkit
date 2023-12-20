@@ -443,6 +443,16 @@ class App: public IApp:
       if len(tokens) > 1:
         name := tokens[1]
         api_launch_app(name)
+    else if line.find("pause ") == 0:
+      tokens := str_utils::split(line, ' ')
+      if len(tokens) > 1:
+        name := tokens[1]
+        api_pause_app(name)
+    else if line.find("stop ") == 0:
+      tokens := str_utils::split(line, ' ')
+      if len(tokens) > 1:
+        name := tokens[1]
+        api_stop_app(name)
 
     else:
       debug "UNKNOWN API LINE:", line
@@ -566,6 +576,30 @@ class App: public IApp:
       self.render_bg()
     else:
       debug "NO SUCH APP:", name
+
+
+  void api_pause_app(string name):
+    app := find_app(name)
+    get_current_app()
+    if app.name == CURRENT_APP:
+      debug "USING API TO PAUSE", name
+      self.show_launcher()
+
+  void api_stop_app(string name):
+    app := find_app(name)
+    if app.bin != "":
+      debug "USING API TO STOP", name
+      get_current_app()
+      self.kill(name)
+      if name == CURRENT_APP:
+        self.show_launcher()
+      #ifdef REMARKABLE
+      else if name == "xochitl" and CURRENT_APP == APP_XOCHITL.name:
+        self.show_launcher()
+      #elif KOBO
+      else if name == "nickel" and CURRENT_APP == APP_NICKEL.name:
+        self.show_launcher()
+      #endif
 
 
   void show_launcher():
@@ -784,6 +818,13 @@ class App: public IApp:
     for auto app : app_dialog->get_apps():
       if app.name == name:
         bin = app.bin
+      #ifdef REMARKABLE
+      else if name == "xochitl" and app.name == APP_XOCHITL.name:
+        bin = app.bin
+      #elif KOBO
+      else if name == "nickel" and app.name == APP_NICKEL.name:
+        bin = app.bin
+      #endif
 
     if bin == "":
       return
@@ -912,8 +953,6 @@ class App: public IApp:
     putenv((char*) "KO_DONT_SET_DEPTH=1")
     putenv((char*) "KO_DONT_GRAB_INPUT=1")
 
-
-
     #if defined(REMARKABLE)
     _ := system("systemctl stop xochitl")
     self.term_apps()
@@ -927,7 +966,6 @@ class App: public IApp:
       debug "RESETTING BPP TO", APP_MAIN.bpp
       fb->set_screen_depth(APP_MAIN.bpp)
     #endif
-
 
     ui::Style::DEFAULT.font_size = 32
 
@@ -959,7 +997,86 @@ class App: public IApp:
       ui::MainLoop::read_input(1000)
       ui::MainLoop::handle_gestures()
 
+  vector<RMApp> get_apps():
+    return self.app_dialog->get_apps()
+
 App app
-def main():
-  LAST_ACTION = time(NULL)
-  app.run()
+def main(int argc, char **argv):
+  if argc > 1:
+    std::string flag(argv[1])
+    str_utils::trim(flag)
+    if flag == "--all-apps":
+      vector<string> apps
+      for auto a : app.get_apps():
+        #ifdef REMARKABLE
+        if a.name == APP_XOCHITL.name:
+          apps.push_back("xochitl")
+        else:
+          apps.push_back(a.name)
+        #elif KOBO
+        if a.name == APP_NICKEL.name:
+          apps.push_back("nickel")
+        else:
+          apps.push_back(a.name)
+        #else
+        apps.push_back(a.name)
+        #endif
+
+      for auto name : apps:
+        print name
+
+    else if flag == "--current-app":
+      for auto a : app.get_apps():
+        // Only if it is running
+        if !a.is_running or (!proc::is_running(a.which) and !proc::is_running(a.bin)):
+          continue
+
+        #ifdef REMARKABLE
+        if a.name == APP_XOCHITL.name:
+          print "xochitl"
+        else:
+          print a.name
+        #elif KOBO
+        if a.name == APP_NICKEL.name:
+          print "nickel"
+        else:
+          print a.name
+        #else
+        print a.name
+        #endif
+        break
+
+    else if flag == "--paused-apps":
+      vector<string> apps
+      for auto a : app.get_apps():
+        // Only if not in the list, and if it is currently running
+        if !a.is_running or std::find(apps.begin(), apps.end(), a.name) != apps.end():
+          continue
+
+        // Ignore current application
+        if proc::is_running(a.which) or proc::is_running(a.bin):
+          continue
+
+        #ifdef REMARKABLE
+        if a.name == APP_XOCHITL.name:
+          apps.push_back("xochitl")
+        else:
+          apps.push_back(a.name)
+        #elif KOBO
+        if a.name == APP_NICKEL.name:
+          apps.push_back("nickel")
+        else:
+          apps.push_back(a.name)
+        #else
+        apps.push_back(a.name)
+        #endif
+
+      for auto name : apps:
+        print name
+
+    else:
+      print "Usage:", argv[0], "[--help|--current-app|--paused-apps|--all-apps]"
+
+  else:
+    LAST_ACTION = time(NULL)
+    app.run()
