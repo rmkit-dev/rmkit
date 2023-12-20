@@ -108,6 +108,9 @@ namespace ui:
 
     // returns whether the supplied widget is visible
     static bool is_visible(Widget *w):
+      for auto widget : scene->widgets:
+        if widget.get() == w:
+          return true
 
       for auto scene : scene_stack:
         for auto widget : scene->widgets:
