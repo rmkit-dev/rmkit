@@ -740,16 +740,26 @@ namespace framebuffer:
       // make an empty file of the right size
 
       exists := file_exists(filename)
+      reset := !exists
       if not exists:
         std::ofstream ofs(filename, std::ios::binary | std::ios::out);
         ofs.seekp(self.byte_size);
         ofs.write("", 1);
         ofs.close()
+      else:
+        fd := open(filename.c_str(), O_RDWR)
+        file_bytes := lseek(fd, 0, SEEK_END)
+        close(fd)
+
+        if file_bytes != self.byte_size:
+          debug "FOUND WRONG BYTE SIZE, NEED TO RESIZE", file_bytes, self.byte_size
+          reset = true
+          truncate(filename.c_str(), self.byte_size)
 
       self.fd = open(filename.c_str(), O_RDWR)
       self.fbmem = (remarkable_color*) mmap(NULL, self.byte_size, PROT_WRITE, MAP_SHARED, self.fd, 0)
 
-      if not exists:
+      if reset:
         memset(self.fbmem, WHITE, self.byte_size)
 
     virtual ~FileFB():
