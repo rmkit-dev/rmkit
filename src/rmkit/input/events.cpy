@@ -4,6 +4,12 @@
 #include "../util/rotate.h"
 #include "../fb/fb_info.h"
 
+#ifndef ABS_MT_SLOT
+#define ABS_MT_SLOT		0x2f	/* MT slot being modified */
+#define SYN_DROPPED		3
+#define ABS_MT_DISTANCE		0x3b	/* Contact hover distance */
+#endif
+
 //#define DEBUG_INPUT_EVENT 1
 //#define DEBUG_INPUT_INIT 1
 namespace input:

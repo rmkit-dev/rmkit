@@ -1,0 +1,3 @@
+[submodule "src/vendor/FBInk"]
+	path = src/vendor/FBInk
+	url = https://github.com/NiLuJe/FBInk/

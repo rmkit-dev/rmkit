@@ -23,9 +23,12 @@
 #include "../../vendor/stb/stb_image.h"
 #include "../../vendor/stb/stb_image_write.h"
 
+#ifdef RMKIT_FBINK
+#include "../../vendor/fbink.h"
+#endif
+
 #define likely(x)      __builtin_expect(!!(x), 1)
 #define unlikely(x)      __builtin_expect(!!(x), 0)
-
 
 using namespace std
 
@@ -670,9 +673,13 @@ namespace framebuffer:
     HardwareFB(): FB():
       self.fd = open("/dev/fb0", O_RDWR)
 
+    virtual remarkable_color* allocate_memory(int byte_size):
+      debug "ALLOCATING MEMORY FROM HW FB"
+      return (remarkable_color*) mmap(NULL, self.byte_size, PROT_WRITE, MAP_SHARED, self.fd, 0)
+
     void init():
       FB::init()
-      self.fbmem = (remarkable_color*) mmap(NULL, self.byte_size, PROT_WRITE, MAP_SHARED, self.fd, 0)
+      self.fbmem = self.allocate_memory(self.byte_size)
 
       fb_var_screeninfo vinfo;
       if (ioctl(self.fd, FBIOGET_VSCREENINFO, &vinfo)):
@@ -886,6 +893,62 @@ namespace framebuffer:
     KoboFB(): RemarkableFB()
       pass
 
+#ifdef RMKIT_FBINK
+  class FBInk: public HardwareFB:
+    public:
+    FBInkConfig config_ = {0}
+    FBInkState state_ = {0}
+    FBInk():
+      self.fd = fbink_open()
+      fbink_init(self.fd, &config_)
+
+    void init():
+      FB::init()
+      self.fbmem = self.allocate_memory(self.byte_size)
+
+      #ifndef FB_NO_INIT_BPP
+      set_screen_depth(sizeof(remarkable_color)*8)
+      #endif
+
+    remarkable_color* allocate_memory(int):
+      size_t size
+      mem := (remarkable_color*) fbink_get_fb_pointer(self.fd, &size)
+      return mem
+
+    int perform_redraw(bool full_screen=false):
+      config_.wfm_mode = self.waveform_mode
+      if !full_screen:
+        fbink_refresh(self.fd,
+          dirty_area.y0,
+          dirty_area.x0,
+          std::min(dirty_area.x1 - dirty_area.x0, self.display_width-1),
+          std::min(dirty_area.y1 - dirty_area.y0, self.height-1),
+          &config_)
+      else:
+        fbink_refresh(self.fd, 0, 0, self.display_width, self.height, &config_)
+      return 0
+
+    void wait_for_redraw(uint32_t update_marker):
+      fbink_wait_for_complete(self.fd, update_marker);
+
+    tuple<int, int> get_display_size():
+      fbink_get_state(&config_, &state_)
+      return state_.view_width, state_.view_height
+
+    tuple<int, int> get_virtual_size():
+      fbink_get_state(&config_, &state_)
+      return ((state_.scanline_stride << 3U) / state_.bpp), state_.screen_height
+
+    int get_screen_depth():
+      fbink_get_state(&config_, &state_)
+      return state_.bpp
+
+    void set_screen_depth(int d):
+      debug "SETTING SCREEN DEPTH", d
+      fbink_get_state(&config_, &state_)
+      ret := fbink_set_fb_info(self.fd, state_.current_rota, d, true, &config_);
+#endif
+
   class MtkFB: public RemarkableFB:
     public:
 
@@ -956,14 +1019,15 @@ namespace framebuffer:
     if _FB != nullptr && _FB.get() != nullptr:
       return _FB
 
-    #ifdef REMARKABLE
+    #ifdef RMKIT_FBINK
+    _FB = make_shared<framebuffer::FBInk>()
+    #elif REMARKABLE
     _FB = make_shared<framebuffer::RemarkableFB>()
     #elif KOBO
     if util::get_kobo_version() == util::KOBO_DEVICE_ID_E::DEVICE_KOBO_ELIPSA_2E:
       _FB = make_shared<framebuffer::MtkFB>()
     else:
       _FB = make_shared<framebuffer::KoboFB>()
-
     #elif DEV
     _FB = make_shared<framebuffer::FileFB>("fb.raw", DISPLAYWIDTH, DISPLAYHEIGHT)
     #else

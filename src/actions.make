@@ -20,16 +20,24 @@ else
 	exit 1
 endif
 
+ifdef FBINK
+CPP_FLAGS+=-L${ROOT_DIR}/src/vendor/FBInk/Release -l:libfbink.a -D"RMKIT_FBINK=1"
+libfbink:
+	cd ../vendor/FBInk/ && BITMAP=1 make staticlib
+else
+libfbink:
+	echo "Skipping FBInk compilation"
+endif
+
 clean-default:
 	rm ${SRC_DIR}/build/${EXE}
-
-compile_kobo: ../build/stb.arm.o
-compile_kobo: export CPP_FLAGS += -O2 -static -static-libstdc++ -static-libgcc
+compile_kobo: ../build/stb.arm.o libfbink
+compile_kobo: export CPP_FLAGS += -O2 -static -static-libstdc++ -static-libgcc 
 compile_kobo: export OKP_FLAGS += ../build/stb.arm.o
 compile_kobo:
 	CXX=${CXX_BIN} okp ${OKP_FLAGS} -- -D"KOBO=1" -D${RMKIT_IMPL} ${CPP_FLAGS}
 
-compile_remarkable: ../build/stb.arm.o
+compile_remarkable: ../build/stb.arm.o libfbink
 compile_remarkable: export CPP_FLAGS += -O2
 compile_remarkable: export OKP_FLAGS += ../build/stb.arm.o
 compile_remarkable:

@@ -1,5 +1,6 @@
 HOST?=10.11.99.1
 TARGET?=rm
+CROSS_TC?=arm-linux-gnueabihf
 CXX_BIN?=arm-linux-gnueabihf-g++
 CC_BIN?=arm-linux-gnueabihf-gcc
 STRIP_BIN?=arm-linux-gnueabihf-strip
@@ -8,6 +9,14 @@ CPP_FLAGS=-pthread -lpthread -fdata-sections -ffunction-sections -Wl,--gc-sectio
 # BUILD STUFF
 ROOT=${PWD}
 BUILD_DIR=src/build
+
+ifdef CROSS_TC
+	ifneq "$(CC)" "clang"
+		CC_BIN=$(CROSS_TC)-gcc
+		CXX_BIN=$(CROSS_TC)-g++
+		STRIP_BIN=$(CROSS_TC)-strip
+	endif
+endif
 
 
 VERSION=$(shell cat src/rmkit/version.cpy | sed 's/__version__=//;s/"//g')
