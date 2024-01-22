@@ -101,6 +101,7 @@ namespace input:
     public:
     int x=-1, y=-1
     int slot = 0, left = -1
+    int eraser = 0
     float pressure=-1, distance=-1, tilt_x=-1, tilt_y=-1
     bool lifted=false
 
@@ -230,6 +231,12 @@ namespace input:
             self.left = 0
           break
 
+        #ifdef KOBO
+        case BTN_STYLUS:
+          self.eraser = data.value
+          break
+        #endif
+
     handle_abs(input_event data):
       if swap_xy:
         if data.code == ABS_MT_POSITION_X:
@@ -327,6 +334,7 @@ namespace input:
       syn_ev.pressure = self.pressure
       syn_ev.tilt_x = self.tilt_x
       syn_ev.tilt_y = self.tilt_y
+      syn_ev.eraser = self.eraser
 
       syn_ev.set_original(new TouchEvent(*self))
 
