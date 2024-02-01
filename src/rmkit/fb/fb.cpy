@@ -418,7 +418,7 @@ namespace framebuffer:
       time (&rawtime);
       timeinfo = localtime(&rawtime);
 
-      strftime(buffer,sizeof(buffer),"%Y-%m-%d-%H:%M:%S",timeinfo);
+      strftime(buffer,sizeof(buffer),"%Y-%m-%d-%H_%M_%S",timeinfo);
       std::string str(buffer);
 
       return str
