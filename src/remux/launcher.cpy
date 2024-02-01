@@ -822,7 +822,7 @@ class App: public IApp:
       else if name == "xochitl" and app.name == APP_XOCHITL.name:
         bin = app.bin
       #elif KOBO
-      else if name == "nickel" and app.name == APP_NICKEL.name:
+      else if (name == "Nickel" or name == "nickel") and app.name == APP_NICKEL.name:
         bin = app.bin
       #endif
 
