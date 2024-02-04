@@ -14,13 +14,16 @@ static void _rmkit_exit(int signum):
   fb := framebuffer::get()
   fb->cleanup()
   ui::MainLoop::in.ungrab()
-
+  exitCode = signum
+      
   switch signum:
     case SIGINT:
       cerr << "received SIGINT, exiting" << endl;
+      exitCode = 0
       break
     case SIGTERM:
       cerr << "received SIGTERM, exiting" << endl;
+      exitCode = 0
       break
     case SIGSEGV:
       cerr << "received SIGABRT, exiting" << endl;
@@ -30,7 +33,7 @@ static void _rmkit_exit(int signum):
       break
 
   ui::MainLoop::exit(signum)
-  exit(signum)
+  exit(exitCode)
 
 static void _rmkit_init() __attribute__((constructor))
 static void _rmkit_init():
