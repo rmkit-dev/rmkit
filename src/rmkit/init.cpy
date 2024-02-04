@@ -19,8 +19,8 @@ static void _rmkit_exit(int signum):
     case SIGINT:
       cerr << "received SIGINT, exiting" << endl;
       break
-    case SIGKILL:
-      cerr << "received SIGKILL, exiting" << endl;
+    case SIGTERM:
+      cerr << "received SIGTERM, exiting" << endl;
       break
     case SIGSEGV:
       cerr << "received SIGABRT, exiting" << endl;
