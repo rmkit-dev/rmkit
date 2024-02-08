@@ -31,7 +31,9 @@ struct rgb_color {
 // 0(black) - 31(white)
 constexpr remarkable_color gray32(int n)
 {
-    return (n << 11) | (2*n << 5) | n;
+    //The green channel should have six bits, but 31 is only five. Set the last green bit unless n is zero
+    //otherwise white is actually slightly pink
+    return (n << 11) | (((2*n)|(n!=0))<< 5) | n;
 }
 
 // 0.0(black) - 1.0(white)
