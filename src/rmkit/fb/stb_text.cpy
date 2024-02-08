@@ -141,7 +141,6 @@ namespace stbtext:
     for j = 0; j < image.h; j++:
       for i = 0; i < image.w; i++:
         uint32_t val = text_buffer[j*image.w+i]
-        //image.buffer[j*image.w+i] = val == 0 ? WHITE: BLACK;
         image.buffer[j*image.w+i] = color::gray32(31 - (val >> 3)); //rescale (0,255) to (31,0) to get gray tones
 
     // TODO: understand why we need to trim the top line
