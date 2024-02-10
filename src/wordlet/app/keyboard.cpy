@@ -116,7 +116,7 @@ namespace wordle:
         backspace_key->mouse.click += PLS_LAMBDA(auto &ev):
           if self.text.size() > 0:
             self.text.pop_back()
-            kev := KeyboardEvent {text:self.text}
+            KeyboardEvent kev(self.text)
             self.events.changed(kev)
             self.dirty = 1
         ;
@@ -127,7 +127,8 @@ namespace wordle:
         enter_key := new KeyButton(0,0,self.btn_width,btn_height,"enter")
         enter_key->set_style(BTN_STYLE)
         enter_key->mouse.click += PLS_LAMBDA(auto &ev):
-          kev := KeyboardEvent {text:self.text}
+          KeyboardEvent kev(self.text)
+          kev.text = self.text
           if self.text.length() == 5:
             self.events.done(kev)
         ;
@@ -156,7 +157,7 @@ namespace wordle:
 
           if self.text.length() < 5:
             self.text.push_back(c)
-            kev := KeyboardEvent {text:self.text}
+            KeyboardEvent kev(self.text)
             self.events.changed(kev)
         ;
 

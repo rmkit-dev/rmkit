@@ -37,6 +37,10 @@
 #define TOUCH_FLOOD_EVENT ABS_DISTANCE
 #endif
 
+#ifdef RMKIT_FBINK
+#define TOUCH_FLOOD_EVENT ABS_DISTANCE
+#endif
+
 TIMEOUT := 1
 // all time is in seconds
 MIN := 60
@@ -607,8 +611,8 @@ class App: public IApp:
       return
 
     #ifdef PORTRAIT_ONLY
-    debug "NOT SHOWING LAUNCHER IN LANDSCAPE"
     if fb->width > fb->height:
+      debug "NOT SHOWING LAUNCHER IN LANDSCAPE"
       return
     #endif
 

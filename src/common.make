@@ -4,7 +4,7 @@ CROSS_TC?=arm-linux-gnueabihf
 CXX_BIN?=arm-linux-gnueabihf-g++
 CC_BIN?=arm-linux-gnueabihf-gcc
 STRIP_BIN?=arm-linux-gnueabihf-strip
-CPP_FLAGS=-pthread -lpthread -fdata-sections -ffunction-sections -Wl,--gc-sections
+CPP_FLAGS=-ldl -pthread -lpthread -fdata-sections -ffunction-sections -Wl,--gc-sections
 
 # BUILD STUFF
 ROOT=${PWD}

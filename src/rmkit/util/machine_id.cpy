@@ -76,13 +76,8 @@ namespace util:
             debug "RUNNING ON ELIPSA 2E"
             break
           default:
-            if getenv("RMKIT_KOBO_ANY") != NULL:
-              debug "*** UNRECOGNIZED KOBO DEVICE, TOUCH MAY NOT WORK ***"
-              break
+            debug "*** UNRECOGNIZED KOBO DEVICE, TOUCH MAY NOT WORK ***"
 
-            debug "*** UNRECOGNIZED KOBO DEVICE, EXITING ***"
-            debug "SET 'RMKIT_KOBO_ANY=1' TO RUN ON UNSUPPORTED KOBOS"
-            exit(1)
             break
       } while (false);
 

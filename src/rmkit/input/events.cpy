@@ -181,6 +181,13 @@ namespace input:
       invert_y = true
       if not rm2fb::IN_RM2FB_SHIM:
         invert_x = true
+      #elif defined(RMKIT_FBINK) & defined(KOBO)
+      FBInkState state
+      FBInkConfig config
+      fbink_get_state(&config, &state)
+      invert_x = state.touch_mirror_x
+      invert_y = state.touch_mirror_y
+      swap_xy  = state.touch_swap_axes
       #elif KOBO
 
       version := util::get_kobo_version()
@@ -300,6 +307,8 @@ namespace input:
         case ABS_MT_PRESSURE:
           slots[slot].pressure = self.pressure = normalize(
             data.value, min_pressure, max_pressure, 0, 1)
+          if self.pressure == 0
+            self.left = 0
           break
 
     int max_touch_area():

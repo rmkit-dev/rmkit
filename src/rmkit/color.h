@@ -107,7 +107,7 @@ inline remarkable_color quantize<16>(float c)
     // Optimize BLACK and WHITE
     return c <   (1/16.0) ? BLACK
          : c >= (15/16.0) ? WHITE
-         : SCALE_16[short(std::trunc(c * 15 + 0.5))];
+         : SCALE_16[short(trunc(c * 15 + 0.5))];
 }
 
 } // namespace color
