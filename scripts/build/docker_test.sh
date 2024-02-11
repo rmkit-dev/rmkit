@@ -1,6 +1,8 @@
 OUTDIR=artifacts
+TARGET=${TARGET:-rm}
+
 mkdir ${OUTDIR}
-docker run -i --rm -v "${PWD}/${OUTDIR}:/mnt/artifacts" rmkit /bin/bash << COMMANDS
+docker run -i --rm -v "${PWD}/${OUTDIR}:/mnt/artifacts" rmkit:${TARGET} /bin/bash << COMMANDS
 mkdir -p src/build
 TARGET=dev make
 echo "FINISHED BUILDING"

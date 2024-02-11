@@ -2,6 +2,7 @@ ROOT=${PWD}
 TARGET=kobo
 KOBO_ROOT=${ROOT}/${TARGET}
 PLUGIN_DIR=${KOBO_ROOT}/mnt/onboard/.adds/rmkit
+CROSS_TC=${CROSS_TC:-arm-linux-gnueabihf}
 
 build_dirs() {
   echo "BUILDING KOBO DIR STRUCTURE"
@@ -22,7 +23,7 @@ copy_files() {
 
   popd
   pushd ${PLUGIN_DIR}/bin/apps/
-  arm-linux-gnueabihf-strip *
+  ${CROSS_TC}-strip *
   popd
 }
 
