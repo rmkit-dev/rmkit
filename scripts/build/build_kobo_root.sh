@@ -18,7 +18,7 @@ build_dirs() {
 copy_files() {
   echo "COPYING FILES TO KOBO ROOT"
   pushd artifacts/${TARGET}
-  cp -v animation_demo input_demo eclear dithering_demo mines remux rpncalc wordlet dumbskull ${PLUGIN_DIR}/bin/apps/
+  cp -v animation_demo input_demo dithering_demo dumbskull eclear harmony mines remux rpncalc wordlet ${PLUGIN_DIR}/bin/apps/
   cp -v genie simple ${PLUGIN_DIR}/bin/
 
   popd
