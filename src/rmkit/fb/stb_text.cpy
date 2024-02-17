@@ -23,6 +23,7 @@ namespace stbtext:
   static unsigned char font_buffer[FONT_BUFFER_SIZE]
   static stbtt_fontinfo font;
   extern bool did_setup = false
+  extern bool GRAYSCALE = false
 
   static void setup_font():
     if !did_setup:
@@ -138,10 +139,17 @@ namespace stbtext:
           xpos += scale*stbtt_GetCodepointKernAdvance(&font, utf32[ch],utf32[ch+1]);
        ++ch;
 
-    for j = 0; j < image.h; j++:
-      for i = 0; i < image.w; i++:
-        uint32_t val = text_buffer[j*image.w+i]
-        image.buffer[j*image.w+i] = val == 0 ? WHITE: BLACK;
+    if GRAYSCALE:
+      for j = 0; j < image.h; j++:
+        for i = 0; i < image.w; i++:
+          uint32_t val = text_buffer[j*image.w+i]
+          //rescale (0,255) to (31,0) to get gray tones
+          image.buffer[j*image.w+i] = color::gray32(31 - (val >> 3));
+    else:
+      for j = 0; j < image.h; j++:
+        for i = 0; i < image.w; i++:
+          uint32_t val = text_buffer[j*image.w+i]
+          image.buffer[j*image.w+i] = val == 0 ? WHITE: BLACK;
 
     // TODO: understand why we need to trim the top line
     // to get rid of artifacts above text
