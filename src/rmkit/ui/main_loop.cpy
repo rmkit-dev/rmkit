@@ -28,6 +28,7 @@
 #include "widget.h"
 #include "task_queue.h"
 #include "timer.h"
+#include "../ui/reflow.h"
 
 #include <unistd.h>
 
@@ -219,6 +220,25 @@ namespace ui:
         for auto s : scene_stack:
           s->redraw()
 
+    static void reflow(Scene s):
+      layouts := ReflowLayout::scene_to_layouts.find(s)
+      if layouts == ReflowLayout::scene_to_layouts.end():
+        return
+
+      for auto w : s->widgets:
+        w->restore_coords()
+
+      unordered_map<ReflowLayout*, bool> has_parent;
+      for auto l : layouts->second:
+        l->restore_coords()
+        for auto w : l->children:
+          w->restore_coords()
+        l->mark_children(has_parent)
+
+      for auto l : layouts->second:
+        if has_parent.find(l) == has_parent.end():
+          l->reflow()
+
 
     /// blocking read for input
     static void read_input(int timeout_ms=0):
@@ -239,6 +259,10 @@ namespace ui:
           s->refresh()
           if s->clear_under:
             break
+
+      reflow(scene)
+      for auto &sc : scene_stack:
+        reflow(sc)
 
     // function: set_scene
     // set the main scene for the app to display when drawing

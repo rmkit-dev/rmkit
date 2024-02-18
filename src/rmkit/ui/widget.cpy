@@ -4,12 +4,38 @@
 #include "../util/signals.h"
 
 namespace ui:
+  class Rect:
+    public:
+    // variables: x, y, w, h
+    //
+    // x - the x coordinate of the widget.
+    // y - the y coordinate of the widget.
+    // w - the width of the widget
+    // h - the height of the widget
+    int x, y, w, h
+    int _x, _y, _w, _h // the original values the widget was instantiated with
+
+    Rect(int x,y,w,h): x(x), y(y), w(w), h(h), _x(x), _y(y), _w(w), _h(h):
+      pass
+
+    // this restores the coordinates of a widget to the coords it was initially
+    // given when it was constructed. this could be used to support reflowing
+    // widgets
+    void restore_coords():
+      x = _x
+      y = _y
+      w = _w
+      h = _h
+
+    virtual void on_reflow():
+      pass
+
   // Class: ui::Widget
   //
   // The widget class is the base of all other widgets. A widget is typically
   // a piece of UI that can receive inputs and draw to screen through the
   // frame buffer
-  class Widget:
+  class Widget : public Rect:
     public:
 
     // variable: fb
@@ -22,14 +48,6 @@ namespace ui:
     GESTURE_EVENTS_DELEGATE gestures = { &mouse }
     KEY_EVENTS kbd
 
-    // variables: x, y, w, h
-    //
-    // x - the x coordinate of the widget.
-    // y - the y coordinate of the widget.
-    // w - the width of the widget
-    // h - the height of the widget
-    int x, y, w, h
-    int _x, _y, _w, _h // the original values the widget was instantiated with
     int mouse_down = false, mouse_inside = false, mouse_down_first = false, mouse_x, mouse_y
     int dirty = 1
     bool visible = true
@@ -43,7 +61,7 @@ namespace ui:
     // y - the y coord of the top left of the widget
     // w - the width of the widget
     // h - the height of the widget
-    Widget(int x,y,w,h): x(x), y(y), w(w), h(h), _x(x), _y(y), _w(w), _h(h):
+    Widget(int x,y,w,h): Rect(x,y,w,h):
       self.install_signal_handlers()
 
     virtual ~Widget():
@@ -191,15 +209,6 @@ namespace ui:
         self.w = c
       if d != -1:
         self.h = d
-
-    // this restores the coordinates of a widget to the coords it was initially
-    // given when it was constructed. this could be used to support reflowing
-    // widgets
-    void restore_coords():
-      x = _x
-      y = _y
-      w = _w
-      h = _h
 
     // function: get_render_size
     // gets the size of the rendered widget. this is for variable sized widgets
