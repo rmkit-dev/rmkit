@@ -342,6 +342,7 @@ class App: public IApp:
       debug "DISPLAYED LAUNCHER FOR", int_ms.count(), "MS"
       if int_ms.count() < MIN_DISPLAY_TIME:
         debug "NOT HIDING LAUNCHER BECAUSE INTERVAL < ", MIN_DISPLAY_TIME
+        app_dialog->show()
         return
 
       launch(CURRENT_APP)
