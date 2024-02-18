@@ -22,24 +22,17 @@
 #include "config.h"
 
 #ifdef REMARKABLE
-#define TOUCH_FLOOD_EVENT ABS_DISTANCE
 #define DRAW_APP_BEHIND_MODAL
 #define READ_XOCHITL_DATA
 #define GRAB_INPUT
 #define SUSPENDABLE
 #elif KOBO
-#define TOUCH_FLOOD_EVENT ABS_MT_DISTANCE
 #define DYNAMIC_BPP
 #define HAS_ROTATION
 #define PORTRAIT_ONLY
 #define USE_GRAYSCALE_32BIT
-#else
-#define TOUCH_FLOOD_EVENT ABS_DISTANCE
 #endif
 
-#ifdef RMKIT_FBINK
-#define TOUCH_FLOOD_EVENT ABS_DISTANCE
-#endif
 
 TIMEOUT := 1
 // all time is in seconds
@@ -775,18 +768,35 @@ class App: public IApp:
     if write(fd, &ev, sizeof(ev)) != sizeof(ev):
       debug "COULDNT WRITE EV", errno
 
+  // Figures out what event is supported for flooding
+  uint16_t get_flood_event():
+    vector<uint16_t> features = { ABS_DISTANCE, ABS_MT_DISTANCE, ABS_PRESSURE }
+    vector<string> names = { "ABS_DISTANCE", "ABS_MT_DISTANCE", "ABS_PRESSURE" }
+
+    unsigned long bit[EV_MAX]
+    fd := ui::MainLoop::in.touch.fd
+    ioctl(fd, EVIOCGBIT(0, EV_MAX), bit)
+    for i := 0; i < len(features); i++:
+      if input::check_bit_set(fd, EV_ABS, features[i]):
+        debug "SETTING FLOOD EVENT TO", names[i], features[i]
+        return features[i]
+
+    // return ABS_DISTANCE by default
+    return ABS_DISTANCE
+
 
   input_event* build_touch_flood():
     n := 512 * 8
     num_inst := 4
     input_event *ev = (input_event*) malloc(sizeof(struct input_event) * n * num_inst)
     memset(ev, 0, sizeof(input_event) * n * num_inst)
+    flood_event := get_flood_event()
 
     i := 0
     while i < n:
-      ev[i++] = input_event{ type:EV_ABS, code:TOUCH_FLOOD_EVENT, value:1 }
+      ev[i++] = input_event{ type:EV_ABS, code:flood_event, value:1 }
       ev[i++] = input_event{ type:EV_SYN, code:0, value:0 }
-      ev[i++] = input_event{ type:EV_ABS, code:TOUCH_FLOOD_EVENT, value:2 }
+      ev[i++] = input_event{ type:EV_ABS, code:flood_event, value:2 }
       ev[i++] = input_event{ type:EV_SYN, code:0, value:0 }
 
     return ev
