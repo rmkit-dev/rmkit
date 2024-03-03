@@ -69,6 +69,20 @@ rmkit.h:
 	mkdir src/build > /dev/null || true
 	cd src/rmkit && make
 
+ifdef FBINK
+CPP_FLAGS+=-L./src/vendor/FBInk/Release -l:libfbink.a -D"RMKIT_FBINK=1"
+libfbink:
+	git submodule init
+	git submodule update
+	cd src/vendor/FBInk/ && git submodule init && git submodule update
+	cd src/vendor/FBInk/ && BITMAP=1 make staticlib
+	cp src/vendor/FBInk/fbink.h src/vendor/
+else
+libfbink:
+	@true
+endif
+
+
 docker:
 	docker build --tag ${DOCKERBUILD} . -f docker/${DOCKERFILE}
 	bash scripts/build/docker_release.sh
