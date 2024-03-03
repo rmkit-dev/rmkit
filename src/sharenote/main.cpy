@@ -204,6 +204,12 @@ class Note: public ui::Widget:
     prevx = prevy = -1
 
   bool ignore_event(input::SynMotionEvent &ev):
+    if not ui::MainLoop::in.has_stylus:
+      ev.pressure = 0.5
+      ev.tilt_x = 0.5
+      ev.tilt_y = 0.5
+      return false
+
     return input::is_touch_event(ev) != NULL
 
   void on_mouse_move(input::SynMotionEvent &ev):

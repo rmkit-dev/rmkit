@@ -13,10 +13,16 @@ class Note: public ui::Widget:
   void on_mouse_up(input::SynMotionEvent &ev):
     prevx = prevy = -1
 
-  void on_mouse_move(input::SynMotionEvent &ev):
-    if input::is_touch_event(ev):
-      return
+  bool ignore_event(input::SynMotionEvent &ev):
+    if not ui::MainLoop::in.has_stylus:
+      ev.pressure = 0.5
+      ev.tilt_x = 0.5
+      ev.tilt_y = 0.5
+      return false
 
+    return input::is_touch_event(ev) != NULL
+
+  void on_mouse_move(input::SynMotionEvent &ev):
     if not mouse_down:
       return
 
