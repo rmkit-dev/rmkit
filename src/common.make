@@ -13,15 +13,6 @@ DOCKERBUILD=rmkit:${TARGET}
 ROOT=${PWD}
 BUILD_DIR=src/build
 
-ifdef CROSS_TC
-	ifneq "$(CC)" "clang"
-		CC_BIN=$(CROSS_TC)-gcc
-		CXX_BIN=$(CROSS_TC)-g++
-		STRIP_BIN=$(CROSS_TC)-strip
-	endif
-endif
-
-
 VERSION=$(shell cat src/rmkit/version.cpy | sed 's/__version__=//;s/"//g')
 KBD=`ls /dev/input/by-path/*kbd | head -n1`
 # NOTE: $FILES and $EXE NEED TO BE DEFINED
