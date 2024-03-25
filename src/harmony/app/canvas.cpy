@@ -117,7 +117,7 @@ namespace app_ui:
 
     void sanitize_filename(string &name):
       for i := 0; i < name.length(); i++:
-        if name[i] == '/':
+        if name[i] == '/' or name[i] == ':':
           name[i] = '_'
 
     auto get_stroke_width():
@@ -363,7 +363,7 @@ namespace app_ui:
       self.mark_redraw()
 
 
-    // we tack on ".hrm" to the filename
+    // we tack on ".[timestamp].hrm" to the filename
     void save_project(bool overwrite=false):
       sanitize_filename(self.project_name)
       debug "SAVING PROJECT", self.project_name
@@ -387,6 +387,7 @@ namespace app_ui:
       run_command("tar", tar_args)
 
       datestr := self.vfb->get_date()
+      sanitize_filename(datestr)
       datecstr := datestr.c_str()
       char filename[PATH_MAX]
       sprintf(filename, "../%s.%s.hrm", self.project_name.c_str(), datecstr)
