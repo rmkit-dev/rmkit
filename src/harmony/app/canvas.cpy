@@ -234,7 +234,6 @@ namespace app_ui:
       sanitize_filename(self.project_name)
       char filename[PATH_MAX]
       datestr := self.vfb->get_date()
-      sanitize_filename(datestr)
       datecstr := datestr.c_str()
       sprintf(filename, "%s/%s-%s%s", SAVE_DIR,
         self.project_name.c_str(), datecstr, ".png")
@@ -266,7 +265,6 @@ namespace app_ui:
       sanitize_filename(layer.name)
       char filename[PATH_MAX]
       datestr := self.vfb->get_date()
-      sanitize_filename(datestr)
       datecstr := datestr.c_str()
       sprintf(filename, "%s/%s-%s%s", SAVE_DIR,
         layer.name.c_str(), datecstr, ".png")
@@ -389,7 +387,6 @@ namespace app_ui:
       run_command("tar", tar_args)
 
       datestr := self.vfb->get_date()
-      sanitize_filename(datestr)
       datecstr := datestr.c_str()
       char filename[PATH_MAX]
       sprintf(filename, "../%s.%s.hrm", self.project_name.c_str(), datecstr)
