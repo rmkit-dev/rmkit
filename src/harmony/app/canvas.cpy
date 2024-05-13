@@ -117,7 +117,7 @@ namespace app_ui:
 
     void sanitize_filename(string &name):
       for i := 0; i < name.length(); i++:
-        if name[i] == '/':
+        if name[i] == '/' or name[i] == ':':
           name[i] = '_'
 
     auto get_stroke_width():
@@ -363,7 +363,7 @@ namespace app_ui:
       self.mark_redraw()
 
 
-    // we tack on ".hrm" to the filename
+    // we tack on ".[timestamp].hrm" to the filename
     void save_project(bool overwrite=false):
       sanitize_filename(self.project_name)
       debug "SAVING PROJECT", self.project_name
