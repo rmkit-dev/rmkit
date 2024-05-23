@@ -2,9 +2,12 @@
 
 [![rm1](https://img.shields.io/badge/rM1-supported-green)](https://remarkable.com/store/remarkable)
 [![rm2](https://img.shields.io/badge/rM2-supported-green)](https://remarkable.com/store/remarkable-2)
+[![Kobo Aura One](https://img.shields.io/badge/Kobo_Aura_One-supported-green)](https://us.kobobooks.com/products/kobo-aura-one/)
 [![Kobo Clara HD](https://img.shields.io/badge/Kobo_Clara_HD-supported-green)](https://us.kobobooks.com/products/kobo-clara-hd)
 [![Kobo Libra H20](https://img.shields.io/badge/Kobo_Libra_H2O-supported-green)](https://us.kobobooks.com/products/kobo-libra-h2o)
 [![Kobo Elipsa 2E](https://img.shields.io/badge/Kobo_Elipsa_2E-supported-green)](https://us.kobobooks.com/products/kobo-elipsa-2e)
+[![Kobo Libra Colour](https://img.shields.io/badge/Kobo_Libra_Colour-supported-green)](https://us.kobobooks.com/products/kobo-libra-colour)
+[![Kobo Clara Colour](https://img.shields.io/badge/Kobo_Clara_Colour-supported-green)](https://us.kobobooks.com/products/kobo-clara-colour)
 
 
 [![opkg](https://img.shields.io/badge/OPKG-harmony-blue)](https://github.com/toltec-dev/toltec)
