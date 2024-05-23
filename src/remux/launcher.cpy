@@ -157,10 +157,7 @@ class AppBackground: public ui::Widget:
 
     vfb := self.get_vfb()
     debug "RENDERING", CURRENT_APP
-    if rm2fb::IN_RM2FB_SHIM:
-      fb->waveform_mode = WAVEFORM_MODE_GC16
-    else:
-      fb->waveform_mode = WAVEFORM_MODE_AUTO
+    fb->waveform_mode = WAVEFORM_MODE_GC16
 
     vfb->decompress(fb->fbmem)
 
