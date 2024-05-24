@@ -27,7 +27,7 @@ $(RUN_APPS): %: rmkit.h
 	cd src/$(@:run_%=%) && make run
 
 $(DOCKER_APPS): %:
-	docker build --tag ${DOCKERBUILD} . -f ${DOCKERFILE}
+	docker build --tag ${DOCKERBUILD} . -f docker/${DOCKERFILE}
 	bash scripts/build/docker_build.sh $(@:%_docker=%)
 
 $(CLEAN_APPS): %:
