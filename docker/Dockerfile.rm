@@ -5,3 +5,4 @@ RUN pip3 install okp
 WORKDIR /rmkit
 COPY . /rmkit/
 RUN rm src/build -fr
+ENV CROSS_TC=arm-linux-gnueabihf
