@@ -295,15 +295,20 @@ namespace framebuffer:
 
           do_dithering(self.fbmem, i+o_x, j+o_y, color, dither)
 
-    inline remarkable_color to_rgb565(char *src, int offset):
-        r := src[offset]
-        g := src[offset+1]
-        b := src[offset+2]
-        return (remarkable_color) (
-          ((r & 0b11111000) << 8) |
-          ((g & 0b11111100) << 3) |
-          ((b & 0b11111000) >> 3)
-        );
+    inline remarkable_color pack_pixel(char *src, int offset):
+      #ifdef RMKIT_FBINK
+      r := src[offset]
+      g := src[offset+1]
+      b := src[offset+2]
+      uint32_t out
+      fbink_pack_pixel_rgba(r, g, b, 0xff, &out)
+      return (remarkable_color) out
+      #else
+      r := src[offset]
+      g := src[offset+1]
+      b := src[offset+2]
+      return (remarkable_color) (((r >> 3U) << 11U) | ((g >> 2U) << 5U) | (b >> 3U));
+      #endif
 
     inline void grayscale_to_rgb32(uint8_t src, char *dst):
         uint32_t color = (src * 0x00010101);
@@ -349,12 +354,12 @@ namespace framebuffer:
             if image.channels == 4 && alpha:
               // 4th bit is alpha -- if it's 0, skip drawing
               if ((char*)src)[i*image.channels+3] != 0:
-                self._set_pixel(&ptr[i], i, j, to_rgb565((char *) src, i*image.channels))
+                self._set_pixel(&ptr[i], i, j, pack_pixel((char *) src, i*image.channels))
             else if image.channels >= 3:
-              self._set_pixel(&ptr[i], i, j, to_rgb565((char *) src, i*image.channels))
+              self._set_pixel(&ptr[i], i, j, pack_pixel((char *) src, i*image.channels))
             else if image.channels == 1:
               grayscale_to_rgb32(src[i], src_val)
-              self._set_pixel(&ptr[i], i, j, to_rgb565(src_val, 0))
+              self._set_pixel(&ptr[i], i, j, pack_pixel(src_val, 0))
             else:
               self._set_pixel(&ptr[i], i, j, src[i])
 

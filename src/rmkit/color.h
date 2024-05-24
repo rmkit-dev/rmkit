@@ -31,6 +31,12 @@ struct rgb_color {
 // 0(black) - 31(white)
 constexpr remarkable_color gray32(int n)
 {
+
+    if (sizeof(remarkable_color) >= 3) {
+      n = (n * 0xff / 32);
+      return (n << 16) | (n << 8) | n;
+    }
+
     // The green channel should have six bits, but 31 is only five.
     // Set the last green bit unless n is zero
     // otherwise white is actually slightly pink
@@ -57,10 +63,17 @@ constexpr rgb_color to_rgb8(remarkable_color s)
 
 constexpr float to_float(remarkable_color c)
 {
+    if (sizeof(remarkable_color) >= 3) {
+      return ((c >> 16) & 0xff) * (0.21 / 0xff)  // red
+           + ((c >>  8) & 0xff) * (0.72 / 0xff)  // green
+           + ((c >>  0) & 0xff) * (0.07 / 0xff); // blue
+    }
+
     // 0.21 R + 0.72 G + 0.07 B
     return ((c >> 11) & 31) * (0.21 / 31)  // red
          + ((c >> 5)  & 63) * (0.72 / 63)  // green
          + (c         & 31) * (0.07 / 31); // blue
+
 }
 
 // 16-gray palette (BLACK, WHITE, and 14 shades of gray)
