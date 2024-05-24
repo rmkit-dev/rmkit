@@ -1,7 +1,7 @@
 OUTDIR=artifacts
 TARGET=${TARGET:-rm}
 FBINK=${FBINK}
-CROSS_TC=${CROSS_TC}
+CROSS_TC=${CROSS_TC:-arm-linux-gnueabihf}
 
 mkdir ${OUTDIR}
 docker run -i --rm -v "${PWD}/${OUTDIR}:/mnt/artifacts" rmkit:${TARGET} /bin/bash << COMMANDS
