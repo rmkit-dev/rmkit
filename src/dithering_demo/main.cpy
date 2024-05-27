@@ -208,7 +208,17 @@ class App : public IApp:
     int channels
     self.image.buffer = (uint32_t*)stbi_load(filename.c_str(), &self.image.w, &self.image.h, &channels, 4);
     self.image.channels = 4
-    util::resize_image(image, self.image.w, self.image.h, 0)
+    fb := framebuffer::get()
+    w, h = fb->get_display_size()
+
+    if w < self.image.w:
+      float resize_ratio = (self.image.w / ((float) w - 100))
+      rw := self.image.w / resize_ratio
+      rh := self.image.h / resize_ratio
+      util::resize_image(image, rw, rh, 0)
+    else:
+      util::resize_image(image, self.image.w, self.image.h, 0)
+
     undithered_bmp->image = self.image
     dithered_bmp->image = self.image
     update()
