@@ -10,12 +10,14 @@ jobs:
 
     steps:
       - name: "Checkout source"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: "Build artifacts"
         run: |
-          ARCH=rm make docker
-          ARCH=kobo make docker
+          CROSS_TC=arm-kobo-linux-gnueabihf DOCKERFILE=Dockerfile.kobo FBINK=1 TARGET=kobo make docker
+          TARGET=rm make docker
 
       - uses: actions/upload-artifact@v3
         with:

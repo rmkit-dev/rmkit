@@ -4,6 +4,7 @@
 #include <chrono>
 
 #include <time.h>
+#include <sys/prctl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/time.h>
@@ -466,6 +467,7 @@ class App: public IApp:
     _ := system("mkdir /run/ 2> /dev/null")
     _ = system("/usr/bin/mkfifo /run/remux.api 2>/dev/null")
     self.ipc_thread = new thread([=]() {
+      prctl(PR_SET_NAME, "fifo\0", 0, 0, 0)
       fd := open("/run/remux.api", O_RDONLY)
 
       string remainder = ""
@@ -495,6 +497,7 @@ class App: public IApp:
     debug "STARTING SUSPEND THREAD"
     version := util::get_remarkable_version()
     self.idle_thread = new thread([=]() {
+      prctl(PR_SET_NAME, "suspend\0", 0, 0, 0)
       last_wake := 0
       while true:
         now := time(NULL)
