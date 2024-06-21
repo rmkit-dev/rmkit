@@ -728,7 +728,8 @@ class App: public IApp:
       _ := system("systemctl suspend")
       sleep(1)
 
-      if system("lsmod | grep brcmfmac") == 0:
+      disable_wifi_reload := getenv("REMUX_DISABLE_WIFI_RELOAD")
+      if (disable_wifi_reload == NULL or strlen(disable_wifi_reload) == 0) and system("lsmod | grep brcmfmac") == 0:
         debug "RELOADING WIFI DRIVERS"
         _ = system("modprobe -r brcmfmac brcmutil")
         _ = system("modprobe brcmfmac brcmutil")
