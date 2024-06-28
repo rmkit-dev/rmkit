@@ -55,10 +55,12 @@ namespace input:
 
 
 
-    void handle_event_fd():
+    int handle_event_fd():
       int bytes = read(fd, ev_data, sizeof(input_event) * 64);
+      if bytes == -1:
+        debug "ERRNO", errno, strerror(errno)
       if bytes < sizeof(input_event) || bytes == -1:
-        return
+        return bytes
 
       #ifndef DEV
       // in DEV mode we allow event coalescing between calls to read() for
@@ -88,6 +90,8 @@ namespace input:
           if !syn_dropped:
             event.update(ev_data[i])
 
+      return 0
+
   class Input:
     private:
 
@@ -104,8 +108,11 @@ namespace input:
     vector<SynKeyEvent> all_key_events
 
     Input():
-      FD_ZERO(&rdfs)
+      open_devices()
 
+    void open_devices():
+      close_devices()
+      FD_ZERO(&rdfs)
       // dev only
       // used by remarkable
       #ifdef REMARKABLE
@@ -141,11 +148,16 @@ namespace input:
       self.has_stylus = supports_stylus()
       return
 
+    void close_devices():
+      if self.touch.fd:
+        close(self.touch.fd)
+      if self.wacom.fd:
+        close(self.wacom.fd)
+      if self.button.fd:
+        close(self.button.fd)
 
     ~Input():
-      close(self.touch.fd)
-      close(self.wacom.fd)
-      close(self.button.fd)
+      close_devices()
 
     void open_device(string fname):
       fd := open(fname.c_str(), O_RDWR)
@@ -267,13 +279,19 @@ namespace input:
       else:
           retval = select(max_fd, &rdfs_cp, NULL, NULL, NULL)
 
+
+      // TODO: refactor this a bit so that the error handling is cleaner
+      // and we only re-open the specific device that fail
       if retval > 0:
         if FD_ISSET(self.wacom.fd, &rdfs_cp):
-          self.wacom.handle_event_fd()
+          if self.wacom.handle_event_fd() < 0 and errno == ENODEV:
+            self.open_devices()
         if FD_ISSET(self.touch.fd, &rdfs_cp):
-          self.touch.handle_event_fd()
+          if self.touch.handle_event_fd() < 0 and errno == ENODEV:
+            self.open_devices()
         if FD_ISSET(self.button.fd, &rdfs_cp):
-          self.button.handle_event_fd()
+          if self.button.handle_event_fd() < 0 and errno == ENODEV:
+            self.open_devices()
         if FD_ISSET(input::ipc_fd[0], &rdfs_cp):
           self.handle_ipc()
 
