@@ -22,10 +22,14 @@ namespace input:
   extern int ipc_fd[2] = { -1, -1 };
   extern bool CRASH_ON_BAD_DEVICE = (getenv("RMKIT_CRASH_ON_BAD_DEVICE") != NULL)
 
-  template<class T, class EV>
-  class InputClass:
+  class IInputClass:
     public:
-    int fd
+    int fd = 0
+    bool reopen = false
+
+  template<class T, class EV>
+  class InputClass : public IInputClass:
+    public:
     input_event ev_data[64]
     T prev_ev, event
     vector<T> events
@@ -60,6 +64,8 @@ namespace input:
       if bytes == -1:
         debug "ERRNO", errno, strerror(errno)
       if bytes < sizeof(input_event) || bytes == -1:
+        if errno == ENODEV:
+          self.reopen = true
         return bytes
 
       #ifndef DEV
@@ -149,12 +155,10 @@ namespace input:
       return
 
     void close_devices():
-      if self.touch.fd:
-        close(self.touch.fd)
-      if self.wacom.fd:
-        close(self.wacom.fd)
-      if self.button.fd:
-        close(self.button.fd)
+      vector<IInputClass> fds = { self.touch, self.wacom, self.button}
+      for auto in : fds:
+        if in.fd > 0:
+          close(in.fd)
 
     ~Input():
       close_devices()
@@ -261,6 +265,19 @@ namespace input:
       for auto fd : { self.touch.fd, self.wacom.fd, self.button.fd }:
         ioctl(fd, EVIOCGRAB, false)
 
+    void check_reopen():
+      vector<IInputClass*> inputs = { &self.wacom, &self.touch, &self.button }
+      needs_reopen := false
+      for auto in : inputs:
+        if in->reopen:
+          needs_reopen = true
+          break
+
+      if needs_reopen:
+        self.open_devices()
+
+      for auto in : inputs:
+        in->reopen = false
 
     void listen_all(long timeout_ms = 0):
       fd_set rdfs_cp
@@ -284,16 +301,15 @@ namespace input:
       // and we only re-open the specific device that fail
       if retval > 0:
         if FD_ISSET(self.wacom.fd, &rdfs_cp):
-          if self.wacom.handle_event_fd() < 0 and errno == ENODEV:
-            self.open_devices()
+          self.wacom.handle_event_fd()
         if FD_ISSET(self.touch.fd, &rdfs_cp):
-          if self.touch.handle_event_fd() < 0 and errno == ENODEV:
-            self.open_devices()
+          self.touch.handle_event_fd()
         if FD_ISSET(self.button.fd, &rdfs_cp):
-          if self.button.handle_event_fd() < 0 and errno == ENODEV:
-            self.open_devices()
+          self.button.handle_event_fd()
         if FD_ISSET(input::ipc_fd[0], &rdfs_cp):
           self.handle_ipc()
+
+        self.check_reopen()
 
       for auto ev : self.wacom.events:
         self.all_motion_events.push_back(self.wacom.marshal(ev))
