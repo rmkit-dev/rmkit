@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <unordered_set>
 #include <thread>
+#include <set>
 #define PID 1
 #define PGROUP 4
 
@@ -53,6 +54,8 @@ namespace proc:
     int available = 0
     int used = 0
   ;
+
+  std::set<string> known_interpreters {"python", "python3", "bash", "sh"}
 
   string join_path(vector<string> v):
     ostringstream s;
@@ -110,13 +113,16 @@ namespace proc:
       base = basename((char *) base)
       base_str := string(base)
 
+      auto search_interpreter = known_interpreters.find(base_str)
+      if search_interpreter != known_interpreters.end():
+          continue
+
       for auto needle : args:
         if base_str == needle || full_str == needle:
           found = true
           break
 
-      if found:
-        break
+      break
 
     return found
 
