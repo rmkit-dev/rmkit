@@ -4,7 +4,7 @@
 namespace ui:
   class ReflowLayout: public ui::Layout:
     public:
-    static unordered_map<Scene, vector<ReflowLayout*>> scene_to_layouts
+    static unordered_map<Scene, vector<ReflowLayout*>> scene_to_layouts = {}
     vector<ReflowLayout*> layouts
 
     class PackedChild:
@@ -75,7 +75,6 @@ namespace ui:
       sl := ReflowLayout::add(w)
       self.center.push_back({sl, NULL, padding})
   ;
-  unordered_map<Scene, vector<ReflowLayout*>> ReflowLayout::scene_to_layouts = {}
 
   class HorizontalReflow: public ReflowLayout:
     public:
