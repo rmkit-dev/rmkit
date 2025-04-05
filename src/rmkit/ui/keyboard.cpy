@@ -90,7 +90,7 @@ namespace ui:
       self.numbers = false
       self.shifted = true
       self.set_layout(
-        "QWERTYUOIP",
+        "QWERTYUIOP",
         "ASDFGHJKL",
         "ZXCVBNM"
       )
@@ -166,6 +166,7 @@ namespace ui:
         if self.text.size() > 0:
           self.text.pop_back()
           self.input_box->text = self.text
+          self.input_box->undraw()
           self.input_box->dirty = 1
           self.dirty = 1
       ;
