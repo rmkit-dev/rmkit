@@ -101,7 +101,7 @@ namespace ui:
       self.set_layout(
         "1234567890",
         "-/:;() &@\"",
-        "  ,.?!'  "
+        "  ,.?!'"
       )
 
     void symbol_layout():
@@ -110,7 +110,7 @@ namespace ui:
       self.set_layout(
         "[]{}#%^*+=",
         "_\\|~<> $  ",
-        "  ,.?!'  "
+        "  ,.?!'"
       )
 
     void set_layout(string row1chars, row2chars, row3chars):
