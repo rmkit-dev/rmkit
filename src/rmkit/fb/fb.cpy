@@ -1014,7 +1014,7 @@ namespace framebuffer:
       return um
 
 
-  static shared_ptr<FB> _FB
+  extern shared_ptr<FB> _FB = nullptr
 
   // function: framebuffer::get
   // this function returns the app's framebuffer
