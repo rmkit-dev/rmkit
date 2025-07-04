@@ -20,8 +20,8 @@
 #define FONT_BUFFER_SIZE 24<<20
 namespace stbtext:
   // TODO: fix the max size read to prevent overflows (or just abort on really large files)
-  static unsigned char font_buffer[FONT_BUFFER_SIZE]
-  static stbtt_fontinfo font;
+  extern unsigned char font_buffer[FONT_BUFFER_SIZE] = {}
+  extern stbtt_fontinfo font = {}
   extern bool did_setup = false
   extern bool GRAYSCALE = false
 
